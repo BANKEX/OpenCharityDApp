@@ -1,0 +1,49 @@
+<div class="row">
+	<div class="col-12">
+		<a class="btn btn-default mrg-btm-20" (click)="updateCharityEventsList()">
+			<i class="ti-reload pdd-right-5"></i>
+			<span>Update list</span>
+		</a>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-lg-4" *ngFor="let charityEvent of charityEvents">
+		<div class="card calendar-event card-hover">
+			<div class="card-block no-pdd-btm">
+				<span class="title-wrap"><h4 class="no-mrg-btm text-semibold">{{charityEvent.name}}</h4> </span>
+			</div>
+			<div class="card-block no-pdd-btm no-pdd-top">
+                <span class="sub-title font-size-8">
+                    {{charityEvent.address}}
+                </span>
+			</div>
+
+			<div class="card-block no-pdd-btm pdd-top-5">
+				<opc-bitmask-tags-list [tags]="charityEvent.tags"></opc-bitmask-tags-list>
+			</div>
+
+			<div class="card-block no-pdd-btm">
+
+
+				<div class="row">
+					<div class="col-12">
+						<div class="mrg-top-30">
+							<p class="mrg-btm-5">Raised:
+								<span
+									class="text-dark text-semibold">{{charityEvent.raised}}/{{charityEvent.target}}</span>
+								<span class="pull-right">Payed: <span class="text-dark text-semibold">{{charityEvent.payed}}</span></span>
+							</p>
+							<div class="progress progress-info progress-sm">
+								<div class="progress-bar"
+									 [ngStyle]="{'width.%': charityEvent.raised/charityEvent.target*100}">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>

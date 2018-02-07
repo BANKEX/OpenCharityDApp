@@ -1,0 +1,63 @@
+<div class="row">
+	<div class="col-md-12">
+		<div class="card">
+			<div class="card-heading border bottom">
+				<h4 class="card-title">Add New Charity Event</h4>
+			</div>
+			<div class="card-block">
+				<div class="row">
+
+					<div class="col-md-8 ml-auto mr-auto">
+						<form role="form" novalidate [formGroup]="charityEventForm">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label>Event Name
+											<small class="text-normal">*</small>
+										</label>
+										<input class="form-control"
+											   [ngClass]="{'error' : charityEventForm.get('name').touched && charityEventForm.get('name').hasError('required')}"
+											   formControlName="name">
+										<label class="error"
+											   *ngIf="charityEventForm.get('name').touched && charityEventForm.get('name').hasError('required')">Name
+											is required</label>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label>Target
+											<small class="text-normal">*</small>
+										</label>
+										<div class="input-group">
+											<input type="text" class="form-control" placeholder="Target"
+												   name="event-required" formControlName="target"
+												   aria-describedby="basic-addon1">
+											<span class="input-group-addon" id="basic-addon1">Рублей</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<opc-set-bitmask-tags [bitmask]="selectedTagsBitmask"
+															  (bitmaskChanged)="bitmaskChanged($event)"></opc-set-bitmask-tags>
+									</div>
+								</div>
+							</div>
+							<div class="row justify-content-center">
+								<div class="col-md-6">
+									<button class="btn btn-primary width-100" type="submit" (click)="submitForm()">
+										Submit
+									</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

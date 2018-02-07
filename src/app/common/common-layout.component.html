@@ -1,0 +1,181 @@
+<div class="app" [ngClass]="
+    {
+        'is-collapsed': app.layout.isMenuCollapsed,
+        'is-opened': app.layout.isMenuOpened,
+        'rtl' : app.layout.rtlActived
+    }">
+	<div class="layout" [ngClass]="headerSelected">
+
+		<div [ngClass]="sidenavSelected">
+			<!-- Side Nav START -->
+			<div class="side-nav" sideBar>
+				<div class="side-nav-inner">
+					<div class="side-nav-logo">
+						<a href="" [routerLink]="['/']">
+							<div class="logo logo-dark"
+								 style="background-image: url('assets/images/logo/logo.png')"></div>
+							<div class="logo logo-white"
+								 style="background-image: url('assets/images/logo/logo-white.png')"></div>
+						</a>
+						<div class="mobile-toggle side-nav-toggle">
+							<a href="javascript:void(0);"
+							   (click)="app.layout.isMenuCollapsed = !app.layout.isMenuCollapsed">
+								<i class="ti-arrow-circle-left"></i>
+							</a>
+						</div>
+					</div>
+					<ul class="side-nav-menu scrollable">
+
+						<li class="nav-item" routerLinkActive="active">
+							<a class="mrg-top-30" href="" [routerLink]="['/organization']">
+                                <span class="icon-holder">
+                                    <i class="fa fa-sitemap"></i>
+                                </span>
+								<span class="title">Organizations</span>
+							</a>
+						</li>
+						<!--<li class="nav-item dropdown" >-->
+						<!--<a class="dropdown-toggle" href="javascript:void(0);" >-->
+						<!--<span class="icon-holder">-->
+						<!--<i class="ti-layout-media-overlay"></i>-->
+						<!--</span>-->
+						<!--<span class="title">Dropdown</span>-->
+						<!--<span class="arrow">-->
+						<!--<i class="ti-angle-right"></i>-->
+						<!--</span>-->
+						<!--</a>-->
+						<!--<ul class="dropdown-menu">-->
+						<!--<li>-->
+						<!--<a href="">item 1</a>-->
+						<!--</li>-->
+						<!--<li>-->
+						<!--<a href="">item 2</a>-->
+						<!--</li>-->
+						<!--</ul>-->
+						<!--</li>-->
+						<!--<li class="nav-item dropdown">-->
+						<!--<a class="dropdown-toggle" href="javascript:void(0);">-->
+						<!--<span class="icon-holder">-->
+						<!--<i class="ti-view-list-alt"></i>-->
+						<!--</span>-->
+						<!--<span class="title">Multi Level</span>-->
+						<!--<span class="arrow">-->
+						<!--<i class="ti-angle-right"></i>-->
+						<!--</span>-->
+						<!--</a>-->
+						<!--<ul class="dropdown-menu">-->
+						<!--<li class="nav-item dropdown">-->
+						<!--<a href="javascript:void(0);">-->
+						<!--<span>Level 1.2</span>-->
+						<!--</a>-->
+						<!--</li>-->
+						<!--<li class="nav-item dropdown">-->
+						<!--<a href="javascript:void(0);">-->
+						<!--<span>Level 1.1</span>-->
+						<!--<span class="arrow">-->
+						<!--<i class="ti-angle-right"></i>-->
+						<!--</span>-->
+						<!--</a>-->
+						<!--<ul class="dropdown-menu">-->
+						<!--<li>-->
+						<!--<a href="javascript:void(0);">Level 2</a>-->
+						<!--</li>-->
+						<!--</ul>-->
+						<!--</li>-->
+						<!--</ul>-->
+						<!--</li>-->
+					</ul>
+				</div>
+			</div>
+			<!-- Side Nav END -->
+
+			<!-- Page Container START -->
+			<div class="page-container">
+
+				<!-- Top Nav START -->
+				<div class="header navbar">
+					<div class="header-container">
+						<ul class="nav-left">
+							<li>
+								<a class="side-nav-toggle" href="javascript:void(0);"
+								   (click)="app.layout.isMenuCollapsed = !app.layout.isMenuCollapsed">
+									<i class="ti-view-grid"></i>
+								</a>
+							</li>
+						</ul>
+						<ul class="nav-right">
+							<li>
+								<a class="side-panel-toggle" href="javascript:void(0);"
+								   (click)="app.layout.sidePanelOpen = !app.layout.sidePanelOpen">
+									<i class="ti-align-right"></i>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<!-- Top Nav END -->
+
+				<!-- Side Panel START -->
+				<div class="side-panel" [ngClass]="{'side-panel-open' : app.layout.sidePanelOpen}">
+					<div class="side-panel-wrapper bg-white">
+						<ul class="nav nav-tabs" role="tablist">
+							<li class="nav-item active">
+								<a class="nav-link" href="#tab1" role="tab" data-toggle="tab">
+									<span>Tab 1</span>
+								</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="#tab2" role="tab" data-toggle="tab">
+									<span>Tab 2</span>
+								</a>
+							</li>
+							<li class="nav-item ">
+								<a class="nav-link" href="#tab3" role="tab" data-toggle="tab">
+									<span>Tab 3</span>
+								</a>
+							</li>
+							<li class="panel-close">
+								<a class="side-panel-toggle" href="javascript:void(0);"
+								   (click)="app.layout.sidePanelOpen = !app.layout.sidePanelOpen">
+									<i class="ti-close"></i>
+								</a>
+							</li>
+						</ul>
+						<div class="tab-content">
+							<div id="tab1" role="tabpanel" class="tab-pane fade in active">
+							</div>
+							<div id="tab2" role="tabpanel" class="tab-pane fade">
+							</div>
+							<div id="tab3" role="tabpanel" class="tab-pane fade">
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Side Panel END -->
+
+				<!-- Content Wrapper START -->
+				<div class="main-content">
+					<router-outlet></router-outlet>
+				</div>
+				<!-- Content Wrapper END -->
+
+				<!-- Footer START -->
+				<footer class="content-footer">
+					<div class="footer">
+						<div class="copyright">
+							<span>Copyright © 2017</span>
+							<span class="go-right">
+                                <a href="" class="text-gray mrg-right-15">Link 1</a>
+                                <a href="" class="text-gray">Link 2</a>
+                            </span>
+						</div>
+					</div>
+				</footer>
+				<!-- Footer END -->
+
+			</div>
+			<!-- Page Container END -->
+
+		</div>
+	</div>
+</div>

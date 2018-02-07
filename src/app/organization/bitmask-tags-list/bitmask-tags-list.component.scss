@@ -1,0 +1,14 @@
+@import 'src/assets/scss/variables';
+
+.tags-list {
+	.tag {
+		border-radius: 3px;
+		cursor: default;
+		&:hover {
+			color: $default-dark;
+			background-color: $default-white;
+			border-color: darken($border-color, 5%);
+
+		}
+	}
+}

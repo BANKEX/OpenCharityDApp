@@ -1,0 +1,37 @@
+<div class="container-fluid">
+	<div class="page-title">
+		<h4>
+			Open Charity Organizations
+		</h4>
+	</div>
+
+	<div class="row">
+		<div class="col-lg-4" *ngFor="let organization of organizations">
+			<div class="card calendar-event card-hover" (click)="goToOgranizationPage(organization.address)">
+				<div class="card-block no-pdd-btm">
+					<span class="title-wrap"><span class="title">Organization Name:</span><span
+						class="title-value mrg-left-10">{{organization.name}}</span> </span>
+				</div>
+				<div class="card-block no-pdd-btm no-pdd-top">
+                <span class="sub-title font-size-8">
+                    {{organization.address}}
+                </span>
+				</div>
+				<div class="card-block no-pdd-btm">
+					<ul class="event-list">
+						<li class="event-items">
+							<a class="" href="javascript:void(0);">
+								<span class="bullet success"></span>
+								<span class="event-name">Companies:</span>
+								<div class="event-detail">
+									<span class="raised">{{organization.charityEventsCount}}</span>
+								</div>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>

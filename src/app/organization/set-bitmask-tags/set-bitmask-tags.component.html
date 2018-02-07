@@ -1,0 +1,6 @@
+<div class="tags-list">
+	<div class="tag btn btn-default" *ngFor="let tag of tags" (click)="toggleTag(tag.value)"
+		 [ngClass]="{'selected': isSelectedTag(tag.value)}">
+		{{tag.name}}
+	</div>
+</div>
