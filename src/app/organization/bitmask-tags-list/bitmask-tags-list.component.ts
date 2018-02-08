@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Tag, TagsBitmaskService} from '../tags-bitmask.service';
+import {Tag, TagsBitmaskService} from '../services/tags-bitmask.service';
 
 @Component({
 	selector: 'opc-bitmask-tags-list',
