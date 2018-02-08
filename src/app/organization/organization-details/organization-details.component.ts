@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
-import {OrganizationContractService} from '../organization-contract.service';
+import {OrganizationContractService} from '../services/organization-contract.service';
 
 @Component({
 	selector: 'opc-organization-details',

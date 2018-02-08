@@ -1,11 +1,9 @@
 import {Injectable} from '@angular/core';
 import {Contract, Tx} from 'web3/types';
-import {Web3ProviderService} from '../core/web3-provider.service';
+import {Web3ProviderService} from '../../core/web3-provider.service';
 import {merge} from 'lodash';
 import Web3 from 'web3';
-import {Observable} from 'rxjs/Observable';
-import {Subject} from 'rxjs/Subject';
-import {OrganizationContractAbi} from '../contracts-abi';
+import {OrganizationContractAbi} from '../../contracts-abi';
 
 export interface Organization {
 	name: string;
@@ -64,28 +62,6 @@ export class OrganizationContractService {
 		return this.buildCharityEventsList(contract, parseInt(charityEventCount));
 	}
 
-	// listen for CharityEventAdded event
-	public onCharityEventAdded(address: string): Observable<any> {
-		const contract: Contract = this.cloneContract(this.organizationContract, address);
-		(<any>contract).setProvider(new Web3.providers.WebsocketProvider('ws://127.0.0.1:7545'));
-		const subject: Subject<any> = new Subject<any>();
-		contract.events.CharityEventAdded({},
-			function (error, event) {
-				console.log(error);
-				console.log(event);
-			}
-		)
-			.on('data', (data: any) => {
-				subject.next(data);
-			})
-			.on('changed', (data: any) => {
-				subject.next(data);
-			})
-			.on('error', (err: any) => {
-				subject.error(err);
-			});
-		return subject;
-	}
 
 	public addIncomingDonation(address: string, realWorldsIdentifier: string, amount: string, note: string, tags: string, txOptions?: Tx) {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);

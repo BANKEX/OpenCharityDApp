@@ -1,6 +1,8 @@
 @import 'src/assets/scss/variables';
 
 .tags-list {
+	display: flex;
+	flex-wrap: wrap;
 	.tag {
 		border-radius: 3px;
 		cursor: default;
