@@ -7,7 +7,7 @@ import {OpenCharityTokenContractAbi} from '../contracts-abi';
 @Injectable()
 export class TokenContractService {
 	private web3: Web3;
-	private TOKEN_CONTRACT_ADDRESS: string = '0x9dee536694e1f0adc640972e61826732666345b3';
+	private TOKEN_CONTRACT_ADDRESS: string = environment.tokenAddress;
 
 	private tokenContract: Contract;
 

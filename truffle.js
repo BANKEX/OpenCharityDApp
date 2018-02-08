@@ -31,7 +31,7 @@ module.exports = {
 			from: "0xdec98a7a34b68c7ba1d342f12069f9c44eeb4be4"
 		},
 		bankexTestNetwork: {
-			host: '52.166.13.111:8546',
+			host: '52.166.13.111',
 			port: 8535,
 			network_id: 488412,
 			gasPrice: 180000000000,

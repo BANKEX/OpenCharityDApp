@@ -27,11 +27,11 @@ contract('Organization', function(accounts) {
         OrganizationInstance = await Organization.new(OpenCharityTokenInstance.address, ADMIN_ACCOUNTS, 'Test Organization');
         await OpenCharityTokenInstance.setMintAgent(OrganizationInstance.address, true);
 
-        await OrganizationInstance.setIncomingDonation('Test Incoming Donation', INCOMING_DONATION_AMOUNT, 'Test note', '0xaa', {
+        await OrganizationInstance.setIncomingDonation('Test Incoming Donation', INCOMING_DONATION_AMOUNT, 'Test note', '0x3f', {
             from: ADMIN_ACCOUNTS[0]
         });
 
-        await OrganizationInstance.addCharityEvent('Test Charity Event', INCOMING_DONATION_AMOUNT+200, '0', '0xaa', {
+        await OrganizationInstance.addCharityEvent('Test Charity Event', INCOMING_DONATION_AMOUNT+200, '0', '0x01', {
             from: ADMIN_ACCOUNTS[0]
         });
 
