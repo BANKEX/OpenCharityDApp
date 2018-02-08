@@ -91,11 +91,13 @@ exports.MY_TEST_PLUGINS = [
 
 
 exports.DEV_ENVIRONMENT = {
+	'tokenAddress': '0x7f1dc0f5f8dafd9715ea51f6c11b92929b2dbdea',
 	'rpcProviderUrl': 'http://52.166.13.111:8535',
 	'websocketProviderUrl': 'ws://52.166.13.111:8536',
 };
 
 exports.PROD_ENVIRONMENT = {
+	'tokenAddress': '0x7f1dc0f5f8dafd9715ea51f6c11b92929b2dbdea',
 	'rpcProviderUrl': 'http://52.166.13.111:8535',
 	'websocketProviderUrl': 'ws://52.166.13.111:8536',
 };

@@ -5,6 +5,7 @@ const CharityEvent = artifacts.require('CharityEvent');
 const Tools = artifacts.require('Tools');
 const SafeMath = artifacts.require('SafeMath');
 const tokenParams = require('../contracts-params').token;
+const adminAddresses = require('../contracts-params').admin_addresses;
 
 
 module.exports = async function(deployer, network, accounts) {
@@ -16,7 +17,7 @@ module.exports = async function(deployer, network, accounts) {
     await deployer.deploy(OpenCharityToken, tokenParams.name, tokenParams.symbol, tokenParams.decimals, {overwrite: false});
 
     const openCharityTokenInstance = await OpenCharityToken.deployed();
-    await deployer.deploy(Organization, openCharityTokenInstance.address, [accounts[0], accounts[1]], 'Test Organization Name');
+    await deployer.deploy(Organization, openCharityTokenInstance.address, adminAddresses, 'Test Organization Name');
     const OrganizationInstance = await Organization.deployed();
     await openCharityTokenInstance.setMintAgent(OrganizationInstance.address, true);
 
