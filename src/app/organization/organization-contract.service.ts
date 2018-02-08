@@ -1,11 +1,12 @@
 import {Injectable} from '@angular/core';
-import {Contract, Tx} from 'web3/types';
+import {Contract, EventEmitter, Tx} from 'web3/types';
 import {Web3ProviderService} from '../core/web3-provider.service';
 import {merge} from 'lodash';
 import Web3 from 'web3';
 import {Observable} from 'rxjs/Observable';
-import {Subject} from 'rxjs/Subject';
 import {OrganizationContractAbi} from '../contracts-abi';
+import {ConnectableObservable} from 'rxjs/Rx';
+import {Observer} from 'rxjs/Observer';
 
 export interface Organization {
 	name: string;
@@ -19,6 +20,11 @@ export class OrganizationContractService {
 	private organizationContract: Contract;
 	private web3: Web3;
 	private defaultTx: Tx;
+
+	// tracks Observables for different organizations
+	// key is organization address
+	private charityEventAddedEmiiters: {[key: string]: ConnectableObservable<any>} = {};
+
 
 	constructor(private web3ProviderService: Web3ProviderService,) {
 		this.organizationContract = this.buildOrganizationContract();
@@ -66,25 +72,39 @@ export class OrganizationContractService {
 
 	// listen for CharityEventAdded event
 	public onCharityEventAdded(address: string): Observable<any> {
+		if (!this.charityEventAddedEmiiters[address]) {
+			this.charityEventAddedEmiiters[address] = this.buildOnCharityEventAddedObservable(address);
+		}
+
+		return this.charityEventAddedEmiiters[address];
+	}
+
+	private buildOnCharityEventAddedObservable(address: string): ConnectableObservable<any> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
-		(<any>contract).setProvider(new Web3.providers.WebsocketProvider('ws://127.0.0.1:7545'));
-		const subject: Subject<any> = new Subject<any>();
-		contract.events.CharityEventAdded({},
-			function (error, event) {
-				console.log(error);
-				console.log(event);
+		(<any>contract).setProvider(new Web3.providers.WebsocketProvider(environment.websocketProviderUrl));
+		return ConnectableObservable.create((observer: Observer<any>) => {
+			const contractEventListener: EventEmitter = contract.events.CharityEventAdded({},
+				function (error, event) {
+					if (error) {
+						observer.error(error);
+					}
+				}
+			)
+				.on('data', (data: any) => {
+					observer.next(data);
+				})
+				.on('changed', (data: any) => {
+					observer.next(data);
+				})
+				.on('error', (err: any) => {
+					observer.error(err);
+				});
+
+			return function() {
+				(<any>contractEventListener).unsubscribe();
 			}
-		)
-			.on('data', (data: any) => {
-				subject.next(data);
-			})
-			.on('changed', (data: any) => {
-				subject.next(data);
-			})
-			.on('error', (err: any) => {
-				subject.error(err);
-			});
-		return subject;
+
+		}).share();
 	}
 
 	public addIncomingDonation(address: string, realWorldsIdentifier: string, amount: string, note: string, tags: string, txOptions?: Tx) {

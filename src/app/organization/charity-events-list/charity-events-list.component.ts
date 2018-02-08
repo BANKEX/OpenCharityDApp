@@ -16,6 +16,7 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 	private componentDestroyed: Subject<void> = new Subject<void>();
 
 
+
 	constructor(private organizationContractService: OrganizationContractService,
 				private charityEventContractService: CharityEventContractService,
 				private tokenContractService: TokenContractService,
@@ -25,19 +26,16 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 
 	ngOnInit(): void {
 		this.updateCharityEventsList();
-		console.log(this.organizationContractAddress);
 
-		// required separate instance of web3 with websocket provider to listen for events
-
-		// this.organizationContractService.onCharityEventAdded(this.organizationContractAddress)
-		//     .takeUntil(this.componentDestroyed)
-		//     .subscribe((event: any) => {
-		//             console.log(event);
-		//             this.updateCharityEventsList();
-		//         },
-		//         (err) => {
-		//             alert(`Error: ${err}`);
-		//         });
+		this.organizationContractService.onCharityEventAdded(this.organizationContractAddress)
+		    .takeUntil(this.componentDestroyed)
+		    .subscribe((event: any) => {
+		            console.log(event);
+		            this.updateCharityEventsList();
+		        },
+		        (err) => {
+		            alert(`Error: ${err}`);
+		        });
 	}
 
 	public async updateCharityEventsList(): Promise<void> {
