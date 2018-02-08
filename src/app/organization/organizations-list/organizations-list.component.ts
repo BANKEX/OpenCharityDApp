@@ -12,7 +12,9 @@ export class OrganizationsListComponent implements OnInit {
 
 	organizations: Organization[] = [];
 	organizationsAddresses: string[] = [
-		'0xe777faf8240196ba99c6e2a89e8f24b75c52eb2a'
+		'0xe777faf8240196ba99c6e2a89e8f24b75c52eb2a',
+		'0x8ccb553bc7c6cc3112c9918362eae0bddcc51e3f',
+		'0x05cfcc5c600945df11bb799344be75429dc72097'
 	];
 
 	constructor(private organizationContractService: OrganizationContractService,
