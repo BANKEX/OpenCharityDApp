@@ -1,5 +1,5 @@
 import {OrganizationContractService} from '../services/organization-contract.service';
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 // tslint:disable-next-line:max-line-length
 import {IncomingDonation, IncomingDonationContractService} from '../services/incoming-donation-contract.service';
 import {Subject} from 'rxjs/Subject';
@@ -7,13 +7,14 @@ import {TokenContractService} from '../../core/token-contract.service';
 import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 import {IncomingDonationSendFundsModalComponent} from '../incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
 import {CharityEventContractService} from '../services/charity-event-contract.service';
+import {OrganizationContractEventsService} from '../services/organization-contract-events.service';
 
 @Component({
 	selector: 'opc-incoming-donations-list',
 	templateUrl: 'incoming-donations-list.component.html',
 	styleUrls: ['incoming-donations-list.component.scss']
 })
-export class IncomingDonationsListComponent implements OnInit {
+export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 	@Input('organizationContractAddress') organizationContractAddress: string;
 	incomingDonations: IncomingDonation[] = [];
 	private componentDestroyed: Subject<void> = new Subject<void>();
@@ -23,6 +24,7 @@ export class IncomingDonationsListComponent implements OnInit {
 				private incomingDonationContractService: IncomingDonationContractService,
 				private tokenContractService: TokenContractService,
 				private charityEventContractService: CharityEventContractService,
+				private organizationContractEventsService: OrganizationContractEventsService,
 				private modalService: NgbModal,
 	) {
 	}
@@ -30,10 +32,9 @@ export class IncomingDonationsListComponent implements OnInit {
 	ngOnInit(): void {
 		this.updateIncomingDonationsList();
 
-		this.organizationContractService.onIncomingDonationAdded(this.organizationContractAddress)
+		this.organizationContractEventsService.onIncomingDonationAdded(this.organizationContractAddress)
 		    .takeUntil(this.componentDestroyed)
 		    .subscribe((event: any) => {
-
 		            this.updateIncomingDonationsList();
 		        },
 		        (err) => {

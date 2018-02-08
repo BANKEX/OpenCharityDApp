@@ -4,6 +4,7 @@ import {CharityEvent, CharityEventContractService} from '../services/charity-eve
 import {Subject} from 'rxjs/Subject';
 import {TokenContractService} from '../../core/token-contract.service';
 import {TagsBitmaskService} from '../services/tags-bitmask.service';
+import {OrganizationContractEventsService} from '../services/organization-contract-events.service';
 
 @Component({
 	selector: 'opc-charity-events-list',
@@ -20,14 +21,14 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 	constructor(private organizationContractService: OrganizationContractService,
 				private charityEventContractService: CharityEventContractService,
 				private tokenContractService: TokenContractService,
-				private tagsBitmaskService: TagsBitmaskService) {
+				private organizationContractEventsService: OrganizationContractEventsService) {
 
 	}
 
 	ngOnInit(): void {
 		this.updateCharityEventsList();
 
-		this.organizationContractService.onCharityEventAdded(this.organizationContractAddress)
+		this.organizationContractEventsService.onCharityEventAdded(this.organizationContractAddress)
 		    .takeUntil(this.componentDestroyed)
 		    .subscribe((event: any) => {
 		            console.log(event);
