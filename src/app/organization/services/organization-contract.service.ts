@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
 import {Contract, EventEmitter, Tx} from 'web3/types';
-import {Web3ProviderService} from '../core/web3-provider.service';
+import {Web3ProviderService} from '../../core/web3-provider.service';
 import {merge} from 'lodash';
 import Web3 from 'web3';
 import {Observable} from 'rxjs/Observable';
-import {OrganizationContractAbi} from '../contracts-abi';
+import {OrganizationContractAbi} from '../../contracts-abi';
 import {ConnectableObservable} from 'rxjs/Rx';
 import {Observer} from 'rxjs/Observer';
 

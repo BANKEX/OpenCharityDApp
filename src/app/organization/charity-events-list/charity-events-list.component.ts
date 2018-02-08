@@ -1,9 +1,9 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {OrganizationContractService} from '../organization-contract.service';
-import {CharityEvent, CharityEventContractService} from '../charity-event-contract.service';
+import {OrganizationContractService} from '../services/organization-contract.service';
+import {CharityEvent, CharityEventContractService} from '../services/charity-event-contract.service';
 import {Subject} from 'rxjs/Subject';
 import {TokenContractService} from '../../core/token-contract.service';
-import {TagsBitmaskService} from '../tags-bitmask.service';
+import {TagsBitmaskService} from '../services/tags-bitmask.service';
 
 @Component({
 	selector: 'opc-charity-events-list',

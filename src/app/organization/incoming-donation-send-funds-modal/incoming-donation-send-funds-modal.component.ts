@@ -1,8 +1,8 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {NgbTypeahead} from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs/Observable';
-import {CharityEvent} from '../charity-event-contract.service';
-import {IncomingDonation, IncomingDonationContractService} from '../incoming-donation-contract.service';
+import {CharityEvent} from '../services/charity-event-contract.service';
+import {IncomingDonation, IncomingDonationContractService} from '../services/incoming-donation-contract.service';
 import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/filter';
@@ -10,7 +10,7 @@ import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {filter} from 'lodash';
-import {TagsBitmaskService} from '../tags-bitmask.service';
+import {TagsBitmaskService} from '../services/tags-bitmask.service';
 
 
 

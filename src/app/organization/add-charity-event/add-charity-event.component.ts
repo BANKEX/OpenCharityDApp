@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {OrganizationContractService} from '../organization-contract.service';
-import {TagsBitmaskService} from '../tags-bitmask.service';
+import {OrganizationContractService} from '../services/organization-contract.service';
+import {TagsBitmaskService} from '../services/tags-bitmask.service';
 
 @Component({
 	selector: 'opc-add-charity-event',

@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Organization, OrganizationContractService} from '../organization-contract.service';
+import {Organization, OrganizationContractService} from '../services/organization-contract.service';
 import {Router} from '@angular/router';
 
 @Component({

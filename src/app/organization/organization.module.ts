@@ -6,9 +6,9 @@ import {OrganizationDetailsComponent} from './organization-details/organization-
 import {AddCharityEventComponent} from './add-charity-event/add-charity-event.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
-import {OrganizationContractService} from './organization-contract.service';
-import {CharityEventContractService} from './charity-event-contract.service';
-import {IncomingDonationContractService} from './incoming-donation-contract.service';
+import {OrganizationContractService} from './services/organization-contract.service';
+import {CharityEventContractService} from './services/charity-event-contract.service';
+import {IncomingDonationContractService} from './services/incoming-donation-contract.service';
 // tslint:disable-next-line:max-line-length
 import {IncomingDonationsListComponent} from './incoming-donations-list/incoming-donations-list.component';
 // tslint:disable-next-line:max-line-length
@@ -16,7 +16,7 @@ import {AddIncomingDonationComponent} from './add-incoming-donation/add-incoming
 import {NgSelectizeModule} from 'ng-selectize';
 import {OrganizationsListComponent} from './organizations-list/organizations-list.component';
 import {IsOrganizationAddressGuard} from './is-organization-address.guard';
-import {TagsBitmaskService} from './tags-bitmask.service';
+import {TagsBitmaskService} from './services/tags-bitmask.service';
 import {SetBitmaskTagsComponent} from './set-bitmask-tags/set-bitmask-tags.component';
 import {BitmaskTagsListComponent} from './bitmask-tags-list/bitmask-tags-list.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';

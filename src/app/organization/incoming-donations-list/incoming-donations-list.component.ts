@@ -1,12 +1,12 @@
-import {OrganizationContractService} from '../organization-contract.service';
+import {OrganizationContractService} from '../services/organization-contract.service';
 import {Component, Input, OnInit} from '@angular/core';
 // tslint:disable-next-line:max-line-length
-import {IncomingDonation, IncomingDonationContractService} from '../incoming-donation-contract.service';
+import {IncomingDonation, IncomingDonationContractService} from '../services/incoming-donation-contract.service';
 import {Subject} from 'rxjs/Subject';
 import {TokenContractService} from '../../core/token-contract.service';
 import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 import {IncomingDonationSendFundsModalComponent} from '../incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
-import {CharityEventContractService} from '../charity-event-contract.service';
+import {CharityEventContractService} from '../services/charity-event-contract.service';
 
 @Component({
 	selector: 'opc-incoming-donations-list',
