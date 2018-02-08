@@ -24,6 +24,7 @@ export class OrganizationContractService {
 	// tracks Observables for different organizations
 	// key is organization address
 	private charityEventAddedEmiiters: {[key: string]: ConnectableObservable<any>} = {};
+	private incomingDonatioinAddedEmitters: {[key: string]: ConnectableObservable<any>} = {};
 
 
 	constructor(private web3ProviderService: Web3ProviderService,) {
@@ -106,6 +107,44 @@ export class OrganizationContractService {
 
 		}).share();
 	}
+
+	public onIncomingDonationAdded(address: string): Observable<any> {
+		if (!this.incomingDonatioinAddedEmitters[address]) {
+			this.incomingDonatioinAddedEmitters[address] = this.buildOnIncomingDonationAddedObservable(address);
+		}
+
+		return this.incomingDonatioinAddedEmitters[address];
+	}
+
+	private buildOnIncomingDonationAddedObservable(address: string): ConnectableObservable<any> {
+		const contract: Contract = this.cloneContract(this.organizationContract, address);
+		(<any>contract).setProvider(new Web3.providers.WebsocketProvider(environment.websocketProviderUrl));
+		return ConnectableObservable.create((observer: Observer<any>) => {
+			const contractEventListener: EventEmitter = contract.events.IncomingDonationAdded({},
+				function (error, event) {
+					if (error) {
+						observer.error(error);
+					}
+				}
+			)
+				.on('data', (data: any) => {
+					observer.next(data);
+				})
+				.on('changed', (data: any) => {
+					observer.next(data);
+				})
+				.on('error', (err: any) => {
+					observer.error(err);
+				});
+
+			return function() {
+				(<any>contractEventListener).unsubscribe();
+			}
+
+		}).share();
+	}
+
+
 
 	public addIncomingDonation(address: string, realWorldsIdentifier: string, amount: string, note: string, tags: string, txOptions?: Tx) {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);

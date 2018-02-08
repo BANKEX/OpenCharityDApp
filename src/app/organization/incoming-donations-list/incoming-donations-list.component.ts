@@ -29,17 +29,16 @@ export class IncomingDonationsListComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.updateIncomingDonationsList();
-		// required separate instance of web3 with websocket provider to listen for events
 
-		// this.organizationContractService.onIncomingDonationAdded(this.organizationContractAddress)
-		//     .takeUntil(this.componentDestroyed)
-		//     .subscribe((event: any) => {
-		//             console.log(event);
-		//             this.updateIncomingDonationsList();
-		//         },
-		//         (err) => {
-		//             alert(`Error: ${err}`);
-		//         });
+		this.organizationContractService.onIncomingDonationAdded(this.organizationContractAddress)
+		    .takeUntil(this.componentDestroyed)
+		    .subscribe((event: any) => {
+
+		            this.updateIncomingDonationsList();
+		        },
+		        (err) => {
+		            alert(`Error: ${err}`);
+		        });
 	}
 
 	public async updateIncomingDonationsList(): Promise<void> {
