@@ -44,7 +44,7 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 	}
 
 	public async updateIncomingDonationsList(): Promise<void> {
-		const incomingDonationsList: string[] = reverse((await this.organizationContractService.getIncomingDonations(this.organizationContractAddress));
+		const incomingDonationsList: string[] = reverse(await this.organizationContractService.getIncomingDonations(this.organizationContractAddress));
 
 		const incomingDonations = [];
 		for (const address of incomingDonationsList) {
