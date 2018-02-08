@@ -8,6 +8,7 @@ import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 import {IncomingDonationSendFundsModalComponent} from '../incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
 import {CharityEventContractService} from '../services/charity-event-contract.service';
 import {OrganizationContractEventsService} from '../services/organization-contract-events.service';
+import {reverse} from 'lodash';
 
 @Component({
 	selector: 'opc-incoming-donations-list',
@@ -43,7 +44,7 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 	}
 
 	public async updateIncomingDonationsList(): Promise<void> {
-		const incomingDonationsList: string[] = await this.organizationContractService.getIncomingDonations(this.organizationContractAddress);
+		const incomingDonationsList: string[] = reverse((await this.organizationContractService.getIncomingDonations(this.organizationContractAddress));
 
 		const incomingDonations = [];
 		for (const address of incomingDonationsList) {
