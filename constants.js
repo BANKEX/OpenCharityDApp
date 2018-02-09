@@ -94,10 +94,21 @@ exports.DEV_ENVIRONMENT = {
 	'tokenAddress': '0x7f1dc0f5f8dafd9715ea51f6c11b92929b2dbdea',
 	'rpcProviderUrl': 'http://52.166.13.111:8535',
 	'websocketProviderUrl': 'ws://52.166.13.111:8536',
+	'organizations':  [
+		'0xe777faf8240196ba99c6e2a89e8f24b75c52eb2a',
+		'0x8ccb553bc7c6cc3112c9918362eae0bddcc51e3f',
+		'0x05cfcc5c600945df11bb799344be75429dc72097',
+		'0xc4e24e6b25fb81e3aae568c3e1d7da04ccebd762'
+	]
 };
 
 exports.PROD_ENVIRONMENT = {
 	'tokenAddress': '0x7f1dc0f5f8dafd9715ea51f6c11b92929b2dbdea',
 	'rpcProviderUrl': 'http://52.166.13.111:8535',
 	'websocketProviderUrl': 'ws://52.166.13.111:8536',
+	'organizations':  [
+		'0x9b5b3cce1f7f8359e026f9573f258782be577f29',
+		'0x6012b9da3716bdd07985d2076fa87048f03cc274',
+		'0xa201bab1b36f56d6de5894eeb94c513cc087bc33'
+	]
 };

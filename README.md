@@ -14,7 +14,7 @@
 1. `npm install -g truffle`
 1. Зайти в папку проекта, запустить `truffle migrate --network ganache`
 1. Дождаться компиляции, в консоли будет строчка вида `Organization: 0x.....` где 0x.... это адрес контракта организации. 
-1. Скопировать адрес организации из предыдущего шага в `/src/app/organization/organizations-list/organizations-list.component.ts` в переменную `organizationsAddresses`;
+1. Скопировать адрес организации из предыдущего шага в `constants.js` в переменную `exports.DEV_ENVIRONMENT.organizations`;
 
 
 
