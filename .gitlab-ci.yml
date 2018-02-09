@@ -10,10 +10,15 @@ stages:
   - deploy-prod
 
 build-node:
-  image: node
+  image: node:alpine
   stage: build-node
   before_script:
+    - apk add --update git
+    - apk --no-cache add g++ gcc libgcc libstdc++ linux-headers make python
+    - npm install --quiet node-gyp -g
     - npm install
+    - npm rebuild bcrypt --build-from-source
+    - npm rebuild node-sass
   cache:
     paths:
       - node_modules/
@@ -22,6 +27,7 @@ build-node:
   artifacts:
     paths:
       - dist
+    expire_in: 1h
 
 tests:
   image: alpine
@@ -46,11 +52,12 @@ deploy_stage:
     DOCKER_TLS_VERIFY: "1"
     SERVERNAME: opencharity.staging.bankex.team
     EMAIL: "om@bankexfoundation.org"
+    DOCKER_CERT_PATH: "/certs"
   before_script:
-    - mkdir -p ~/.docker
-    - echo "$DOCKER_CA" > ~/.docker/ca.pem
-    - echo "$DOCKER_CERT" > ~/.docker/cert.pem
-    - echo "$DOCKER_KEY" > ~/.docker/key.pem
+    - mkdir -p $DOCKER_CERT_PATH
+    - echo "$DOCKER_CA" > $DOCKER_CERT_PATH/ca.pem
+    - echo "$DOCKER_CERT" > $DOCKER_CERT_PATH/cert.pem
+    - echo "$DOCKER_KEY" > $DOCKER_CERT_PATH/key.pem
     - docker login -u $DOCKER_USER -p $DOCKER_TOKEN
     - echo "IMAGE=$IMAGE" > .env ; echo "VIRTUAL_HOST=$SERVERNAME" >> .env ; echo "LETSENCRYPT_HOST=$SERVERNAME" >> .env; echo "LETSENCRYPT_EMAIL=$EMAIL" >> .env
   script:
@@ -71,11 +78,12 @@ deploy_prod:
     DOCKER_TLS_VERIFY: "1"
     SERVERNAME: opencharity.bankex.team
     EMAIL: "om@bankexfoundation.org"
+    DOCKER_CERT_PATH: "/certs"
   before_script:
-    - mkdir -p ~/.docker
-    - echo "$DOCKER_CA" > ~/.docker/ca.pem
-    - echo "$DOCKER_CERT" > ~/.docker/cert.pem
-    - echo "$DOCKER_KEY" > ~/.docker/key.pem
+    - mkdir -p $DOCKER_CERT_PATH
+    - echo "$DOCKER_CA" > $DOCKER_CERT_PATH/ca.pem
+    - echo "$DOCKER_CERT" > $DOCKER_CERT_PATH/cert.pem
+    - echo "$DOCKER_KEY" > $DOCKER_CERT_PATH/key.pem
     - docker login -u $DOCKER_USER -p $DOCKER_TOKEN
     - echo "IMAGE=$IMAGE" > .env ; echo "VIRTUAL_HOST=$SERVERNAME" >> .env ; echo "LETSENCRYPT_HOST=$SERVERNAME" >> .env; echo "LETSENCRYPT_EMAIL=$EMAIL" >> .env
   script:
