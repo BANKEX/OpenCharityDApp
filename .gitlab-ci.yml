@@ -64,6 +64,7 @@ deploy_stage:
     - docker-compose -f docker/docker-compose.yml down
     - docker rmi $IMAGE
     - docker pull $IMAGE
+    - sleep 15
     - docker-compose -f docker/docker-compose.yml up -d
   environment:
     name: staging
@@ -90,6 +91,7 @@ deploy_prod:
     - docker-compose -f docker/docker-compose.yml down
     - docker rmi $IMAGE
     - docker pull $IMAGE
+    - sleep 15
     - docker-compose -f docker/docker-compose.yml up -d
   environment:
     name: prod
