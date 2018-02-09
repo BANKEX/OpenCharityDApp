@@ -59,11 +59,12 @@ deploy_stage:
     - echo "$DOCKER_CERT" > $DOCKER_CERT_PATH/cert.pem
     - echo "$DOCKER_KEY" > $DOCKER_CERT_PATH/key.pem
     - docker login -u $DOCKER_USER -p $DOCKER_TOKEN
-    - echo "IMAGE=$IMAGE" > .env ; echo "VIRTUAL_HOST=$SERVERNAME" >> .env ; echo "LETSENCRYPT_HOST=$SERVERNAME" >> .env; echo "LETSENCRYPT_EMAIL=$EMAIL" >> .env
+    - echo "IMAGE=$IMAGE" > .env ; echo "VIRTUAL_HOST=$SERVERNAME" >> .env ;
   script:
     - docker-compose -f docker/docker-compose.yml down
     - docker rmi $IMAGE
     - docker pull $IMAGE
+    - sleep 15
     - docker-compose -f docker/docker-compose.yml up -d
   environment:
     name: staging
@@ -85,11 +86,12 @@ deploy_prod:
     - echo "$DOCKER_CERT" > $DOCKER_CERT_PATH/cert.pem
     - echo "$DOCKER_KEY" > $DOCKER_CERT_PATH/key.pem
     - docker login -u $DOCKER_USER -p $DOCKER_TOKEN
-    - echo "IMAGE=$IMAGE" > .env ; echo "VIRTUAL_HOST=$SERVERNAME" >> .env ; echo "LETSENCRYPT_HOST=$SERVERNAME" >> .env; echo "LETSENCRYPT_EMAIL=$EMAIL" >> .env
+    - echo "IMAGE=$IMAGE" > .env ; echo "VIRTUAL_HOST=$SERVERNAME" >> .env ;
   script:
     - docker-compose -f docker/docker-compose.yml down
     - docker rmi $IMAGE
     - docker pull $IMAGE
+    - sleep 15
     - docker-compose -f docker/docker-compose.yml up -d
   environment:
     name: prod
