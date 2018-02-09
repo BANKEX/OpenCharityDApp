@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>BANKEX Foundation Open Charity</title>
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta charset='utf-8'>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+	<link rel="icon" type="image/x-icon" href="assets/images/logo/favicon.png">
+	<base href="/">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css"/>
+	<link rel="stylesheet" href="styles.css"/>
+	<style>
+		#str-dlls {
+			display: none
+		}
+	</style>
+
+	<!-- CSS -->
+	<link href="assets/css/animate.min.css" rel="stylesheet">
+	<link href="assets/css/font-awesome.min.css" rel="stylesheet">
+	<link href="assets/css/themify-icons.css" rel="stylesheet">
+	<link href="assets/css/ei-icon.css" rel="stylesheet">
+</head>
+
+<body>
+<my-app>
+	Loading...
+</my-app>
+
+<link rel="stylesheet" href="https://unpkg.com/selectize/dist/css/selectize.css"/>
+<link rel="stylesheet" href="https://unpkg.com/selectize@0.12.4/dist/css/selectize.bootstrap3.css"/>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+		integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/ng-selectize/selectize/selectize.standalone.js"></script>
+
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=console.*,Intl.~locale.en&gated=1"></script>
+<% if (htmlWebpackPlugin.options.metadata.isDevServer) { %>
+<!-- DLL files -->
+<script src="/polyfill.dll.js"></script>
+<script src="/vendor.dll.js"></script>
+<% } %>
+</body>
+
+</html>

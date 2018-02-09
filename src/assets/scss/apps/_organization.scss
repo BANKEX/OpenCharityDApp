@@ -1,0 +1,16 @@
+.title-wrap {
+    .title {
+        color: #515365;
+        font-family: Roboto, -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+        letter-spacing: 0.5px;
+        font-weight: normal;
+        line-height: 1.5;
+        font-size: 16px;
+    }
+}
+
+.card-hover {
+    &:hover {
+        box-shadow: 0 7px 15px rgba(0, 0, 0, 0.075);
+    }
+}

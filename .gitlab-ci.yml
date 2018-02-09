@@ -1,0 +1,91 @@
+variables:
+  IMAGE_TAG: bankexlabs/$CI_PROJECT_NAME:$CI_JOB_NAME
+  IMAGE: bankexlabs/$CI_PROJECT_NAME:release
+
+stages:
+  - build-node
+  - tests
+  - release-nginx
+  - deploy-stage
+  - deploy-prod
+
+build-node:
+  image: node
+  stage: build-node
+  before_script:
+    - npm install
+  cache:
+    paths:
+      - node_modules/
+  script:
+    - npm run build:aot:prod
+  artifacts:
+    paths:
+      - dist
+
+tests:
+  image: alpine
+  stage: tests
+  script:
+    - echo "Tests OK"
+
+release:
+  image: docker:latest
+  stage: release-nginx
+  before_script:
+    - docker login -u $DOCKER_USER -p $DOCKER_TOKEN
+  script:
+    - docker build -f docker/Dockerfile -t ${IMAGE_TAG} .
+    - docker push ${IMAGE_TAG}
+    
+deploy_stage:
+  stage: deploy-stage
+  image: tmaier/docker-compose
+  variables:
+    DOCKER_HOST: "tcp://charity-staging.westeurope.cloudapp.azure.com:2376"
+    DOCKER_TLS_VERIFY: "1"
+    SERVERNAME: opencharity.staging.bankex.team
+    EMAIL: "om@bankexfoundation.org"
+  before_script:
+    - mkdir -p ~/.docker
+    - echo "$DOCKER_CA" > ~/.docker/ca.pem
+    - echo "$DOCKER_CERT" > ~/.docker/cert.pem
+    - echo "$DOCKER_KEY" > ~/.docker/key.pem
+    - docker login -u $DOCKER_USER -p $DOCKER_TOKEN
+    - echo "IMAGE=$IMAGE" > .env ; echo "VIRTUAL_HOST=$SERVERNAME" >> .env ; echo "LETSENCRYPT_HOST=$SERVERNAME" >> .env; echo "LETSENCRYPT_EMAIL=$EMAIL" >> .env
+  script:
+    - docker-compose -f docker/docker-compose.yml down
+    - docker rmi $IMAGE
+    - docker pull $IMAGE
+    - docker-compose -f docker/docker-compose.yml up -d
+  environment:
+    name: staging
+    url: https://opencharity.staging.bankex.team
+  when: manual
+
+deploy_prod:
+  stage: deploy-prod
+  image: tmaier/docker-compose
+  variables:
+    DOCKER_HOST: "tcp://charity-prod.westeurope.cloudapp.azure.com:2376"
+    DOCKER_TLS_VERIFY: "1"
+    SERVERNAME: opencharity.bankex.team
+    EMAIL: "om@bankexfoundation.org"
+  before_script:
+    - mkdir -p ~/.docker
+    - echo "$DOCKER_CA" > ~/.docker/ca.pem
+    - echo "$DOCKER_CERT" > ~/.docker/cert.pem
+    - echo "$DOCKER_KEY" > ~/.docker/key.pem
+    - docker login -u $DOCKER_USER -p $DOCKER_TOKEN
+    - echo "IMAGE=$IMAGE" > .env ; echo "VIRTUAL_HOST=$SERVERNAME" >> .env ; echo "LETSENCRYPT_HOST=$SERVERNAME" >> .env; echo "LETSENCRYPT_EMAIL=$EMAIL" >> .env
+  script:
+    - docker-compose -f docker/docker-compose.yml down
+    - docker rmi $IMAGE
+    - docker pull $IMAGE
+    - docker-compose -f docker/docker-compose.yml up -d
+  environment:
+    name: prod
+    url: https://opencharity.bankex.team
+  when: manual
+  only:
+    - production

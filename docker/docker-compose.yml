@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  oc_client:
+    image: ${IMAGE}
+    container_name: oc_client
+    restart: always
+    expose:
+      - "80"
+    environment:
+      VIRTUAL_HOST: ${VIRTUAL_HOST}
+      LETSENCRYPT_HOST: ${LETSENCRYPT_HOST}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
+
+networks:
+  default:
+    external:
+      name: webproxy

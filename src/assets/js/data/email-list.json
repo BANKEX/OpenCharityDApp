@@ -1,0 +1,148 @@
+{
+    "emails": [
+
+        {
+            "list": [{
+                "id": 1,
+                "subject": "Bring me Solo and the Wookiee",
+                "body": "<p>Hi, Luke</p><p>Somebody's coming. Oh! Luke! Where's Leia? What? She didn't come back? I thought she was with you. We got separated. Hey, we better go look for her. Take the squad ahead. We'll meet at the shield generator at 0300. Come on, Artoo. We'll need your scanners. Don't worry, Master Luke. We know what to do. And you said it was pretty here. Ugh!.</p><p>This can't be! Artoo, you're playing the wrong message. There will be no bargain. We're doomed. I will not give up my favorite decoration. I like Captain Solo where he is. Artoo, look! Captain Solo. And he's still frozen in carbonite. What could possibly have come over Master Luke. Is it something I did? He never expressed any unhappiness with my work. Oh! Oh! Hold it! Ohh!</p><p> <br>Your fleet has lost. And your friends on the Endor moon will not survive. There is no escape, my young apprentice. <br><br><br>Moruth Doole, <br></p>",
+                "time": "8 Mins ago",
+				"to": "lukeskywalker@gmail.com",
+                "from": "Droopy McCool",
+                "avatar": "assets/images/avatars/thumb-1.jpg",
+				"files": [{
+					"type": "pdf",
+					"filename": "Anual_Report.pdf",
+					"size": "18Mb"
+				}, {
+					"type": "image",
+					"filename": "Image_1.jpg",
+					"size": "168Kb"
+				}]
+            }, {
+                "id": 2,
+                "subject": "I think you'll fit in nicely",
+                "body": "<p>Hello Luke</p><p>If I don't make it back, you're the only hope for the Alliance. Luke, don't talk that way. You have a power I--I don't understand and could never have. You're wrong, Leia. You have that power too. In time you'll learn to use it as I have. The Force is strong in my family. My father has it... I have it ...and...my sister has it. Yes. It's you Leia. I know. Somehow...I've always known. Then you know why I have to face him.</p><p>Search your feelings, father. You can't do this. I feel the conflict within you. Let goof your hate. It is too late for me, son. The Emperor will show you the true nature of the Force. He is your master now. Then my father is truly dead.</p><p>Thank you</p>",
+                "time": "17 Mins ago",
+				"to": "lukeskywalker@gmail.com",
+                "from": "Lady Valarian",
+                "avatar": "assets/images/avatars/thumb-2.jpg",
+				"files": [{
+					"type": "image",
+					"filename": "Image_1.jpg",
+					"size": "287Kb"
+				}, {
+					"type": "image",
+					"filename": "Image_2.jpg",
+					"size": "168Kb"
+				}, {
+					"type": "image",
+					"filename": "Image_3.jpg",
+					"size": "168Kb"
+				}]
+            }, {
+                "id": 3,
+                "subject": "That face you make",
+                "body": "<p>Hi Luke</p><p>Good luck. You're gonna need it. General Madine. We have stolen a small Imperial shuttle. Disguised as a cargo ship, and using a secret Imperial code, a strike team will land on the moon and deactivate the shield generator. Sounds dangerous. I wonder who they found to pull that off. General Solo, is your strike team assembled? Uh, my team's ready. I don't have a command crew for the shuttle. Rawwwrr! Well, it's gonna be rough, pal. I didn't want to speak for you. That's one. Uh, General... count me in. I'm with you, too! What is it? Ask me again sometime. Luke. Hi, Han... Chewie. Exciting is hardly the word I would use.</p><p>No! Luke, run away, far away. If he can feel your presence, then leave this place. I wish I could go with you. No, you don't. You've always been strong. But, why must you confront him? Because...there is good in him. I've felt it. He won't turn me over to the Emperor. I can save him. I can turn him back to the good side. I have to try. Hey, what's goin' on? Nothing. I - just want to be alone for a little while. Nothing? Come on, tell me. What's goin' on? I...I can't tell you. Did you tell Luke? Is that who you could tell? I... Ahhh... I'm sorry. Hold me.</p><p>The main entrance to the control bunker's on the far side of that landing platform. This isn't gonna be easy. Hey, don't worry. Chewie and me got into a lot of places more heavily guarded than this. What's he saying? He says there's a secret entrance on the other side of the ridge.</p><p>Regards</p>",
+                "time": "48 Mins ago",
+				"to": "lukeskywalker@gmail.com",
+                "from": "Garindan",
+                "avatar": "assets/images/avatars/thumb-3.jpg"
+            }, {
+               "id": 4,
+                "subject": "Rouge Group",
+                "body": "<p>Dear Luke</p><p>Oh! Nice to see a familiar face. E chu ta! ow rude! That sounds like an R2 unit in there. I wonder if... Hello? How interesting. Oh, my. Who are you? Oh, I'm terribly sorry. I...I didn't mean to intrude. No, no, please don't get up. No!</p><p>But that down. Hey! That's my dinner. How you get so big, eating food of this kind? Listen, friend, we didn't mean to land in that puddle, and if we could get our ship out, we would, but we can't, so why don't you just... Aww, cannot get your ship out? Hey, you could have broken this. Don't do that. Ohhh...you're making a mess. Hey, give me that! Mine! Or I will help you not. don't want your help. I want my lamp back. I'll need it to get out of this slimy mudhole. Mudhole? Slimy? My home this is. Ah, ah, ah! Oh, Artoo, let him have it. Mine! Mine! Artoo! Mine! Mine!</p><p>Thank you</p>",
+                "time": "1 Hours ago",
+				"to": "lukeskywalker@gmail.com",
+                "from": "Nomi Sunrider",
+                "avatar": "assets/images/avatars/thumb-4.jpg"
+            }, {
+                "id": 5,
+                "subject": "Empire Strikes Back",
+                "body": "<p>Run! Yes. A Jedi's strength flows from the Force. But beware of the dark side. Anger...fear...aggression. The dark side of the Force are they. Easily they flow, quick to join you in a fight. If once you start down the dark path, forever will it dominate your destiny, consume you it will, as it did Obi-Wan's apprentice. Vader. Is the dark side stronger? No...no...no. Quicker, easier, more seductive. But how am I to know the good side from the bad? You will know. When you are calm, at peace. Passive. A Jedi uses the Force for knowledge and defense, never for attack. But tell me why I can't... No, no, there is no why. Nothing more will I teach you today. Clear your mind of questions. Mmm. Mmmmmm.</p><p>Luke! Luke, don't - it's a trap! It's a trap! The Force is with you, young Skywalker. But you are not a Jedi yet.</p><p>Alert all commands. Ready for the tractor beam. Artoo, come back at once! You haven't finished with me yet! You don't know how to fix the hyperdrive. Chewbacca can do it. I'm standing here in pieces, and you're having delusions of grandeur! Oh, you did it!</p><p>What...what's going on? Turn around, Chewbacca, I can't see. Oh...they've encased him in carbonite. He should be quite well-protected - if he survives the freezing process, that is. Well, Calrissian, did he survive? Yes, he's alive. And in perfect hibernation. He's all yours bounty hunter. Reset the chamber for Skywalker. Skywalker has just landed, my lord. Good. See to it that he finds his way here. Calrissian, take the princess and the Wookiee to my ship. You said they'd be left in the city under my supervision. I am altering the deal. Pray I don't alter it any further.</p>",
+                "time": "Fri 8:40 AM",
+				"to": "lukeskywalker@gmail.com",
+                "from": "Grand Admiral Thrawn",
+                "avatar": "assets/images/avatars/thumb-5.jpg",
+				"files": [{
+					"type": "pdf",
+					"filename": "Battle_Report.pdf",
+					"size": "18Mb"
+				}, {
+					"type": "image",
+					"filename": "Image_1.jpg",
+					"size": "172Kb"
+				}]
+            }]
+        }, {
+            "list": [{
+                "id": 6,
+                "subject": "Farewell",
+                "body": "<p>You have learned much, young one. You'll find I'm full of surprises. Your destiny lies with me, Skywalker. Obi-Wan knew this to be true. No! All to easy. Perhaps you are not as strong as the Emperor thought. Impressive...most impressive. Obi-Wan has taught you well. You have controlled your fear... now release your anger. Only your hatred can destroy me.</p><p>You like me because I'm a scoundrel. There aren't enough scoundrels in your life. I happen to like nice men. I'm a nice man. No, you're not. You're... Sir, sir! I've isolated the reverse power flux coupling. Thank you. Thank you very much. Oh, you're perfectly welcome, sir.</p><p>What is it, General? My lord, the fleet has moves out of light-speed. Com-Scan has detected an energy field protecting an area around the sixth planet of the Hoth system. The field is strong enough to deflect any bombardment. The Rebels are alerted to our presence. Admiral Ozzel came out of light-speed too close to the system. He felt surprise was wiser... He is as clumsy as he is stupid. General, prepare your troops for a surface attack. Yes, my lord.</p>",
+                "time": "Fri 7:451 AM",
+				"to": "lukeskywalker@gmail.com",
+                "from": "Sy Snootles",
+                "avatar": "assets/images/avatars/thumb-6.jpg",
+				"files": [{
+					"type": "pdf",
+					"filename": "Some_files.pdf",
+					"size": "18Mb"
+				}]
+            }, {
+                "id": 7,
+                "subject": "Feeling all right, sir? ",
+                "body": "<p>Hi, Luke</p><p>Somebody's coming. Oh! Luke! Where's Leia? What? She didn't come back? I thought she was with you. We got separated. Hey, we better go look for her. Take the squad ahead. We'll meet at the shield generator at 0300. Come on, Artoo. We'll need your scanners. Don't worry, Master Luke. We know what to do. And you said it was pretty here. Ugh!.</p><p>This can't be! Artoo, you're playing the wrong message. There will be no bargain. We're doomed. I will not give up my favorite decoration. I like Captain Solo where he is. Artoo, look! Captain Solo. And he's still frozen in carbonite. What could possibly have come over Master Luke. Is it something I did? He never expressed any unhappiness with my work. Oh! Oh! Hold it! Ohh!</p><p> <br>Your fleet has lost. And your friends on the Endor moon will not survive. There is no escape, my young apprentice. <br><br><br>Moruth Doole, <br></p>",
+                "time": "Wed 11:27 PM",
+				"to": "lukeskywalker@gmail.com",
+                "from": "Moruth Doole",
+                "avatar": "assets/images/avatars/thumb-7.jpg",
+				"files": [{
+					"type": "image",
+					"filename": "Image_1.jpg",
+					"size": "168Kb"
+				}]
+            }, {
+                "id": 8,
+                "subject": "Leave that to mee",
+                "body": "<p>Secure this area until the alert is canceled. Give me regular reports. Do you know what's going on? Maybe it's another drill. What was that? Oh, it's nothing. Don't worry about it.</p><p>Help me, Obi-Wan Kenobi. You're my only hope. What's this? What is what?!? He asked you a question... What is that? Help me, Obi-Wan Kenobi. You're my only hope. Help me, Obi-Wan Kenobi. You're my only hope. Oh, he says it's nothing, sir. Merely a malfunction. Old data. Pay it no mind. Who is she? She's beautiful. I'm afraid I'm not quite sure, sir. Help me, Obi-Wan Kenobi... I think she was a passenger on our last voyage. A person of some importance, sir -- I believe. Our captain was attached to... Is there more to this recording? Behave yourself, Artoo. You're going to get us in trouble. It's all right, you can trust him. He's our new master.</p><p>Not after we demonstrate the power of this station. In a way, you have determined the choice of the planet that'll be destroyed first. Since you are reluctant to provide us with the location of the Rebel base, I have chosen to test this station's destructive power... on your home planet of Alderaan. No! Alderaan is peaceful. We have no weapons. You can't possibly... You would prefer another target? A military target? Then name the system! I grow tired of asking this. So it'll be the last time. Where is the Rebel base? Dantooine. They're on Dantooine.</p>",
+                "time": "Wed 9:19 PM",
+				"to": "lukeskywalker@gmail.com",
+                "from": "Salla Zend",
+                "avatar": "assets/images/avatars/thumb-8.jpg"
+            }, {
+                "id": 9,
+                "subject": "What are you doing?",
+                "body": "<p>Run! Yes. A Jedi's strength flows from the Force. But beware of the dark side. Anger...fear...aggression. The dark side of the Force are they. Easily they flow, quick to join you in a fight. If once you start down the dark path, forever will it dominate your destiny, consume you it will, as it did Obi-Wan's apprentice. Vader. Is the dark side stronger? No...no...no. Quicker, easier, more seductive. But how am I to know the good side from the bad? You will know. When you are calm, at peace. Passive. A Jedi uses the Force for knowledge and defense, never for attack. But tell me why I can't... No, no, there is no why. Nothing more will I teach you today. Clear your mind of questions. Mmm. Mmmmmm.</p><p>Luke! Luke, don't - it's a trap! It's a trap! The Force is with you, young Skywalker. But you are not a Jedi yet.</p><p>Alert all commands. Ready for the tractor beam. Artoo, come back at once! You haven't finished with me yet! You don't know how to fix the hyperdrive. Chewbacca can do it. I'm standing here in pieces, and you're having delusions of grandeur! Oh, you did it!</p><p>What...what's going on? Turn around, Chewbacca, I can't see. Oh...they've encased him in carbonite. He should be quite well-protected - if he survives the freezing process, that is. Well, Calrissian, did he survive? Yes, he's alive. And in perfect hibernation. He's all yours bounty hunter. Reset the chamber for Skywalker. Skywalker has just landed, my lord. Good. See to it that he finds his way here. Calrissian, take the princess and the Wookiee to my ship. You said they'd be left in the city under my supervision. I am altering the deal. Pray I don't alter it any further.</p>",
+                "time": "Wed 5:53 PM",
+				"to": "lukeskywalker@gmail.com",
+                "from": "Talon Karrde",
+                "avatar": "assets/images/avatars/thumb-8.jpg"
+            }, {
+                "id": 10,
+                "subject": "Obi-Wan is here",
+                "body": "<p>Hi Luke</p><p>Good luck. You're gonna need it. General Madine. We have stolen a small Imperial shuttle. Disguised as a cargo ship, and using a secret Imperial code, a strike team will land on the moon and deactivate the shield generator. Sounds dangerous. I wonder who they found to pull that off. General Solo, is your strike team assembled? Uh, my team's ready. I don't have a command crew for the shuttle. Rawwwrr! Well, it's gonna be rough, pal. I didn't want to speak for you. That's one. Uh, General... count me in. I'm with you, too! What is it? Ask me again sometime. Luke. Hi, Han... Chewie. Exciting is hardly the word I would use.</p><p>No! Luke, run away, far away. If he can feel your presence, then leave this place. I wish I could go with you. No, you don't. You've always been strong. But, why must you confront him? Because...there is good in him. I've felt it. He won't turn me over to the Emperor. I can save him. I can turn him back to the good side. I have to try. Hey, what's goin' on? Nothing. I - just want to be alone for a little while. Nothing? Come on, tell me. What's goin' on? I...I can't tell you. Did you tell Luke? Is that who you could tell? I... Ahhh... I'm sorry. Hold me.</p><p>The main entrance to the control bunker's on the far side of that landing platform. This isn't gonna be easy. Hey, don't worry. Chewie and me got into a lot of places more heavily guarded than this. What's he saying? He says there's a secret entrance on the other side of the ridge.</p><p>Regards</p>",
+                "time": "Tue 12:10 AM",
+				"to": "lukeskywalker@gmail.com",
+                "from": "Teneniel Djo",
+                "avatar": "assets/images/avatars/thumb-9.jpg"
+            }, {
+                "id": 11,
+                "subject": "All flight trooper",
+                "body": "<p>You have learned much, young one. You'll find I'm full of surprises. Your destiny lies with me, Skywalker. Obi-Wan knew this to be true. No! All to easy. Perhaps you are not as strong as the Emperor thought. Impressive...most impressive. Obi-Wan has taught you well. You have controlled your fear... now release your anger. Only your hatred can destroy me.</p><p>You like me because I'm a scoundrel. There aren't enough scoundrels in your life. I happen to like nice men. I'm a nice man. No, you're not. You're... Sir, sir! I've isolated the reverse power flux coupling. Thank you. Thank you very much. Oh, you're perfectly welcome, sir.</p><p>What is it, General? My lord, the fleet has moves out of light-speed. Com-Scan has detected an energy field protecting an area around the sixth planet of the Hoth system. The field is strong enough to deflect any bombardment. The Rebels are alerted to our presence. Admiral Ozzel came out of light-speed too close to the system. He felt surprise was wiser... He is as clumsy as he is stupid. General, prepare your troops for a surface attack. Yes, my lord.</p>",
+                "time": "Tue 6:48 PM",
+				"to": "lukeskywalker@gmail.com",
+                "from": "Cindel Towani",
+                "avatar": "assets/images/avatars/thumb-10.jpg"
+            }, {
+                "id": 12,
+                "subject": " The Force is with him",
+                "body": "<p>Dear Luke</p><p>Oh! Nice to see a familiar face. E chu ta! ow rude! That sounds like an R2 unit in there. I wonder if... Hello? How interesting. Oh, my. Who are you? Oh, I'm terribly sorry. I...I didn't mean to intrude. No, no, please don't get up. No!</p><p>But that down. Hey! That's my dinner. How you get so big, eating food of this kind? Listen, friend, we didn't mean to land in that puddle, and if we could get our ship out, we would, but we can't, so why don't you just... Aww, cannot get your ship out? Hey, you could have broken this. Don't do that. Ohhh...you're making a mess. Hey, give me that! Mine! Or I will help you not. don't want your help. I want my lamp back. I'll need it to get out of this slimy mudhole. Mudhole? Slimy? My home this is. Ah, ah, ah! Oh, Artoo, let him have it. Mine! Mine! Artoo! Mine! Mine!</p><p>Thank you</p>",
+                "time": "Mon 05/06",
+				"to": "lukeskywalker@gmail.com",
+                "from": "Mako Spince",
+                "avatar": "assets/images/avatars/thumb-1.jpg"
+            }]
+        }
+
+    ]
+}
