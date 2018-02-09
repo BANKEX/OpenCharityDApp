@@ -10,10 +10,14 @@ stages:
   - deploy-prod
 
 build-node:
-  image: node
+  image: node:alpine
   stage: build-node
   before_script:
+    - apk add --update git
+    - apk --no-cache add g++ gcc libgcc libstdc++ linux-headers make python
+    - npm install --quiet node-gyp -g
     - npm install
+    - npm rebuild bcrypt --build-from-source
   cache:
     paths:
       - node_modules/
@@ -22,6 +26,7 @@ build-node:
   artifacts:
     paths:
       - dist
+    expire_in: 1h
 
 tests:
   image: alpine
