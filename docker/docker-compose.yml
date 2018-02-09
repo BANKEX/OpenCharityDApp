@@ -9,8 +9,7 @@ services:
       - "80"
     environment:
       VIRTUAL_HOST: ${VIRTUAL_HOST}
-      LETSENCRYPT_HOST: ${LETSENCRYPT_HOST}
-      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
+      HTTPS_METHOD: noredirect
 
 networks:
   default:
