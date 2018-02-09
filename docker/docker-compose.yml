@@ -9,6 +9,7 @@ services:
       - "80"
     environment:
       VIRTUAL_HOST: ${VIRTUAL_HOST}
+      HTTPS_METHOD=noredirect
 
 networks:
   default:
