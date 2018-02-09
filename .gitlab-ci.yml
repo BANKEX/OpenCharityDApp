@@ -18,6 +18,7 @@ build-node:
     - npm install --quiet node-gyp -g
     - npm install
     - npm rebuild bcrypt --build-from-source
+    - npm rebuild node-sass
   cache:
     paths:
       - node_modules/
