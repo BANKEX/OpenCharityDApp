@@ -17,10 +17,12 @@
 										</label>
 										<input class="form-control"
 											   [ngClass]="{'error' : charityEventForm.get('name').touched && charityEventForm.get('name').hasError('required')}"
+											   placeholder="Event Name"
 											   formControlName="name">
 										<label class="error"
-											   *ngIf="charityEventForm.get('name').touched && charityEventForm.get('name').hasError('required')">Name
-											is required</label>
+											   *ngIf="charityEventForm.get('name').touched && charityEventForm.get('name').hasError('required')">
+											Name is required
+										</label>
 									</div>
 								</div>
 							</div>
@@ -32,9 +34,28 @@
 										</label>
 										<div class="input-group">
 											<input type="text" class="form-control" placeholder="Target"
-												   name="event-required" formControlName="target"
-												   aria-describedby="basic-addon1">
-											<span class="input-group-addon" id="basic-addon1">Рублей</span>
+												   formControlName="target"
+												   [ngClass]="{'error' : charityEventForm.get('target').touched && charityEventForm.get('target').invalid}"
+											>
+											<span class="input-group-addon">Рублей</span>
+										</div>
+										<div>
+											<label class="error"
+												   *ngIf="charityEventForm.get('target').touched && charityEventForm.get('target').hasError('required')">
+												Target is required
+											</label>
+										</div>
+										<div>
+											<label class="error"
+												   *ngIf="charityEventForm.get('target').touched && charityEventForm.get('target').hasError('pattern')">
+												Target should be a number
+											</label>
+										</div>
+										<div>g
+											<label class="error"
+												   *ngIf="charityEventForm.get('target').touched && charityEventForm.get('target').hasError('min')">
+												Target should be > 0
+											</label>
 										</div>
 									</div>
 								</div>
