@@ -36,7 +36,6 @@
 												   placeholder="Amount"
 												   [ngClass]="{'error' : incomingDonationForm.get('amount').touched && incomingDonationForm.get('amount').invalid}"
 												   formControlName="amount">
-											{{incomingDonationForm.get('amount').required}}
 											<div *ngIf="incomingDonationForm.get('amount').touched && incomingDonationForm.get('amount').hasError('required')">
 												<label class="error">
 													Amount is required
@@ -75,7 +74,10 @@
 								</div>
 								<div class="row justify-content-center">
 									<div class="col-md-6">
-										<button class="btn btn-primary width-100" type="submit" (click)="submitForm()">
+										<button type="submit"
+												class="btn btn-primary width-100"
+												[ngClass]="{'disabled': incomingDonationForm.invalid}"
+												(click)="submitForm()">
 											Submit
 										</button>
 									</div>
