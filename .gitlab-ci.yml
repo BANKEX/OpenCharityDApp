@@ -1,17 +1,38 @@
 variables:
-  IMAGE_TAG: bankexlabs/$CI_PROJECT_NAME:$CI_JOB_NAME
-  IMAGE: bankexlabs/$CI_PROJECT_NAME:release
+  IMAGE: bankexlabs/$CI_PROJECT_NAME
 
 stages:
-  - build-node
+  - build-node-stage
+  - build-node-prod
   - tests
-  - release-nginx
+  - release-nginx-stage
+  - release-nginx-prod
   - deploy-stage
   - deploy-prod
 
-build-node:
+build-node-stage:
   image: node:alpine
-  stage: build-node
+  stage: build-node-stage
+  before_script:
+    - apk add --update git
+    - apk --no-cache add g++ gcc libgcc libstdc++ linux-headers make python
+    - npm install --quiet node-gyp -g
+    - npm install
+    - npm rebuild bcrypt --build-from-source
+    - npm rebuild node-sass
+  cache:
+    paths:
+      - node_modules/
+  script:
+    - npm run build:aot:dev
+  artifacts:
+    paths:
+      - dist
+    expire_in: 1h
+
+build-node-prod:
+  image: node:alpine
+  stage: build-node-prod
   before_script:
     - apk add --update git
     - apk --no-cache add g++ gcc libgcc libstdc++ linux-headers make python
@@ -28,21 +49,38 @@ build-node:
     paths:
       - dist
     expire_in: 1h
-
+  only:
+    - production
+    
 tests:
   image: alpine
   stage: tests
   script:
     - echo "Tests OK"
 
-release:
+release-nginx-stage:
   image: docker:latest
-  stage: release-nginx
+  stage: release-nginx-stage
   before_script:
     - docker login -u $DOCKER_USER -p $DOCKER_TOKEN
   script:
-    - docker build -f docker/Dockerfile -t ${IMAGE_TAG} .
-    - docker push ${IMAGE_TAG}
+    - docker build -f docker/Dockerfile -t ${IMAGE}:stage .
+    - docker push ${IMAGE}:stage
+  dependencies: 
+    - build-node-stage
+
+release-nginx-prod:
+  image: docker:latest
+  stage: release-nginx-prod
+  before_script:
+    - docker login -u $DOCKER_USER -p $DOCKER_TOKEN
+  script:
+    - docker build -f docker/Dockerfile -t ${IMAGE}:prod .
+    - docker push ${IMAGE}:prod
+  dependencies: 
+    - build-node-prod
+  only:
+    - production
     
 deploy_stage:
   stage: deploy-stage
@@ -53,6 +91,7 @@ deploy_stage:
     SERVERNAME: opencharity.staging.bankex.team
     EMAIL: "om@bankexfoundation.org"
     DOCKER_CERT_PATH: "/certs"
+    IMAGE: bankexlabs/$CI_PROJECT_NAME:stage
   before_script:
     - mkdir -p $DOCKER_CERT_PATH
     - echo "$DOCKER_CA" > $DOCKER_CERT_PATH/ca.pem
@@ -80,6 +119,7 @@ deploy_prod:
     SERVERNAME: opencharity.bankex.team
     EMAIL: "om@bankexfoundation.org"
     DOCKER_CERT_PATH: "/certs"
+    IMAGE: bankexlabs/$CI_PROJECT_NAME:prod
   before_script:
     - mkdir -p $DOCKER_CERT_PATH
     - echo "$DOCKER_CA" > $DOCKER_CERT_PATH/ca.pem
