@@ -29,9 +29,18 @@ export class AddIncomingDonationComponent implements OnInit {
 		}
 		const f = this.incomingDonationForm.value;
 
+
 		const tags = '0x' + this.tagsBitmaskService.convertToHexWithLeadingZeros(this.selectedTagsBitmask);
 
-		const transactionHash = this.organizationContractService.addIncomingDonation(this.organizationContractAddress, f.realWorldIdentifier, f.amount, f.note, tags);
+		try {
+			const trans = await this.organizationContractService.addIncomingDonation(this.organizationContractAddress, f.realWorldIdentifier, f.amount, f.note, tags);
+			console.log(trans);
+		} catch(e) {
+			console.warn(e.message);
+		} finally {
+			this.initForm();
+		}
+
 	}
 
 	public bitmaskChanged(bitmask: number) {
@@ -41,7 +50,7 @@ export class AddIncomingDonationComponent implements OnInit {
 	private initForm() {
 		this.incomingDonationForm = this.fb.group({
 			realWorldIdentifier: ['', Validators.required],
-			amount: ['', Validators.required],
+			amount: ['', [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)]],
 			note: ''
 		});
 	}

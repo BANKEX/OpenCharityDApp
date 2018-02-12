@@ -31,7 +31,13 @@ export class AddCharityEventComponent implements OnInit {
 		const f = this.charityEventForm.value;
 
 		const tags = '0x' + this.tagsBitmaskService.convertToHexWithLeadingZeros(this.selectedTagsBitmask);
-		const transactionHash = this.organizationContractService.addCharityEvent(this.organizationContractAddress, f.name, f.target, f.payed, tags);
+		try {
+			this.organizationContractService.addCharityEvent(this.organizationContractAddress, f.name, f.target, f.payed, tags);
+		} catch (e) {
+			console.warn(e.message);
+		} finally {
+			this.initForm();
+		}
 	}
 
 	public bitmaskChanged(bitmask: number) {
@@ -41,7 +47,7 @@ export class AddCharityEventComponent implements OnInit {
 	private initForm(): void {
 		this.charityEventForm = this.fb.group({
 			name: ['', Validators.required],
-			target: ['', Validators.required],
+			target: ['', [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)]],
 			payed: ''
 		});
 	}
