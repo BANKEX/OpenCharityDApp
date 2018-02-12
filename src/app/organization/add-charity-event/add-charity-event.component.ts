@@ -35,6 +35,8 @@ export class AddCharityEventComponent implements OnInit {
 			this.organizationContractService.addCharityEvent(this.organizationContractAddress, f.name, f.target, f.payed, tags);
 		} catch (e) {
 			console.warn(e.message);
+		} finally {
+			this.initForm();
 		}
 	}
 
