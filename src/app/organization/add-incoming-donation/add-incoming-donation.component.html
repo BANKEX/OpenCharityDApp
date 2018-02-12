@@ -36,7 +36,6 @@
 												   placeholder="Amount"
 												   [ngClass]="{'error' : incomingDonationForm.get('amount').touched && incomingDonationForm.get('amount').invalid}"
 												   formControlName="amount">
-											{{incomingDonationForm.get('amount').required}}
 											<div *ngIf="incomingDonationForm.get('amount').touched && incomingDonationForm.get('amount').hasError('required')">
 												<label class="error">
 													Amount is required
