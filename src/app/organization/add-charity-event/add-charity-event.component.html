@@ -70,7 +70,10 @@
 							</div>
 							<div class="row justify-content-center">
 								<div class="col-md-6">
-									<button class="btn btn-primary width-100" type="submit" (click)="submitForm()">
+									<button type="submit"
+											class="btn btn-primary width-100"
+											[ngClass]="{'disabled': charityEventForm.invalid }"
+											(click)="submitForm()">
 										Submit
 									</button>
 								</div>
