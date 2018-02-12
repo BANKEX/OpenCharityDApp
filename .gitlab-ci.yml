@@ -101,7 +101,7 @@ deploy_stage:
     - echo "IMAGE=$IMAGE" > .env ; echo "VIRTUAL_HOST=$SERVERNAME" >> .env ;
   script:
     - docker-compose -f docker/docker-compose.yml down
-    - docker rmi $IMAGE
+    - docker rmi $IMAGE || echo "image not exist"
     - docker pull $IMAGE
     - sleep 15
     - docker-compose -f docker/docker-compose.yml up -d
@@ -129,7 +129,7 @@ deploy_prod:
     - echo "IMAGE=$IMAGE" > .env ; echo "VIRTUAL_HOST=$SERVERNAME" >> .env ;
   script:
     - docker-compose -f docker/docker-compose.yml down
-    - docker rmi $IMAGE
+    - docker rmi $IMAGE || echo "image not exist"
     - docker pull $IMAGE
     - sleep 15
     - docker-compose -f docker/docker-compose.yml up -d
