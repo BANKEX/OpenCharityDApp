@@ -7,7 +7,7 @@ module.exports = {
 			port: 8545,
 			network_id: "*", // Match any network id,
 			gas: 4600000,
-			from: "0xf17f52151EbEF6C7334FAD080c5704D77216b732"
+			from: "0xce09126ace45e85ac8ca1c9c8de106acbfe81ea2"
 		},
 		ganache: {
 			host: '127.0.0.1',
@@ -35,7 +35,7 @@ module.exports = {
 			port: 8535,
 			network_id: 488412,
 			gasPrice: 180000000000,
-			from: "0xf17f52151EbEF6C7334FAD080c5704D77216b732"
+			from: "0xce09126ace45e85ac8ca1c9c8de106acbfe81ea2"
 		},
 		solc: {
 			optimizer: {
