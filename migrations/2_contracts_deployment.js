@@ -21,4 +21,23 @@ module.exports = async function(deployer, network, accounts) {
     const OrganizationInstance = await Organization.deployed();
     await openCharityTokenInstance.setMintAgent(OrganizationInstance.address, true);
 
+    // dev function to deploy new organizations
+	// await createTestOrganizations(deployer, openCharityTokenInstance, adminAddresses, ['Staging Test Organization 1', 'Staging Test Organization 2', 'Staging  Test Organization 3']);
+
 };
+
+
+async function createTestOrganizations(deployer, tokenInstance, adminAddresses, names) {
+
+	const organizations = [];
+	let organization;
+
+	for(let i = 0; i < names.length; i++) {
+		await deployer.deploy(Organization, tokenInstance.address, adminAddresses, names[i]);
+		organization = await Organization.deployed();
+		organizations.push(organization.address);
+		await tokenInstance.setMintAgent(organization.address, true);
+	}
+
+	console.log(organizations);
+}
