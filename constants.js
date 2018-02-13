@@ -91,24 +91,23 @@ exports.MY_TEST_PLUGINS = [
 
 
 exports.DEV_ENVIRONMENT = {
-	'tokenAddress': '0x7f1dc0f5f8dafd9715ea51f6c11b92929b2dbdea',
+	'tokenAddress': '0x6a183381d14371b4a228cca37802c09bd166ba9e',
 	'rpcProviderUrl': 'http://52.166.13.111:8535',
 	'websocketProviderUrl': 'ws://52.166.13.111:8536',
 	'organizations':  [
-		'0xe777faf8240196ba99c6e2a89e8f24b75c52eb2a',
-		'0x8ccb553bc7c6cc3112c9918362eae0bddcc51e3f',
-		'0x05cfcc5c600945df11bb799344be75429dc72097',
-		'0xc4e24e6b25fb81e3aae568c3e1d7da04ccebd762'
+		'0xbb8251c7252b6fec412a0a99995ebc1a28e4e103',
+		'0xc9afa3e4e78a678ffb836c4062547b1dc8dd592f',
+		'0xe379894535aa72706396f9a3e1db6f3f5e4c1c15'
 	]
 };
 
 exports.PROD_ENVIRONMENT = {
-	'tokenAddress': '0x7f1dc0f5f8dafd9715ea51f6c11b92929b2dbdea',
+	'tokenAddress': '0x6a183381d14371b4a228cca37802c09bd166ba9e',
 	'rpcProviderUrl': 'http://52.166.13.111:8535',
 	'websocketProviderUrl': 'ws://52.166.13.111:8536',
 	'organizations':  [
-		'0x9b5b3cce1f7f8359e026f9573f258782be577f29',
-		'0x6012b9da3716bdd07985d2076fa87048f03cc274',
-		'0xa201bab1b36f56d6de5894eeb94c513cc087bc33'
+		'0xa9a667764e0520393c5b8a17b389b7408996f821',
+		'0x371f1b07649009fc7e4e617d1b8a5ef05b0157c2',
+		'0xbfcf6117ab933edddbcad327f82f0f5f9ab01097'
 	]
 };
