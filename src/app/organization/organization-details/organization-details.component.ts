@@ -9,7 +9,7 @@ import {OrganizationContractService} from '../services/organization-contract.ser
 })
 export class OrganizationDetailsComponent implements OnInit {
 	public name: string;
-	public changer: string = 'events';
+	public changer: string = 'donations';
 	public organizationContractAddress;
 
 

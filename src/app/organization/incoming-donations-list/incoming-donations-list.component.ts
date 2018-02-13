@@ -8,7 +8,8 @@ import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 import {IncomingDonationSendFundsModalComponent} from '../incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
 import {CharityEventContractService} from '../services/charity-event-contract.service';
 import {OrganizationContractEventsService} from '../services/organization-contract-events.service';
-import {reverse} from 'lodash';
+import {reverse, times, constant} from 'lodash';
+
 
 @Component({
 	selector: 'opc-incoming-donations-list',
@@ -30,20 +31,46 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 	) {
 	}
 
-	ngOnInit(): void {
+	public ngOnInit(): void {
 		this.updateIncomingDonationsList();
 
 		this.organizationContractEventsService.onIncomingDonationAdded(this.organizationContractAddress)
-		    .takeUntil(this.componentDestroyed)
-		    .subscribe((event: any) => {
-		            this.updateIncomingDonationsList();
-		        },
-		        (err) => {
-		            alert(`Error: ${err}`);
-		        });
+			.takeUntil(this.componentDestroyed)
+			.subscribe((event: any) => {
+					this.addNewIncomingDonation(event.returnValues.incomingDonation);
+				},
+				(err) => {
+					alert(`Error: ${err.message}`);
+				});
+
+	}
+
+	public async addNewIncomingDonation(address: string) {
+		const newItemIndex = this.incomingDonations.length;
+		this.incomingDonations.push(null);
+		this.incomingDonationContractService.getIncomingDonationDetails(address)
+			.then((incomingDonation: IncomingDonation) => {
+				this.incomingDonations[newItemIndex] = incomingDonation;
+			});
 	}
 
 	public async updateIncomingDonationsList(): Promise<void> {
+		// get amount of organization incoming donations
+		const incomingDonationsCount: number = parseInt(await this.organizationContractService.getIncomingDonationsCount(this.organizationContractAddress), 10);
+
+		// initialize empty array
+		// null values means that incoming donation data is loading
+		// when data is loaded, replace null by data
+		this.incomingDonations = times(incomingDonationsCount, constant(null));
+
+		this.organizationContractService.getIncomingDonations(this.organizationContractAddress)
+			.takeWhile((val: { address: string, index: number }, index: number) => index < incomingDonationsCount)
+			.subscribe(async (res: { address: string, index: number }) => {
+				this.incomingDonations[res.index] = await this.incomingDonationContractService.getIncomingDonationDetails(res.address);
+			});
+	}
+
+	public async updateIncomingDonationsListAsync(): Promise<void> {
 		const incomingDonationsList: string[] = reverse(await this.organizationContractService.getIncomingDonations(this.organizationContractAddress));
 
 		const incomingDonations = [];

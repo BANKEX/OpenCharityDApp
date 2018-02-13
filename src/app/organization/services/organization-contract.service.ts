@@ -1,9 +1,11 @@
 import {Injectable} from '@angular/core';
 import {Contract, Tx} from 'web3/types';
 import {Web3ProviderService} from '../../core/web3-provider.service';
-import {merge} from 'lodash';
+import {merge, forEach} from 'lodash';
 import Web3 from 'web3';
 import {OrganizationContractAbi} from '../../contracts-abi';
+import {Observable} from 'rxjs/Observable';
+import {Subject} from 'rxjs/Subject';
 
 export interface Organization {
 	name: string;
@@ -74,10 +76,33 @@ export class OrganizationContractService {
 		return contract.methods.setIncomingDonation(realWorldsIdentifier, amount, note, tags).send(tx);
 	}
 
-	public async getIncomingDonations(address: string, txOptions?: Tx): Promise<string[]> {
+	public async getIncomingDonationsCount(address: string, txOptions?: Tx): Promise<string> {
+		const contract: Contract = this.cloneContract(this.organizationContract, address);
+		return contract.methods.incomingDonationCount().call(txOptions);
+	}
+
+	public async getIncomingDonationsAsync(address: string, txOptions?: Tx): Promise<string[]> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		const incomingDonationCount: string = await contract.methods.incomingDonationCount().call(txOptions);
 		return this.buildIncomingDonationsList(contract, parseInt(incomingDonationCount));
+	}
+
+	public getIncomingDonations(address: string, txOptions?: Tx): Observable<{ address: string, index: number }> {
+		const source: Subject<{ address: string, index: number }> = new Subject<{ address: string, index: number }>();
+
+		const contract: Contract = this.cloneContract(this.organizationContract, address);
+		contract.methods.incomingDonationCount().call(txOptions)
+			.then(async (count: number) => {
+				for (let i = 0; i < count; i++) {
+					const address: string = await contract.methods.incomingDonationIndex(i).call(txOptions);
+					const isActive: boolean = await contract.methods.incomingDonations(address).call(txOptions);
+					if (isActive) {
+						source.next({address: address, index: i});
+					}
+				}
+			});
+
+		return source.asObservable();
 	}
 
 	private async buildCharityEventsList(contract: Contract, charityEventCount: number): Promise<string[]> {
