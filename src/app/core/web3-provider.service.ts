@@ -11,20 +11,9 @@ export class Web3ProviderService {
 		this.web3 = this.checkAndInstantiateWeb3();
 	}
 
-
-	// resolve(): Observable<any> {
-	//   return new Observable(observer => {
-	//     Observable.fromEvent(window, 'load')
-	//       .subscribe(() => {
-	//         observer.next(this.checkAndInstantiateWeb3());
-	//         observer.complete();
-	//       }, (err) => {
-	//         console.error(err);
-	//         observer.error(err);
-	//       });
-	//   });
-	// }
-
+	public async getCurrentAccount(): Promise<string> {
+		return (await this.web3.eth.getAccounts())[0];
+	}
 
 	private checkAndInstantiateWeb3() {
 		// Checking if Web3 has been injected by the browser (Mist/MetaMask)

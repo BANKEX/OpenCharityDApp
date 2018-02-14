@@ -23,7 +23,7 @@ export class LoadingOverlayService {
 	}
 
 	public onOverlayStateChanged(): Observable<boolean> {
-		return this.onOverlayStateChangedSource.asObservable();
+		return this.onOverlayStateChangedSource.asObservable().share();
 	}
 
 }

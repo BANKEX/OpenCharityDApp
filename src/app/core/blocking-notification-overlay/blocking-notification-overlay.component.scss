@@ -1,0 +1,31 @@
+@import "../../../assets/scss/_variables";
+
+.opc-blocking-notification-overlay {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: white;
+	z-index: 9999999;
+
+	.loading-center-container {
+		width: 500px;
+		text-align: center;
+
+		.warning-icon {
+			font-size: 100px;
+			margin-bottom: 20px;
+			color: $default-warning;
+		}
+		.warning-message {
+			font-size: 25px;
+			color: black;
+		}
+
+	}
+}
+
