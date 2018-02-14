@@ -4,6 +4,7 @@ import {OrganizationDetailsComponent} from './organization-details/organization-
 import {OrganizationsListComponent} from './organizations-list/organizations-list.component';
 import {CommonLayoutComponent} from '../common/common-layout.component';
 import {IsOrganizationAddressGuard} from './is-organization-address.guard';
+import {IsAdminGuard} from './is-admin.guard';
 
 
 export const OrganizationRoutes: Routes = [
@@ -22,7 +23,7 @@ export const OrganizationRoutes: Routes = [
 			{
 				path: ':address',
 				component: OrganizationDetailsComponent,
-				canActivate: [IsOrganizationAddressGuard]
+				canActivate: [IsOrganizationAddressGuard, IsAdminGuard]
 			},
 		]
 	}

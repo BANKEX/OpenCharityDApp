@@ -1,0 +1,13 @@
+@import '../../variables';
+
+.no-organizations-warning {
+	text-align: center;
+	.warning-icon {
+		font-size: 60px;
+		color: $default-warning;
+	}
+
+	.warning-message {
+		font-size: 18px;
+	}
+}

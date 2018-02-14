@@ -9,8 +9,8 @@ import {Subject} from 'rxjs/Subject';
 })
 export class BlockingNotificationOverlayComponent implements OnInit, OnDestroy {
 
-	@Input() public showOverlay: boolean;
-	@Input() public message: string;
+	public showOverlay: boolean;
+	public message: string;
 	private componentDestroyed: Subject<void> = new Subject<void>();
 
 	constructor(

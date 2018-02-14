@@ -32,6 +32,19 @@
 				</div>
 			</div>
 		</div>
+
+		<div class="col-lg-4 offset-lg-4" *ngIf="organizations.length === 0 && listLoaded">
+			<div class="card no-organizations-warning">
+				<div class="card-block">
+					<div class="warning-icon">
+						<i class="fa fa-warning"></i>
+					</div>
+					<div class="warning-message">
+						No organizations found. Please, check that you use account with admin rights
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 
 </div>

@@ -22,6 +22,7 @@ import {BitmaskTagsListComponent} from './bitmask-tags-list/bitmask-tags-list.co
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {IncomingDonationSendFundsModalComponent} from './incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
 import {OrganizationContractEventsService} from './services/organization-contract-events.service';
+import {IsAdminGuard} from './is-admin.guard';
 
 @NgModule({
 	declarations: [
@@ -51,7 +52,8 @@ import {OrganizationContractEventsService} from './services/organization-contrac
 		IsOrganizationAddressGuard,
 		TagsBitmaskService,
 		IsOrganizationAddressGuard,
-		OrganizationContractEventsService
+		OrganizationContractEventsService,
+		IsAdminGuard
 	]
 })
 

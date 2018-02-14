@@ -21,13 +21,11 @@ export class MetamaskCheckService {
 
 	public async isMetamaskLocked(): Promise<boolean> {
 		const accounts: string[] = await this.web3.eth.getAccounts();
-
 		return !(accounts && accounts.length !== 0);
 	}
 
 	public async isCorrectNetwork(): Promise<boolean> {
 		const netId: number = await this.web3.eth.net.getId();
-		console.log(netId);
 		return (netId === environment.networkId);
 	}
 

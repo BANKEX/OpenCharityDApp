@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
 import {Web3ProviderService} from './core/web3-provider.service';
 import {LoadingOverlayService} from './core/loading-overlay.service';
 import {MetamaskCheckService} from './core/metamask-check.service';
@@ -13,7 +12,7 @@ import {BlockingNotificationOverlayService} from './core/blocking-notification-o
 
 export class AppComponent implements OnInit {
 
-	public showLoadingOverlay: boolean = true;
+	public appLoaded: boolean = false;
 	public showBlockingOverlay: boolean = false;
 	public blockingOverlayMessage: string = '';
 
@@ -27,16 +26,7 @@ export class AppComponent implements OnInit {
 
 	async ngOnInit(): Promise<void> {
 		await this.checkMetamask();
-
-		this.showLoadingOverlay = false;
-
-		this.loadingOverlayService.onOverlayStateChanged()
-			.subscribe((showOverlay: boolean) => {
-					this.showLoadingOverlay = showOverlay;
-				},
-				(err: any) => {
-					console.error(err.message);
-				});
+		this.appLoaded = true;
 	}
 
 	private async checkMetamask(): Promise<void> {
