@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {Organization, OrganizationContractService} from '../services/organization-contract.service';
 import {Router} from '@angular/router';
+import {Web3ProviderService} from '../../core/web3-provider.service';
+import {LoadingOverlayService} from '../../core/loading-overlay.service';
 
 @Component({
 	selector: 'opc-organizations-list',
@@ -8,22 +10,35 @@ import {Router} from '@angular/router';
 	styleUrls: ['organizations-list.component.scss']
 })
 export class OrganizationsListComponent implements OnInit {
-	// hardcoded list of organizations
 
-	organizations: Organization[] = [];
-	organizationsAddresses: string[] = environment.organizations;
+	public organizations: Organization[] = [];
+	private organizationsAddresses: string[] = environment.organizations;
+	public listLoaded: boolean = false;
 
-	constructor(private organizationContractService: OrganizationContractService,
-				private router: Router) {
+	constructor(
+		private organizationContractService: OrganizationContractService,
+		private router: Router,
+		private web3ProviderService: Web3ProviderService,
+		private loadingOverlayService: LoadingOverlayService
+	) {
 
 
 	}
 
 
 	public async ngOnInit(): Promise<void> {
+		this.loadingOverlayService.showOverlay();
+
+
 		for (let address of this.organizationsAddresses) {
-			this.organizations.push(await this.organizationContractService.getOrganization(address));
+			if (await this.organizationContractService.isAdmin(address, await this.web3ProviderService.getCurrentAccount() )) {
+				this.organizations.push(await this.organizationContractService.getOrganization(address));
+			}
 		}
+
+
+		this.loadingOverlayService.hideOverlay();
+		this.listLoaded = true;
 	}
 
 	public goToOgranizationPage(address: string) {

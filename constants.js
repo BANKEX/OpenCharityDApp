@@ -91,6 +91,7 @@ exports.MY_TEST_PLUGINS = [
 
 
 exports.DEV_ENVIRONMENT = {
+	'networkId': 488413,
 	'tokenAddress': '0x6a183381d14371b4a228cca37802c09bd166ba9e',
 	'rpcProviderUrl': 'https://rpcprovider.staging.bankex.team:8635',
 	'websocketProviderUrl': 'wss://wsprovider.staging.bankex.team:8636',
@@ -102,6 +103,7 @@ exports.DEV_ENVIRONMENT = {
 };
 
 exports.PROD_ENVIRONMENT = {
+	'networkId': 488413,
 	'tokenAddress': '0x6a183381d14371b4a228cca37802c09bd166ba9e',
 	'rpcProviderUrl': 'https://rpcprovider.staging.bankex.team:8635',
 	'websocketProviderUrl': 'wss://wsprovider.staging.bankex.team:8636',

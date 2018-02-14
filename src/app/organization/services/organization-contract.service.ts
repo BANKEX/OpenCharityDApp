@@ -49,6 +49,11 @@ export class OrganizationContractService {
 		}
 	}
 
+	public async isAdmin(address: string, walletAddress: string, txOptions?: Tx): Promise<boolean> {
+		const contract: Contract = this.cloneContract(this.organizationContract, address);
+		return contract.methods.admins(walletAddress).call(txOptions);
+	}
+
 
 	public addCharityEvent(address: string, name: string, target: string, payed: string, tags: string, txOptions?: Tx): Promise<any> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);

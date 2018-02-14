@@ -1,2 +1,5 @@
-<router-outlet></router-outlet>
-<opc-loading-overlay *ngIf="showLoadingOverlay"></opc-loading-overlay>
+<opc-loading-overlay></opc-loading-overlay>
+<opc-blocking-notification-overlay></opc-blocking-notification-overlay>
+
+<router-outlet *ngIf="appLoaded"></router-outlet>
+
