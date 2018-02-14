@@ -6,8 +6,12 @@ import {LoadingOverlayService} from './loading-overlay.service';
 import {BlockingNotificationOverlayComponent} from './blocking-notification-overlay/blocking-notification-overlay.component';
 import {MetamaskCheckService} from './metamask-check.service';
 import {BlockingNotificationOverlayService} from './blocking-notification-overlay.service';
-import {FormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
+
+export function windowFactory() {
+	return window;
+
+}
 
 @NgModule({
 	imports: [CommonModule],
@@ -22,7 +26,7 @@ import {CommonModule} from '@angular/common';
 		LoadingOverlayService,
 		BlockingNotificationOverlayService,
 		MetamaskCheckService,
-		{provide: Window, useValue: window }
+		{provide: 'Window', useFactory: windowFactory }
 	]
 })
 export class CoreModule {

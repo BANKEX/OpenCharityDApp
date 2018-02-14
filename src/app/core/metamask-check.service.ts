@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import Web3 from 'web3';
 import {Web3ProviderService} from './web3-provider.service';
 
@@ -9,7 +9,7 @@ export class MetamaskCheckService {
 	private web3: Web3;
 
 	constructor(
-		private window: Window,
+		@Inject('Window') private window: Window,
 		private web3ProviderService: Web3ProviderService
 	) {
 		this.web3 = this.web3ProviderService.web3;
