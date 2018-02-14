@@ -19,7 +19,6 @@ export class LoadingOverlayComponent implements OnInit {
 		this.loadingOverlayService.onOverlayStateChanged()
 			.debounceTime(200)
 			.subscribe((showOverlay: boolean) => {
-				console.log(Date.now());
 					this.showOverlay = showOverlay;
 				},
 				(err: any) => {
