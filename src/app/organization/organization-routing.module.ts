@@ -9,10 +9,6 @@ import {IsAdminGuard} from './is-admin.guard';
 
 export const OrganizationRoutes: Routes = [
 	{
-		path: 'list',
-		component: OrganizationsListComponent,
-	},
-	{
 		path: 'organization',
 		component: CommonLayoutComponent,
 		children: [

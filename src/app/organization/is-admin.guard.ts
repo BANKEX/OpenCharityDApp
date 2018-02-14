@@ -18,6 +18,13 @@ export class IsAdminGuard implements CanActivate {
 	async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
 		const organizationAddress = route.params.address;
 		const userAddress = await this.web3ProviderService.getCurrentAccount();
-		return this.organizationContractService.isAdmin(organizationAddress, userAddress);
+		const isAdmin: boolean = await this.organizationContractService.isAdmin(organizationAddress, userAddress);
+		if (isAdmin) {
+			return true;
+		} else {
+			this.router.navigate(['organization']);
+			return false;
+		}
+
 	}
 }

@@ -26,6 +26,8 @@ export class AppComponent implements OnInit {
 
 	async ngOnInit(): Promise<void> {
 		await this.checkMetamask();
+
+		this.loadingOverlayService.hideOverlay();
 		this.appLoaded = true;
 	}
 
