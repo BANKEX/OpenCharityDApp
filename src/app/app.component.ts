@@ -25,23 +25,10 @@ export class AppComponent implements OnInit {
 	) {
 	}
 
-	ngOnInit(): void {
+	async ngOnInit(): Promise<void> {
+		this.checkMetamask();
 
-
-		if( this.metamaskCheckService.isMetamaskInstalled()) {
-			this.showLoadingOverlay = false;
-		} else {
-			const message: string = 'You need MetaMask extension to interact with this app. Please, install it and try again';
-
-			this.blockingNotificationOverlayService.setOverlayMessage(message);
-			this.blockingOverlayMessage = message;
-
-			this.blockingNotificationOverlayService.showOverlay();
-			this.showBlockingOverlay = true;
-
-			this.showLoadingOverlay = false;
-		}
-
+		this.showLoadingOverlay = false;
 
 		this.loadingOverlayService.onOverlayStateChanged()
 			.subscribe((showOverlay: boolean) => {
@@ -50,6 +37,28 @@ export class AppComponent implements OnInit {
 				(err: any) => {
 					console.error(err.message);
 				});
+	}
+
+	private async checkMetamask(): Promise<void> {
+		let message: string;
+
+		if (this.metamaskCheckService.isMetamaskInstalled()) {
+			const metamaskLocked: boolean = await this.metamaskCheckService.isMetamaskLocked();
+
+			if (metamaskLocked) {
+				message = 'Your MetaMask wallet is locked. Please, unlock it and try again;';
+			}
+		} else {
+			message = 'You need MetaMask extension to interact with this app. Please, install it and try again';
+		}
+
+		if (message) {
+			this.blockingNotificationOverlayService.setOverlayMessage(message);
+			this.blockingOverlayMessage = message;
+
+			this.blockingNotificationOverlayService.showOverlay();
+			this.showBlockingOverlay = true;
+		}
 
 	}
 

@@ -23,7 +23,6 @@ export class BlockingNotificationOverlayComponent implements OnInit, OnDestroy {
 		this.blockingNotificationOverlayService.onSetMessage()
 			.takeUntil(this.componentDestroyed)
 			.subscribe((message: string) => {
-				alert('on set message');
 					this.message = message;
 				},
 				(err: any) => {
@@ -32,7 +31,6 @@ export class BlockingNotificationOverlayComponent implements OnInit, OnDestroy {
 
 		this.blockingNotificationOverlayService.onShowOverlay()
 			.subscribe((isVisible: boolean) => {
-				alert('123');
 					this.showOverlay = isVisible;
 				},
 				(err: any) => {

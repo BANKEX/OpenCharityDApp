@@ -24,11 +24,11 @@ export class BlockingNotificationOverlayService {
 	}
 
 	public onSetMessage(): Observable<string> {
-		return this.onSetMessageSource.asObservable();
+		return this.onSetMessageSource.asObservable().share();
 	}
 
 	public onShowOverlay(): Observable<boolean> {
-		return this.onShowOverlaySource.asObservable();
+		return this.onShowOverlaySource.asObservable().share();
 	}
 
 }
