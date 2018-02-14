@@ -29,6 +29,7 @@ export declare const EXCLUDE_SOURCE_MAPS: any[];
 
 
 interface Environment {
+	networkId: number;
 	tokenAddress: string;
 	rpcProviderUrl: string;
 	websocketProviderUrl: string;

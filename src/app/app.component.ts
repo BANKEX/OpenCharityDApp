@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
 	}
 
 	async ngOnInit(): Promise<void> {
-		this.checkMetamask();
+		await this.checkMetamask();
 
 		this.showLoadingOverlay = false;
 
@@ -44,9 +44,12 @@ export class AppComponent implements OnInit {
 
 		if (this.metamaskCheckService.isMetamaskInstalled()) {
 			const metamaskLocked: boolean = await this.metamaskCheckService.isMetamaskLocked();
+			const correctNetwork: boolean = await this.metamaskCheckService.isCorrectNetwork();
 
 			if (metamaskLocked) {
 				message = 'Your MetaMask wallet is locked. Please, unlock it and try again;';
+			} else if(!correctNetwork) {
+				message = 'Wrong network. Please, connect to Open Charity network and try again';
 			}
 		} else {
 			message = 'You need MetaMask extension to interact with this app. Please, install it and try again';
