@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Web3ProviderService} from './core/web3-provider.service';
 import {LoadingOverlayService} from './core/loading-overlay.service';
+import {MetamaskCheckService} from './core/metamask-check.service';
+import {BlockingNotificationOverlayService} from './core/blocking-notification-overlay.service';
 
 @Component({
 	selector: 'my-app',
@@ -12,15 +14,34 @@ import {LoadingOverlayService} from './core/loading-overlay.service';
 export class AppComponent implements OnInit {
 
 	public showLoadingOverlay: boolean = true;
+	public showBlockingOverlay: boolean = false;
+	public blockingOverlayMessage: string = '';
 
 	constructor(
 		private web3ProviderService: Web3ProviderService,
-		private loadingOverlayService: LoadingOverlayService
+		private loadingOverlayService: LoadingOverlayService,
+		private metamaskCheckService: MetamaskCheckService,
+		private blockingNotificationOverlayService: BlockingNotificationOverlayService
 	) {
 	}
 
-	ngOnInit() {
-		this.showLoadingOverlay = false;
+	ngOnInit(): void {
+
+
+		if( this.metamaskCheckService.isMetamaskInstalled()) {
+			this.showLoadingOverlay = false;
+		} else {
+			const message: string = 'You need MetaMask extension to interact with this app. Please, install it and try again';
+
+			this.blockingNotificationOverlayService.setOverlayMessage(message);
+			this.blockingOverlayMessage = message;
+
+			this.blockingNotificationOverlayService.showOverlay();
+			this.showBlockingOverlay = true;
+
+			this.showLoadingOverlay = false;
+		}
+
 
 		this.loadingOverlayService.onOverlayStateChanged()
 			.subscribe((showOverlay: boolean) => {
@@ -29,7 +50,9 @@ export class AppComponent implements OnInit {
 				(err: any) => {
 					console.error(err.message);
 				});
+
 	}
+
 
 
 
