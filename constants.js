@@ -92,8 +92,8 @@ exports.MY_TEST_PLUGINS = [
 
 exports.DEV_ENVIRONMENT = {
 	'tokenAddress': '0x6a183381d14371b4a228cca37802c09bd166ba9e',
-	'rpcProviderUrl': 'http://52.166.13.111:8535',
-	'websocketProviderUrl': 'ws://52.166.13.111:8536',
+	'rpcProviderUrl': 'https://rpcprovider.staging.bankex.team:8635',
+	'websocketProviderUrl': 'wss://wsprovider.staging.bankex.team:8636',
 	'organizations':  [
 		'0xbb8251c7252b6fec412a0a99995ebc1a28e4e103',
 		'0xc9afa3e4e78a678ffb836c4062547b1dc8dd592f',
@@ -103,8 +103,8 @@ exports.DEV_ENVIRONMENT = {
 
 exports.PROD_ENVIRONMENT = {
 	'tokenAddress': '0x6a183381d14371b4a228cca37802c09bd166ba9e',
-	'rpcProviderUrl': 'http://52.166.13.111:8535',
-	'websocketProviderUrl': 'ws://52.166.13.111:8536',
+	'rpcProviderUrl': 'https://rpcprovider.staging.bankex.team:8635',
+	'websocketProviderUrl': 'wss://wsprovider.staging.bankex.team:8636',
 	'organizations':  [
 		'0xa9a667764e0520393c5b8a17b389b7408996f821',
 		'0x371f1b07649009fc7e4e617d1b8a5ef05b0157c2',
