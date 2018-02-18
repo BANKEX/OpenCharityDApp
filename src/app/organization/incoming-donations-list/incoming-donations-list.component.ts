@@ -54,6 +54,8 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 			});
 	}
 
+	// show ID cards with loading animation and replace it
+	// by data when it is loaded
 	public async updateIncomingDonationsList(): Promise<void> {
 		// get amount of organization incoming donations
 		const incomingDonationsCount: number = parseInt(await this.organizationContractService.getIncomingDonationsCount(this.organizationContractAddress), 10);
@@ -70,7 +72,8 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 			});
 	}
 
-	public async updateIncomingDonationsListAsync(): Promise<void> {
+	// show list of incoming donations only when all data is loaded
+	public async updateIncomingDonationsListSync(): Promise<void> {
 		const incomingDonationsList: string[] = reverse(await this.organizationContractService.getIncomingDonations(this.organizationContractAddress));
 
 		const incomingDonations = [];
