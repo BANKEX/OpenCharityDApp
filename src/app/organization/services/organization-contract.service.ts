@@ -57,19 +57,8 @@ export class OrganizationContractService {
 	}
 
 
-	public addCharityEvent(address: string, name: string, target: string, payed: string, tags: string, txOptions?: Tx): Promise<any> {
-		const contract: Contract = this.cloneContract(this.organizationContract, address);
-		const tx: Tx = merge(this.defaultTx, txOptions);
-		return contract.methods.addCharityEvent(name, target, payed, tags).send(tx);
-	}
 
-	public async getCharityEvents(address: string, txOptions?: Tx): Promise<string[]> {
-		const contract: Contract = this.cloneContract(this.organizationContract, address);
-		const charityEventCount: string = await contract.methods.charityEventCount().call(txOptions);
-		return this.buildCharityEventsList(contract, parseInt(charityEventCount));
-	}
-
-
+	// IncomingDonations methods
 	public addIncomingDonation(address: string, realWorldsIdentifier: string, amount: string, note: string, tags: string, txOptions?: Tx) {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		const tx: Tx = merge(this.defaultTx, txOptions);
@@ -105,18 +94,6 @@ export class OrganizationContractService {
 		return source.asObservable();
 	}
 
-	private async buildCharityEventsList(contract: Contract, charityEventCount: number): Promise<string[]> {
-		const result: string[] = [];
-
-		for (let i = 0; i < charityEventCount; i++) {
-			const address: string = await contract.methods.charityEventIndex(i).call();
-			const isActive: boolean = await contract.methods.charityEvents(address).call();
-			(isActive) ? result.push(address) : null;
-		}
-
-		return result;
-	}
-
 	private async buildIncomingDonationsList(contract: Contract, incomingDonationCount: number): Promise<string[]> {
 		const result: string[] = [];
 
@@ -130,6 +107,35 @@ export class OrganizationContractService {
 	}
 
 
+
+	// Charity Events Methods
+	public addCharityEvent(address: string, name: string, target: string, payed: string, tags: string, txOptions?: Tx): Promise<any> {
+		const contract: Contract = this.cloneContract(this.organizationContract, address);
+		const tx: Tx = merge(this.defaultTx, txOptions);
+		return contract.methods.addCharityEvent(name, target, payed, tags).send(tx);
+	}
+
+	public async getCharityEvents(address: string, txOptions?: Tx): Promise<string[]> {
+		const contract: Contract = this.cloneContract(this.organizationContract, address);
+		const charityEventCount: string = await contract.methods.charityEventCount().call(txOptions);
+		return this.buildCharityEventsList(contract, parseInt(charityEventCount));
+	}
+
+	private async buildCharityEventsList(contract: Contract, charityEventCount: number): Promise<string[]> {
+		const result: string[] = [];
+
+		for (let i = 0; i < charityEventCount; i++) {
+			const address: string = await contract.methods.charityEventIndex(i).call();
+			const isActive: boolean = await contract.methods.charityEvents(address).call();
+			(isActive) ? result.push(address) : null;
+		}
+
+		return result;
+	}
+
+
+
+	// Utils
 	private cloneContract(original: Contract, address: string): Contract {
 		const contract: any = (<any>original).clone();
 		const originalProvider = (<any>original).currentProvider;
