@@ -6,9 +6,6 @@ import {Observable} from 'rxjs/Observable';
 import {OrganizationContractAbi} from '../../contracts-abi';
 import {ConnectableObservable} from 'rxjs/Rx';
 import {Observer} from 'rxjs/Observer';
-import {Subject} from 'rxjs/Subject';
-
-type EventsSources = {[key: string]: {[key: string]: Subject<any>}};
 
 @Injectable()
 export class OrganizationContractEventsService {
@@ -18,11 +15,6 @@ export class OrganizationContractEventsService {
 
 	// tracks Observables for different organizations
 	// key is organization address
-
-
-	// organizationAddress => { eventTopic => Subject<any>}
-	private eventsSources: EventsSources = {};
-
 	private charityEventAddedObservable: {[key: string]: ConnectableObservable<any>} = {};
 	private incomingDonationAddedObservable: {[key: string]: ConnectableObservable<any>} = {};
 
@@ -38,13 +30,6 @@ export class OrganizationContractEventsService {
 		// websocket provider is required to subscribe to events
 		this.web3 = new Web3(environment.websocketProviderUrl);
 		this.organizationContract = this.buildOrganizationContract();
-
-		// this interval is required to send requests to the server
-		// to keep websocket connection alive
-		// otherwise websocket disconnects
-		// setInterval(() => {
-		// 	this.web3.eth.getBlockNumber().then(console.log);
-		// }, 10000);
 	}
 
 
@@ -94,26 +79,6 @@ export class OrganizationContractEventsService {
 
 		}).share();
 	}
-
-	// private listenOrganizationEvent(organizationAddress: string, eventTopics: string[]): EventEmitter {
-	// 	if (!eventTopics || eventTopics.length === 0) {
-	// 		return
-	// 	}
-	// 	return this.web3.eth.subscribe('logs', {
-	// 		address: organizationAddress,
-	// 		topics: eventTopics
-	// 	}, (error, event) => {
-	// 		if (error) {
-	// 			if (error.code === 1006) {
-	//
-	// 			} else {
-	//
-	// 			}
-	// 		}
-	//
-	// 	})
-	//
-	// }
 
 	public onIncomingDonationAdded(address: string): Observable<any> {
 		if (!this.incomingDonationAddedObservable[address]) {
