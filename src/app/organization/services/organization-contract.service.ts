@@ -38,7 +38,7 @@ export class OrganizationContractService {
 		return contract.methods.name().call(txOptions);
 	}
 
-	public getCharityEventsCount(address: string, txOptions?: Tx): Promise<any> {
+	public getCharityEventsCount(address: string, txOptions?: Tx): Promise<string> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		return contract.methods.charityEventCount().call(txOptions);
 	}
@@ -47,7 +47,7 @@ export class OrganizationContractService {
 		return {
 			name: await this.getName(address, txOptions),
 			address: address,
-			charityEventsCount: await this.getCharityEventsCount(address, txOptions)
+			charityEventsCount: parseInt(await this.getCharityEventsCount(address, txOptions), 10)
 		}
 	}
 
@@ -115,7 +115,22 @@ export class OrganizationContractService {
 		return contract.methods.addCharityEvent(name, target, payed, tags).send(tx);
 	}
 
-	public async getCharityEvents(address: string, txOptions?: Tx): Promise<string[]> {
+	public getCharityEvents(address: string, txOptions?: Tx): Observable<{ address: string, index: number }> {
+		const source: Subject<{ address: string, index: number }> = new Subject<{ address: string, index: number }>();
+
+		const contract: Contract = this.cloneContract(this.organizationContract, address);
+		contract.methods.charityEventCount().call(txOptions)
+			.then(async (count: number) => {
+				for (let i = count - 1; i >= 0; i--) {
+					const address: string = await contract.methods.charityEventIndex(i).call(txOptions);
+					source.next({address: address, index: i});
+				}
+			});
+
+		return source.asObservable();
+	}
+
+	public async getCharityEventsAsync(address: string, txOptions?: Tx): Promise<string[]> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		const charityEventCount: string = await contract.methods.charityEventCount().call(txOptions);
 		return this.buildCharityEventsList(contract, parseInt(charityEventCount));

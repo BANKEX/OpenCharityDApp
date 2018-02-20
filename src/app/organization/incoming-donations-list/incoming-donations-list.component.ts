@@ -102,7 +102,7 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 	}
 
 	public async openSendDonationFundsModal(incomingDonation: IncomingDonation): Promise<void> {
-		const charityEventsAddresses: string[] = await this.organizationContractService.getCharityEvents(this.organizationContractAddress);
+		const charityEventsAddresses: string[] = await this.organizationContractService.getCharityEventsAsync(this.organizationContractAddress);
 		const charityEvents = await this.charityEventContractService.getCharityEventsList(charityEventsAddresses);
 
 		const modalRef: NgbModalRef = this.modalService.open(IncomingDonationSendFundsModalComponent);
