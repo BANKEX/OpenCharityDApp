@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {OrganizationContractService} from '../services/organization-contract.service';
 import {CharityEvent, CharityEventContractService} from '../services/charity-event-contract.service';
 import {Subject} from 'rxjs/Subject';
@@ -21,7 +21,9 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 	constructor(private organizationContractService: OrganizationContractService,
 				private charityEventContractService: CharityEventContractService,
 				private tokenContractService: TokenContractService,
-				private organizationContractEventsService: OrganizationContractEventsService) {
+				private organizationContractEventsService: OrganizationContractEventsService,
+				private cd: ChangeDetectorRef
+) {
 
 	}
 
@@ -58,7 +60,9 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 			.subscribe(async (res: { address: string, index: number }) => {
 				try {
 					this.charityEvents[res.index] = await this.charityEventContractService.getCharityEventDetails(res.address);
-					this.updateCharityEventRaised(this.charityEvents[res.index]);
+					await this.updateCharityEventRaised(this.charityEvents[res.index]);
+					this.cd.detectChanges();
+
 				} catch(e) {
 					console.error(e);
 				}
