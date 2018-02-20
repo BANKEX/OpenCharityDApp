@@ -49,18 +49,22 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 		this.charityEvents = times(charityEventsCount, constant(null));
 
 
+		// this counter is used to track how much items is loaded
+		// if all data is loaded, unsubscribe from Observable
 		let charityEventsCounter: number = charityEventsCount;
 
 		this.organizationContractService.getCharityEvents(this.organizationContractAddress)
 			.takeWhile(() => charityEventsCounter > 0 )
 			.subscribe(async (res: { address: string, index: number }) => {
-				charityEventsCounter--;
-
 				try {
 					this.charityEvents[res.index] = await this.charityEventContractService.getCharityEventDetails(res.address);
+					this.updateCharityEventRaised(this.charityEvents[res.index]);
 				} catch(e) {
 					console.error(e);
 				}
+
+				charityEventsCounter--;
+
 			});
 	}
 
@@ -75,9 +79,14 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 		this.componentDestroyed.next();
 	}
 
-	public async updateCharityEventsRaised(charityEvents: CharityEvent[]) {
+
+	private async updateCharityEventRaised(charityEvent: CharityEvent) {
+		charityEvent.raised = await this.tokenContractService.balanceOf(charityEvent.address);
+	}
+
+	private async updateCharityEventsRaised(charityEvents: CharityEvent[]) {
 		charityEvents.forEach(async (charityEvent) => {
-			charityEvent.raised = await this.tokenContractService.balanceOf(charityEvent.address);
+			this.updateCharityEventRaised(charityEvent);
 		});
 	}
 }
