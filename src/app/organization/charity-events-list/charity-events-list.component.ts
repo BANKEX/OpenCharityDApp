@@ -26,8 +26,6 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 	}
 
 	async ngOnInit(): Promise<void> {
-		console.log(`charity events count: ${await this.organizationContractService.getCharityEventsCount(this.organizationContractAddress)}`);
-
 		this.updateCharityEventsList();
 
 		this.organizationContractEventsService.onCharityEventAdded(this.organizationContractAddress)

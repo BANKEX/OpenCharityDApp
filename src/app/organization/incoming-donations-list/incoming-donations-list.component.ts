@@ -1,5 +1,5 @@
 import {OrganizationContractService} from '../services/organization-contract.service';
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 // tslint:disable-next-line:max-line-length
 import {IncomingDonation, IncomingDonationContractService} from '../services/incoming-donation-contract.service';
 import {Subject} from 'rxjs/Subject';
@@ -28,6 +28,7 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 				private charityEventContractService: CharityEventContractService,
 				private organizationContractEventsService: OrganizationContractEventsService,
 				private modalService: NgbModal,
+				private cd: ChangeDetectorRef
 	) {
 	}
 
@@ -51,6 +52,7 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 		this.incomingDonationContractService.getIncomingDonationDetails(address)
 			.then((incomingDonation: IncomingDonation) => {
 				this.incomingDonations[newItemIndex] = incomingDonation;
+				this.cd.detectChanges();
 			});
 	}
 
