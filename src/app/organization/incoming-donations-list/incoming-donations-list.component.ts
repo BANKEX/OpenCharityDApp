@@ -71,6 +71,8 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 			.takeWhile((val: { address: string, index: number }, index: number) => index < incomingDonationsCount)
 			.subscribe(async (res: { address: string, index: number }) => {
 				this.incomingDonations[res.index] = await this.incomingDonationContractService.getIncomingDonationDetails(res.address);
+				await this.updateIncomingDonationAmount(this.incomingDonations[res.index]);
+				this.cd.detectChanges();
 			});
 	}
 
@@ -97,9 +99,13 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 		}
 	}
 
+	public async updateIncomingDonationAmount(incomingDonation: IncomingDonation): Promise<void> {
+		incomingDonation.amount = await this.tokenContractService.balanceOf(incomingDonation.address);
+	}
+
 	public async updateIncomingDonationsAmount(incomingDonations: IncomingDonation[]) {
-		incomingDonations.forEach(async (incomingDonation) => {
-			incomingDonation.amount = await this.tokenContractService.balanceOf(incomingDonation.address);
+		incomingDonations.forEach((incomingDonation) => {
+			this.updateIncomingDonationAmount(incomingDonation);
 		});
 	}
 
