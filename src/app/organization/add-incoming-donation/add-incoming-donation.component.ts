@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {OrganizationContractService} from '../services/organization-contract.service';
+import {OrganizationContractService} from '../../core/contracts-services/organization-contract.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {TagsBitmaskService} from '../services/tags-bitmask.service';
 

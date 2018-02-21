@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {OrganizationContractService} from '../services/organization-contract.service';
+import {OrganizationContractService} from '../../core/contracts-services/organization-contract.service';
 import {TagsBitmaskService} from '../services/tags-bitmask.service';
 
 @Component({

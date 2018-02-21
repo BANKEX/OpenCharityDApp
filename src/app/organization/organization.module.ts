@@ -6,9 +6,6 @@ import {OrganizationDetailsComponent} from './organization-details/organization-
 import {AddCharityEventComponent} from './add-charity-event/add-charity-event.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
-import {OrganizationContractService} from './services/organization-contract.service';
-import {CharityEventContractService} from './services/charity-event-contract.service';
-import {IncomingDonationContractService} from './services/incoming-donation-contract.service';
 // tslint:disable-next-line:max-line-length
 import {IncomingDonationsListComponent} from './incoming-donations-list/incoming-donations-list.component';
 // tslint:disable-next-line:max-line-length
@@ -21,7 +18,7 @@ import {SetBitmaskTagsComponent} from './set-bitmask-tags/set-bitmask-tags.compo
 import {BitmaskTagsListComponent} from './bitmask-tags-list/bitmask-tags-list.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {IncomingDonationSendFundsModalComponent} from './incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
-import {OrganizationContractEventsService} from './services/organization-contract-events.service';
+import {OrganizationContractEventsService} from '../core/contracts-services/organization-contract-events.service';
 import {IsAdminGuard} from './is-admin.guard';
 
 @NgModule({
@@ -46,13 +43,9 @@ import {IsAdminGuard} from './is-admin.guard';
 		NgbModule
 	],
 	providers: [
-		OrganizationContractService,
-		CharityEventContractService,
-		IncomingDonationContractService,
 		IsOrganizationAddressGuard,
 		TagsBitmaskService,
 		IsOrganizationAddressGuard,
-		OrganizationContractEventsService,
 		IsAdminGuard
 	]
 })

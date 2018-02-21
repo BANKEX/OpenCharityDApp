@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import {Contract, Tx} from 'web3/types';
-import {Web3ProviderService} from '../../core/web3-provider.service';
+import {Web3ProviderService} from '../web3-provider.service';
 import {merge} from 'lodash';
 import Web3 from 'web3';
-import {TokenContractService} from '../../core/token-contract.service';
+import {TokenContractService} from './token-contract.service';
 import {IncomingDonationContractAbi} from '../../contracts-abi';
 
 export interface IncomingDonation {

@@ -1,9 +1,9 @@
 import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {OrganizationContractService} from '../services/organization-contract.service';
-import {CharityEvent, CharityEventContractService} from '../services/charity-event-contract.service';
+import {OrganizationContractService} from '../../core/contracts-services/organization-contract.service';
+import {CharityEvent, CharityEventContractService} from '../../core/contracts-services/charity-event-contract.service';
 import {Subject} from 'rxjs/Subject';
-import {TokenContractService} from '../../core/token-contract.service';
-import {OrganizationContractEventsService} from '../services/organization-contract-events.service';
+import {TokenContractService} from '../../core/contracts-services/token-contract.service';
+import {OrganizationContractEventsService} from '../../core/contracts-services/organization-contract-events.service';
 import {reverse, times, constant} from 'lodash';
 
 @Component({

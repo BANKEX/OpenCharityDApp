@@ -1,13 +1,13 @@
-import {OrganizationContractService} from '../services/organization-contract.service';
+import {OrganizationContractService} from '../../core/contracts-services/organization-contract.service';
 import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 // tslint:disable-next-line:max-line-length
-import {IncomingDonation, IncomingDonationContractService} from '../services/incoming-donation-contract.service';
+import {IncomingDonation, IncomingDonationContractService} from '../../core/contracts-services/incoming-donation-contract.service';
 import {Subject} from 'rxjs/Subject';
-import {TokenContractService} from '../../core/token-contract.service';
+import {TokenContractService} from '../../core/contracts-services/token-contract.service';
 import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 import {IncomingDonationSendFundsModalComponent} from '../incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
-import {CharityEventContractService} from '../services/charity-event-contract.service';
-import {OrganizationContractEventsService} from '../services/organization-contract-events.service';
+import {CharityEventContractService} from '../../core/contracts-services/charity-event-contract.service';
+import {OrganizationContractEventsService} from '../../core/contracts-services/organization-contract-events.service';
 import {reverse, times, constant} from 'lodash';
 
 

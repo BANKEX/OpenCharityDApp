@@ -1,8 +1,8 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {NgbTypeahead} from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs/Observable';
-import {CharityEvent} from '../services/charity-event-contract.service';
-import {IncomingDonation, IncomingDonationContractService} from '../services/incoming-donation-contract.service';
+import {CharityEvent} from '../../core/contracts-services/charity-event-contract.service';
+import {IncomingDonation, IncomingDonationContractService} from '../../core/contracts-services/incoming-donation-contract.service';
 import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/filter';

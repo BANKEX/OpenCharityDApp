@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Contract, Tx} from 'web3/types';
-import {Web3ProviderService} from '../../core/web3-provider.service';
+import {Web3ProviderService} from '../web3-provider.service';
 import {merge, forEach} from 'lodash';
 import Web3 from 'web3';
 import {OrganizationContractAbi} from '../../contracts-abi';
