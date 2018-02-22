@@ -9,7 +9,6 @@ import {IncomingDonationSendFundsModalComponent} from '../incoming-donation-send
 import {CharityEventContractService} from '../../core/contracts-services/charity-event-contract.service';
 import {OrganizationContractEventsService} from '../../core/contracts-services/organization-contract-events.service';
 import {reverse, times, constant, findOne} from 'lodash';
-import {IncomingDonationContractEventsService} from '../../core/contracts-services/incoming-donation-contract-events.service';
 
 
 @Component({
@@ -28,7 +27,6 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 				private tokenContractService: TokenContractService,
 				private charityEventContractService: CharityEventContractService,
 				private organizationContractEventsService: OrganizationContractEventsService,
-				private incomingDonationContractEventsService: IncomingDonationContractEventsService,
 				private modalService: NgbModal,
 				private cd: ChangeDetectorRef
 	) {
@@ -109,23 +107,23 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 		const modalRef: NgbModalRef = this.modalService.open(IncomingDonationSendFundsModalComponent);
 		modalRef.componentInstance.incomingDonation = incomingDonation;
 		modalRef.componentInstance.charityEvents = charityEvents;
-		modalRef.componentInstance.fundsMoved.subscribe(this.listenForFundsMovedEvent.bind(this));
+		// modalRef.componentInstance.fundsMoved.subscribe(this.listenForFundsMovedEvent.bind(this));
 	}
 
-	private listenForFundsMovedEvent(incomingDonationAddress: string) {
-		this.incomingDonationContractEventsService.onFundsMovedToCharityEvent(incomingDonationAddress)
-			.subscribe((res) => {
-				debugger;
-				const incomingDonation = findOne(this.incomingDonations, {address: incomingDonationAddress});
-				if (incomingDonation) {
-					console.log('update');
-					this.updateIncomingDonationAmount(incomingDonation);
-				}
-			}, (err) => {
-				debugger;
-				console.log(err);
-			});
-	}
+	// private listenForFundsMovedEvent(incomingDonationAddress: string) {
+	// 	this.incomingDonationContractEventsService.onFundsMovedToCharityEvent(incomingDonationAddress)
+	// 		.subscribe((res) => {
+	// 			debugger;
+	// 			const incomingDonation = findOne(this.incomingDonations, {address: incomingDonationAddress});
+	// 			if (incomingDonation) {
+	// 				console.log('update');
+	// 				this.updateIncomingDonationAmount(incomingDonation);
+	// 			}
+	// 		}, (err) => {
+	// 			debugger;
+	// 			console.log(err);
+	// 		});
+	// }
 
 	ngOnDestroy(): void {
 		this.componentDestroyed.next();
