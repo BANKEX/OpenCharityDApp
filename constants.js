@@ -96,9 +96,9 @@ exports.DEV_ENVIRONMENT = {
 	'rpcProviderUrl': 'https://rpcprovider.staging.bankex.team:8635',
 	'websocketProviderUrl': 'wss://wsprovider.staging.bankex.team:8636',
 	'organizations':  [
-		'0x25daef934c1e91b29f4c0da9252035cdc0d9d3d0',
-		'0x8f14c5e6f306487dd176d46c90a5156fd0aa178e',
-		'0x8e7ecec2dd35dedfd5c26c697d99fe4022a190c9'
+		'0xb337a67dbefa5dbeff280b25c6974e2a172fe7d3',
+		'0xaaec792ff94d8f6afb4ef4723f7a35641fb2c5cf',
+		'0xb995046667c1608eb178e0c15b4c325b41a31973'
 	]
 };
 
