@@ -8,7 +8,7 @@ import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 import {IncomingDonationSendFundsModalComponent} from '../incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
 import {CharityEventContractService} from '../../core/contracts-services/charity-event-contract.service';
 import {OrganizationContractEventsService} from '../../core/contracts-services/organization-contract-events.service';
-import {reverse, times, constant, findOne} from 'lodash';
+import {reverse, times, constant, find} from 'lodash';
 
 
 @Component({
@@ -76,20 +76,6 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 			});
 	}
 
-	// show list of incoming donations only when all data is loaded
-	public async updateIncomingDonationsListSync(): Promise<void> {
-		const incomingDonationsList: string[] = reverse(await this.organizationContractService.getIncomingDonations(this.organizationContractAddress));
-
-		const incomingDonations = [];
-		for (const address of incomingDonationsList) {
-			const incomingDonation: IncomingDonation = await this.incomingDonationContractService.getIncomingDonationDetails(address);
-			incomingDonations.push(incomingDonation);
-		}
-		this.incomingDonations = incomingDonations;
-
-		this.updateIncomingDonationsAmount(this.incomingDonations);
-	}
-
 	public async updateIncomingDonationAmount(incomingDonation: IncomingDonation): Promise<void> {
 		incomingDonation.amount = await this.tokenContractService.balanceOf(incomingDonation.address);
 	}
@@ -107,23 +93,15 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 		const modalRef: NgbModalRef = this.modalService.open(IncomingDonationSendFundsModalComponent);
 		modalRef.componentInstance.incomingDonation = incomingDonation;
 		modalRef.componentInstance.charityEvents = charityEvents;
-		// modalRef.componentInstance.fundsMoved.subscribe(this.listenForFundsMovedEvent.bind(this));
+		modalRef.componentInstance.fundsMoved.subscribe((incomingDonationAddress: string) => {
+			debugger;
+			const incDonation = find(this.incomingDonations, {address: incomingDonationAddress});
+			if (this.incomingDonations) {
+				this.updateIncomingDonationAmount(incDonation);
+			}
+		});
 	}
 
-	// private listenForFundsMovedEvent(incomingDonationAddress: string) {
-	// 	this.incomingDonationContractEventsService.onFundsMovedToCharityEvent(incomingDonationAddress)
-	// 		.subscribe((res) => {
-	// 			debugger;
-	// 			const incomingDonation = findOne(this.incomingDonations, {address: incomingDonationAddress});
-	// 			if (incomingDonation) {
-	// 				console.log('update');
-	// 				this.updateIncomingDonationAmount(incomingDonation);
-	// 			}
-	// 		}, (err) => {
-	// 			debugger;
-	// 			console.log(err);
-	// 		});
-	// }
 
 	ngOnDestroy(): void {
 		this.componentDestroyed.next();

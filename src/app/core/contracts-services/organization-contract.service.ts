@@ -141,8 +141,7 @@ export class OrganizationContractService {
 
 		for (let i = 0; i < charityEventCount; i++) {
 			const address: string = await contract.methods.charityEventIndex(i).call();
-			const isActive: boolean = await contract.methods.charityEvents(address).call();
-			(isActive) ? result.push(address) : null;
+			result.push(address);
 		}
 
 		return result;
