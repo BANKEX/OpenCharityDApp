@@ -62,9 +62,9 @@ export class IncomingDonationContractService {
 		};
 	}
 
-	public async moveToCharityEvent(address: string, targetEventAddress: string, amount: string, txOptions?: Tx): Promise<any> {
+	public moveToCharityEvent(address: string, targetEventAddress: string, amount: string, txOptions?: Tx): Promise<any> {
 		const contract: Contract = this.cloneContract(this.incomingDonationContract, address);
-		const tx: Tx = merge(this.defaultTx, txOptions);
+		const tx: Tx = merge({}, this.defaultTx, txOptions);
 		return contract.methods.moveToCharityEvent(targetEventAddress, amount).send(tx);
 	}
 

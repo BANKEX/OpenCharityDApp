@@ -28,29 +28,6 @@ export const OrganizationContractAbi = [
 		'type': 'function'
 	},
 	{
-		'constant': false,
-		'inputs': [
-			{
-				'name': '_firstName',
-				'type': 'string'
-			},
-			{
-				'name': '_lastName',
-				'type': 'string'
-			}
-		],
-		'name': 'addEmployee',
-		'outputs': [
-			{
-				'name': '',
-				'type': 'address'
-			}
-		],
-		'payable': false,
-		'stateMutability': 'nonpayable',
-		'type': 'function'
-	},
-	{
 		'constant': true,
 		'inputs': [
 			{
@@ -67,55 +44,6 @@ export const OrganizationContractAbi = [
 		],
 		'payable': false,
 		'stateMutability': 'view',
-		'type': 'function'
-	},
-	{
-		'constant': false,
-		'inputs': [
-			{
-				'name': 'admin',
-				'type': 'address'
-			},
-			{
-				'name': 'value',
-				'type': 'bool'
-			}
-		],
-		'name': 'setAdmin',
-		'outputs': [],
-		'payable': false,
-		'stateMutability': 'nonpayable',
-		'type': 'function'
-	},
-	{
-		'constant': false,
-		'inputs': [
-			{
-				'name': '_name',
-				'type': 'string'
-			},
-			{
-				'name': '_target',
-				'type': 'uint256'
-			},
-			{
-				'name': '_payed',
-				'type': 'uint256'
-			},
-			{
-				'name': '_tags',
-				'type': 'bytes1'
-			}
-		],
-		'name': 'addCharityEvent',
-		'outputs': [
-			{
-				'name': '',
-				'type': 'address'
-			}
-		],
-		'payable': false,
-		'stateMutability': 'nonpayable',
 		'type': 'function'
 	},
 	{
@@ -201,51 +129,6 @@ export const OrganizationContractAbi = [
 		],
 		'payable': false,
 		'stateMutability': 'view',
-		'type': 'function'
-	},
-	{
-		'constant': true,
-		'inputs': [],
-		'name': 'isAdmin',
-		'outputs': [
-			{
-				'name': '',
-				'type': 'bool'
-			}
-		],
-		'payable': false,
-		'stateMutability': 'view',
-		'type': 'function'
-	},
-	{
-		'constant': false,
-		'inputs': [
-			{
-				'name': '_realWorldIdentifier',
-				'type': 'string'
-			},
-			{
-				'name': '_amount',
-				'type': 'uint256'
-			},
-			{
-				'name': '_note',
-				'type': 'string'
-			},
-			{
-				'name': '_tags',
-				'type': 'bytes1'
-			}
-		],
-		'name': 'setIncomingDonation',
-		'outputs': [
-			{
-				'name': '',
-				'type': 'address'
-			}
-		],
-		'payable': false,
-		'stateMutability': 'nonpayable',
 		'type': 'function'
 	},
 	{
@@ -384,8 +267,125 @@ export const OrganizationContractAbi = [
 		],
 		'name': 'IncomingDonationAdded',
 		'type': 'event'
+	},
+	{
+		'constant': false,
+		'inputs': [
+			{
+				'name': '_firstName',
+				'type': 'string'
+			},
+			{
+				'name': '_lastName',
+				'type': 'string'
+			}
+		],
+		'name': 'addEmployee',
+		'outputs': [
+			{
+				'name': '',
+				'type': 'address'
+			}
+		],
+		'payable': false,
+		'stateMutability': 'nonpayable',
+		'type': 'function'
+	},
+	{
+		'constant': false,
+		'inputs': [
+			{
+				'name': '_name',
+				'type': 'string'
+			},
+			{
+				'name': '_target',
+				'type': 'uint256'
+			},
+			{
+				'name': '_payed',
+				'type': 'uint256'
+			},
+			{
+				'name': '_tags',
+				'type': 'bytes1'
+			}
+		],
+		'name': 'addCharityEvent',
+		'outputs': [
+			{
+				'name': '',
+				'type': 'address'
+			}
+		],
+		'payable': false,
+		'stateMutability': 'nonpayable',
+		'type': 'function'
+	},
+	{
+		'constant': false,
+		'inputs': [
+			{
+				'name': '_realWorldIdentifier',
+				'type': 'string'
+			},
+			{
+				'name': '_amount',
+				'type': 'uint256'
+			},
+			{
+				'name': '_note',
+				'type': 'string'
+			},
+			{
+				'name': '_tags',
+				'type': 'bytes1'
+			}
+		],
+		'name': 'setIncomingDonation',
+		'outputs': [
+			{
+				'name': '',
+				'type': 'address'
+			}
+		],
+		'payable': false,
+		'stateMutability': 'nonpayable',
+		'type': 'function'
+	},
+	{
+		'constant': true,
+		'inputs': [],
+		'name': 'isAdmin',
+		'outputs': [
+			{
+				'name': '',
+				'type': 'bool'
+			}
+		],
+		'payable': false,
+		'stateMutability': 'view',
+		'type': 'function'
+	},
+	{
+		'constant': false,
+		'inputs': [
+			{
+				'name': 'admin',
+				'type': 'address'
+			},
+			{
+				'name': 'value',
+				'type': 'bool'
+			}
+		],
+		'name': 'setAdmin',
+		'outputs': [],
+		'payable': false,
+		'stateMutability': 'nonpayable',
+		'type': 'function'
 	}
-]
+];
 export const CharityEventContractAbi = [
 	{
 		'constant': true,
@@ -413,20 +413,6 @@ export const CharityEventContractAbi = [
 		],
 		'payable': false,
 		'stateMutability': 'view',
-		'type': 'function'
-	},
-	{
-		'constant': true,
-		'inputs': [],
-		'name': 'isCharityEvent',
-		'outputs': [
-			{
-				'name': '',
-				'type': 'bool'
-			}
-		],
-		'payable': false,
-		'stateMutability': 'pure',
 		'type': 'function'
 	},
 	{
@@ -479,169 +465,178 @@ export const CharityEventContractAbi = [
 		'payable': false,
 		'stateMutability': 'nonpayable',
 		'type': 'constructor'
+	},
+	{
+		'constant': true,
+		'inputs': [],
+		'name': 'isCharityEvent',
+		'outputs': [
+			{
+				'name': '',
+				'type': 'bool'
+			}
+		],
+		'payable': false,
+		'stateMutability': 'pure',
+		'type': 'function'
 	}
 ];
 export const IncomingDonationContractAbi = [
 	{
-		"constant": true,
-		"inputs": [],
-		"name": "note",
-		"outputs": [
+		'constant': true,
+		'inputs': [],
+		'name': 'note',
+		'outputs': [
 			{
-				"name": "",
-				"type": "string"
+				'name': '',
+				'type': 'string'
 			}
 		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
+		'payable': false,
+		'stateMutability': 'view',
+		'type': 'function'
 	},
 	{
-		"constant": true,
-		"inputs": [],
-		"name": "isIncomingDonation",
-		"outputs": [
+		'constant': true,
+		'inputs': [],
+		'name': 'realWorldIdentifier',
+		'outputs': [
 			{
-				"name": "",
-				"type": "bool"
+				'name': '',
+				'type': 'string'
 			}
 		],
-		"payable": false,
-		"stateMutability": "pure",
-		"type": "function"
+		'payable': false,
+		'stateMutability': 'view',
+		'type': 'function'
 	},
 	{
-		"constant": true,
-		"inputs": [],
-		"name": "realWorldIdentifier",
-		"outputs": [
+		'constant': true,
+		'inputs': [],
+		'name': 'tags',
+		'outputs': [
 			{
-				"name": "",
-				"type": "string"
+				'name': '',
+				'type': 'bytes1'
 			}
 		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
+		'payable': false,
+		'stateMutability': 'view',
+		'type': 'function'
 	},
 	{
-		"constant": true,
-		"inputs": [
+		'constant': true,
+		'inputs': [],
+		'name': 'token',
+		'outputs': [
 			{
-				"name": "donationTags",
-				"type": "bytes1"
-			},
-			{
-				"name": "eventTags",
-				"type": "bytes1"
+				'name': '',
+				'type': 'address'
 			}
 		],
-		"name": "validateTags",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
+		'payable': false,
+		'stateMutability': 'view',
+		'type': 'function'
 	},
 	{
-		"constant": false,
-		"inputs": [
+		'inputs': [
 			{
-				"name": "_charityEvent",
-				"type": "address"
+				'name': '_token',
+				'type': 'address'
 			},
 			{
-				"name": "_amount",
-				"type": "uint256"
+				'name': '_realWorldIdentifier',
+				'type': 'string'
+			},
+			{
+				'name': '_note',
+				'type': 'string'
+			},
+			{
+				'name': '_tags',
+				'type': 'bytes1'
 			}
 		],
-		"name": "moveToCharityEvent",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
+		'payable': false,
+		'stateMutability': 'nonpayable',
+		'type': 'constructor'
 	},
 	{
-		"constant": true,
-		"inputs": [],
-		"name": "tags",
-		"outputs": [
+		'anonymous': false,
+		'inputs': [
 			{
-				"name": "",
-				"type": "bytes1"
+				'indexed': true,
+				'name': 'charityEvent',
+				'type': 'address'
+			},
+			{
+				'indexed': true,
+				'name': 'who',
+				'type': 'address'
+			},
+			{
+				'indexed': false,
+				'name': 'amount',
+				'type': 'uint256'
 			}
 		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
+		'name': 'FundsMovedToCharityEvent',
+		'type': 'event'
 	},
 	{
-		"constant": true,
-		"inputs": [],
-		"name": "token",
-		"outputs": [
+		'constant': false,
+		'inputs': [
 			{
-				"name": "",
-				"type": "address"
+				'name': '_charityEvent',
+				'type': 'address'
+			},
+			{
+				'name': '_amount',
+				'type': 'uint256'
 			}
 		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
+		'name': 'moveToCharityEvent',
+		'outputs': [],
+		'payable': false,
+		'stateMutability': 'nonpayable',
+		'type': 'function'
 	},
 	{
-		"inputs": [
+		'constant': true,
+		'inputs': [
 			{
-				"name": "_token",
-				"type": "address"
+				'name': 'donationTags',
+				'type': 'bytes1'
 			},
 			{
-				"name": "_realWorldIdentifier",
-				"type": "string"
-			},
-			{
-				"name": "_note",
-				"type": "string"
-			},
-			{
-				"name": "_tags",
-				"type": "bytes1"
+				'name': 'eventTags',
+				'type': 'bytes1'
 			}
 		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "constructor"
+		'name': 'validateTags',
+		'outputs': [
+			{
+				'name': '',
+				'type': 'bool'
+			}
+		],
+		'payable': false,
+		'stateMutability': 'view',
+		'type': 'function'
 	},
 	{
-		"anonymous": false,
-		"inputs": [
+		'constant': true,
+		'inputs': [],
+		'name': 'isIncomingDonation',
+		'outputs': [
 			{
-				"indexed": true,
-				"name": "donation",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"name": "charityEvent",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"name": "who",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"name": "amount",
-				"type": "uint256"
+				'name': '',
+				'type': 'bool'
 			}
 		],
-		"name": "FundsMovedToCharityEvent",
-		"type": "event"
+		'payable': false,
+		'stateMutability': 'pure',
+		'type': 'function'
 	}
 ];
 export const OpenCharityTokenContractAbi = [

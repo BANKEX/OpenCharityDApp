@@ -35,13 +35,13 @@ export class AddIncomingDonationComponent implements OnInit {
 		try {
 			const trans = await this.organizationContractService.addIncomingDonation(this.organizationContractAddress, f.realWorldIdentifier, f.amount, f.note, tags);
 			console.log(trans);
-		} catch(e) {
-			console.warn(e.message);
-		} finally {
 			this.initForm();
+		} catch (e) {
+			console.warn(e.message);
 		}
 
 	}
+
 
 	public bitmaskChanged(bitmask: number) {
 		this.selectedTagsBitmask = bitmask;

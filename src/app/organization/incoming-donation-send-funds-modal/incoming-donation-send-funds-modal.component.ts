@@ -1,5 +1,5 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {NgbTypeahead} from '@ng-bootstrap/ng-bootstrap';
+import {Component, EventEmitter, Input, NgZone, OnInit, Output, ViewChild} from '@angular/core';
+import {NgbActiveModal, NgbTypeahead} from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs/Observable';
 import {CharityEvent} from '../../core/contracts-services/charity-event-contract.service';
 import {IncomingDonation, IncomingDonationContractService} from '../../core/contracts-services/incoming-donation-contract.service';
@@ -22,7 +22,8 @@ import {TagsBitmaskService} from '../services/tags-bitmask.service';
 export class IncomingDonationSendFundsModalComponent implements OnInit {
 	@Input('charityEvents') charityEvents: CharityEvent[];
 	@Input('incomingDonation') incomingDonation: IncomingDonation;
-	@ViewChild('instance') instance: NgbTypeahead;
+	@Output('fundsMoved') fundsMoved: EventEmitter<string> = new EventEmitter<string>();
+	@ViewChild('typeahead') typeahead: NgbTypeahead;
 	focus$ = new Subject<string>();
 	click$ = new Subject<string>();
 
@@ -38,6 +39,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 		private incomingDonationContractService: IncomingDonationContractService,
 		private tagsBitmaskService: TagsBitmaskService,
 		private fb: FormBuilder,
+		private activeModal: NgbActiveModal
 	) {
 	}
 
@@ -47,7 +49,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 			text$
 				.debounceTime(200).distinctUntilChanged()
 				.merge(this.focus$)
-				.merge(this.click$.filter(() => !this.instance.isPopupOpen()))
+				.merge(this.click$.filter(() => !this.typeahead.isPopupOpen()))
 				.map(term => term === '' ?  this.statesWithFlags
 					: this.statesWithFlags.filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10));
 
@@ -83,14 +85,19 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 	}
 
 
-	public async sendFounds(targetCharityEvent: CharityEvent, amount: string): Promise<void> {
+	public async sendFunds(targetCharityEvent: CharityEvent, amount: string): Promise<void> {
 		try {
-			const transaction = await this.incomingDonationContractService.moveToCharityEvent(this.incomingDonation.address, targetCharityEvent.address, amount);
-			console.log(transaction);
+			const tran = await this.incomingDonationContractService.moveToCharityEvent(this.incomingDonation.address, targetCharityEvent.address, amount);
+			console.log(tran);
+			this.fundsMoved.emit(this.incomingDonation.address);
+			this.activeModal.close();
 		} catch (e) {
 			console.log(e);
 		}
 	}
+
+
+
 
 }
 

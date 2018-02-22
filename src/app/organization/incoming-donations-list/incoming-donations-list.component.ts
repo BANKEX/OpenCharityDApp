@@ -1,5 +1,5 @@
 import {OrganizationContractService} from '../../core/contracts-services/organization-contract.service';
-import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, NgZone, OnDestroy, OnInit} from '@angular/core';
 // tslint:disable-next-line:max-line-length
 import {IncomingDonation, IncomingDonationContractService} from '../../core/contracts-services/incoming-donation-contract.service';
 import {Subject} from 'rxjs/Subject';
@@ -8,7 +8,8 @@ import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 import {IncomingDonationSendFundsModalComponent} from '../incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
 import {CharityEventContractService} from '../../core/contracts-services/charity-event-contract.service';
 import {OrganizationContractEventsService} from '../../core/contracts-services/organization-contract-events.service';
-import {reverse, times, constant} from 'lodash';
+import {reverse, times, constant, findOne} from 'lodash';
+import {IncomingDonationContractEventsService} from '../../core/contracts-services/incoming-donation-contract-events.service';
 
 
 @Component({
@@ -27,6 +28,7 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 				private tokenContractService: TokenContractService,
 				private charityEventContractService: CharityEventContractService,
 				private organizationContractEventsService: OrganizationContractEventsService,
+				private incomingDonationContractEventsService: IncomingDonationContractEventsService,
 				private modalService: NgbModal,
 				private cd: ChangeDetectorRef
 	) {
@@ -90,15 +92,6 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 		this.updateIncomingDonationsAmount(this.incomingDonations);
 	}
 
-	public async moveToCharityEvent(donationAddress: string, targetEventAddress: string, amount: string): Promise<void> {
-		try {
-			const transactoin = await this.incomingDonationContractService.moveToCharityEvent(donationAddress, targetEventAddress, amount);
-			console.log(transactoin);
-		} catch (e) {
-			console.log(e);
-		}
-	}
-
 	public async updateIncomingDonationAmount(incomingDonation: IncomingDonation): Promise<void> {
 		incomingDonation.amount = await this.tokenContractService.balanceOf(incomingDonation.address);
 	}
@@ -116,6 +109,22 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 		const modalRef: NgbModalRef = this.modalService.open(IncomingDonationSendFundsModalComponent);
 		modalRef.componentInstance.incomingDonation = incomingDonation;
 		modalRef.componentInstance.charityEvents = charityEvents;
+		modalRef.componentInstance.fundsMoved.subscribe(this.listenForFundsMovedEvent.bind(this));
+	}
+
+	private listenForFundsMovedEvent(incomingDonationAddress: string) {
+		this.incomingDonationContractEventsService.onFundsMovedToCharityEvent(incomingDonationAddress)
+			.subscribe((res) => {
+				debugger;
+				const incomingDonation = findOne(this.incomingDonations, {address: incomingDonationAddress});
+				if (incomingDonation) {
+					console.log('update');
+					this.updateIncomingDonationAmount(incomingDonation);
+				}
+			}, (err) => {
+				debugger;
+				console.log(err);
+			});
 	}
 
 	ngOnDestroy(): void {
