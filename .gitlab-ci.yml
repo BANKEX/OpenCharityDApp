@@ -86,7 +86,7 @@ deploy_stage:
   stage: deploy-stage
   image: tmaier/docker-compose
   variables:
-    DOCKER_HOST: "tcp://charity-staging.westeurope.cloudapp.azure.com:2376"
+    DOCKER_HOST: "tcp://charity-staging-do.bankex.team:2376"
     DOCKER_TLS_VERIFY: "1"
     SERVERNAME: opencharity.staging.bankex.team
     EMAIL: "om@bankexfoundation.org"
@@ -94,9 +94,9 @@ deploy_stage:
     IMAGE: bankexlabs/$CI_PROJECT_NAME:stage
   before_script:
     - mkdir -p $DOCKER_CERT_PATH
-    - echo "$DOCKER_CA" > $DOCKER_CERT_PATH/ca.pem
-    - echo "$DOCKER_CERT" > $DOCKER_CERT_PATH/cert.pem
-    - echo "$DOCKER_KEY" > $DOCKER_CERT_PATH/key.pem
+    - echo "$DO_DOCKER_CA_STAGE" > $DOCKER_CERT_PATH/ca.pem
+    - echo "$DO_DOCKER_CERT_STAGE" > $DOCKER_CERT_PATH/cert.pem
+    - echo "$DO_DOCKER_KEY_STAGE" > $DOCKER_CERT_PATH/key.pem
     - docker login -u $DOCKER_USER -p $DOCKER_TOKEN
     - echo "IMAGE=$IMAGE" > .env ; echo "VIRTUAL_HOST=$SERVERNAME" >> .env ;
   script:
@@ -114,7 +114,7 @@ deploy_prod:
   stage: deploy-prod
   image: tmaier/docker-compose
   variables:
-    DOCKER_HOST: "tcp://charity-prod.westeurope.cloudapp.azure.com:2376"
+    DOCKER_HOST: "tcp://charity-prod-do.bankex.team:2376"
     DOCKER_TLS_VERIFY: "1"
     SERVERNAME: opencharity.bankex.team
     EMAIL: "om@bankexfoundation.org"
@@ -122,9 +122,9 @@ deploy_prod:
     IMAGE: bankexlabs/$CI_PROJECT_NAME:prod
   before_script:
     - mkdir -p $DOCKER_CERT_PATH
-    - echo "$DOCKER_CA" > $DOCKER_CERT_PATH/ca.pem
-    - echo "$DOCKER_CERT" > $DOCKER_CERT_PATH/cert.pem
-    - echo "$DOCKER_KEY" > $DOCKER_CERT_PATH/key.pem
+    - echo "$DO_DOCKER_CA_PROD" > $DOCKER_CERT_PATH/ca.pem
+    - echo "$DO_DOCKER_CERT_PROD" > $DOCKER_CERT_PATH/cert.pem
+    - echo "$DO_DOCKER_KEY_PROD" > $DOCKER_CERT_PATH/key.pem
     - docker login -u $DOCKER_USER -p $DOCKER_TOKEN
     - echo "IMAGE=$IMAGE" > .env ; echo "VIRTUAL_HOST=$SERVERNAME" >> .env ;
   script:
