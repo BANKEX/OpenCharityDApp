@@ -1,8 +1,7 @@
 import {Component, EventEmitter, Input, NgZone, OnInit, Output, ViewChild} from '@angular/core';
 import {NgbActiveModal, NgbTypeahead} from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs/Observable';
-import {CharityEvent} from '../../core/contracts-services/charity-event-contract.service';
-import {IncomingDonation, IncomingDonationContractService} from '../../core/contracts-services/incoming-donation-contract.service';
+import {IncomingDonationContractService} from '../../core/contracts-services/incoming-donation-contract.service';
 import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/filter';
@@ -20,8 +19,8 @@ import {TagsBitmaskService} from '../services/tags-bitmask.service';
 })
 
 export class IncomingDonationSendFundsModalComponent implements OnInit {
-	@Input('charityEvents') charityEvents: CharityEvent[];
-	@Input('incomingDonation') incomingDonation: IncomingDonation;
+	@Input('charityEvents') charityEvents: ContractCharityEvent[];
+	@Input('incomingDonation') incomingDonation: ContractIncomingDonation;
 	@Output('fundsMoved') fundsMoved: EventEmitter<string> = new EventEmitter<string>();
 	@ViewChild('typeahead') typeahead: NgbTypeahead;
 	focus$ = new Subject<string>();
@@ -31,7 +30,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 	public search: any;
 	public statesWithFlags: any;
 
-	public targetCharityEvent: CharityEvent;
+	public targetContractCharityEvent: ContractCharityEvent;
 	public amount: string;
 	public moveFundsForm: FormGroup;
 
@@ -44,7 +43,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 	}
 
 	public ngOnInit(): void {
-		this.statesWithFlags = this.filterCharityEventsByTags(this.charityEvents);
+		this.statesWithFlags = this.filterContractCharityEventsByTags(this.charityEvents);
 		this.search = (text$: Observable<string>) =>
 			text$
 				.debounceTime(200).distinctUntilChanged()
@@ -58,7 +57,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 		this.initForm();
 	}
 
-	private filterCharityEventsByTags(charityEvents: CharityEvent[]): CharityEvent[] {
+	private filterContractCharityEventsByTags(charityEvents: ContractCharityEvent[]): ContractCharityEvent[] {
 		const donationTags = parseInt(this.incomingDonation.tags, 16);
 		return charityEvents.filter((event) => {
 			return this.tagsBitmaskService.containSimilarTags(parseInt(event.tags, 16), donationTags);
@@ -67,7 +66,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 
 	private initForm(): void {
 		this.moveFundsForm = this.fb.group({
-			targetCharityEvent: ['', [Validators.required]],
+			targetContractCharityEvent: ['', [Validators.required]],
 			amount: ['', [Validators.required, this.validateAmount.bind(this)]]
 		})
 	}
@@ -85,9 +84,9 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 	}
 
 
-	public async sendFunds(targetCharityEvent: CharityEvent, amount: string): Promise<void> {
+	public async sendFunds(targetContractCharityEvent: ContractCharityEvent, amount: string): Promise<void> {
 		try {
-			const tran = await this.incomingDonationContractService.moveToCharityEvent(this.incomingDonation.address, targetCharityEvent.address, amount);
+			const tran = await this.incomingDonationContractService.moveToCharityEvent(this.incomingDonation.address, targetContractCharityEvent.address, amount);
 			console.log(tran);
 			this.fundsMoved.emit(this.incomingDonation.address);
 			this.activeModal.close();

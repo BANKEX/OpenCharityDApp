@@ -1,10 +1,10 @@
 import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {OrganizationContractService} from '../../core/contracts-services/organization-contract.service';
-import {CharityEvent, CharityEventContractService} from '../../core/contracts-services/charity-event-contract.service';
+import {CharityEventContractService} from '../../core/contracts-services/charity-event-contract.service';
 import {Subject} from 'rxjs/Subject';
 import {TokenContractService} from '../../core/contracts-services/token-contract.service';
 import {OrganizationContractEventsService} from '../../core/contracts-services/organization-contract-events.service';
-import {reverse, times, constant} from 'lodash';
+import {reverse, times, constant, merge} from 'lodash';
 
 @Component({
 	selector: 'opc-charity-events-list',
@@ -13,10 +13,8 @@ import {reverse, times, constant} from 'lodash';
 })
 export class CharityEventsListComponent implements OnInit, OnDestroy {
 	@Input('organizationContractAddress') organizationContractAddress: string;
-	charityEvents: CharityEvent[] = [];
+	charityEvents: AppCharityEvent[] = [];
 	private componentDestroyed: Subject<void> = new Subject<void>();
-
-
 
 	constructor(private organizationContractService: OrganizationContractService,
 				private charityEventContractService: CharityEventContractService,
@@ -59,7 +57,9 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 			.takeWhile(() => charityEventsCounter > 0 )
 			.subscribe(async (res: { address: string, index: number }) => {
 				try {
-					this.charityEvents[res.index] = await this.charityEventContractService.getCharityEventDetails(res.address);
+					this.charityEvents[res.index] = merge({}, await this.charityEventContractService.getCharityEventDetails(res.address), {
+						loaded: true
+					});
 					await this.updateCharityEventRaised(this.charityEvents[res.index]);
 					this.cd.detectChanges();
 
@@ -84,11 +84,11 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 	}
 
 
-	private async updateCharityEventRaised(charityEvent: CharityEvent) {
+	private async updateCharityEventRaised(charityEvent: AppCharityEvent) {
 		charityEvent.raised = await this.tokenContractService.balanceOf(charityEvent.address);
 	}
 
-	private async updateCharityEventsRaised(charityEvents: CharityEvent[]) {
+	private async updateCharityEventsRaised(charityEvents: AppCharityEvent[]) {
 		charityEvents.forEach(async (charityEvent) => {
 			this.updateCharityEventRaised(charityEvent);
 		});

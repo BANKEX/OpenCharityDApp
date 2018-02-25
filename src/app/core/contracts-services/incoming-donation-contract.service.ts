@@ -6,14 +6,6 @@ import Web3 from 'web3';
 import {TokenContractService} from './token-contract.service';
 import {IncomingDonationContractAbi} from '../../contracts-abi';
 
-export interface IncomingDonation {
-	realWorldsIdentifier: string;
-	address: string;
-	amount: string;
-	note: string;
-	tags: string;
-}
-
 
 @Injectable()
 export class IncomingDonationContractService {
@@ -52,7 +44,7 @@ export class IncomingDonationContractService {
 	}
 
 
-	public async getIncomingDonationDetails(address: string, txOptions?: Tx): Promise<IncomingDonation> {
+	public async getIncomingDonationDetails(address: string, txOptions?: Tx): Promise<ContractIncomingDonation> {
 		return {
 			realWorldsIdentifier: await this.getRealWorldIdentifier(address, txOptions),
 			address: address,
