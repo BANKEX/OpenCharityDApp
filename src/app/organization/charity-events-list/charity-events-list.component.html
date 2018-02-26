@@ -1,7 +1,12 @@
 
 <div class="row">
 	<div class="col-lg-4" *ngFor="let charityEvent of charityEvents">
-		<div class="card calendar-event card-hover">
+		<div class="card calendar-event card-hover ce-card">
+			<div class="btn-group btn-group-sm ce-tools">
+				<button type="button" class="btn btn-default"><i class="fa fa-pencil"></i></button>
+				<button type="button" class="btn btn-default"><i class="fa fa-trash"></i></button>
+				<button type="button" class="btn btn-default"><i class="fa fa-ellipsis-h"></i></button>
+			</div>
 			<div class="card-block no-pdd-btm">
 				<span class="title-wrap"><h4 class="no-mrg-btm text-semibold">{{charityEvent.name}}</h4> </span>
 			</div>
