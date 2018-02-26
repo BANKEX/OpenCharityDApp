@@ -39,7 +39,7 @@ export class OrganizationSharedService {
 	/*********************************/
 
 	// triggered when user try to add new incoming donation
-	private _onIncomingDonationAdded: Subject<ContractIncomingDonation> = new Subject<AppIncomingDonation>();
+	private _onIncomingDonationAdded: Subject<AppIncomingDonation> = new Subject<AppIncomingDonation>();
 	private onIncomingDonationAddedSource = this._onIncomingDonationAdded.asObservable().share<AppIncomingDonation>();
 
 	// triggered when transaction succeed i.e CE stored in blockchain
