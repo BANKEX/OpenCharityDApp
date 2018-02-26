@@ -1,18 +1,12 @@
 import {Injectable} from '@angular/core';
 import {Contract, Tx} from 'web3/types';
-import {Web3ProviderService} from '../../core/web3-provider.service';
+import {Web3ProviderService} from '../web3-provider.service';
 import {merge} from 'lodash';
 import Web3 from 'web3';
 import {CharityEventContractAbi} from '../../contracts-abi';
+import {ContractCharityEvent} from '../../open-charity-types';
 
-export interface CharityEvent {
-	name: string;
-	address: string;
-	raised?: string;
-	target: string;
-	payed: string;
-	tags: string;
-}
+
 
 
 @Injectable()
@@ -56,7 +50,7 @@ export class CharityEventContractService {
 		return contract.methods.tags().call(txOptions);
 	}
 
-	public async getCharityEventDetails(address: string, txOptions?: Tx): Promise<CharityEvent> {
+	public async getCharityEventDetails(address: string, txOptions?: Tx): Promise<ContractCharityEvent> {
 		return {
 			name: await this.getName(address, txOptions),
 			address: address,
@@ -66,13 +60,13 @@ export class CharityEventContractService {
 		};
 	}
 
-	public async getCharityEventsList(charityEventsAddresses: string[], txOptions?: Tx): Promise<CharityEvent[]> {
+	public async getCharityEventsList(charityEventsAddresses: string[], txOptions?: Tx): Promise<ContractCharityEvent[]> {
 		const charityEvents = [];
 
 		// for-of is required to provide
 		// sequential performing for async/await operations
 		for (const address of charityEventsAddresses) {
-			const charityEvent: CharityEvent = await this.getCharityEventDetails(address);
+			const charityEvent: ContractCharityEvent = await this.getCharityEventDetails(address);
 			charityEvents.push(charityEvent);
 		}
 

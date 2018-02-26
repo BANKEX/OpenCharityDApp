@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
 import {MetamaskCheckService} from '../core/metamask-check.service';
-import {OrganizationContractService} from './services/organization-contract.service';
+import {OrganizationContractService} from '../core/contracts-services/organization-contract.service';
 import {Web3ProviderService} from '../core/web3-provider.service';
 import {BlockingNotificationOverlayService} from '../core/blocking-notification-overlay.service';
 

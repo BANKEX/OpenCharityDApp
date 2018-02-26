@@ -23,12 +23,11 @@ contract IncomingDonation {
 
     /**
      * @dev Events emitted when donation funds moved to charity event
-     * @param donation address of donation
      * @param charityEvent address of target charity event
      * @param who address which initiate transaction
      * @param amount how much tokens moved
      */
-    event FundsMovedToCharityEvent(address indexed donation, address indexed charityEvent, address indexed who, uint amount);
+    event FundsMovedToCharityEvent(address indexed charityEvent, address indexed who, uint amount);
 
 
 
@@ -52,6 +51,8 @@ contract IncomingDonation {
         require(validateTags(tags, charityEvent.tags()));
 
         token.transfer(_charityEvent, _amount);
+
+		FundsMovedToCharityEvent(_charityEvent, msg.sender, _amount);
     }
 
     /**
