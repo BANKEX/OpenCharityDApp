@@ -120,12 +120,6 @@ export class OrganizationContractService {
 		return contract.methods.addCharityEvent(name, target, payed, tags).send(tx);
 	}
 
-	public addCharityEventCall(address: string, name: string, target: string, payed: string, tags: string, txOptions?: Tx): Promise<string> {
-		const contract: Contract = this.cloneContract(this.organizationContract, address);
-		const tx: Tx = merge(this.defaultTx, txOptions);
-		return contract.methods.addCharityEvent(name, target, payed, tags).call(tx);
-	}
-
 	public getCharityEvents(address: string, txOptions?: Tx): Observable<{ address: string, index: number }> {
 		const source: Subject<{ address: string, index: number }> = new Subject<{ address: string, index: number }>();
 

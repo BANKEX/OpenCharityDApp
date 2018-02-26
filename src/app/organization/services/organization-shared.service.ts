@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
-import {ContractCharityEvent, ContractIncomingDonation} from '../../open-charity-types';
+import {AppCharityEvent, ContractCharityEvent, ContractIncomingDonation} from '../../open-charity-types';
+import {Web3ProviderService} from '../../core/web3-provider.service';
 
 // service to share events between components in organization module
 
@@ -13,8 +14,8 @@ export class OrganizationSharedService {
 	/*********************************/
 
 	// triggered when user try to add new charity event
-	private _onCharityEventAdded: Subject<ContractCharityEvent> = new Subject<ContractCharityEvent>();
-	private onCharityEventAddedSource = this._onCharityEventAdded.asObservable().share<ContractCharityEvent>();
+	private _onCharityEventAdded: Subject<AppCharityEvent> = new Subject<AppCharityEvent>();
+	private onCharityEventAddedSource = this._onCharityEventAdded.asObservable().share<AppCharityEvent>();
 
 	// triggered when transaction succeed i.e CE stored in blockchain
 	private _onCharityEventConfirmed: Subject<string> = new Subject<string>();
@@ -49,8 +50,7 @@ export class OrganizationSharedService {
 	private onIncomingDonationCanceledSource = this._onIncomingDonationCanceled.asObservable().share<string>();
 
 
-
-	constructor() {
+	constructor(private web3ProviderService: Web3ProviderService) {
 
 	}
 
@@ -58,20 +58,20 @@ export class OrganizationSharedService {
 	/****** Methods to emit data *****/
 	/*********************************/
 
-	public charityEventAdded(charityEvent: ContractCharityEvent): void {
+	public charityEventAdded(charityEvent: AppCharityEvent): void {
 		this._onCharityEventAdded.next(charityEvent);
 	}
 
-	public charityEventConfirmed(charityEventAddress: string): void {
-		this._onCharityEventConfirmed.next(charityEventAddress);
+	public charityEventConfirmed(charityEventInternalId: string): void {
+		this._onCharityEventConfirmed.next(charityEventInternalId);
 	}
 
-	public charityEventFailed(charityEventAddress: string): void {
-		this._onCharityEventFailed.next(charityEventAddress);
+	public charityEventFailed(charityEventInternalId: string): void {
+		this._onCharityEventFailed.next(charityEventInternalId);
 	}
 
-	public charityEventCanceled(charityEventAddress: string): void {
-		this._onCharityEventCanceled.next(charityEventAddress);
+	public charityEventCanceled(charityEventInternalId: string): void {
+		this._onCharityEventCanceled.next(charityEventInternalId);
 	}
 
 	public incomingDonationAdded(incomingDonation: ContractIncomingDonation): void {
@@ -89,10 +89,6 @@ export class OrganizationSharedService {
 	public incomingDonationCanceled(incomingDonationAddress: string): void {
 		this._onIncomingDonationCanceled.next(incomingDonationAddress);
 	}
-
-
-
-
 
 	/***********************************/
 	/** Methods to subscribe to events **/
@@ -129,6 +125,31 @@ export class OrganizationSharedService {
 
 	public onIncomingDonationCanceled(): Observable<string> {
 		return this.onIncomingDonationCanceledSource;
+	}
+
+
+	/*********************************/
+	/****** Utils ********************/
+	/*********************************/
+
+	// this function is used to create a hash string
+	// from provided data. this hash is used to provide
+	// short term unique internal ids for pending transactions items
+	// THIS HASH IS UNIQUE ONLY WITHING CURRENT USER SESSION
+	// DON'T STORE IT ON THE SERVER OR ANYWHERE ELSE
+
+	public makePseudoRandomHash(data: ContractCharityEvent | ContractIncomingDonation): string {
+		let sourceData = '';
+
+		for (let p in data) {
+			sourceData += data[p];
+		}
+
+		const randomNumber: number = Math.random() * 1000;
+		sourceData += randomNumber.toString();
+		console.log(sourceData);
+
+		return this.web3ProviderService.web3.utils.sha3(sourceData);
 	}
 
 

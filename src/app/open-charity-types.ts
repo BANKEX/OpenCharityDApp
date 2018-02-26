@@ -7,7 +7,7 @@ export enum ConfirmationStatusState {
 
 export interface ContractCharityEvent {
 	name: string;
-	address: string;
+	address?: string;
 	target: string;
 	payed: string;
 	tags: string;
@@ -15,6 +15,7 @@ export interface ContractCharityEvent {
 
 
 export interface AppCharityEvent extends ContractCharityEvent{
+	internalId?: string;
 	raised?: string;
 	confirmation: ConfirmationStatusState;
 }
@@ -28,5 +29,6 @@ export interface ContractIncomingDonation {
 }
 
 export interface AppIncomingDonation extends ContractIncomingDonation {
+	internalId?: string;
 	confirmation: ConfirmationStatusState;
 }

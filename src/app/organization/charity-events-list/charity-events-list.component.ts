@@ -39,8 +39,8 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 	private initEventsListeners(): void {
 		this.organizationSharedService.onCharityEventAdded()
 			.takeUntil(this.componentDestroyed)
-			.subscribe((res: ContractCharityEvent) => {
-				this.charityEvents.push(merge({}, res, {raised: 0, confirmation: ConfirmationStatusState.PENDING}));
+			.subscribe((res: AppCharityEvent) => {
+				this.charityEvents.push(merge({}, res, {raised: 0}));
 			}, (err: any) => {
 				console.error(err);
 				alert('`Error ${err.message}');
@@ -49,9 +49,8 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 
 		this.organizationSharedService.onCharityEventConfirmed()
 			.takeUntil(this.componentDestroyed)
-			.subscribe((charityEventAddress: string) => {
-
-				const i: number = findIndex(this.charityEvents, {address: charityEventAddress});
+			.subscribe((charityEventInternalId: string) => {
+				const i: number = findIndex(this.charityEvents, {internalId: charityEventInternalId});
 				if (i !== -1) {
 					this.charityEvents[i].confirmation = ConfirmationStatusState.CONFIRMED;
 				}
@@ -62,9 +61,9 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 
 		this.organizationSharedService.onCharityEventFailed()
 			.takeUntil(this.componentDestroyed)
-			.subscribe((charityEventAddress: string) => {
+			.subscribe((charityEventInternalId: string) => {
 
-				const i: number = findIndex(this.charityEvents, {address: charityEventAddress});
+				const i: number = findIndex(this.charityEvents, {internalId: charityEventInternalId});
 				if (i !== -1) {
 					this.charityEvents[i].confirmation = ConfirmationStatusState.FAILED;
 				}
@@ -77,9 +76,9 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 
 		this.organizationSharedService.onCharityEventCanceled()
 			.takeUntil(this.componentDestroyed)
-			.subscribe((charityEventAddress: string) => {
+			.subscribe((charityEventInternalId: string) => {
 
-				const i: number = findIndex(this.charityEvents, {address: charityEventAddress});
+				const i: number = findIndex(this.charityEvents, {internalId: charityEventInternalId});
 				if (i !== -1) {
 					this.charityEvents.splice(i, 1);
 				}
