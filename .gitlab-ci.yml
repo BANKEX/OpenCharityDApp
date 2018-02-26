@@ -98,7 +98,7 @@ deploy_stage:
     - echo "$DO_DOCKER_CERT_STAGE" > $DOCKER_CERT_PATH/cert.pem
     - echo "$DO_DOCKER_KEY_STAGE" > $DOCKER_CERT_PATH/key.pem
     - docker login -u $DOCKER_USER -p $DOCKER_TOKEN
-    - echo "IMAGE=$IMAGE" > .env ; echo "VIRTUAL_HOST=$SERVERNAME" >> .env ;
+    - echo "IMAGE=$IMAGE" > .env ; echo "VIRTUAL_HOST=$SERVERNAME" >> .env ; echo "LETSENCRYPT_HOST=$SERVERNAME" >> .env; echo "LETSENCRYPT_EMAIL=$EMAIL" >> .env
   script:
     - docker-compose -f docker/docker-compose.yml down
     - docker rmi $IMAGE || echo "image not exist"
@@ -126,7 +126,7 @@ deploy_prod:
     - echo "$DO_DOCKER_CERT_PROD" > $DOCKER_CERT_PATH/cert.pem
     - echo "$DO_DOCKER_KEY_PROD" > $DOCKER_CERT_PATH/key.pem
     - docker login -u $DOCKER_USER -p $DOCKER_TOKEN
-    - echo "IMAGE=$IMAGE" > .env ; echo "VIRTUAL_HOST=$SERVERNAME" >> .env ;
+    - echo "IMAGE=$IMAGE" > .env ; echo "VIRTUAL_HOST=$SERVERNAME" >> .env ; echo "LETSENCRYPT_HOST=$SERVERNAME" >> .env; echo "LETSENCRYPT_EMAIL=$EMAIL" >> .env
   script:
     - docker-compose -f docker/docker-compose.yml down
     - docker rmi $IMAGE || echo "image not exist"
