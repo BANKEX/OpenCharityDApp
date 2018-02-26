@@ -85,31 +85,3 @@ interface NodeModule extends WebpackModule {
 
 interface Global extends GlobalEnvironment {
 }
-
-
-// App typings
-
-interface ContractCharityEvent {
-	name: string;
-	address: string;
-	target: string;
-	payed: string;
-	tags: string;
-}
-
-interface AppCharityEvent extends ContractCharityEvent{
-	raised?: string;
-	loaded: boolean;
-}
-
-interface ContractIncomingDonation {
-	realWorldsIdentifier: string;
-	address: string;
-	amount: string;
-	note: string;
-	tags: string;
-}
-
-interface AppIncomingDonation extends ContractIncomingDonation {
-	loaded: boolean;
-}

@@ -4,6 +4,7 @@ import {Web3ProviderService} from '../web3-provider.service';
 import {merge} from 'lodash';
 import Web3 from 'web3';
 import {CharityEventContractAbi} from '../../contracts-abi';
+import {ContractCharityEvent} from '../../open-charity-types';
 
 
 

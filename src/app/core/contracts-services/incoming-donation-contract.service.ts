@@ -5,6 +5,7 @@ import {merge} from 'lodash';
 import Web3 from 'web3';
 import {TokenContractService} from './token-contract.service';
 import {IncomingDonationContractAbi} from '../../contracts-abi';
+import {ContractIncomingDonation} from '../../open-charity-types';
 
 
 @Injectable()

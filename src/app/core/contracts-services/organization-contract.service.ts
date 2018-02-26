@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Contract, Tx} from 'web3/types';
+import {Contract, TransactionReceipt, Tx} from 'web3/types';
 import {Web3ProviderService} from '../web3-provider.service';
 import {merge, forEach} from 'lodash';
 import Web3 from 'web3';
@@ -109,10 +109,16 @@ export class OrganizationContractService {
 
 
 	// Charity Events Methods
-	public addCharityEvent(address: string, name: string, target: string, payed: string, tags: string, txOptions?: Tx): Promise<any> {
+	public addCharityEvent(address: string, name: string, target: string, payed: string, tags: string, txOptions?: Tx): Promise<TransactionReceipt> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		const tx: Tx = merge(this.defaultTx, txOptions);
 		return contract.methods.addCharityEvent(name, target, payed, tags).send(tx);
+	}
+
+	public addCharityEventCall(address: string, name: string, target: string, payed: string, tags: string, txOptions?: Tx): Promise<string> {
+		const contract: Contract = this.cloneContract(this.organizationContract, address);
+		const tx: Tx = merge(this.defaultTx, txOptions);
+		return contract.methods.addCharityEvent(name, target, payed, tags).call(tx);
 	}
 
 	public getCharityEvents(address: string, txOptions?: Tx): Observable<{ address: string, index: number }> {

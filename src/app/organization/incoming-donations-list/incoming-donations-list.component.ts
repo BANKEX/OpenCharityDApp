@@ -9,6 +9,7 @@ import {IncomingDonationSendFundsModalComponent} from '../incoming-donation-send
 import {CharityEventContractService} from '../../core/contracts-services/charity-event-contract.service';
 import {OrganizationContractEventsService} from '../../core/contracts-services/organization-contract-events.service';
 import {reverse, times, constant, find, merge} from 'lodash';
+import {AppIncomingDonation} from '../../open-charity-types';
 
 
 @Component({
