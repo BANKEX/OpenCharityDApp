@@ -2,7 +2,10 @@ import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
 import {
-	AppCharityEvent, ConfirmationResponse, ContractCharityEvent,
+	AppCharityEvent,
+	AppIncomingDonation,
+	ConfirmationResponse,
+	ContractCharityEvent,
 	ContractIncomingDonation
 } from '../../open-charity-types';
 import {Web3ProviderService} from '../../core/web3-provider.service';
@@ -36,21 +39,21 @@ export class OrganizationSharedService {
 	/*********************************/
 
 	// triggered when user try to add new incoming donation
-	private _onIncomingDonationAdded: Subject<ContractIncomingDonation> = new Subject<ContractIncomingDonation>();
-	private onIncomingDonationAddedSource = this._onIncomingDonationAdded.asObservable().share<ContractIncomingDonation>();
+	private _onIncomingDonationAdded: Subject<ContractIncomingDonation> = new Subject<AppIncomingDonation>();
+	private onIncomingDonationAddedSource = this._onIncomingDonationAdded.asObservable().share<AppIncomingDonation>();
 
 	// triggered when transaction succeed i.e CE stored in blockchain
-	private _onIncomingDonationConfirmed: Subject<string> = new Subject<string>();
-	private onIncomingDonationConfirmedSource = this._onIncomingDonationConfirmed.asObservable().share<string>();
+	private _onIncomingDonationConfirmed: Subject<ConfirmationResponse> = new Subject<ConfirmationResponse>();
+	private onIncomingDonationConfirmedSource = this._onIncomingDonationConfirmed.asObservable().share<ConfirmationResponse>();
 
 
 	// triggered when transaction failed  i.e CE is not stored in blockchain
-	private _onIncomingDonationFailed: Subject<string> = new Subject<string>();
-	private onIncomingDonationFailedSource = this._onIncomingDonationFailed.asObservable().share<string>();
+	private _onIncomingDonationFailed: Subject<ConfirmationResponse> = new Subject<ConfirmationResponse>();
+	private onIncomingDonationFailedSource = this._onIncomingDonationFailed.asObservable().share<ConfirmationResponse>();
 
 	// triggered when transaction canceled by user
-	private _onIncomingDonationCanceled: Subject<string> = new Subject<string>();
-	private onIncomingDonationCanceledSource = this._onIncomingDonationCanceled.asObservable().share<string>();
+	private _onIncomingDonationCanceled: Subject<ConfirmationResponse> = new Subject<ConfirmationResponse>();
+	private onIncomingDonationCanceledSource = this._onIncomingDonationCanceled.asObservable().share<ConfirmationResponse>();
 
 
 	constructor(private web3ProviderService: Web3ProviderService) {
@@ -59,6 +62,7 @@ export class OrganizationSharedService {
 
 	/*********************************/
 	/****** Methods to emit data *****/
+
 	/*********************************/
 
 	public charityEventAdded(charityEvent: AppCharityEvent): void {
@@ -66,38 +70,39 @@ export class OrganizationSharedService {
 	}
 
 	public charityEventConfirmed(charityEventInternalId: string, address: string): void {
-		this._onCharityEventConfirmed.next({internalId: charityEventInternalId, address: address });
+		this._onCharityEventConfirmed.next({internalId: charityEventInternalId, address: address});
 	}
 
 	public charityEventFailed(charityEventInternalId: string, address: string): void {
-		this._onCharityEventFailed.next({internalId: charityEventInternalId, address: address });
+		this._onCharityEventFailed.next({internalId: charityEventInternalId, address: address});
 	}
 
 	public charityEventCanceled(charityEventInternalId: string, address: string): void {
-		this._onCharityEventCanceled.next({internalId: charityEventInternalId, address: address });
+		this._onCharityEventCanceled.next({internalId: charityEventInternalId, address: address});
 	}
 
-	public incomingDonationAdded(incomingDonation: ContractIncomingDonation): void {
+	public incomingDonationAdded(incomingDonation: AppIncomingDonation): void {
 		this._onIncomingDonationAdded.next(incomingDonation);
 	}
 
-	public incomingDonationConfirmed(incomingDonationAddress: string): void {
-		this._onIncomingDonationConfirmed.next(incomingDonationAddress);
+	public incomingDonationConfirmed(incomingDonationInternalId: string, address: string): void {
+		this._onIncomingDonationConfirmed.next({internalId: incomingDonationInternalId, address: address});
 	}
 
-	public incomingDonationFailed(incomingDonationAddress: string): void {
-		this._onIncomingDonationFailed.next(incomingDonationAddress);
+	public incomingDonationFailed(incomingDonationInternalId: string, address: string): void {
+		this._onIncomingDonationFailed.next({internalId: incomingDonationInternalId, address: address});
 	}
 
-	public incomingDonationCanceled(incomingDonationAddress: string): void {
-		this._onIncomingDonationCanceled.next(incomingDonationAddress);
+	public incomingDonationCanceled(incomingDonationInternalId: string, address: string): void {
+		this._onIncomingDonationCanceled.next({internalId: incomingDonationInternalId, address: address});
 	}
 
 	/***********************************/
 	/** Methods to subscribe to events **/
+
 	/***********************************/
 
-	public onCharityEventAdded(): Observable<ContractCharityEvent> {
+	public onCharityEventAdded(): Observable<AppCharityEvent> {
 		return this.onCharityEventAddedSource;
 	}
 
@@ -114,19 +119,19 @@ export class OrganizationSharedService {
 	}
 
 
-	public onIncomingDonationAdded(): Observable<ContractIncomingDonation> {
+	public onIncomingDonationAdded(): Observable<AppIncomingDonation> {
 		return this.onIncomingDonationAddedSource;
 	}
 
-	public onIncomingDonationConfirmed(): Observable<string> {
+	public onIncomingDonationConfirmed(): Observable<ConfirmationResponse> {
 		return this.onIncomingDonationConfirmedSource;
 	}
 
-	public onIncomingDonationFailed(): Observable<string> {
+	public onIncomingDonationFailed(): Observable<ConfirmationResponse> {
 		return this.onIncomingDonationFailedSource;
 	}
 
-	public onIncomingDonationCanceled(): Observable<string> {
+	public onIncomingDonationCanceled(): Observable<ConfirmationResponse> {
 		return this.onIncomingDonationCanceledSource;
 	}
 
@@ -153,7 +158,6 @@ export class OrganizationSharedService {
 
 		return this.web3ProviderService.web3.utils.sha3(sourceData);
 	}
-
 
 
 }

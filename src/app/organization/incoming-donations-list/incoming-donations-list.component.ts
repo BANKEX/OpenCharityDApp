@@ -11,7 +11,7 @@ import {OrganizationContractEventsService} from '../../core/contracts-services/o
 import {reverse, times, constant, find, merge, findIndex} from 'lodash';
 import {
 	AppCharityEvent,
-	AppIncomingDonation, ConfirmationStatusState, ContractCharityEvent,
+	AppIncomingDonation, ConfirmationResponse, ConfirmationStatusState, ContractCharityEvent,
 	ContractIncomingDonation
 } from '../../open-charity-types';
 import {OrganizationSharedService} from '../services/organization-shared.service';
@@ -47,8 +47,8 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 	private initEventsListeners(): void {
 		this.organizationSharedService.onIncomingDonationAdded()
 			.takeUntil(this.componentDestroyed)
-			.subscribe((res: ContractIncomingDonation) => {
-				this.incomingDonations.push(merge({}, res, {confirmation: ConfirmationStatusState.PENDING}));
+			.subscribe((res: AppIncomingDonation) => {
+				this.incomingDonations.push(res);
 			}, (err: any) => {
 				console.error(err);
 				alert('`Error ${err.message}');
@@ -57,10 +57,11 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 
 		this.organizationSharedService.onIncomingDonationConfirmed()
 			.takeUntil(this.componentDestroyed)
-			.subscribe((incomingDonationAddress: string) => {
+			.subscribe((res: ConfirmationResponse) => {
 
-				const i: number = findIndex(this.incomingDonations, {address: incomingDonationAddress});
+				const i: number = findIndex(this.incomingDonations, {internalId: res.internalId});
 				if (i !== -1) {
+					this.incomingDonations[i].address = res.address;
 					this.incomingDonations[i].confirmation = ConfirmationStatusState.CONFIRMED;
 				}
 			}, (err: any) => {
@@ -70,9 +71,9 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 
 		this.organizationSharedService.onIncomingDonationFailed()
 			.takeUntil(this.componentDestroyed)
-			.subscribe((incomingDonationAddress: string) => {
+			.subscribe((res: ConfirmationResponse) => {
 
-				const i: number = findIndex(this.incomingDonations, {address: incomingDonationAddress});
+				const i: number = findIndex(this.incomingDonations, {internalId: res.internalId});
 				if (i !== -1) {
 					this.incomingDonations[i].confirmation = ConfirmationStatusState.FAILED;
 				}
@@ -85,9 +86,9 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 
 		this.organizationSharedService.onIncomingDonationCanceled()
 			.takeUntil(this.componentDestroyed)
-			.subscribe((incomingDonationAddress: string) => {
+			.subscribe((res: ConfirmationResponse) => {
 
-				const i: number = findIndex(this.incomingDonations, {address: incomingDonationAddress});
+				const i: number = findIndex(this.incomingDonations, {internalId: res.internalId});
 				if (i !== -1) {
 					this.incomingDonations.splice(i, 1);
 				}

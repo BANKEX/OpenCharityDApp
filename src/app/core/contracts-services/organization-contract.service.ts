@@ -94,12 +94,6 @@ export class OrganizationContractService {
 		return source.asObservable();
 	}
 
-	public getNewIncomingDonationAddress(address: string, incomingDonation: ContractIncomingDonation, txOptions?: Tx) {
-		const contract: Contract = this.cloneContract(this.organizationContract, address);
-		const tx: Tx = merge(this.defaultTx, txOptions);
-		return contract.methods.setIncomingDonation(incomingDonation.realWorldsIdentifier, incomingDonation.amount, incomingDonation.note, incomingDonation.tags).call(tx);
-	}
-
 	private async buildIncomingDonationsList(contract: Contract, incomingDonationCount: number): Promise<string[]> {
 		const result: string[] = [];
 
