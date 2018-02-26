@@ -1,12 +1,19 @@
 <div class="row">
 	<div class="col-lg-12" *ngFor="let incomingDonation of incomingDonations.slice().reverse()">
-		<div class="card calendar-event incoming-donation-card card-hover">
+		<div class="card calendar-event incoming-donation-card card-hover" [ngClass]="{'pending' : incomingDonation && isPending(incomingDonation)}">
 
 			<div class="loading-overlay" *ngIf="incomingDonation === null">
 				<i class="fa fa-spinner fa-spin"></i>
 			</div>
 
 			<div *ngIf="incomingDonation">
+
+				<div class="portlet">
+					<div class="portlet-item unconfirmed-loader" *ngIf="isPending(incomingDonation)" title="This incoming donation has not stored in blockchain yet">
+						Unconfirmed
+						<i class="fa fa-spinner fa-spin"></i>
+					</div>
+				</div>
 
 				<div class="card-block no-pdd-btm" >
 				<span class="title-wrap"><span class="title">Real World Identifier:</span><span

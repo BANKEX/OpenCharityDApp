@@ -21,12 +21,12 @@ export interface AppCharityEvent extends ContractCharityEvent{
 
 export interface ContractIncomingDonation {
 	realWorldsIdentifier: string;
-	address: string;
+	address?: string;
 	amount: string;
 	note: string;
 	tags: string;
 }
 
 export interface AppIncomingDonation extends ContractIncomingDonation {
-	loaded: boolean;
+	confirmation: ConfirmationStatusState;
 }

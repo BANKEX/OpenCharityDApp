@@ -1,3 +1,4 @@
+@import "src/assets/scss/_variables";
 
 .incoming-donation-card {
 	min-height: 240px;
@@ -11,6 +12,14 @@
 		align-items: center;
 		justify-content: center;
 		z-index: 99;
+	}
+
+	&.pending {
+		background: lighten($default-dark, 40%);
+		color: black;
+		.unconfirmed-loader {
+
+		}
 	}
 }
 

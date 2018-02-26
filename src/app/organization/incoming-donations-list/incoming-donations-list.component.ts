@@ -8,8 +8,13 @@ import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 import {IncomingDonationSendFundsModalComponent} from '../incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
 import {CharityEventContractService} from '../../core/contracts-services/charity-event-contract.service';
 import {OrganizationContractEventsService} from '../../core/contracts-services/organization-contract-events.service';
-import {reverse, times, constant, find, merge} from 'lodash';
-import {AppIncomingDonation} from '../../open-charity-types';
+import {reverse, times, constant, find, merge, findIndex} from 'lodash';
+import {
+	AppCharityEvent,
+	AppIncomingDonation, ConfirmationStatusState, ContractCharityEvent,
+	ContractIncomingDonation
+} from '../../open-charity-types';
+import {OrganizationSharedService} from '../services/organization-shared.service';
 
 
 @Component({
@@ -19,7 +24,7 @@ import {AppIncomingDonation} from '../../open-charity-types';
 })
 export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 	@Input('organizationContractAddress') organizationContractAddress: string;
-	incomingDonations: AppIncomingDonation[] = [];
+	public incomingDonations: AppIncomingDonation[] = [];
 	private componentDestroyed: Subject<void> = new Subject<void>();
 
 
@@ -29,13 +34,71 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 				private charityEventContractService: CharityEventContractService,
 				private organizationContractEventsService: OrganizationContractEventsService,
 				private modalService: NgbModal,
-				private cd: ChangeDetectorRef
+				private cd: ChangeDetectorRef,
+				private organizationSharedService: OrganizationSharedService
 	) {
 	}
 
 	public ngOnInit(): void {
 		this.updateIncomingDonationsList();
+		this.initEventsListeners();
 	}
+
+	private initEventsListeners(): void {
+		this.organizationSharedService.onIncomingDonationAdded()
+			.takeUntil(this.componentDestroyed)
+			.subscribe((res: ContractIncomingDonation) => {
+				this.incomingDonations.push(merge({}, res, {confirmation: ConfirmationStatusState.PENDING}));
+			}, (err: any) => {
+				console.error(err);
+				alert('`Error ${err.message}');
+			});
+
+
+		this.organizationSharedService.onIncomingDonationConfirmed()
+			.takeUntil(this.componentDestroyed)
+			.subscribe((incomingDonationAddress: string) => {
+
+				const i: number = findIndex(this.incomingDonations, {address: incomingDonationAddress});
+				if (i !== -1) {
+					this.incomingDonations[i].confirmation = ConfirmationStatusState.CONFIRMED;
+				}
+			}, (err: any) => {
+				console.error(err);
+				alert('`Error ${err.message}');
+			});
+
+		this.organizationSharedService.onIncomingDonationFailed()
+			.takeUntil(this.componentDestroyed)
+			.subscribe((incomingDonationAddress: string) => {
+
+				const i: number = findIndex(this.incomingDonations, {address: incomingDonationAddress});
+				if (i !== -1) {
+					this.incomingDonations[i].confirmation = ConfirmationStatusState.FAILED;
+				}
+			}, (err: any) => {
+				console.error(err);
+				alert('`Error ${err.message}');
+			});
+
+
+
+		this.organizationSharedService.onIncomingDonationCanceled()
+			.takeUntil(this.componentDestroyed)
+			.subscribe((incomingDonationAddress: string) => {
+
+				const i: number = findIndex(this.incomingDonations, {address: incomingDonationAddress});
+				if (i !== -1) {
+					this.incomingDonations.splice(i, 1);
+				}
+			}, (err: any) => {
+				console.error(err);
+				alert('`Error ${err.message}');
+			});
+
+	}
+
+
 
 	public async addNewIncomingDonation(address: string) {
 		const newItemIndex = this.incomingDonations.length;
@@ -54,20 +117,40 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 		const incomingDonationsCount: number = parseInt(await this.organizationContractService.getIncomingDonationsCount(this.organizationContractAddress), 10);
 
 		// initialize empty array
-		// null values means that incoming donation data is loading
+		// null value means that incoming donation data is loading
 		// when data is loaded, replace null by data
 		this.incomingDonations = times(incomingDonationsCount, constant(null));
 
+		// this counter is used to track how much items is loaded
+		// if all data is loaded, unsubscribe from Observable
+		let loadedItemsCount: number = incomingDonationsCount;
+
 		this.organizationContractService.getIncomingDonations(this.organizationContractAddress)
-			.takeWhile((val: { address: string, index: number }, index: number) => index < incomingDonationsCount)
+			.takeWhile(() => loadedItemsCount > 0 )
 			.subscribe(async (res: { address: string, index: number }) => {
 				this.incomingDonations[res.index] = merge({}, await this.incomingDonationContractService.getIncomingDonationDetails(res.address), {
-					loaded: true
+					confirmation: ConfirmationStatusState.CONFIRMED
 				});
 				await this.updateIncomingDonationAmount(this.incomingDonations[res.index]);
 				this.cd.detectChanges();
+
+				loadedItemsCount--;
 			});
 	}
+
+	public isPending(incomingDonation: AppIncomingDonation): boolean {
+		return (incomingDonation.confirmation === ConfirmationStatusState.PENDING);
+	}
+	public isConfirmed(incomingDonation: AppIncomingDonation): boolean {
+		return (incomingDonation.confirmation === ConfirmationStatusState.CONFIRMED);
+	}
+	public isFailed(incomingDonation: AppIncomingDonation): boolean {
+		return (incomingDonation.confirmation === ConfirmationStatusState.FAILED);
+	}
+	public isErrored(incomingDonation: AppIncomingDonation): boolean {
+		return (incomingDonation.confirmation === ConfirmationStatusState.ERROR);
+	}
+
 
 	public async updateIncomingDonationAmount(incomingDonation: AppIncomingDonation): Promise<void> {
 		incomingDonation.amount = await this.tokenContractService.balanceOf(incomingDonation.address);

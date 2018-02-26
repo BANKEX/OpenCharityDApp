@@ -90,6 +90,8 @@ contract Organization {
         address incomingDonation = addIncomingDonation(_realWorldIdentifier, _amount, _note, _tags);
 
         token.mint(incomingDonation, _amount);
+
+		return incomingDonation;
     }
 
     /**

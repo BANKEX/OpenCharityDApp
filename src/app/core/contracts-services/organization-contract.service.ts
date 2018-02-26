@@ -6,6 +6,7 @@ import Web3 from 'web3';
 import {OrganizationContractAbi} from '../../contracts-abi';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
+import {ContractIncomingDonation} from '../../open-charity-types';
 
 export interface Organization {
 	name: string;
@@ -57,8 +58,10 @@ export class OrganizationContractService {
 	}
 
 
+	/********************************/
+	/***  IncomingDonations methods */
+	/********************************/
 
-	// IncomingDonations methods
 	public addIncomingDonation(address: string, realWorldsIdentifier: string, amount: string, note: string, tags: string, txOptions?: Tx) {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		const tx: Tx = merge(this.defaultTx, txOptions);
@@ -82,16 +85,19 @@ export class OrganizationContractService {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		contract.methods.incomingDonationCount().call(txOptions)
 			.then(async (count: number) => {
-				for (let i = 0; i < count; i++) {
+				for (let i = count - 1; i >=0; i--) {
 					const address: string = await contract.methods.incomingDonationIndex(i).call(txOptions);
-					const isActive: boolean = await contract.methods.incomingDonations(address).call(txOptions);
-					if (isActive) {
-						source.next({address: address, index: i});
-					}
+					source.next({address: address, index: i});
 				}
 			});
 
 		return source.asObservable();
+	}
+
+	public getNewIncomingDonationAddress(address: string, incomingDonation: ContractIncomingDonation, txOptions?: Tx) {
+		const contract: Contract = this.cloneContract(this.organizationContract, address);
+		const tx: Tx = merge(this.defaultTx, txOptions);
+		return contract.methods.setIncomingDonation(incomingDonation.realWorldsIdentifier, incomingDonation.amount, incomingDonation.note, incomingDonation.tags).call(tx);
 	}
 
 	private async buildIncomingDonationsList(contract: Contract, incomingDonationCount: number): Promise<string[]> {
@@ -99,8 +105,7 @@ export class OrganizationContractService {
 
 		for (let i = 0; i < incomingDonationCount; i++) {
 			const address: string = await contract.methods.incomingDonationIndex(i).call();
-			const isActive: boolean = await contract.methods.incomingDonations(address).call();
-			(isActive) ? result.push(address) : null;
+			result.push(address);
 		}
 
 		return result;

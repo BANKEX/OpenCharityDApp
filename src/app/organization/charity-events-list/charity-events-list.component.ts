@@ -18,7 +18,6 @@ import {AppCharityEvent, ConfirmationStatusState, ContractCharityEvent} from '..
 export class CharityEventsListComponent implements OnInit, OnDestroy {
 	@Input('organizationContractAddress') organizationContractAddress: string;
 
-	public ConfirmationStatusState = ConfirmationStatusState;
 	public charityEvents: AppCharityEvent[] = [];
 	private componentDestroyed: Subject<void> = new Subject<void>();
 
@@ -28,14 +27,16 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 				private organizationContractEventsService: OrganizationContractEventsService,
 				private organizationSharedService: OrganizationSharedService,
 				private cd: ChangeDetectorRef
-) {
+	) {
 
 	}
 
 	async ngOnInit(): Promise<void> {
 		this.updateCharityEventsList();
+		this.initEventsListeners();
+	}
 
-
+	private initEventsListeners(): void {
 		this.organizationSharedService.onCharityEventAdded()
 			.takeUntil(this.componentDestroyed)
 			.subscribe((res: ContractCharityEvent) => {
@@ -86,7 +87,6 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 				console.error(err);
 				alert('`Error ${err.message}');
 			});
-
 	}
 
 	public async updateCharityEventsList(): Promise<void> {
@@ -102,24 +102,18 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 
 		// this counter is used to track how much items is loaded
 		// if all data is loaded, unsubscribe from Observable
-		let charityEventsCounter: number = charityEventsCount;
+		let loadedItemsCount: number = charityEventsCount;
 
 		this.organizationContractService.getCharityEvents(this.organizationContractAddress)
-			.takeWhile(() => charityEventsCounter > 0 )
+			.takeWhile(() => loadedItemsCount > 0 )
 			.subscribe(async (res: { address: string, index: number }) => {
-				try {
-					this.charityEvents[res.index] = merge({}, await this.charityEventContractService.getCharityEventDetails(res.address), {
-						loaded: true,
-						confirmation: ConfirmationStatusState.CONFIRMED
-					});
-					await this.updateCharityEventRaised(this.charityEvents[res.index]);
-					this.cd.detectChanges();
+				this.charityEvents[res.index] = merge({}, await this.charityEventContractService.getCharityEventDetails(res.address), {
+					confirmation: ConfirmationStatusState.CONFIRMED
+				});
+				await this.updateCharityEventRaised(this.charityEvents[res.index]);
+				this.cd.detectChanges();
 
-				} catch(e) {
-					console.error(e);
-				}
-
-				charityEventsCounter--;
+				loadedItemsCount--;
 
 			});
 	}
