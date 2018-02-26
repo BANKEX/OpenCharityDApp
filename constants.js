@@ -96,9 +96,9 @@ exports.DEV_ENVIRONMENT = {
 	'rpcProviderUrl': 'https://rpcprovider.staging.bankex.team:8635',
 	'websocketProviderUrl': 'wss://wsprovider.staging.bankex.team:8636',
 	'organizations':  [
-		'0xb337a67dbefa5dbeff280b25c6974e2a172fe7d3',
-		'0xaaec792ff94d8f6afb4ef4723f7a35641fb2c5cf',
-		'0xb995046667c1608eb178e0c15b4c325b41a31973'
+		'0x78a6f275abb6e5ffb95ef9114ec6b605a000ea76',
+		'0x77203ee959ebd7f9ade414969773cdc978eac709',
+		'0x2cc93f96abdc1f0f6b726e6b097d5a20e174d18c'
 	]
 };
 
@@ -108,8 +108,8 @@ exports.PROD_ENVIRONMENT = {
 	'rpcProviderUrl': 'https://rpcprovider.staging.bankex.team:8635',
 	'websocketProviderUrl': 'wss://wsprovider.staging.bankex.team:8636',
 	'organizations':  [
-		'0xa9a667764e0520393c5b8a17b389b7408996f821',
-		'0x371f1b07649009fc7e4e617d1b8a5ef05b0157c2',
-		'0xbfcf6117ab933edddbcad327f82f0f5f9ab01097'
+		'0xe7b74d5d5d36cd2a8f40ac7838fe2783e2413869',
+		'0x0dd9a70354a6403ec66a36c237293b0a0538919e',
+		'0x0ec6f8e77432140ada4c460c55657bfabe1b9fd8'
 	]
 };
