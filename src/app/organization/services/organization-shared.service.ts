@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
+import {ContractCharityEvent} from '../../open-charity-types';
 
 // service to share events between components in organization module
 

@@ -4,7 +4,11 @@ import {CharityEventContractService} from '../../core/contracts-services/charity
 import {Subject} from 'rxjs/Subject';
 import {TokenContractService} from '../../core/contracts-services/token-contract.service';
 import {OrganizationContractEventsService} from '../../core/contracts-services/organization-contract-events.service';
-import {reverse, times, constant, merge} from 'lodash';
+import {reverse, times, constant, merge, findIndex} from 'lodash';
+import {OrganizationSharedService} from '../services/organization-shared.service';
+import {AppCharityEvent, ConfirmationStatusState, ContractCharityEvent} from '../../open-charity-types';
+
+
 
 @Component({
 	selector: 'opc-charity-events-list',
@@ -13,13 +17,16 @@ import {reverse, times, constant, merge} from 'lodash';
 })
 export class CharityEventsListComponent implements OnInit, OnDestroy {
 	@Input('organizationContractAddress') organizationContractAddress: string;
-	charityEvents: AppCharityEvent[] = [];
+
+	public ConfirmationStatusState = ConfirmationStatusState;
+	public charityEvents: AppCharityEvent[] = [];
 	private componentDestroyed: Subject<void> = new Subject<void>();
 
 	constructor(private organizationContractService: OrganizationContractService,
 				private charityEventContractService: CharityEventContractService,
 				private tokenContractService: TokenContractService,
 				private organizationContractEventsService: OrganizationContractEventsService,
+				private organizationSharedService: OrganizationSharedService,
 				private cd: ChangeDetectorRef
 ) {
 
@@ -28,14 +35,58 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 	async ngOnInit(): Promise<void> {
 		this.updateCharityEventsList();
 
-		this.organizationContractEventsService.onCharityEventAdded(this.organizationContractAddress)
-		    .takeUntil(this.componentDestroyed)
-		    .subscribe((event: any) => {
-		            this.updateCharityEventsList();
-		        },
-		        (err) => {
-		            alert(`Error: ${err}`);
-		        });
+
+		this.organizationSharedService.onCharityEventAdded()
+			.takeUntil(this.componentDestroyed)
+			.subscribe((res: ContractCharityEvent) => {
+				this.charityEvents.push(merge({}, res, {raised: 0, confirmation: ConfirmationStatusState.PENDING}));
+			}, (err: any) => {
+				console.error(err);
+				alert('`Error ${err.message}');
+			});
+
+
+		this.organizationSharedService.onCharityEventConfirmed()
+			.takeUntil(this.componentDestroyed)
+			.subscribe((charityEventAddress: string) => {
+
+				const i: number = findIndex(this.charityEvents, {address: charityEventAddress});
+				if (i !== -1) {
+					this.charityEvents[i].confirmation = ConfirmationStatusState.CONFIRMED;
+				}
+			}, (err: any) => {
+				console.error(err);
+				alert('`Error ${err.message}');
+			});
+
+		this.organizationSharedService.onCharityEventFailed()
+			.takeUntil(this.componentDestroyed)
+			.subscribe((charityEventAddress: string) => {
+
+				const i: number = findIndex(this.charityEvents, {address: charityEventAddress});
+				if (i !== -1) {
+					this.charityEvents[i].confirmation = ConfirmationStatusState.FAILED;
+				}
+			}, (err: any) => {
+				console.error(err);
+				alert('`Error ${err.message}');
+			});
+
+
+
+		this.organizationSharedService.onCharityEventCanceled()
+			.takeUntil(this.componentDestroyed)
+			.subscribe((charityEventAddress: string) => {
+
+				const i: number = findIndex(this.charityEvents, {address: charityEventAddress});
+				if (i !== -1) {
+					this.charityEvents.splice(i, 1);
+				}
+			}, (err: any) => {
+				console.error(err);
+				alert('`Error ${err.message}');
+			});
+
 	}
 
 	public async updateCharityEventsList(): Promise<void> {
@@ -58,7 +109,8 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 			.subscribe(async (res: { address: string, index: number }) => {
 				try {
 					this.charityEvents[res.index] = merge({}, await this.charityEventContractService.getCharityEventDetails(res.address), {
-						loaded: true
+						loaded: true,
+						confirmation: ConfirmationStatusState.CONFIRMED
 					});
 					await this.updateCharityEventRaised(this.charityEvents[res.index]);
 					this.cd.detectChanges();
@@ -79,8 +131,17 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 		this.updateCharityEventsRaised(this.charityEvents);
 	}
 
-	ngOnDestroy(): void {
-		this.componentDestroyed.next();
+	public isPending(charityEvent: AppCharityEvent): boolean {
+		return (charityEvent.confirmation === ConfirmationStatusState.PENDING);
+	}
+	public isConfirmed(charityEvent: AppCharityEvent): boolean {
+		return (charityEvent.confirmation === ConfirmationStatusState.CONFIRMED);
+	}
+	public isFailed(charityEvent: AppCharityEvent): boolean {
+		return (charityEvent.confirmation === ConfirmationStatusState.FAILED);
+	}
+	public isErrored(charityEvent: AppCharityEvent): boolean {
+		return (charityEvent.confirmation === ConfirmationStatusState.ERROR);
 	}
 
 
@@ -92,5 +153,9 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 		charityEvents.forEach(async (charityEvent) => {
 			this.updateCharityEventRaised(charityEvent);
 		});
+	}
+
+	ngOnDestroy(): void {
+		this.componentDestroyed.next();
 	}
 }

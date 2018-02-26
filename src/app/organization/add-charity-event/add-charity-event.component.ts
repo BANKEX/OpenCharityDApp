@@ -46,7 +46,7 @@ export class AddCharityEventComponent implements OnInit {
 				name: f.name,
 				address: charityEventAddress,
 				target: f.target,
-				payed: f.payed,
+				payed: (f.payed) ? f.payed : 0,
 				tags: tags,
 			});
 
@@ -62,14 +62,10 @@ export class AddCharityEventComponent implements OnInit {
 
 		} catch (e) {
 			if (e.message.search('MetaMask Tx Signature: User denied transaction signature') !== -1) {
-
 				this.organizationSharedService.charityEventCanceled(charityEventAddress);
-
 			} else {
-
 				// TODO:  global errors notifier
 				console.warn(e.message);
-
 			}
 		}
 	}

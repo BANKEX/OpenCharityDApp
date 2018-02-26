@@ -1,3 +1,4 @@
+@import 'src/assets/scss/variables';
 
 .charity-event-card {
 	min-height: 240px;
@@ -12,4 +13,16 @@
 		justify-content: center;
 		z-index: 99;
 	}
+
+	&.pending {
+		background: lighten($default-dark, 40%);
+		color: black;
+		.unconfirmed-loader {
+
+		}
+	}
+
+
+
+
 }

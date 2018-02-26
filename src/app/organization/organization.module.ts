@@ -20,6 +20,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {IncomingDonationSendFundsModalComponent} from './incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
 import {OrganizationContractEventsService} from '../core/contracts-services/organization-contract-events.service';
 import {IsAdminGuard} from './is-admin.guard';
+import {OrganizationSharedService} from './services/organization-shared.service';
 
 @NgModule({
 	declarations: [
@@ -46,7 +47,8 @@ import {IsAdminGuard} from './is-admin.guard';
 		IsOrganizationAddressGuard,
 		TagsBitmaskService,
 		IsOrganizationAddressGuard,
-		IsAdminGuard
+		IsAdminGuard,
+		OrganizationSharedService,
 	]
 })
 
