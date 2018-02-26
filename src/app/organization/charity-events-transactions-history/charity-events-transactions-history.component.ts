@@ -9,10 +9,10 @@ import {Router, ActivatedRoute} from '@angular/router';
 })
 export class CharityEventsTransactionsHistoryComponent implements OnInit, OnDestroy {
 	private componentDestroyed: Subject<void> = new Subject<void>();
-	private organizationAddress: string = null;
-	private charityEventAddress: string = null;
-	private name: string = "";
-	private transactions: any[] = [];
+	public organizationAddress: string = null;
+	public charityEventAddress: string = null;
+	public name: string = "";
+	public transactions: any[] = [];
 
 
 
