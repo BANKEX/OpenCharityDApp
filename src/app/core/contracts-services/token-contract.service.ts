@@ -1,8 +1,8 @@
-import {Web3ProviderService} from './web3-provider.service';
+import {Web3ProviderService} from '../web3-provider.service';
 import {Injectable} from '@angular/core';
 import Web3 from 'web3';
 import {Contract, Tx} from 'web3/types';
-import {OpenCharityTokenContractAbi} from '../contracts-abi';
+import {OpenCharityTokenContractAbi} from '../../contracts-abi';
 
 @Injectable()
 export class TokenContractService {

@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Organization, OrganizationContractService} from '../services/organization-contract.service';
+import {Organization, OrganizationContractService} from '../../core/contracts-services/organization-contract.service';
 import {Router} from '@angular/router';
 import {Web3ProviderService} from '../../core/web3-provider.service';
 import {LoadingOverlayService} from '../../core/loading-overlay.service';

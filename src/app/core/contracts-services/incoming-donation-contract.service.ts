@@ -1,18 +1,11 @@
 import {Injectable} from '@angular/core';
 import {Contract, Tx} from 'web3/types';
-import {Web3ProviderService} from '../../core/web3-provider.service';
+import {Web3ProviderService} from '../web3-provider.service';
 import {merge} from 'lodash';
 import Web3 from 'web3';
-import {TokenContractService} from '../../core/token-contract.service';
+import {TokenContractService} from './token-contract.service';
 import {IncomingDonationContractAbi} from '../../contracts-abi';
-
-export interface IncomingDonation {
-	realWorldsIdentifier: string;
-	address: string;
-	amount: string;
-	note: string;
-	tags: string;
-}
+import {ContractIncomingDonation} from '../../open-charity-types';
 
 
 @Injectable()
@@ -52,7 +45,7 @@ export class IncomingDonationContractService {
 	}
 
 
-	public async getIncomingDonationDetails(address: string, txOptions?: Tx): Promise<IncomingDonation> {
+	public async getIncomingDonationDetails(address: string, txOptions?: Tx): Promise<ContractIncomingDonation> {
 		return {
 			realWorldsIdentifier: await this.getRealWorldIdentifier(address, txOptions),
 			address: address,
@@ -62,9 +55,9 @@ export class IncomingDonationContractService {
 		};
 	}
 
-	public async moveToCharityEvent(address: string, targetEventAddress: string, amount: string, txOptions?: Tx): Promise<any> {
+	public moveToCharityEvent(address: string, targetEventAddress: string, amount: string, txOptions?: Tx): Promise<any> {
 		const contract: Contract = this.cloneContract(this.incomingDonationContract, address);
-		const tx: Tx = merge(this.defaultTx, txOptions);
+		const tx: Tx = merge({}, this.defaultTx, txOptions);
 		return contract.methods.moveToCharityEvent(targetEventAddress, amount).send(tx);
 	}
 

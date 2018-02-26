@@ -1,14 +1,28 @@
+@import 'src/assets/scss/variables';
 
-.charity-events-list {
-    margin-bottom: 20px;
+.charity-event-card {
+	min-height: 240px;
+	.loading-overlay {
+		position: absolute;
+		top: 0; bottom: 0;
+		right: 0; left: 0;
+		display: flex;
+		font-size: 40px;
+		background: white;
+		align-items: center;
+		justify-content: center;
+		z-index: 99;
+	}
 
-    .flexbox-container {
-        display: flex;
-        flex-wrap: wrap;
-        margin: 0 -10px;
-    }
-    .charity-event-card {
-        flex: 0 0 30%;
-        margin: 10px;
-    }
+	&.pending {
+		background: lighten($default-dark, 40%);
+		color: black;
+		.unconfirmed-loader {
+
+		}
+	}
+
+
+
+
 }
