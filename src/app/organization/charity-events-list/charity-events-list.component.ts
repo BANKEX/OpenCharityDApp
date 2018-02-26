@@ -4,13 +4,9 @@ import {CharityEventContractService} from '../../core/contracts-services/charity
 import {Subject} from 'rxjs/Subject';
 import {TokenContractService} from '../../core/contracts-services/token-contract.service';
 import {OrganizationContractEventsService} from '../../core/contracts-services/organization-contract-events.service';
-import {reverse, times, constant, merge, findIndex} from 'lodash';
+import {constant, findIndex, merge, reverse, times} from 'lodash';
 import {OrganizationSharedService} from '../services/organization-shared.service';
-import {
-	AppCharityEvent, ConfirmationResponse, ConfirmationStatusState,
-	ContractCharityEvent
-} from '../../open-charity-types';
-
+import {AppCharityEvent, ConfirmationResponse, ConfirmationStatusState} from '../../open-charity-types';
 
 
 @Component({
@@ -29,8 +25,7 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 				private tokenContractService: TokenContractService,
 				private organizationContractEventsService: OrganizationContractEventsService,
 				private organizationSharedService: OrganizationSharedService,
-				private cd: ChangeDetectorRef
-	) {
+				private cd: ChangeDetectorRef) {
 
 	}
 
@@ -76,7 +71,6 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 			});
 
 
-
 		this.organizationSharedService.onCharityEventCanceled()
 			.takeUntil(this.componentDestroyed)
 			.subscribe((res: ConfirmationResponse) => {
@@ -107,7 +101,7 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 		let loadedItemsCount: number = charityEventsCount;
 
 		this.organizationContractService.getCharityEvents(this.organizationContractAddress)
-			.takeWhile(() => loadedItemsCount > 0 )
+			.takeWhile(() => loadedItemsCount > 0)
 			.subscribe(async (res: { address: string, index: number }) => {
 				this.charityEvents[res.index] = merge({}, await this.charityEventContractService.getCharityEventDetails(res.address), {
 					confirmation: ConfirmationStatusState.CONFIRMED
@@ -130,12 +124,15 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 	public isPending(charityEvent: AppCharityEvent): boolean {
 		return (charityEvent.confirmation === ConfirmationStatusState.PENDING);
 	}
+
 	public isConfirmed(charityEvent: AppCharityEvent): boolean {
 		return (charityEvent.confirmation === ConfirmationStatusState.CONFIRMED);
 	}
+
 	public isFailed(charityEvent: AppCharityEvent): boolean {
 		return (charityEvent.confirmation === ConfirmationStatusState.FAILED);
 	}
+
 	public isErrored(charityEvent: AppCharityEvent): boolean {
 		return (charityEvent.confirmation === ConfirmationStatusState.ERROR);
 	}
