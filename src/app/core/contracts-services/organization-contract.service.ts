@@ -6,7 +6,7 @@ import Web3 from 'web3';
 import {OrganizationContractAbi} from '../../contracts-abi';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
-import {ContractIncomingDonation} from '../../open-charity-types';
+import {ContractCharityEvent, ContractIncomingDonation} from '../../open-charity-types';
 
 export interface Organization {
 	name: string;
@@ -114,10 +114,10 @@ export class OrganizationContractService {
 
 
 	// Charity Events Methods
-	public addCharityEvent(address: string, name: string, target: string, payed: string, tags: string, txOptions?: Tx): Promise<TransactionReceipt> {
+	public addCharityEvent(address: string, charityEvent: ContractCharityEvent, txOptions?: Tx): Promise<TransactionReceipt> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		const tx: Tx = merge(this.defaultTx, txOptions);
-		return contract.methods.addCharityEvent(name, target, payed, tags).send(tx);
+		return contract.methods.addCharityEvent(charityEvent.name, charityEvent.target, charityEvent.payed, charityEvent.tags).send(tx);
 	}
 
 	public getCharityEvents(address: string, txOptions?: Tx): Observable<{ address: string, index: number }> {

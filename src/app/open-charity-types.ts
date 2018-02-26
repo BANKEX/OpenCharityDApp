@@ -4,6 +4,7 @@ export enum ConfirmationStatusState {
 	FAILED,
 	ERROR
 }
+export type ConfirmationResponse = { internalId: string; address: string; }
 
 export interface ContractCharityEvent {
 	name: string;

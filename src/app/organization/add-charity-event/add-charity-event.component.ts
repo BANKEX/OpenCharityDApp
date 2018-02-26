@@ -45,6 +45,7 @@ export class AddCharityEventComponent implements OnInit {
 		};
 
 		let charityEventInternalId: string = this.organizationSharedService.makePseudoRandomHash(newCharityEvent);
+		let newCharityEventAddress: string = null;
 
 		try {
 			this.organizationSharedService.charityEventAdded({
@@ -56,15 +57,21 @@ export class AddCharityEventComponent implements OnInit {
 				confirmation: ConfirmationStatusState.PENDING
 			});
 
-			await this.organizationContractService.addCharityEvent(this.organizationContractAddress, f.name, f.target, f.payed, tags);
-			this.organizationSharedService.charityEventConfirmed(charityEventInternalId);
+			const receipt: TransactionReceipt = await this.organizationContractService.addCharityEvent(this.organizationContractAddress, newCharityEvent);
+
+			if (receipt.events && receipt.events.CharityEventAdded) {
+				newCharityEventAddress = receipt.events.CharityEventAdded.returnValues['charityEvent'];
+				this.organizationSharedService.charityEventConfirmed(charityEventInternalId, newCharityEventAddress);
+			} else {
+				this.organizationSharedService.charityEventFailed(charityEventInternalId, newCharityEventAddress);
+			}
 
 			this.initForm();
 
 		} catch (e) {
 			// TODO: listen for failed transaction
 			if (e.message.search('MetaMask Tx Signature: User denied transaction signature') !== -1) {
-				this.organizationSharedService.charityEventCanceled(charityEventInternalId);
+				this.organizationSharedService.charityEventCanceled(charityEventInternalId, newCharityEventAddress);
 			} else {
 				// TODO:  global errors notifier
 				console.warn(e.message);

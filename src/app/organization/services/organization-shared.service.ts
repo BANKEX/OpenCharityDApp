@@ -1,7 +1,10 @@
 import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
-import {AppCharityEvent, ContractCharityEvent, ContractIncomingDonation} from '../../open-charity-types';
+import {
+	AppCharityEvent, ConfirmationResponse, ContractCharityEvent,
+	ContractIncomingDonation
+} from '../../open-charity-types';
 import {Web3ProviderService} from '../../core/web3-provider.service';
 
 // service to share events between components in organization module
@@ -18,17 +21,17 @@ export class OrganizationSharedService {
 	private onCharityEventAddedSource = this._onCharityEventAdded.asObservable().share<AppCharityEvent>();
 
 	// triggered when transaction succeed i.e CE stored in blockchain
-	private _onCharityEventConfirmed: Subject<string> = new Subject<string>();
-	private onCharityEventConfirmedSource = this._onCharityEventConfirmed.asObservable().share<string>();
+	private _onCharityEventConfirmed: Subject<ConfirmationResponse> = new Subject<ConfirmationResponse>();
+	private onCharityEventConfirmedSource = this._onCharityEventConfirmed.asObservable().share<ConfirmationResponse>();
 
 
 	// triggered when transaction failed  i.e CE is not stored in blockchain
-	private _onCharityEventFailed: Subject<string> = new Subject<string>();
-	private onCharityEventFailedSource = this._onCharityEventFailed.asObservable().share<string>();
+	private _onCharityEventFailed: Subject<ConfirmationResponse> = new Subject<ConfirmationResponse>();
+	private onCharityEventFailedSource = this._onCharityEventFailed.asObservable().share<ConfirmationResponse>();
 
 	// triggered when transaction canceled by user
-	private _onCharityEventCanceled: Subject<string> = new Subject<string>();
-	private onCharityEventCanceledSource = this._onCharityEventCanceled.asObservable().share<string>();
+	private _onCharityEventCanceled: Subject<ConfirmationResponse> = new Subject<ConfirmationResponse>();
+	private onCharityEventCanceledSource = this._onCharityEventCanceled.asObservable().share<ConfirmationResponse>();
 
 	/*********************************/
 
@@ -62,16 +65,16 @@ export class OrganizationSharedService {
 		this._onCharityEventAdded.next(charityEvent);
 	}
 
-	public charityEventConfirmed(charityEventInternalId: string): void {
-		this._onCharityEventConfirmed.next(charityEventInternalId);
+	public charityEventConfirmed(charityEventInternalId: string, address: string): void {
+		this._onCharityEventConfirmed.next({internalId: charityEventInternalId, address: address });
 	}
 
-	public charityEventFailed(charityEventInternalId: string): void {
-		this._onCharityEventFailed.next(charityEventInternalId);
+	public charityEventFailed(charityEventInternalId: string, address: string): void {
+		this._onCharityEventFailed.next({internalId: charityEventInternalId, address: address });
 	}
 
-	public charityEventCanceled(charityEventInternalId: string): void {
-		this._onCharityEventCanceled.next(charityEventInternalId);
+	public charityEventCanceled(charityEventInternalId: string, address: string): void {
+		this._onCharityEventCanceled.next({internalId: charityEventInternalId, address: address });
 	}
 
 	public incomingDonationAdded(incomingDonation: ContractIncomingDonation): void {
@@ -98,15 +101,15 @@ export class OrganizationSharedService {
 		return this.onCharityEventAddedSource;
 	}
 
-	public onCharityEventConfirmed(): Observable<string> {
+	public onCharityEventConfirmed(): Observable<ConfirmationResponse> {
 		return this.onCharityEventConfirmedSource;
 	}
 
-	public onCharityEventFailed(): Observable<string> {
+	public onCharityEventFailed(): Observable<ConfirmationResponse> {
 		return this.onCharityEventFailedSource;
 	}
 
-	public onCharityEventCanceled(): Observable<string> {
+	public onCharityEventCanceled(): Observable<ConfirmationResponse> {
 		return this.onCharityEventCanceledSource;
 	}
 
@@ -147,7 +150,6 @@ export class OrganizationSharedService {
 
 		const randomNumber: number = Math.random() * 1000;
 		sourceData += randomNumber.toString();
-		console.log(sourceData);
 
 		return this.web3ProviderService.web3.utils.sha3(sourceData);
 	}
