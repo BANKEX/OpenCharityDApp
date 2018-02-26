@@ -7,6 +7,7 @@ import {OrganizationContractEventsService} from '../../core/contracts-services/o
 import {constant, findIndex, merge, reverse, times} from 'lodash';
 import {OrganizationSharedService} from '../services/organization-shared.service';
 import {AppCharityEvent, ConfirmationResponse, ConfirmationStatusState} from '../../open-charity-types';
+import {Router} from '@angular/router';
 
 
 @Component({
@@ -23,6 +24,7 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 	constructor(private organizationContractService: OrganizationContractService,
 				private charityEventContractService: CharityEventContractService,
 				private tokenContractService: TokenContractService,
+				private router: Router,
 				private organizationContractEventsService: OrganizationContractEventsService,
 				private organizationSharedService: OrganizationSharedService,
 				private cd: ChangeDetectorRef) {
@@ -151,5 +153,15 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 
 	ngOnDestroy(): void {
 		this.componentDestroyed.next();
+	}
+
+	public async updateCharityEventRaised(charityEvents: CharityEvent[]) {
+		charityEvents.forEach(async (charityEvent) => {
+			charityEvent.raised = await this.tokenContractService.balanceOf(charityEvent.address);
+		});
+	}
+
+	goToTransactions(charityEvent: CharityEvent): void {
+		this.router.navigate([`/organization/${this.organizationContractAddress}/charityevent/${charityEvent.address}/transactions`]);
 	}
 }
