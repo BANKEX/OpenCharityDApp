@@ -50,6 +50,7 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 			.subscribe((res: ConfirmationResponse) => {
 				const i: number = findIndex(this.charityEvents, {internalId: res.internalId});
 				if (i !== -1) {
+					this.charityEvents[i].address = res.address;
 					this.charityEvents[i].confirmation = ConfirmationStatusState.CONFIRMED;
 				}
 			}, (err: any) => {
