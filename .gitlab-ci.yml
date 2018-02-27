@@ -2,6 +2,7 @@ variables:
   IMAGE: bankexlabs/$CI_PROJECT_NAME
 
 stages:
+  - setup
   - build-node-stage
   - build-node-prod
   - tests
@@ -10,45 +11,40 @@ stages:
   - deploy-stage
   - deploy-prod
 
-build-node-stage:
+cache:
+  paths:
+    - node_modules/
+
+setup:
   image: node:alpine
-  stage: build-node-stage
-  before_script:
+  stage: setup
+  script:
     - apk add --update git
     - apk --no-cache add g++ gcc libgcc libstdc++ linux-headers make python
     - npm install --quiet node-gyp -g
     - npm install
     - npm rebuild bcrypt --build-from-source
     - npm rebuild node-sass
-  cache:
-    paths:
-      - node_modules/
+
+build-node-stage:
+  image: node:alpine
+  stage: build-node-stage
   script:
     - npm run build:aot:dev
   artifacts:
     paths:
       - dist
-    expire_in: 1h
+    expire_in: 24h
 
 build-node-prod:
   image: node:alpine
   stage: build-node-prod
-  before_script:
-    - apk add --update git
-    - apk --no-cache add g++ gcc libgcc libstdc++ linux-headers make python
-    - npm install --quiet node-gyp -g
-    - npm install
-    - npm rebuild bcrypt --build-from-source
-    - npm rebuild node-sass
-  cache:
-    paths:
-      - node_modules/
   script:
     - npm run build:aot:prod
   artifacts:
     paths:
       - dist
-    expire_in: 1h
+    expire_in: 24h
   only:
     - production
     
