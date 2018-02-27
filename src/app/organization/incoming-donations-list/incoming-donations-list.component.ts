@@ -1,5 +1,5 @@
 import {OrganizationContractService} from '../../core/contracts-services/organization-contract.service';
-import {ChangeDetectorRef, Component, Input, NgZone, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 // tslint:disable-next-line:max-line-length
 import {IncomingDonationContractService} from '../../core/contracts-services/incoming-donation-contract.service';
 import {Subject} from 'rxjs/Subject';
@@ -8,12 +8,8 @@ import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 import {IncomingDonationSendFundsModalComponent} from '../incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
 import {CharityEventContractService} from '../../core/contracts-services/charity-event-contract.service';
 import {OrganizationContractEventsService} from '../../core/contracts-services/organization-contract-events.service';
-import {reverse, times, constant, find, merge, findIndex} from 'lodash';
-import {
-	AppCharityEvent,
-	AppIncomingDonation, ConfirmationResponse, ConfirmationStatusState, ContractCharityEvent,
-	ContractIncomingDonation
-} from '../../open-charity-types';
+import {constant, find, findIndex, merge, reverse, times} from 'lodash';
+import {AppIncomingDonation, ConfirmationResponse, ConfirmationStatusState} from '../../open-charity-types';
 import {OrganizationSharedService} from '../services/organization-shared.service';
 
 
@@ -35,8 +31,7 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 				private organizationContractEventsService: OrganizationContractEventsService,
 				private modalService: NgbModal,
 				private cd: ChangeDetectorRef,
-				private organizationSharedService: OrganizationSharedService
-	) {
+				private organizationSharedService: OrganizationSharedService) {
 	}
 
 	public ngOnInit(): void {
@@ -83,7 +78,6 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 			});
 
 
-
 		this.organizationSharedService.onIncomingDonationCanceled()
 			.takeUntil(this.componentDestroyed)
 			.subscribe((res: ConfirmationResponse) => {
@@ -98,7 +92,6 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 			});
 
 	}
-
 
 
 	public async addNewIncomingDonation(address: string) {
@@ -127,7 +120,7 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 		let loadedItemsCount: number = incomingDonationsCount;
 
 		this.organizationContractService.getIncomingDonations(this.organizationContractAddress)
-			.takeWhile(() => loadedItemsCount > 0 )
+			.takeWhile(() => loadedItemsCount > 0)
 			.subscribe(async (res: { address: string, index: number }) => {
 				this.incomingDonations[res.index] = merge({}, await this.incomingDonationContractService.getIncomingDonationDetails(res.address), {
 					confirmation: ConfirmationStatusState.CONFIRMED
@@ -142,12 +135,15 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 	public isPending(incomingDonation: AppIncomingDonation): boolean {
 		return (incomingDonation.confirmation === ConfirmationStatusState.PENDING);
 	}
+
 	public isConfirmed(incomingDonation: AppIncomingDonation): boolean {
 		return (incomingDonation.confirmation === ConfirmationStatusState.CONFIRMED);
 	}
+
 	public isFailed(incomingDonation: AppIncomingDonation): boolean {
 		return (incomingDonation.confirmation === ConfirmationStatusState.FAILED);
 	}
+
 	public isErrored(incomingDonation: AppIncomingDonation): boolean {
 		return (incomingDonation.confirmation === ConfirmationStatusState.ERROR);
 	}

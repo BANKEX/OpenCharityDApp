@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {CharityEvent, CharityEventContractService} from '../services/charity-event-contract.service';
 import {Subject} from 'rxjs/Subject';
 import {Router, ActivatedRoute} from '@angular/router';
+import {CharityEventContractService} from '../../core/contracts-services/charity-event-contract.service';
 
 @Component({
 	templateUrl: 'charity-events-transactions-history.component.html',

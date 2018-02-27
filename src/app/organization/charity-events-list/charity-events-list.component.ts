@@ -155,13 +155,8 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 		this.componentDestroyed.next();
 	}
 
-	public async updateCharityEventRaised(charityEvents: CharityEvent[]) {
-		charityEvents.forEach(async (charityEvent) => {
-			charityEvent.raised = await this.tokenContractService.balanceOf(charityEvent.address);
-		});
-	}
 
-	goToTransactions(charityEvent: CharityEvent): void {
+	goToTransactions(charityEvent: AppCharityEvent): void {
 		this.router.navigate([`/organization/${this.organizationContractAddress}/charityevent/${charityEvent.address}/transactions`]);
 	}
 }

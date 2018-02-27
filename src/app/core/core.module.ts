@@ -36,7 +36,7 @@ const contractsServices = [
 		LoadingOverlayService,
 		BlockingNotificationOverlayService,
 		MetamaskCheckService,
-		{provide: 'Window', useFactory: windowFactory },
+		{provide: 'Window', useFactory: windowFactory},
 		...contractsServices
 	]
 })
