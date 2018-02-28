@@ -99,21 +99,14 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 		this.charityEvents = times(charityEventsCount, constant(null));
 
 
-		// this counter is used to track how much items is loaded
-		// if all data is loaded, unsubscribe from Observable
-		let loadedItemsCount: number = charityEventsCount;
-
 		this.organizationContractService.getCharityEvents(this.organizationContractAddress)
-			.takeWhile(() => loadedItemsCount > 0)
+			.take(charityEventsCount)
 			.subscribe(async (res: { address: string, index: number }) => {
 				this.charityEvents[res.index] = merge({}, await this.charityEventContractService.getCharityEventDetails(res.address), {
 					confirmation: ConfirmationStatusState.CONFIRMED
 				});
 				await this.updateCharityEventRaised(this.charityEvents[res.index]);
 				this.cd.detectChanges();
-
-				loadedItemsCount--;
-
 			});
 	}
 

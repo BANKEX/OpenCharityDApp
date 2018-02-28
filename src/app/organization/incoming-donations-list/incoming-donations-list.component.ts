@@ -115,20 +115,15 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 		// when data is loaded, replace null by data
 		this.incomingDonations = times(incomingDonationsCount, constant(null));
 
-		// this counter is used to track how much items is loaded
-		// if all data is loaded, unsubscribe from Observable
-		let loadedItemsCount: number = incomingDonationsCount;
 
 		this.organizationContractService.getIncomingDonations(this.organizationContractAddress)
-			.takeWhile(() => loadedItemsCount > 0)
+			.take(incomingDonationsCount)
 			.subscribe(async (res: { address: string, index: number }) => {
 				this.incomingDonations[res.index] = merge({}, await this.incomingDonationContractService.getIncomingDonationDetails(res.address), {
 					confirmation: ConfirmationStatusState.CONFIRMED
 				});
 				await this.updateIncomingDonationAmount(this.incomingDonations[res.index]);
 				this.cd.detectChanges();
-
-				loadedItemsCount--;
 			});
 	}
 
