@@ -35,6 +35,15 @@ contract Organization {
     event IncomingDonationAdded(address indexed organization, address incomingDonation, address indexed who, uint amount);
 
 
+	/**
+     * @dev Events emitted when donation funds moved to charity event
+     * @param charityEvent address of target charity event
+     * @param who address which initiate transaction
+     * @param amount how much tokens moved
+     */
+	event FundsMovedToCharityEvent(address indexed incomingDonation, address indexed charityEvent, address indexed who, uint amount);
+
+
 
     function Organization(OpenCharityMintableToken _token, address[] _admins, string _name) public {
         // at least one admin is required
@@ -111,6 +120,24 @@ contract Organization {
 
         return incomingDonation;
     }
+
+	function moveDonationFundsToCharityEvent(address _incomingDonation, address _charityEvent, uint _amount) public {
+		// check that it is IncomingDonation contract
+		require(IncomingDonation(_incomingDonation).isIncomingDonation());
+
+		// check that it is CharityEvent contract
+		require(CharityEvent(_charityEvent).isCharityEvent());
+
+		// move funds
+		require(IncomingDonation(_incomingDonation).moveToCharityEvent(_charityEvent, _amount));
+
+		FundsMovedToCharityEvent(_incomingDonation, _charityEvent, msg.sender, _amount);
+
+	}
+
+
+
+
 
     function isAdmin() view external returns (bool) {
         return(admins[msg.sender]);

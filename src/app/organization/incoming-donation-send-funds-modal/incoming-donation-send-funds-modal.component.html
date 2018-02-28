@@ -1,4 +1,4 @@
-<div class="modal-dialog modal-md" role="document">
+<div class="modal-dialog modal-md">
 	<div class="modal-content">
 		<div class="modal-body">
 			<div class="modal-header no-pdd-left">
@@ -12,12 +12,7 @@
 					<label for="typeahead-focus">Choose event:</label>
 					<input id="typeahead-focus" type="text"
 						   class="form-control"
-						   [formControlName]="'targetCharityEvent'"
-						   (focus)="focus$.next($event.target.value)"
-						   (click)="click$.next($event.target.value)"
-						   [ngbTypeahead]="search" [resultTemplate]="rt"
-						   [inputFormatter]="formatter"
-						   #typeahead="ngbTypeahead" />
+						   [formControlName]="'targetCharityEvent'"/>
 				</div>
 				<div class="mrg-top-20">
 					<label class="control-label" for="form-1-1">Amount</label>
