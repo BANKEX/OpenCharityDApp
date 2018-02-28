@@ -1,5 +1,5 @@
 <div class="row">
-	<div class="col-lg-12" *ngFor="let charityEvent of charityEvents.slice().reverse()">
+	<div class="col-lg-12" *ngFor="let charityEvent of charityEvents.slice().reverse()" (click)="goToTransactions(charityEvent)">
 		<div class="card charity-event-card card-hover" [ngClass]="{'pending' : charityEvent && isPending(charityEvent)}">
 
 			<div class="loading-overlay" *ngIf="charityEvent === null">

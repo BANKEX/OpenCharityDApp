@@ -20,6 +20,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {IncomingDonationSendFundsModalComponent} from './incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
 import {OrganizationContractEventsService} from '../core/contracts-services/organization-contract-events.service';
 import {IsAdminGuard} from './is-admin.guard';
+import {CharityEventsTransactionsHistoryComponent} from './charity-events-transactions-history/charity-events-transactions-history.component';
 import {OrganizationSharedService} from './services/organization-shared.service';
 
 @NgModule({
@@ -32,7 +33,8 @@ import {OrganizationSharedService} from './services/organization-shared.service'
 		OrganizationsListComponent,
 		SetBitmaskTagsComponent,
 		BitmaskTagsListComponent,
-		IncomingDonationSendFundsModalComponent
+		IncomingDonationSendFundsModalComponent,
+		CharityEventsTransactionsHistoryComponent
 	],
   	entryComponents: [IncomingDonationSendFundsModalComponent],
 	imports: [

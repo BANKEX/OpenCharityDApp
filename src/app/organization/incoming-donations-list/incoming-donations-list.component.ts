@@ -8,12 +8,8 @@ import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 import {IncomingDonationSendFundsModalComponent} from '../incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
 import {CharityEventContractService} from '../../core/contracts-services/charity-event-contract.service';
 import {OrganizationContractEventsService} from '../../core/contracts-services/organization-contract-events.service';
-import {reverse, times, constant, find, merge, findIndex} from 'lodash';
-import {
-	AppCharityEvent,
-	AppIncomingDonation, ConfirmationResponse, ConfirmationStatusState, ContractCharityEvent,
-	ContractIncomingDonation
-} from '../../open-charity-types';
+import {constant, find, findIndex, merge, reverse, times} from 'lodash';
+import {AppIncomingDonation, ConfirmationResponse, ConfirmationStatusState} from '../../open-charity-types';
 import {OrganizationSharedService} from '../services/organization-shared.service';
 
 
@@ -34,8 +30,8 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 				private charityEventContractService: CharityEventContractService,
 				private organizationContractEventsService: OrganizationContractEventsService,
 				private modalService: NgbModal,
-				private cd: ChangeDetectorRef,
-				private organizationSharedService: OrganizationSharedService
+				private organizationSharedService: OrganizationSharedService,
+				private zone: NgZone
 	) {
 	}
 
@@ -83,7 +79,6 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 			});
 
 
-
 		this.organizationSharedService.onIncomingDonationCanceled()
 			.takeUntil(this.componentDestroyed)
 			.subscribe((res: ConfirmationResponse) => {
@@ -100,17 +95,6 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 	}
 
 
-
-	public async addNewIncomingDonation(address: string) {
-		const newItemIndex = this.incomingDonations.length;
-		this.incomingDonations.push(null);
-		this.incomingDonationContractService.getIncomingDonationDetails(address)
-			.then((incomingDonation: AppIncomingDonation) => {
-				this.incomingDonations[newItemIndex] = incomingDonation;
-				this.cd.detectChanges();
-			});
-	}
-
 	// show ID cards with loading animation and replace it
 	// by data when it is loaded
 	public async updateIncomingDonationsList(): Promise<void> {
@@ -122,32 +106,37 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 		// when data is loaded, replace null by data
 		this.incomingDonations = times(incomingDonationsCount, constant(null));
 
-		// this counter is used to track how much items is loaded
-		// if all data is loaded, unsubscribe from Observable
-		let loadedItemsCount: number = incomingDonationsCount;
 
 		this.organizationContractService.getIncomingDonations(this.organizationContractAddress)
-			.takeWhile(() => loadedItemsCount > 0 )
+			.take(incomingDonationsCount)
 			.subscribe(async (res: { address: string, index: number }) => {
-				this.incomingDonations[res.index] = merge({}, await this.incomingDonationContractService.getIncomingDonationDetails(res.address), {
-					confirmation: ConfirmationStatusState.CONFIRMED
-				});
-				await this.updateIncomingDonationAmount(this.incomingDonations[res.index]);
-				this.cd.detectChanges();
 
-				loadedItemsCount--;
+				// it is a hack. without zone.run it doesn't work properly:
+				// it doesn't update incoming donations in template
+				// if you change it to .detectChanges, it breaks further change detection of other components
+				// if you know how to fix it, please do it
+				this.zone.run(async () => {
+					this.incomingDonations[res.index] = merge({}, await this.incomingDonationContractService.getIncomingDonationDetails(res.address), {
+						confirmation: ConfirmationStatusState.CONFIRMED
+					});
+					await this.updateIncomingDonationAmount(this.incomingDonations[res.index]);
+				});
+
 			});
 	}
 
 	public isPending(incomingDonation: AppIncomingDonation): boolean {
 		return (incomingDonation.confirmation === ConfirmationStatusState.PENDING);
 	}
+
 	public isConfirmed(incomingDonation: AppIncomingDonation): boolean {
 		return (incomingDonation.confirmation === ConfirmationStatusState.CONFIRMED);
 	}
+
 	public isFailed(incomingDonation: AppIncomingDonation): boolean {
 		return (incomingDonation.confirmation === ConfirmationStatusState.FAILED);
 	}
+
 	public isErrored(incomingDonation: AppIncomingDonation): boolean {
 		return (incomingDonation.confirmation === ConfirmationStatusState.ERROR);
 	}

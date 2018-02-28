@@ -30,7 +30,6 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 	public search: any;
 	public statesWithFlags: any;
 
-	public targetContractCharityEvent: ContractCharityEvent;
 	public amount: string;
 	public moveFundsForm: FormGroup;
 
@@ -66,7 +65,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 
 	private initForm(): void {
 		this.moveFundsForm = this.fb.group({
-			targetContractCharityEvent: ['', [Validators.required]],
+			targetCharityEvent: ['', [Validators.required]],
 			amount: ['', [Validators.required, this.validateAmount.bind(this)]]
 		})
 	}
@@ -84,9 +83,9 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 	}
 
 
-	public async sendFunds(targetContractCharityEvent: ContractCharityEvent, amount: string): Promise<void> {
+	public async sendFunds(targetCharityEvent: ContractCharityEvent, amount: string): Promise<void> {
 		try {
-			const tran = await this.incomingDonationContractService.moveToCharityEvent(this.incomingDonation.address, targetContractCharityEvent.address, amount);
+			const tran = await this.incomingDonationContractService.moveToCharityEvent(this.incomingDonation.address, targetCharityEvent.address, amount);
 			console.log(tran);
 			this.fundsMoved.emit(this.incomingDonation.address);
 			this.activeModal.close();

@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {OrganizationContractService} from '../../core/contracts-services/organization-contract.service';
 import {CharityEventContractService} from '../../core/contracts-services/charity-event-contract.service';
 import {Subject} from 'rxjs/Subject';
@@ -7,6 +7,7 @@ import {OrganizationContractEventsService} from '../../core/contracts-services/o
 import {constant, findIndex, merge, reverse, times} from 'lodash';
 import {OrganizationSharedService} from '../services/organization-shared.service';
 import {AppCharityEvent, ConfirmationResponse, ConfirmationStatusState} from '../../open-charity-types';
+import {Router} from '@angular/router';
 
 
 @Component({
@@ -23,15 +24,21 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 	constructor(private organizationContractService: OrganizationContractService,
 				private charityEventContractService: CharityEventContractService,
 				private tokenContractService: TokenContractService,
+				private router: Router,
 				private organizationContractEventsService: OrganizationContractEventsService,
 				private organizationSharedService: OrganizationSharedService,
-				private cd: ChangeDetectorRef) {
+				private zone: NgZone
+	) {
 
 	}
 
 	async ngOnInit(): Promise<void> {
 		this.updateCharityEventsList();
 		this.initEventsListeners();
+
+		this.zone.onUnstable.subscribe((err) => {
+
+		});
 	}
 
 	private initEventsListeners(): void {
@@ -97,21 +104,21 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 		this.charityEvents = times(charityEventsCount, constant(null));
 
 
-		// this counter is used to track how much items is loaded
-		// if all data is loaded, unsubscribe from Observable
-		let loadedItemsCount: number = charityEventsCount;
-
 		this.organizationContractService.getCharityEvents(this.organizationContractAddress)
-			.takeWhile(() => loadedItemsCount > 0)
+			.take(charityEventsCount)
 			.subscribe(async (res: { address: string, index: number }) => {
-				this.charityEvents[res.index] = merge({}, await this.charityEventContractService.getCharityEventDetails(res.address), {
-					confirmation: ConfirmationStatusState.CONFIRMED
+
+				// it is a hack. without zone.run it doesn't work properly:
+				// it doesn't update charityEvents in template
+				// if you change it to .detectChanges, it breaks further change detection of other comopnents
+				// if you know how to fix it, please do it
+				this.zone.run(async() => {
+					this.charityEvents[res.index] = merge({}, await this.charityEventContractService.getCharityEventDetails(res.address), {
+						confirmation: ConfirmationStatusState.CONFIRMED
+					});
+
+					await this.updateCharityEventRaised(this.charityEvents[res.index]);
 				});
-				await this.updateCharityEventRaised(this.charityEvents[res.index]);
-				this.cd.detectChanges();
-
-				loadedItemsCount--;
-
 			});
 	}
 
@@ -151,5 +158,10 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 
 	ngOnDestroy(): void {
 		this.componentDestroyed.next();
+	}
+
+
+	goToTransactions(charityEvent: AppCharityEvent): void {
+		this.router.navigate([`/organization/${this.organizationContractAddress}/charityevent/${charityEvent.address}/transactions`]);
 	}
 }
