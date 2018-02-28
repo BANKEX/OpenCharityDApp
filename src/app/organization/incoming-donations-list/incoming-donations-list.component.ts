@@ -1,5 +1,5 @@
 import {OrganizationContractService} from '../../core/contracts-services/organization-contract.service';
-import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, NgZone, OnDestroy, OnInit} from '@angular/core';
 // tslint:disable-next-line:max-line-length
 import {IncomingDonationContractService} from '../../core/contracts-services/incoming-donation-contract.service';
 import {Subject} from 'rxjs/Subject';
@@ -30,8 +30,9 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 				private charityEventContractService: CharityEventContractService,
 				private organizationContractEventsService: OrganizationContractEventsService,
 				private modalService: NgbModal,
-				private cd: ChangeDetectorRef,
-				private organizationSharedService: OrganizationSharedService) {
+				private organizationSharedService: OrganizationSharedService,
+				private zone: NgZone
+	) {
 	}
 
 	public ngOnInit(): void {
@@ -94,16 +95,6 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 	}
 
 
-	public async addNewIncomingDonation(address: string) {
-		const newItemIndex = this.incomingDonations.length;
-		this.incomingDonations.push(null);
-		this.incomingDonationContractService.getIncomingDonationDetails(address)
-			.then((incomingDonation: AppIncomingDonation) => {
-				this.incomingDonations[newItemIndex] = incomingDonation;
-				this.cd.detectChanges();
-			});
-	}
-
 	// show ID cards with loading animation and replace it
 	// by data when it is loaded
 	public async updateIncomingDonationsList(): Promise<void> {
@@ -119,11 +110,18 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 		this.organizationContractService.getIncomingDonations(this.organizationContractAddress)
 			.take(incomingDonationsCount)
 			.subscribe(async (res: { address: string, index: number }) => {
-				this.incomingDonations[res.index] = merge({}, await this.incomingDonationContractService.getIncomingDonationDetails(res.address), {
-					confirmation: ConfirmationStatusState.CONFIRMED
+
+				// it is a hack. without zone.run it doesn't work properly:
+				// it doesn't update incoming donations in template
+				// if you change it to .detectChanges, it breaks further change detection of other components
+				// if you know how to fix it, please do it
+				this.zone.run(async () => {
+					this.incomingDonations[res.index] = merge({}, await this.incomingDonationContractService.getIncomingDonationDetails(res.address), {
+						confirmation: ConfirmationStatusState.CONFIRMED
+					});
+					await this.updateIncomingDonationAmount(this.incomingDonations[res.index]);
 				});
-				await this.updateIncomingDonationAmount(this.incomingDonations[res.index]);
-				this.cd.detectChanges();
+
 			});
 	}
 
