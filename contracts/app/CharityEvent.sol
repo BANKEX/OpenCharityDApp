@@ -16,7 +16,10 @@ contract CharityEvent {
 
     bytes1 public tags;
 
-    function CharityEvent(string _name, uint _target, uint _payed, bytes1 _tags) public {
+	string public metaStorageHash;
+
+
+    function CharityEvent(string _name, uint _target, uint _payed, bytes1 _tags, string _metaStorageHash) public {
         require(_target > 0);
         require(_payed >= 0);
         require(!Tools.isEmptyString(_name));
@@ -25,12 +28,18 @@ contract CharityEvent {
         target = _target;
         payed = _payed;
         tags = _tags;
+
+		metaStorageHash = _metaStorageHash;
     }
 
     // check that contract is charity event contract
     function isCharityEvent() pure external returns (bool) {
         return true;
     }
+
+	function updateMetaStorageHash(string _metaStorageHash) public  {
+		metaStorageHash = _metaStorageHash;
+	}
 
 
 }

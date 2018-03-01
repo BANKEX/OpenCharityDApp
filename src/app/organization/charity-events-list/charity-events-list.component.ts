@@ -8,6 +8,7 @@ import {constant, findIndex, merge, reverse, times} from 'lodash';
 import {OrganizationSharedService} from '../services/organization-shared.service';
 import {AppCharityEvent, ConfirmationResponse, ConfirmationStatusState} from '../../open-charity-types';
 import {Router} from '@angular/router';
+import {MetaDataStorageService} from '../../core/meta-data-storage.service';
 
 
 @Component({
@@ -27,7 +28,8 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 				private router: Router,
 				private organizationContractEventsService: OrganizationContractEventsService,
 				private organizationSharedService: OrganizationSharedService,
-				private zone: NgZone
+				private zone: NgZone,
+				private metaDataStorageService: MetaDataStorageService
 	) {
 
 	}
@@ -35,10 +37,6 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 	async ngOnInit(): Promise<void> {
 		this.updateCharityEventsList();
 		this.initEventsListeners();
-
-		this.zone.onUnstable.subscribe((err) => {
-
-		});
 	}
 
 	private initEventsListeners(): void {
@@ -117,7 +115,8 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 						confirmation: ConfirmationStatusState.CONFIRMED
 					});
 
-					await this.updateCharityEventRaised(this.charityEvents[res.index]);
+					this.updateCharityEventRaised(this.charityEvents[res.index]);
+					this.updateCharityEventMetaStorageData(this.charityEvents[res.index]);
 				});
 			});
 	}
@@ -155,6 +154,27 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 			this.updateCharityEventRaised(charityEvent);
 		});
 	}
+
+
+	private async updateCharityEventMetaStorageData(charityEvent: AppCharityEvent): Promise<void> {
+		// TODO: add typescript itnerface for CE meta storage data
+
+		let data: any = await this.getCharityEventMetaStorageData(charityEvent);
+		if (!data) {
+			return
+		}
+
+		if (data.attachment) {
+			charityEvent.image = this.metaDataStorageService.convertArrayBufferToBase64( await this.metaDataStorageService.getImage(data.attachment).toPromise() );
+		}
+
+		charityEvent.description = data.description;
+	}
+
+	private getCharityEventMetaStorageData(charityEvent: AppCharityEvent): Promise<any> {
+		return this.metaDataStorageService.getData(charityEvent.metaStorageHash).toPromise();
+	}
+
 
 	ngOnDestroy(): void {
 		this.componentDestroyed.next();

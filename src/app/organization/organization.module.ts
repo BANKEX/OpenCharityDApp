@@ -30,6 +30,7 @@ import {CharityEventsAllComponent} from './charity-events-all/charity-events-all
 import {IncomingDonationsDetailsComponent} from './incoming-donations-details/incoming-donations-details.component';
 import {IncomingDonationsEditorComponent} from './incoming-donation-editor/incoming-donation-editor.component';
 import {IncomingDonationsAllComponent} from './incoming-donations-all/incoming-donations-all.component';
+import {FileDropModule} from 'ngx-file-drop';
 
 @NgModule({
 	declarations: [
@@ -59,7 +60,8 @@ import {IncomingDonationsAllComponent} from './incoming-donations-all/incoming-d
 		RouterModule.forChild(OrganizationRoutes),
 		ReactiveFormsModule,
 		NgSelectizeModule,
-		NgbModule
+		NgbModule,
+		FileDropModule
 	],
 	providers: [
 		IsOrganizationAddressGuard,

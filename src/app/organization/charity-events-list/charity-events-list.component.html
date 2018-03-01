@@ -1,5 +1,5 @@
 <div class="row">
-	<div class="col-lg-12" *ngFor="let charityEvent of charityEvents.slice().reverse()" (click)="goToTransactions(charityEvent)">
+	<div class="col-12 col-md-6 col-lg-4" *ngFor="let charityEvent of charityEvents.slice().reverse()" (click)="goToTransactions(charityEvent)">
 		<div class="card charity-event-card card-hover" [ngClass]="{'pending' : charityEvent && isPending(charityEvent)}">
 
 			<div class="loading-overlay" *ngIf="charityEvent === null">
@@ -16,18 +16,26 @@
 					</div>
 				</div>
 
+				<div class="card-media" *ngIf="charityEvent.image">
+					<img src="data:image/JPEG;base64,{{charityEvent.image}}" alt="">
+				</div>
+
 
 				<div class="card-block no-pdd-btm">
 					<span class="title-wrap"><h4 class="no-mrg-btm text-semibold">{{charityEvent.name}}</h4> </span>
 				</div>
 				<div class="card-block no-pdd-btm no-pdd-top">
                 <span class="sub-title font-size-8">
-                    {{charityEvent.address}}
+					{{charityEvent.address}}
                 </span>
 				</div>
 
 				<div class="card-block no-pdd-btm pdd-top-5">
 					<opc-bitmask-tags-list [tags]="charityEvent.tags"></opc-bitmask-tags-list>
+				</div>
+
+				<div class="card-block">
+					{{charityEvent.description}}
 				</div>
 
 				<div class="card-block no-pdd-btm">

@@ -66,6 +66,8 @@ exports.MY_VENDOR_DLLS = [
 	// list vendors that you want to be included in your dlls files
 	// this will speed up initial dev server build and incremental builds.
 	// Be sure to run `npm run build:dll` if you make changes to this array.
+	'@swimlane/ngx-dnd',
+	'ngx-file-drop'
 ]
 
 exports.MY_CLIENT_PLUGINS = [
@@ -95,10 +97,11 @@ exports.DEV_ENVIRONMENT = {
 	'tokenAddress': '0x6a183381d14371b4a228cca37802c09bd166ba9e',
 	'rpcProviderUrl': 'https://rpcprovider.staging.bankex.team:8635',
 	'websocketProviderUrl': 'wss://wsprovider.staging.bankex.team:8636',
+	'metaStorageUrl': 'http://127.0.0.1:8081/api/meta/',
 	'organizations':  [
-		'0x45679dd4c4896c6035a3059ccf13bd5d9e6edb7c',
-		'0x7f0319765298863bb75d56825dbced6cdff36d21',
-		'0xbe08f7884ff4e31b4c77a5b6ed7f4fcae0440d0b'
+		'0x33d3fbac058929d39a7c37f3d50fecfc4f0ef009',
+		'0xa23c54662b627434d5220101e0fa43bb213f4096',
+		'0x34677dffc2a117aaa18716017ad8ffce0af1751c'
 	]
 };
 

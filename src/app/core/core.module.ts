@@ -11,6 +11,7 @@ import {CharityEventContractService} from './contracts-services/charity-event-co
 import {IncomingDonationContractService} from './contracts-services/incoming-donation-contract.service';
 import {OrganizationContractService} from './contracts-services/organization-contract.service';
 import {OrganizationContractEventsService} from './contracts-services/organization-contract-events.service';
+import {MetaDataStorageService} from './meta-data-storage.service';
 
 export function windowFactory() {
 	return window;
@@ -37,6 +38,7 @@ const contractsServices = [
 		BlockingNotificationOverlayService,
 		MetamaskCheckService,
 		{provide: 'Window', useFactory: windowFactory},
+		MetaDataStorageService,
 		...contractsServices
 	]
 })
