@@ -88,7 +88,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 
 	public async sendFunds(targetCharityEvent: ContractCharityEvent, amount: string): Promise<void> {
 		try {
-			const tran = await this.incomingDonationContractService.moveToCharityEvent(this.incomingDonation.address, targetCharityEvent.address, amount);
+			const tran = await this.organizationContractService.moveFundsToCharityEvent(this.organizationContractAddress, this.incomingDonation.address, targetCharityEvent.address, amount);
 			console.log(tran);
 			this.fundsMoved.emit(this.incomingDonation.address);
 			this.activeModal.close();
