@@ -30,20 +30,26 @@ build-node-stage:
   image: node:alpine
   stage: build-node-stage
   script:
+    - npm install -g truffle
     - npm run build:aot:dev
+    - truffle compile
   artifacts:
     paths:
       - dist
+      - abi
     expire_in: 24h
 
 build-node-prod:
   image: node:alpine
   stage: build-node-prod
   script:
+    - npm install -g truffle
     - npm run build:aot:prod
+    - truffle compile
   artifacts:
     paths:
       - dist
+      - abi
     expire_in: 24h
   only:
     - production
