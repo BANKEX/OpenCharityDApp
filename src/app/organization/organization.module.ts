@@ -20,8 +20,15 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {IncomingDonationSendFundsModalComponent} from './incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
 import {OrganizationContractEventsService} from '../core/contracts-services/organization-contract-events.service';
 import {IsAdminGuard} from './is-admin.guard';
-import {CharityEventsTransactionsHistoryComponent} from './charity-events-transactions-history/charity-events-transactions-history.component';
 import {OrganizationSharedService} from './services/organization-shared.service';
+import {CharityEventsCardComponent} from './charity-event-card/charity-events-card.component';
+import {ActualCharityEventsComponent} from './actual-events/actual-events.component';
+import {ActualIncomingDonationsComponent} from './actual-donations/actual-donations.component';
+import {CharityEventsTransactionsHistoryComponent} from './charity-events-transactions-history/charity-events-transactions-history.component';
+import {CharityEventEditorComponent} from './charity-event-editor/charity-event-editor.component';
+import {CharityEventsAllComponent} from './charity-events-all/charity-events-all.component';
+import {IncomingDonationsDetailsComponent} from './incoming-donations-details/incoming-donations-details.component';
+import {IncomingDonationsEditorComponent} from './incoming-donation-editor/incoming-donation-editor.component';
 
 @NgModule({
 	declarations: [
@@ -34,7 +41,14 @@ import {OrganizationSharedService} from './services/organization-shared.service'
 		SetBitmaskTagsComponent,
 		BitmaskTagsListComponent,
 		IncomingDonationSendFundsModalComponent,
-		CharityEventsTransactionsHistoryComponent
+		CharityEventsCardComponent,
+		ActualCharityEventsComponent,
+		ActualIncomingDonationsComponent,
+		CharityEventsTransactionsHistoryComponent,
+		CharityEventEditorComponent,
+		CharityEventsAllComponent,
+		IncomingDonationsDetailsComponent,
+		IncomingDonationsEditorComponent
 	],
   	entryComponents: [IncomingDonationSendFundsModalComponent],
 	imports: [

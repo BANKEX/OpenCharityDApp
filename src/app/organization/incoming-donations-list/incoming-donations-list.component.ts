@@ -160,7 +160,6 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 		modalRef.componentInstance.incomingDonation = incomingDonation;
 		modalRef.componentInstance.charityEvents = charityEvents;
 		modalRef.componentInstance.fundsMoved.subscribe((incomingDonationAddress: string) => {
-			debugger;
 			const incDonation = find(this.incomingDonations, {address: incomingDonationAddress});
 			if (this.incomingDonations) {
 				this.updateIncomingDonationAmount(incDonation);
