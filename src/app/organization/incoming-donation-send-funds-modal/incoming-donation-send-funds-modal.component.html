@@ -12,7 +12,12 @@
 					<label for="typeahead-focus">Choose event:</label>
 					<input id="typeahead-focus" type="text"
 						   class="form-control"
-						   [formControlName]="'targetCharityEvent'"/>
+						   [formControlName]="'targetCharityEvent'"
+						   (focus)="focus$.next($event.target.value)"
+						   (click)="click$.next($event.target.value)"
+						   [ngbTypeahead]="search" [resultTemplate]="rt"
+						   [inputFormatter]="formatter"
+						   #typeahead="ngbTypeahead" />
 				</div>
 				<div class="mrg-top-20">
 					<label class="control-label" for="form-1-1">Amount</label>
