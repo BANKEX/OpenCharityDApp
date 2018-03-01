@@ -1,7 +1,7 @@
 version: '3'
 
 volumes:
-    abi:
+    contracts:
 
 services:
   oc_client:
@@ -9,7 +9,7 @@ services:
     container_name: oc_client
     restart: always
     volumes:
-      - abi:/opt/abi
+      - contracts:/opt/contracts
     expose:
       - "80"
     environment:
