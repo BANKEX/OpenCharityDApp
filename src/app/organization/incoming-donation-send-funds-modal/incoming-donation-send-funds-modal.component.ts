@@ -11,6 +11,7 @@ import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} f
 import {filter} from 'lodash';
 import {TagsBitmaskService} from '../services/tags-bitmask.service';
 import {ContractCharityEvent, ContractIncomingDonation} from '../../open-charity-types';
+import {OrganizationContractService} from '../../core/contracts-services/organization-contract.service';
 
 
 @Component({
@@ -19,6 +20,7 @@ import {ContractCharityEvent, ContractIncomingDonation} from '../../open-charity
 })
 
 export class IncomingDonationSendFundsModalComponent implements OnInit {
+	@Input('organizationContractAddress') organizationContractAddress: string;
 	@Input('charityEvents') charityEvents: ContractCharityEvent[];
 	@Input('incomingDonation') incomingDonation: ContractIncomingDonation;
 	@Output('fundsMoved') fundsMoved: EventEmitter<string> = new EventEmitter<string>();
@@ -34,6 +36,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 	public moveFundsForm: FormGroup;
 
 	constructor(
+		private organizationContractService: OrganizationContractService,
 		private incomingDonationContractService: IncomingDonationContractService,
 		private tagsBitmaskService: TagsBitmaskService,
 		private fb: FormBuilder,

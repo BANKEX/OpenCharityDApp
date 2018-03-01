@@ -21,15 +21,6 @@ contract IncomingDonation {
     // optional note. can be anything or empty
     string public note;
 
-    /**
-     * @dev Events emitted when donation funds moved to charity event
-     * @param charityEvent address of target charity event
-     * @param who address which initiate transaction
-     * @param amount how much tokens moved
-     */
-    event FundsMovedToCharityEvent(address indexed charityEvent, address indexed who, uint amount);
-
-
 
     function IncomingDonation(address _token, string _realWorldIdentifier, string _note, bytes1 _tags) public {
         require(_token != address(0x0));
@@ -41,7 +32,7 @@ contract IncomingDonation {
         tags = _tags;
     }
 
-    function moveToCharityEvent(address _charityEvent, uint _amount) public {
+    function moveToCharityEvent(address _charityEvent, uint _amount) public returns(bool) {
         require(_amount > 0);
 
         CharityEvent charityEvent = CharityEvent(_charityEvent);
@@ -52,7 +43,7 @@ contract IncomingDonation {
 
         token.transfer(_charityEvent, _amount);
 
-		FundsMovedToCharityEvent(_charityEvent, msg.sender, _amount);
+		return true;
     }
 
     /**
