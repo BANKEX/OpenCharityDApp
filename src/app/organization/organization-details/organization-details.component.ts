@@ -12,9 +12,10 @@ export class OrganizationDetailsComponent implements OnInit {
 	public changer: string = 'events';
 	public organizationContractAddress;
 
-
-	constructor(private organizationService: OrganizationContractService,
-				private route: ActivatedRoute) {
+	constructor(
+		private organizationService: OrganizationContractService,
+		private route: ActivatedRoute
+	) {
 		this.route.params.subscribe((params: Params) => {
 			this.organizationContractAddress = params.address;
 		});
@@ -23,5 +24,4 @@ export class OrganizationDetailsComponent implements OnInit {
 	public async ngOnInit(): Promise<void> {
 		this.name = await this.organizationService.getName(this.organizationContractAddress);
 	}
-
 }

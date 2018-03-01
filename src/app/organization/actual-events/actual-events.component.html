@@ -1,0 +1,9 @@
+<div class="row">
+	<button class="btn btn-primary all-button" type="button" (click)="toAllCharityEvents()">To all Charity Events</button>
+	<opc-charity-events-card class="col-lg-4" *ngFor="let charityEvent of charityEvents.slice(0, 5)" [charityEvent]="charityEvent"></opc-charity-events-card>
+	<!-- <div class="col-lg-4">
+		<div class="card charity-event-button card-hover">
+			<div class="to-events-button"><i class="fa fa-ellipsis-h"></i></div>
+		</div>
+	</div> -->
+</div>

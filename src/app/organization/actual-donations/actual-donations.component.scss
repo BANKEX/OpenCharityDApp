@@ -1,0 +1,44 @@
+@import 'src/assets/scss/variables';
+
+.nav-link {
+  cursor: pointer;
+}
+
+.incoming-donations-row {
+  margin: 0;
+}
+
+.incoming-donations-actual {
+  position: relative;
+  width: 100%;
+}
+
+.dropdown {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.incoming-donations-content {
+  margin: 12px;
+}
+
+.donations-table {
+  tr.data {
+    cursor: pointer;
+
+    // &:hover {
+    //   background-color: rgba($theme-primary, 0.2);
+    // }
+  }
+}
+
+.upload-btn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 144px;
+  height: 43px;
+  opacity: 0;
+  cursor: pointer;
+}

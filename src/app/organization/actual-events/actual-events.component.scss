@@ -1,0 +1,25 @@
+@import 'src/assets/scss/variables';
+
+.charity-event-button {
+	min-height: 240px;
+	position: relative;
+
+  .to-events-button {
+    height: 240px;
+    line-height: 240px;
+    width: 100%;
+    font-size: 64px;
+    text-align: center;
+    cursor: pointer;
+  }
+}
+
+.row {
+	position: relative;
+}
+
+.all-button {
+	position: absolute;
+	right: 12px;
+	top: -54px;
+}
