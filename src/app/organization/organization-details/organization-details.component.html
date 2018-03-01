@@ -8,7 +8,10 @@
 		</h4>
 	</div>
 
-	<div class="card">
+	<opc-actual-charity-events></opc-actual-charity-events>
+	<opc-actual-incoming-donations></opc-actual-incoming-donations>
+
+	<!-- <div class="card">
 		<div class="tab-primary">
 			<ul class="nav nav-tabs" role="tablist">
 				<li class="nav-item">
@@ -23,8 +26,7 @@
 			<div class="tab-content">
 				<div class="tab-pane fade" [ngClass]="{'in active':changer === 'events'}">
 					<div class="pdd-horizon-15 pdd-vertical-20 m-height-card">
-						<opc-charity-events-list
-							[organizationContractAddress]="organizationContractAddress"></opc-charity-events-list>
+						<opc-charity-events-list [organizationContractAddress]="organizationContractAddress"></opc-charity-events-list>
 					</div>
 				</div>
 				<div class="tab-pane fade" [ngClass]="{'in active':changer === 'donations'}">
@@ -35,10 +37,10 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	</div> -->
 
-	<opc-add-charity-event [ngClass]="{'hidden':changer != 'events'}"
+	<!-- <opc-add-charity-event [ngClass]="{'hidden':changer != 'events'}"
 						   [organizationContractAddress]="organizationContractAddress"></opc-add-charity-event>
 	<opc-add-incoming-donation [ngClass]="{'hidden':changer != 'donations'}"
-							   [organizationContractAddress]="organizationContractAddress"></opc-add-incoming-donation>
+							   [organizationContractAddress]="organizationContractAddress"></opc-add-incoming-donation> -->
 </div>

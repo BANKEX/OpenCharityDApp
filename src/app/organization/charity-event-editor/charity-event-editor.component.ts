@@ -4,10 +4,10 @@ import {Router, ActivatedRoute} from '@angular/router';
 import {CharityEventContractService} from '../../core/contracts-services/charity-event-contract.service';
 
 @Component({
-	templateUrl: 'charity-events-transactions-history.component.html',
-	styleUrls: ['charity-events-transactions-history.component.scss']
+	templateUrl: 'charity-event-editor.component.html',
+	styleUrls: ['charity-event-editor.component.scss']
 })
-export class CharityEventsTransactionsHistoryComponent implements OnInit, OnDestroy {
+export class CharityEventEditorComponent implements OnInit, OnDestroy {
 	private componentDestroyed: Subject<void> = new Subject<void>();
 	public organizationAddress: string = null;
 	public charityEventAddress: string = null;
@@ -26,31 +26,14 @@ export class CharityEventsTransactionsHistoryComponent implements OnInit, OnDest
 			this.charityEventAddress = params["event"];
 		});
 		this.name = await this.charityEventContractService.getName(this.charityEventAddress);
-		this.transactions = [{
-			from: "0xbb8251c7252b6fec412a0a99995ebc1a28e4e103",
-			transaction: "0xbb8251c7252b6fec412a0a99995ebc1a28e4e103",
-			value: "500"
-		}, {
-			from: "0xbb8251c7252b6fec412a0a99995ebc1a28e4e103",
-			transaction: "0xbb8251c7252b6fec412a0a99995ebc1a28e4e103",
-			value: "500"
-		}, {
-			from: "0xbb8251c7252b6fec412a0a99995ebc1a28e4e103",
-			transaction: "0xbb8251c7252b6fec412a0a99995ebc1a28e4e103",
-			value: "500"
-		}, {
-			from: "0xbb8251c7252b6fec412a0a99995ebc1a28e4e103",
-			transaction: "0xbb8251c7252b6fec412a0a99995ebc1a28e4e103",
-			value: "500"
-		}];
-	}
-
-	public goBackToOrganization(event: Event): void {
-		this.router.navigate(['/organization', this.organizationAddress]);
-		event.preventDefault();
 	}
 
 	ngOnDestroy(): void {
 		this.componentDestroyed.next();
+	}
+
+	goBackToOrganization(event: Event): void {
+		this.router.navigate(['/organization', this.organizationAddress]);
+		event.preventDefault();
 	}
 }

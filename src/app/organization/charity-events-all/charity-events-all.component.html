@@ -1,0 +1,48 @@
+<div class="container-fluid">
+	<ol class="breadcrumb oc-breadcrumbs">
+		<li><a href="#" (click)="goBackToOrganization($event)">
+			<i class="fa fa-arrow-left"></i>
+			<span>Back to organization</span>
+		</a></li>
+	</ol>
+	<div class="page-title">
+		<h4>
+			{{name}}
+			<div>
+				<small>{{address}}</small>
+			</div>
+		</h4>
+	</div>
+	<div class="card">
+		<div class="tab-primary">
+			<ul class="nav nav-tabs" role="tablist">
+				<li class="nav-item">
+					<a class="nav-link" [ngClass]="{'active':changer === 'actual'}" (click)="changer = 'actual'">Actual Events</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" [ngClass]="{'active':changer === 'archive'}" (click)="changer = 'archive'">Archive Events</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" [ngClass]="{'active':changer === 'canceled'}" (click)="changer = 'canceled'">Canceled Events</a>
+				</li>
+			</ul>
+			<div class="tab-content">
+				<div class="tab-pane fade" [ngClass]="{'in active':changer === 'actual'}">
+					<div class="row ce-row">
+						<opc-charity-events-card class="col-lg-4" *ngFor="let charityEvent of charityEvents" [charityEvent]="charityEvent"></opc-charity-events-card>
+					</div>
+				</div>
+				<div class="tab-pane fade" [ngClass]="{'in active':changer === 'archive'}">
+					<div class="row ce-row">
+						<!-- <opc-charity-events-card class="col-lg-4" *ngFor="let charityEvent of charityEvents" [charityEvent]="charityEvent"></opc-charity-events-card> -->
+					</div>
+				</div>
+				<div class="tab-pane fade" [ngClass]="{'in active':changer === 'canceled'}">
+					<div class="row ce-row">
+						<!-- <opc-charity-events-card class="col-lg-4" *ngFor="let charityEvent of charityEvents" [charityEvent]="charityEvent"></opc-charity-events-card> -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

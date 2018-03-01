@@ -11,6 +11,7 @@ $font-secondary:          Roboto, -apple-system, system-ui, BlinkMacSystemFont, 
 // 	Default color
 //==================================
 
+$default-black:           #000000;
 $default-dark:            #515365;
 $default-white:           #ffffff;
 $default-gray:            #f6f7fb;
@@ -25,10 +26,10 @@ $default-danger:          #ff3c7e;
 // 	Inverse color
 //==================================
 $inverse-primary :        lighten($default-primary, 30%);
-$inverse-success :        lighten($default-success, 45%); 	   
-$inverse-info :           lighten($default-info, 45%);         
-$inverse-warning :        lighten($default-warning, 45%);	   
-$inverse-danger :         lighten($default-danger, 35%);	   
+$inverse-success :        lighten($default-success, 45%);
+$inverse-info :           lighten($default-info, 45%);
+$inverse-warning :        lighten($default-warning, 45%);
+$inverse-danger :         lighten($default-danger, 35%);
 
 //==================================
 // 	Misc
