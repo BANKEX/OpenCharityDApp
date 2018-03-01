@@ -32,6 +32,8 @@ contract IncomingDonation {
         tags = _tags;
     }
 
+
+	// THIS METHOD SHOULD BE CALLED ONLY FROM ORGANIZATION CONTRACT
     function moveToCharityEvent(address _charityEvent, uint _amount) public returns(bool) {
         require(_amount > 0);
 

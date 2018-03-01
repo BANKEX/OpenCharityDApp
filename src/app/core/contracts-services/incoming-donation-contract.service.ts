@@ -55,13 +55,6 @@ export class IncomingDonationContractService {
 		};
 	}
 
-	public moveToCharityEvent(address: string, targetEventAddress: string, amount: string, txOptions?: Tx): Promise<any> {
-		const contract: Contract = this.cloneContract(this.incomingDonationContract, address);
-		const tx: Tx = merge({}, this.defaultTx, txOptions);
-		return contract.methods.moveToCharityEvent(targetEventAddress, amount).send(tx);
-	}
-
-
 	private cloneContract(original: Contract, address: string): Contract {
 		const contract: any = (<any>original).clone();
 		const originalProvider = (<any>original).currentProvider;
