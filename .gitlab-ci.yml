@@ -36,7 +36,7 @@ build-node-stage:
   artifacts:
     paths:
       - dist
-      - contracts
+      - build/contracts
     expire_in: 24h
 
 build-node-prod:
@@ -49,7 +49,7 @@ build-node-prod:
   artifacts:
     paths:
       - dist
-      - contracts
+      - build/contracts
     expire_in: 24h
   only:
     - production
