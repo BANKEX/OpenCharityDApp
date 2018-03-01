@@ -97,7 +97,7 @@ exports.DEV_ENVIRONMENT = {
 	'tokenAddress': '0x6a183381d14371b4a228cca37802c09bd166ba9e',
 	'rpcProviderUrl': 'https://rpcprovider.staging.bankex.team:8635',
 	'websocketProviderUrl': 'wss://wsprovider.staging.bankex.team:8636',
-	'metaStorageUrl': 'http://127.0.0.1:8081/api/meta/',
+	'metaStorageUrl': 'https://opencharity.staging.bankex.team/api/meta/',
 	'organizations':  [
 		'0x33d3fbac058929d39a7c37f3d50fecfc4f0ef009',
 		'0xa23c54662b627434d5220101e0fa43bb213f4096',
@@ -110,6 +110,7 @@ exports.PROD_ENVIRONMENT = {
 	'tokenAddress': '0x6a183381d14371b4a228cca37802c09bd166ba9e',
 	'rpcProviderUrl': 'https://rpcprovider.staging.bankex.team:8635',
 	'websocketProviderUrl': 'wss://wsprovider.staging.bankex.team:8636',
+	'metaStorageUrl': 'https://opencharity.staging.bankex.team/api/meta/',
 	'organizations':  [
 		'0xe7b74d5d5d36cd2a8f40ac7838fe2783e2413869',
 		'0x0dd9a70354a6403ec66a36c237293b0a0538919e',
