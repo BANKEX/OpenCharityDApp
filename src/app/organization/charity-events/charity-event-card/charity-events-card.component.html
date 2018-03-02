@@ -27,7 +27,12 @@
 			<div class="card-block no-pdd-btm pdd-top-5">
 				<opc-bitmask-tags-list [tags]="charityEvent.tags"></opc-bitmask-tags-list>
 			</div>
-			<div class="card-block no-pdd-btm charity-event-raised">
+
+			<div class="card-block no-pdd-btm" *ngIf="charityEvent.description">
+				{{charityEvent.description}}
+			</div>
+
+			<div class="card-block no-pdd-btm no-pdd-top charity-event-raised">
 				<div class="row">
 					<div class="col-12">
 						<div class="mrg-top-30">
