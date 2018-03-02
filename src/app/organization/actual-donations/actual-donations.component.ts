@@ -68,7 +68,6 @@ export class ActualIncomingDonationsComponent implements OnInit, OnDestroy {
 
 	public async updateIncomingDonationAmount(incomingDonation: AppIncomingDonation): Promise<void> {
 		incomingDonation.amount = await this.tokenContractService.balanceOf(incomingDonation.address);
-		console.log(JSON.stringify(incomingDonation));
 	}
 
 	public getRWID(incomingDonation: AppIncomingDonation): string {
