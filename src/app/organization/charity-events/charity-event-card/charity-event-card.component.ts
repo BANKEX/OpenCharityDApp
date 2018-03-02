@@ -9,7 +9,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 	templateUrl: 'charity-event-card.component.html',
 	styleUrls: ['charity-event-card.component.scss']
 })
-export class CharityEventsCardComponent implements OnInit {
+export class CharityEventCardComponent implements OnInit {
 	@Input('organizationAddress') organizationAddress: string;
 	@Input('charityEvent') public charityEvent: AppCharityEvent;
 
