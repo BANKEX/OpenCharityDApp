@@ -2,18 +2,18 @@
 	<div class="card incoming-donations-actual">
 		<div class="incoming-donations-content">
 			<h4>Incoming Donations</h4>
-			<!-- <div class="dropdown">
-				<button class="btn btn-primary" type="button" (click)="addClick()">Chose File or Form <i class="fa fa-chevron-down"></i></button>
-				<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-					<li><a href="#">CSV File</a></li>
-					<li><a href="#">Manual</a></li>
-				</ul>
-			</div> -->
-
-			<div class="btn-group dropdown">
-				<button type="button" class="btn btn-primary">Upload CSV File</button>
-				<input type="file" class="upload-btn" value="Upload CSV File" />
-				<button type="button" class="btn btn-primary add-button" (click)="addClick()">Add new Incoming Donation</button>
+			<div class="id-tools">
+				<button type="button" class="btn btn-primary" (click)="toAllDonations()">To All Incoming Donation</button>
+				<div class="btn-group">
+				  <button type="button" class="btn btn-primary" (click)="addClick()">Add new Incoming Donation</button>
+				  <div class="btn-group" ngbDropdown placement="bottom-right" role="group" aria-label="Upload CSV File">
+				    <button class="btn btn-primary strange-btn" ngbDropdownToggle><i class="fa fa-caret-down"></i></button>
+				    <div class="dropdown-menu" ngbDropdownMenu>
+				      <button class="dropdown-item">Upload CSV File</button>
+							<input type="file" class="upload-btn" value="Upload CSV File" />
+				    </div>
+				  </div>
+				</div>
 			</div>
 
 			<div class="tab-primary">

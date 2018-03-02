@@ -8,6 +8,7 @@ import {CharityEventEditorComponent} from './charity-event-editor/charity-event-
 import {CharityEventsAllComponent} from './charity-events-all/charity-events-all.component';
 import {IncomingDonationsDetailsComponent} from './incoming-donations-details/incoming-donations-details.component';
 import {IncomingDonationsEditorComponent} from './incoming-donation-editor/incoming-donation-editor.component';
+import {IncomingDonationsAllComponent} from './incoming-donations-all/incoming-donations-all.component';
 import {IsOrganizationAddressGuard} from './is-organization-address.guard';
 import {IsAdminGuard} from './is-admin.guard';
 
@@ -36,5 +37,8 @@ export const OrganizationRoutes: Routes = [{
 	}, {
 		path: ':address/donation/editor',
 		component: IncomingDonationsEditorComponent
+	}, {
+		path: ':address/alldonations',
+		component: IncomingDonationsAllComponent
 	}]
 }];

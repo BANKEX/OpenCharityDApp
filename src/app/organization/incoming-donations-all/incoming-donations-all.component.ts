@@ -12,15 +12,15 @@ import {CharityEventContractService} from '../../core/contracts-services/charity
 import {IncomingDonationSendFundsModalComponent} from '../incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
 
 @Component({
-	selector: 'opc-actual-incoming-donations',
-	templateUrl: 'actual-donations.component.html',
-	styleUrls: ['actual-donations.component.scss']
+	templateUrl: 'incoming-donations-all.component.html',
+	styleUrls: ['incoming-donations-all.component.scss']
 })
-export class ActualIncomingDonationsComponent implements OnInit, OnDestroy {
+export class IncomingDonationsAllComponent implements OnInit, OnDestroy {
 	private componentDestroyed: Subject<void> = new Subject<void>();
 	public changer: string = "sms";
 	public organizationContractAddress: string;
 	public incomingDonations: AppIncomingDonation[] = [];
+	public name: string = "";
 
 	constructor(
 		private organizationContractService: OrganizationContractService,
@@ -36,6 +36,7 @@ export class ActualIncomingDonationsComponent implements OnInit, OnDestroy {
 	async ngOnInit(): Promise<void> {
 		this.route.params.subscribe(params => { this.organizationContractAddress = params["address"]; });
 		await this.updateIncomingDonationsList();
+		this.name = await this.organizationContractService.getName(this.organizationContractAddress);
 	}
 
 	public async updateIncomingDonationsList(): Promise<void> {
@@ -68,7 +69,6 @@ export class ActualIncomingDonationsComponent implements OnInit, OnDestroy {
 
 	public async updateIncomingDonationAmount(incomingDonation: AppIncomingDonation): Promise<void> {
 		incomingDonation.amount = await this.tokenContractService.balanceOf(incomingDonation.address);
-		console.log(JSON.stringify(incomingDonation));
 	}
 
 	public getRWID(incomingDonation: AppIncomingDonation): string {
@@ -110,12 +110,13 @@ export class ActualIncomingDonationsComponent implements OnInit, OnDestroy {
 		this.router.navigate([`/organization/${this.organizationContractAddress}/donation/${incomingDonation.address}/details`]);
 	}
 
-	public toAllDonations() {
-		this.router.navigate([`/organization/${this.organizationContractAddress}/alldonations`]);
-	}
-
 	public addClick() {
 		this.router.navigate([`/organization/${this.organizationContractAddress}/donation/editor`]);
+	}
+
+	public goBackToOrganization(event: Event): void {
+		this.router.navigate(['/organization', this.organizationContractAddress]);
+		event.preventDefault();
 	}
 
 	ngOnDestroy(): void {

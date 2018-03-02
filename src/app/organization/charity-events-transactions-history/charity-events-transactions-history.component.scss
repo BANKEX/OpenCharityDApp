@@ -9,9 +9,7 @@
 }
 
 .transaction-value {
-  position: absolute;
-  top: 38px;
-  right: 24px;
+  text-align: right;
   font-size: 18px;
   color: $theme-success
 }

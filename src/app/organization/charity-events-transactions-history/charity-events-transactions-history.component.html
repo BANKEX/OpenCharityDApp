@@ -14,7 +14,7 @@
 		</h4>
 	</div>
 </div>
-<div class="row" *ngFor="let transaction of transactions">
+<!-- <div class="row" *ngFor="let transaction of transactions">
 	<div class="col-lg-12">
 		<div class="card calendar-event card-hover">
 			<div class="card-block transaction">
@@ -24,4 +24,24 @@
 			</div>
 		</div>
 	</div>
+</div> -->
+<div class="card">
+	<table class="table table-striped donations-table">
+		<thead>
+			<tr>
+				<th>Date</th>
+				<th>From</th>
+				<th>Transaction</th>
+				<th>Amount</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr class="data" *ngFor="let transaction of transactions" (click)="toDetails(incomingDonation)">
+				<td>01.02.2018</td>
+				<td>{{transaction.from}}</td>
+				<td>{{transaction.transaction}}</td>
+				<td><div class="transaction-value">+ {{transaction.value}}</div></td>
+			</tr>
+		</tbody>
+	</table>
 </div>
