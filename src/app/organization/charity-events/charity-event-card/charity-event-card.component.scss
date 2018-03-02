@@ -29,5 +29,13 @@
 	  z-index: 10;
 	}
 
-	.charity-event-raised {}
+	.charity-event-raised {
+		position: absolute;
+		width: 100%;
+		bottom: 12px;
+	}
+
+	.charity-description {
+		margin-bottom: 92px;
+	}
 }
