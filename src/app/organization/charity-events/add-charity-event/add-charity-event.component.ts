@@ -57,6 +57,7 @@ export class AddCharityEventComponent implements OnInit {
 		try {
 			// save meta data into storage
 			const metaStorageHash: string = await this.storeToMetaStorage(newCharityEvent, f.details);
+			console.log(metaStorageHash);
 			merge(newCharityEvent, {metaStorageHash: metaStorageHash});
 
 
@@ -113,7 +114,6 @@ export class AddCharityEventComponent implements OnInit {
 				const reader: FileReader = new FileReader();
 
 				reader.addEventListener('load', async (e) => {
-					console.log('loaded');
 					resolve(await this.metaDataStorageService.storeData((<any>e.target).result).first().toPromise());
 				});
 

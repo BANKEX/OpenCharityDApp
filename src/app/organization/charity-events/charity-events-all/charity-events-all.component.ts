@@ -46,6 +46,7 @@ export class CharityEventsAllComponent extends CharityEventsListBaseComponent im
 			.takeUntil(this.componentDestroyed)
 			.subscribe((res: AppCharityEvent) => {
 				this.charityEvents.push(merge({}, res, {raised: 0}));
+				this.updateCharityEventMetaStorageData(this.charityEvents[this.charityEvents.length-1]);
 				this.hideAddCharityEventForm();
 			}, (err: any) => {
 				console.error(err);

@@ -62,7 +62,7 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 			});
 	}
 
-	private async updateCharityEventMetaStorageData(charityEvent: AppCharityEvent): Promise<void> {
+	protected async updateCharityEventMetaStorageData(charityEvent: AppCharityEvent): Promise<void> {
 		// TODO: add typescript itnerface for CE meta storage data
 
 		let data: any = await this.getCharityEventMetaStorageData(charityEvent);
@@ -77,11 +77,11 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 		charityEvent.description = data.description;
 	}
 
-	private getCharityEventMetaStorageData(charityEvent: AppCharityEvent): Promise<any> {
+	protected getCharityEventMetaStorageData(charityEvent: AppCharityEvent): Promise<any> {
 		return this.metaDataStorageService.getData(charityEvent.metaStorageHash).toPromise();
 	}
 
-	private async updateCharityEventRaised(charityEvent: AppCharityEvent) {
+	protected async updateCharityEventRaised(charityEvent: AppCharityEvent) {
 		charityEvent.raised = await this.tokenContractService.balanceOf(charityEvent.address);
 	}
 

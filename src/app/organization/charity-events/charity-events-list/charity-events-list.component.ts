@@ -44,6 +44,7 @@ export class CharityEventsListComponent implements OnInit, OnDestroy {
 			.takeUntil(this.componentDestroyed)
 			.subscribe((res: AppCharityEvent) => {
 				this.charityEvents.push(merge({}, res, {raised: 0}));
+				this.updateCharityEventMetaStorageData(this.charityEvents[this.charityEvents.length-1]);
 			}, (err: any) => {
 				console.error(err);
 				alert('`Error ${err.message}');
