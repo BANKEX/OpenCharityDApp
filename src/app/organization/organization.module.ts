@@ -30,6 +30,7 @@ import {IncomingDonationsDetailsComponent} from './incoming-donations/incoming-d
 import {IncomingDonationsEditorComponent} from './incoming-donations/incoming-donation-editor/incoming-donation-editor.component';
 import {IncomingDonationsAllComponent} from './incoming-donations/incoming-donations-all/incoming-donations-all.component';
 import {FileDropModule} from 'ngx-file-drop';
+import {CharityEventsListBaseComponent} from './charity-events/charity-events-list-base.component';
 
 @NgModule({
 	declarations: [
@@ -50,7 +51,8 @@ import {FileDropModule} from 'ngx-file-drop';
 		CharityEventsAllComponent,
 		IncomingDonationsDetailsComponent,
 		IncomingDonationsEditorComponent,
-		IncomingDonationsAllComponent
+		IncomingDonationsAllComponent,
+		CharityEventsListBaseComponent
 	],
 	entryComponents: [IncomingDonationSendFundsModalComponent],
 	imports: [

@@ -3,11 +3,16 @@
 		<div class="loading-overlay" *ngIf="charityEvent === null"><i class="fa fa-spinner fa-spin"></i></div>
 		<div *ngIf="isEvent()">
 			<div class="portlet">
-				<div class="portlet-item unconfirmed-loader" *ngIf="isPending()" title="This charity event has not stored in blockchain yet">
+				<div class="portlet-item unconfirmed-loader" *ngIf="isPending(charityEvent)" title="This charity event has not stored in blockchain yet">
 					Unconfirmed
 					<i class="fa fa-spinner fa-spin"></i>
 				</div>
 			</div>
+
+			<div class="card-media" *ngIf="charityEvent.image">
+				<img src="data:image/JPEG;base64,{{charityEvent.image}}" alt="">
+			</div>
+
 			<div class="btn-group btn-group-sm charity-event-tools">
 				<button type="button" class="btn btn-default" (click)="editClick($event)"><i class="fa fa-pencil"></i></button>
 				<button type="button" class="btn btn-default" (click)="removeClick($event)"><i class="fa fa-trash"></i></button>
@@ -17,7 +22,7 @@
 				<span class="title-wrap"><h4 class="no-mrg-btm text-semibold">{{charityEvent.name}}</h4> </span>
 			</div>
 			<div class="card-block no-pdd-btm no-pdd-top">
-        <span class="sub-title font-size-8">{{charityEvent.address}}</span>
+				<span class="sub-title font-size-8">{{charityEvent.address}}</span>
 			</div>
 			<div class="card-block no-pdd-btm pdd-top-5">
 				<opc-bitmask-tags-list [tags]="charityEvent.tags"></opc-bitmask-tags-list>

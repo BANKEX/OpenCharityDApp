@@ -1,26 +1,24 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
 
-import {AppCharityEvent, ConfirmationResponse, ConfirmationStatusState} from '../../../open-charity-types';
-import {Router, ActivatedRoute} from '@angular/router';
+import {AppCharityEvent, ConfirmationStatusState} from '../../../open-charity-types';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
 	selector: 'opc-charity-events-card',
 	templateUrl: 'charity-events-card.component.html',
 	styleUrls: ['charity-events-card.component.scss']
 })
-export class CharityEventsCardComponent implements OnInit, OnDestroy {
+export class CharityEventsCardComponent implements OnInit {
+	@Input('organizationAddress') organizationAddress: string;
 	@Input('charityEvent') public charityEvent: AppCharityEvent;
-	private componentDestroyed: Subject<void> = new Subject<void>();
-	private address: string = "";
 
 	constructor(
-		private router: Router,
-		private route: ActivatedRoute
-	) { }
+		private router: Router
+	) {
+	}
 
 	ngOnInit() {
-		this.route.params.subscribe(params => { this.address = params["address"]; });
 	}
 
 	public isEvent(): boolean {
@@ -28,7 +26,7 @@ export class CharityEventsCardComponent implements OnInit, OnDestroy {
 	}
 
 	public isPending(): boolean {
-		if(this.charityEvent == null) return true;
+		if (this.charityEvent == null) return true;
 		return (this.charityEvent.confirmation === ConfirmationStatusState.PENDING);
 	}
 
@@ -44,16 +42,12 @@ export class CharityEventsCardComponent implements OnInit, OnDestroy {
 		return (this.charityEvent.confirmation === ConfirmationStatusState.ERROR);
 	}
 
-	ngOnDestroy(): void {
-		this.componentDestroyed.next();
-	}
-
 	public goToTransactions(): void {
-		this.router.navigate([`/organization/${this.address}/charityevent/${this.charityEvent.address}/transactions`]);
+		this.router.navigate([`/organization/${this.organizationAddress}/charityevent/${this.charityEvent.address}/transactions`]);
 	}
 
 	public editClick($event: Event): void {
-		this.router.navigate([`/organization/${this.address}/charityevent/${this.charityEvent.address}/editor`]);
+		this.router.navigate([`/organization/${this.organizationAddress}/charityevent/${this.charityEvent.address}/editor`]);
 		$event.stopPropagation();
 	}
 
