@@ -1,8 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
 import {Router, ActivatedRoute} from '@angular/router';
+
 import {IncomingDonationContractService} from '../../core/contracts-services/incoming-donation-contract.service';
 import {ContractIncomingDonation} from '../../open-charity-types';
+import {AppIncomingDonation, ConfirmationResponse, ConfirmationStatusState} from '../../open-charity-types';
 
 @Component({
 	templateUrl: 'incoming-donations-details.component.html',
@@ -31,6 +33,22 @@ export class IncomingDonationsDetailsComponent implements OnInit, OnDestroy {
 
 	public isDonation(): boolean {
 		return this.incomingDonation != null;
+	}
+
+	public isPending(incomingDonation: AppIncomingDonation): boolean {
+		return (incomingDonation.confirmation === ConfirmationStatusState.PENDING);
+	}
+
+	public isConfirmed(incomingDonation: AppIncomingDonation): boolean {
+		return (incomingDonation.confirmation === ConfirmationStatusState.CONFIRMED);
+	}
+
+	public isFailed(incomingDonation: AppIncomingDonation): boolean {
+		return (incomingDonation.confirmation === ConfirmationStatusState.FAILED);
+	}
+
+	public isErrored(incomingDonation: AppIncomingDonation): boolean {
+		return (incomingDonation.confirmation === ConfirmationStatusState.ERROR);
 	}
 
 	ngOnDestroy(): void {
