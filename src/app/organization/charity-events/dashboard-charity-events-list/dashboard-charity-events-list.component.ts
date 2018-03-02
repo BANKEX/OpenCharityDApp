@@ -8,11 +8,11 @@ import {CharityEventsListBaseComponent} from '../charity-events-list-base.compon
 import {MetaDataStorageService} from '../../../core/meta-data-storage.service';
 
 @Component({
-	selector: 'opc-actual-charity-events',
-	templateUrl: 'actual-events.component.html',
-	styleUrls: ['actual-events.component.scss']
+	selector: 'opc-dashboard-charity-events-list',
+	templateUrl: 'dashboard-charity-events-list.component.html',
+	styleUrls: ['dashboard-charity-events-list.component.scss']
 })
-export class ActualCharityEventsComponent extends CharityEventsListBaseComponent implements OnInit, OnDestroy {
+export class DashboardCharityEventsList extends CharityEventsListBaseComponent implements OnInit, OnDestroy {
 	constructor(
 		protected organizationContractService: OrganizationContractService,
 		protected charityEventContractService: CharityEventContractService,

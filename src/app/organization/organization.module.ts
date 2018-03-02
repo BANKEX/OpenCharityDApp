@@ -20,7 +20,6 @@ import {IncomingDonationSendFundsModalComponent} from './incoming-donations/inco
 import {IsAdminGuard} from './is-admin.guard';
 import {OrganizationSharedService} from './services/organization-shared.service';
 import {CharityEventCardComponent} from './charity-events/charity-event-card/charity-event-card.component';
-import {ActualCharityEventsComponent} from './charity-events/actual-events/actual-events.component';
 import {ActualIncomingDonationsComponent} from './incoming-donations/actual-donations/actual-donations.component';
 import {CharityEventsTransactionsHistoryComponent} from './charity-events/charity-events-transactions-history/charity-events-transactions-history.component';
 import {CharityEventEditorComponent} from './charity-events/charity-event-editor/charity-event-editor.component';
@@ -30,6 +29,7 @@ import {IncomingDonationsEditorComponent} from './incoming-donations/incoming-do
 import {IncomingDonationsAllComponent} from './incoming-donations/incoming-donations-all/incoming-donations-all.component';
 import {FileDropModule} from 'ngx-file-drop';
 import {CharityEventsListBaseComponent} from './charity-events/charity-events-list-base.component';
+import {DashboardCharityEventsList} from './charity-events/dashboard-charity-events-list/dashboard-charity-events-list.component';
 
 @NgModule({
 	declarations: [
@@ -42,7 +42,7 @@ import {CharityEventsListBaseComponent} from './charity-events/charity-events-li
 		BitmaskTagsListComponent,
 		IncomingDonationSendFundsModalComponent,
 		CharityEventCardComponent,
-		ActualCharityEventsComponent,
+		DashboardCharityEventsList,
 		ActualIncomingDonationsComponent,
 		CharityEventsTransactionsHistoryComponent,
 		CharityEventEditorComponent,
