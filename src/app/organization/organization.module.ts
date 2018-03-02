@@ -29,6 +29,7 @@ import {CharityEventEditorComponent} from './charity-event-editor/charity-event-
 import {CharityEventsAllComponent} from './charity-events-all/charity-events-all.component';
 import {IncomingDonationsDetailsComponent} from './incoming-donations-details/incoming-donations-details.component';
 import {IncomingDonationsEditorComponent} from './incoming-donation-editor/incoming-donation-editor.component';
+import {IncomingDonationsAllComponent} from './incoming-donations-all/incoming-donations-all.component';
 
 @NgModule({
 	declarations: [
@@ -48,7 +49,8 @@ import {IncomingDonationsEditorComponent} from './incoming-donation-editor/incom
 		CharityEventEditorComponent,
 		CharityEventsAllComponent,
 		IncomingDonationsDetailsComponent,
-		IncomingDonationsEditorComponent
+		IncomingDonationsEditorComponent,
+		IncomingDonationsAllComponent
 	],
   	entryComponents: [IncomingDonationSendFundsModalComponent],
 	imports: [

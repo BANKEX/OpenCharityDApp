@@ -33,12 +33,12 @@ export class IncomingDonationsEditorComponent implements OnInit, OnDestroy {
 		return this.incomingDonation != null;
 	}
 
-	ngOnDestroy(): void {
-		this.componentDestroyed.next();
-	}
-
-	goBackToOrganization(event: Event): void {
+	public goBackToOrganization(event: Event): void {
 		this.router.navigate(['/organization', this.organizationAddress]);
 		event.preventDefault();
+	}
+
+	ngOnDestroy(): void {
+		this.componentDestroyed.next();
 	}
 }
