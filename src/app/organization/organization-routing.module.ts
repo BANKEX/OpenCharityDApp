@@ -2,13 +2,13 @@ import {Routes} from '@angular/router';
 //Dashboard Components
 import {OrganizationDetailsComponent} from './organization-details/organization-details.component';
 import {OrganizationsListComponent} from './organizations-list/organizations-list.component';
-import {CharityEventsTransactionsHistoryComponent} from './charity-events-transactions-history/charity-events-transactions-history.component';
+import {CharityEventsTransactionsHistoryComponent} from './charity-events/charity-events-transactions-history/charity-events-transactions-history.component';
 import {CommonLayoutComponent} from '../common/common-layout.component';
-import {CharityEventEditorComponent} from './charity-event-editor/charity-event-editor.component';
-import {CharityEventsAllComponent} from './charity-events-all/charity-events-all.component';
-import {IncomingDonationsDetailsComponent} from './incoming-donations-details/incoming-donations-details.component';
-import {IncomingDonationsEditorComponent} from './incoming-donation-editor/incoming-donation-editor.component';
-import {IncomingDonationsAllComponent} from './incoming-donations-all/incoming-donations-all.component';
+import {CharityEventEditorComponent} from './charity-events/charity-event-editor/charity-event-editor.component';
+import {CharityEventsAllComponent} from './charity-events/charity-events-all/charity-events-all.component';
+import {IncomingDonationsDetailsComponent} from './incoming-donations/incoming-donations-details/incoming-donations-details.component';
+import {IncomingDonationsEditorComponent} from './incoming-donations/incoming-donation-editor/incoming-donation-editor.component';
+import {IncomingDonationsAllComponent} from './incoming-donations/incoming-donations-all/incoming-donations-all.component';
 import {IsOrganizationAddressGuard} from './is-organization-address.guard';
 import {IsAdminGuard} from './is-admin.guard';
 

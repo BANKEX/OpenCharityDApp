@@ -66,6 +66,7 @@ exports.MY_VENDOR_DLLS = [
 	// list vendors that you want to be included in your dlls files
 	// this will speed up initial dev server build and incremental builds.
 	// Be sure to run `npm run build:dll` if you make changes to this array.
+	'ngx-file-drop'
 ]
 
 exports.MY_CLIENT_PLUGINS = [
@@ -95,10 +96,11 @@ exports.DEV_ENVIRONMENT = {
 	'tokenAddress': '0x6a183381d14371b4a228cca37802c09bd166ba9e',
 	'rpcProviderUrl': 'https://rpcprovider.staging.bankex.team:8635',
 	'websocketProviderUrl': 'wss://wsprovider.staging.bankex.team:8636',
+	'metaStorageUrl': 'https://opencharity.staging.bankex.team/api/meta/',
 	'organizations':  [
-		'0x45679dd4c4896c6035a3059ccf13bd5d9e6edb7c',
-		'0x7f0319765298863bb75d56825dbced6cdff36d21',
-		'0xbe08f7884ff4e31b4c77a5b6ed7f4fcae0440d0b'
+		'0x33d3fbac058929d39a7c37f3d50fecfc4f0ef009',
+		'0xa23c54662b627434d5220101e0fa43bb213f4096',
+		'0x34677dffc2a117aaa18716017ad8ffce0af1751c'
 	]
 };
 
@@ -107,9 +109,10 @@ exports.PROD_ENVIRONMENT = {
 	'tokenAddress': '0x6a183381d14371b4a228cca37802c09bd166ba9e',
 	'rpcProviderUrl': 'https://rpcprovider.staging.bankex.team:8635',
 	'websocketProviderUrl': 'wss://wsprovider.staging.bankex.team:8636',
+	'metaStorageUrl': 'https://opencharity.staging.bankex.team/api/meta/',
 	'organizations':  [
-		'0xe7b74d5d5d36cd2a8f40ac7838fe2783e2413869',
-		'0x0dd9a70354a6403ec66a36c237293b0a0538919e',
-		'0x0ec6f8e77432140ada4c460c55657bfabe1b9fd8'
+		'0x14548f61d91c2961d2ca612fb8a404eda07f9383',
+		'0x9cf762ece9825d34af177fa1adc5186e2a1b3d16',
+		'0x2127ec3241179a8fad68e415cfcd7f5f68372bd9'
 	]
 };

@@ -336,6 +336,10 @@ export const OrganizationContractAbi = [
 			{
 				'name': '_tags',
 				'type': 'bytes1'
+			},
+			{
+				'name': 'metaHashString',
+				'type': 'string'
 			}
 		],
 		'name': 'addCharityEvent',
@@ -453,6 +457,20 @@ export const CharityEventContractAbi = [
 	{
 		'constant': true,
 		'inputs': [],
+		'name': 'metaStorageHash',
+		'outputs': [
+			{
+				'name': '',
+				'type': 'string'
+			}
+		],
+		'payable': false,
+		'stateMutability': 'view',
+		'type': 'function'
+	},
+	{
+		'constant': true,
+		'inputs': [],
 		'name': 'payed',
 		'outputs': [
 			{
@@ -509,6 +527,10 @@ export const CharityEventContractAbi = [
 			{
 				'name': '_tags',
 				'type': 'bytes1'
+			},
+			{
+				'name': '_metaStorageHash',
+				'type': 'string'
 			}
 		],
 		'payable': false,
@@ -527,6 +549,20 @@ export const CharityEventContractAbi = [
 		],
 		'payable': false,
 		'stateMutability': 'pure',
+		'type': 'function'
+	},
+	{
+		'constant': false,
+		'inputs': [
+			{
+				'name': '_metaStorageHash',
+				'type': 'string'
+			}
+		],
+		'name': 'updateMetaStorageHash',
+		'outputs': [],
+		'payable': false,
+		'stateMutability': 'nonpayable',
 		'type': 'function'
 	}
 ];

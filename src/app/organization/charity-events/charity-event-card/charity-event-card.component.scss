@@ -1,0 +1,33 @@
+@import 'src/assets/scss/variables';
+
+.charity-event-card {
+	min-height: 240px;
+	position: relative;
+	cursor: pointer;
+
+	.loading-overlay {
+		position: absolute;
+		top: 0; bottom: 0;
+		right: 0; left: 0;
+		display: flex;
+		font-size: 40px;
+		background: $default-white;
+		align-items: center;
+		justify-content: center;
+		z-index: 99;
+	}
+
+	&.pending {
+		background: lighten($default-dark, 40%);
+		color: $default-black;
+	}
+
+	.charity-event-tools {
+	  position: absolute;
+	  top: 12px;
+	  right: 12px;
+	  z-index: 10;
+	}
+
+	.charity-event-raised {}
+}

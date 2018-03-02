@@ -1,0 +1,57 @@
+<div (click)="goToTransactions()">
+	<div class="card charity-event-card card-hover" [ngClass]="{'pending' : charityEvent && isPending()}">
+		<div class="loading-overlay" *ngIf="charityEvent === null"><i class="fa fa-spinner fa-spin"></i></div>
+
+		<div *ngIf="isEvent()">
+
+			<div class="btn-group btn-group-sm charity-event-tools">
+				<button type="button" class="btn btn-default"
+						(click)="$event.stopPropagation()"
+						title="This charity event has not stored in blockchain yet"
+						*ngIf="isPending(charityEvent)"
+				>
+					<i class="fa fa-spinner fa-spin"></i>
+				</button>
+
+				<button type="button" class="btn btn-default" (click)="editClick($event)" *ngIf="!isPending(charityEvent)"><i class="fa fa-pencil"></i></button>
+				<button type="button" class="btn btn-default" (click)="removeClick($event)" *ngIf="!isPending(charityEvent)"><i class="fa fa-trash"></i></button>
+				<button type="button" class="btn btn-default" (click)="otherClick($event)" *ngIf="!isPending(charityEvent)"><i class="fa fa-ellipsis-h"></i></button>
+			</div>
+
+			<div class="card-media" *ngIf="charityEvent.image">
+				<img src="data:image/JPEG;base64,{{charityEvent.image}}" alt="">
+			</div>
+
+
+			<div class="card-block no-pdd-btm">
+				<span class="title-wrap"><h4 class="no-mrg-btm text-semibold">{{charityEvent.name}}</h4> </span>
+			</div>
+			<div class="card-block no-pdd-btm no-pdd-top">
+				<span class="sub-title font-size-8">{{charityEvent.address}}</span>
+			</div>
+			<div class="card-block no-pdd-btm pdd-top-5">
+				<opc-bitmask-tags-list [tags]="charityEvent.tags"></opc-bitmask-tags-list>
+			</div>
+
+			<div class="card-block no-pdd-btm" *ngIf="charityEvent.description">
+				{{charityEvent.description}}
+			</div>
+
+			<div class="card-block no-pdd-btm no-pdd-top charity-event-raised">
+				<div class="row">
+					<div class="col-12">
+						<div class="mrg-top-30">
+							<p class="mrg-btm-5">Raised:
+								<span class="text-dark text-semibold">{{charityEvent.raised}}/{{charityEvent.target}}</span>
+								<span class="pull-right">Payed: <span class="text-dark text-semibold">{{charityEvent.payed}}</span></span>
+							</p>
+							<div class="progress progress-info progress-sm">
+								<div class="progress-bar" [ngStyle]="{'width.%': charityEvent.raised/charityEvent.target*100}"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

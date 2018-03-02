@@ -81,8 +81,8 @@ contract Organization {
     /**
    * @dev Add new CharityEvent to Organization
    */
-    function addCharityEvent(string _name, uint _target, uint _payed, bytes1 _tags) public onlyAdmin returns(address) {
-        CharityEvent charityEvent = new CharityEvent(_name, _target, _payed, _tags);
+    function addCharityEvent(string _name, uint _target, uint _payed, bytes1 _tags, string _metaHashString) public onlyAdmin returns(address) {
+        CharityEvent charityEvent = new CharityEvent(_name, _target, _payed, _tags, _metaHashString);
 
         // add charityEvent to charityEvents list
         charityEventIndex[charityEventCount] = charityEvent;
