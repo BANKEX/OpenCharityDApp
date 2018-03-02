@@ -16,9 +16,8 @@ import {IsOrganizationAddressGuard} from './is-organization-address.guard';
 import {TagsBitmaskService} from './services/tags-bitmask.service';
 import {SetBitmaskTagsComponent} from './set-bitmask-tags/set-bitmask-tags.component';
 import {BitmaskTagsListComponent} from './bitmask-tags-list/bitmask-tags-list.component';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {IncomingDonationSendFundsModalComponent} from './incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
-import {OrganizationContractEventsService} from '../core/contracts-services/organization-contract-events.service';
 import {IsAdminGuard} from './is-admin.guard';
 import {OrganizationSharedService} from './services/organization-shared.service';
 import {CharityEventsCardComponent} from './charity-event-card/charity-events-card.component';
@@ -53,7 +52,7 @@ import {FileDropModule} from 'ngx-file-drop';
 		IncomingDonationsEditorComponent,
 		IncomingDonationsAllComponent
 	],
-  	entryComponents: [IncomingDonationSendFundsModalComponent],
+	entryComponents: [IncomingDonationSendFundsModalComponent],
 	imports: [
 		FormsModule,
 		CommonModule,

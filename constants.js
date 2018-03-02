@@ -66,7 +66,6 @@ exports.MY_VENDOR_DLLS = [
 	// list vendors that you want to be included in your dlls files
 	// this will speed up initial dev server build and incremental builds.
 	// Be sure to run `npm run build:dll` if you make changes to this array.
-	'@swimlane/ngx-dnd',
 	'ngx-file-drop'
 ]
 
