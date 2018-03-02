@@ -43,6 +43,9 @@ export class CharityEventCardComponent implements OnInit {
 	}
 
 	public goToTransactions(): void {
+		if (!this.isConfirmed()) {
+			return;
+		}
 		this.router.navigate([`/organization/${this.organizationAddress}/charityevent/${this.charityEvent.address}/transactions`]);
 	}
 
