@@ -1,5 +1,4 @@
 import {NgModule} from '@angular/core';
-import {CharityEventsListComponent} from './charity-events/charity-events-list/charity-events-list.component';
 import {RouterModule} from '@angular/router';
 import {OrganizationRoutes} from './organization-routing.module';
 import {OrganizationDetailsComponent} from './organization-details/organization-details.component';
@@ -20,7 +19,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {IncomingDonationSendFundsModalComponent} from './incoming-donations/incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
 import {IsAdminGuard} from './is-admin.guard';
 import {OrganizationSharedService} from './services/organization-shared.service';
-import {CharityEventsCardComponent} from './charity-events/charity-event-card/charity-events-card.component';
+import {CharityEventsCardComponent} from './charity-events/charity-event-card/charity-event-card.component';
 import {ActualCharityEventsComponent} from './charity-events/actual-events/actual-events.component';
 import {ActualIncomingDonationsComponent} from './incoming-donations/actual-donations/actual-donations.component';
 import {CharityEventsTransactionsHistoryComponent} from './charity-events/charity-events-transactions-history/charity-events-transactions-history.component';
@@ -35,7 +34,6 @@ import {CharityEventsListBaseComponent} from './charity-events/charity-events-li
 @NgModule({
 	declarations: [
 		OrganizationDetailsComponent,
-		CharityEventsListComponent,
 		AddCharityEventComponent,
 		IncomingDonationsListComponent,
 		AddIncomingDonationComponent,

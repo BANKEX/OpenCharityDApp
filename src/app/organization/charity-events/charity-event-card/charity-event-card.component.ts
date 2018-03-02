@@ -6,8 +6,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
 	selector: 'opc-charity-events-card',
-	templateUrl: 'charity-events-card.component.html',
-	styleUrls: ['charity-events-card.component.scss']
+	templateUrl: 'charity-event-card.component.html',
+	styleUrls: ['charity-event-card.component.scss']
 })
 export class CharityEventsCardComponent implements OnInit {
 	@Input('organizationAddress') organizationAddress: string;
