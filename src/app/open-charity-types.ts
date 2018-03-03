@@ -7,6 +7,7 @@ export enum ConfirmationStatusState {
 export type ConfirmationResponse = { internalId: string; address: string; }
 
 export interface ContractCharityEvent {
+	metaStorageHash?: string;
 	name: string;
 	address?: string;
 	target: string;
@@ -19,6 +20,8 @@ export interface AppCharityEvent extends ContractCharityEvent{
 	internalId?: string;
 	raised?: string;
 	confirmation: ConfirmationStatusState;
+	description: string;
+	image: string;
 }
 
 export interface ContractIncomingDonation {

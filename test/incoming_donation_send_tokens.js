@@ -43,15 +43,16 @@ contract('Organization', function(accounts) {
 
     it('should move tokens from donation to charity event contract', async () => {
         try {
-            await IncomingDonationInstance.moveToCharityEvent(CharityEventInstance.address, INCOMING_DONATION_AMOUNT, {
+        	const amountToMove = INCOMING_DONATION_AMOUNT - INCOMING_DONATION_AMOUNT/2;
+            await OrganizationInstance.moveDonationFundsToCharityEvent(IncomingDonationInstance.address, CharityEventInstance.address, amountToMove, {
                 from: ADMIN_ACCOUNTS[0]
             });
 
             const incomingDonationBalance = await OpenCharityTokenInstance.balanceOf(IncomingDonationInstance.address);
             const eventBalance = await OpenCharityTokenInstance.balanceOf(CharityEventInstance.address);
 
-            assert(eventBalance.toNumber() === INCOMING_DONATION_AMOUNT, 'Tokens haven\'t move to charity event');
-            assert(incomingDonationBalance.toNumber() === 0, 'Tokens are still on incomingDonation balance');
+            assert(eventBalance.toNumber() === amountToMove, 'Tokens haven\'t move to charity event');
+            assert(incomingDonationBalance.toNumber() === amountToMove, 'Tokens are still on incomingDonation balance');
 
         } catch (e) {
             console.log(e);
@@ -68,21 +69,15 @@ contract('Organization', function(accounts) {
 
 
         try {
-            await IncomingDonationInstance.moveToCharityEvent(UnmatchedCharityEvent.address, INCOMING_DONATION_AMOUNT, {
+            await OrganizationInstance.moveDonationFundsToCharityEvent(IncomingDonationInstance.address, UnmatchedCharityEvent.address, INCOMING_DONATION_AMOUNT, {
                 from: ADMIN_ACCOUNTS[0]
             });
-
-            const incomingDonationBalance = await OpenCharityTokenInstance.balanceOf(IncomingDonationInstance.address);
-            const eventBalance = await OpenCharityTokenInstance.balanceOf(CharityEventInstance.address);
 
             assert(false, 'Move funds to charity event with unmatched tags');
         } catch (e) {
             const transactionException = e.message.search('Exception while processing transaction: revert') !== -1;
             assert(transactionException, 'Move funds to charity event with unmatched tags');
         }
-
-
-
 
     });
 

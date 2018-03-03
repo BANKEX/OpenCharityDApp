@@ -1,10 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {OrganizationContractService} from '../../core/contracts-services/organization-contract.service';
+import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {TagsBitmaskService} from '../services/tags-bitmask.service';
+import {TagsBitmaskService} from '../../services/tags-bitmask.service';
 import {TransactionReceipt} from 'web3/types';
-import {OrganizationSharedService} from '../services/organization-shared.service';
-import {ConfirmationStatusState, ContractIncomingDonation} from '../../open-charity-types';
+import {OrganizationSharedService} from '../../services/organization-shared.service';
+import {ConfirmationStatusState, ContractIncomingDonation} from '../../../open-charity-types';
 
 @Component({
 	selector: 'opc-add-incoming-donation',

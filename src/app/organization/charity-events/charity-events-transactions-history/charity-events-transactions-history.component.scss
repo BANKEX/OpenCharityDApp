@@ -1,0 +1,15 @@
+@import '../../../../assets/scss/variables';
+
+.oc-breadcrumbs {
+  margin-bottom: 12px;
+}
+
+.transaction {
+  position: relative;
+}
+
+.transaction-value {
+  text-align: right;
+  font-size: 18px;
+  color: $theme-success
+}

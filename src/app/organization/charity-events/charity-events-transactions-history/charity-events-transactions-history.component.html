@@ -1,0 +1,47 @@
+<div class="container-fluid">
+	<ol class="breadcrumb oc-breadcrumbs">
+		<li><a href="#" (click)="goBackToOrganization($event)">
+			<i class="fa fa-arrow-left"></i>
+			<span>Back to organization</span>
+		</a></li>
+	</ol>
+	<div class="page-title">
+		<h4>
+			{{name}}
+			<div>
+				<small>{{charityEventAddress}}</small>
+			</div>
+		</h4>
+	</div>
+</div>
+<!-- <div class="row" *ngFor="let transaction of transactions">
+	<div class="col-lg-12">
+		<div class="card calendar-event card-hover">
+			<div class="card-block transaction">
+				<div class="transaction-value">+ {{transaction.value}}</div>
+				<div>From: {{transaction.from}}</div>
+				<div>Transaction: {{transaction.transaction}}</div>
+			</div>
+		</div>
+	</div>
+</div> -->
+<div class="card">
+	<table class="table table-striped donations-table">
+		<thead>
+			<tr>
+				<th>Date</th>
+				<th>From</th>
+				<th>Transaction</th>
+				<th>Amount</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr class="data" *ngFor="let transaction of transactions" (click)="toDetails(incomingDonation)">
+				<td>01.02.2018</td>
+				<td>{{transaction.from}}</td>
+				<td>{{transaction.transaction}}</td>
+				<td><div class="transaction-value">+ {{transaction.value}}</div></td>
+			</tr>
+		</tbody>
+	</table>
+</div>

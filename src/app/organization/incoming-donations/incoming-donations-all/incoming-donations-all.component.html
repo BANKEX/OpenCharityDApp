@@ -1,0 +1,85 @@
+<div class="container-fluid">
+	<ol class="breadcrumb oc-breadcrumbs">
+		<li><a href="#" (click)="goBackToOrganization($event)">
+			<i class="fa fa-arrow-left"></i>
+			<span>Back to organization</span>
+		</a></li>
+	</ol>
+	<div class="page-title">
+		<h4>
+			{{name}}
+			<div>
+				<small>{{organizationContractAddress}}</small>
+			</div>
+		</h4>
+	</div>
+
+	<div class="row incoming-donations-row">
+		<div class="card incoming-donations-actual">
+			<div class="incoming-donations-content">
+				<h4>Incoming Donations</h4>
+				<div class="id-tools">
+					<div class="btn-group">
+					  <button type="button" class="btn btn-primary" (click)="addClick()">Add new Incoming Donation</button>
+					  <div class="btn-group" ngbDropdown placement="bottom-right" role="group" aria-label="Upload CSV File">
+					    <button class="btn btn-primary strange-btn" ngbDropdownToggle><i class="fa fa-caret-down"></i></button>
+					    <div class="dropdown-menu" ngbDropdownMenu>
+					      <button class="dropdown-item">Upload CSV File</button>
+								<input type="file" class="upload-btn" value="Upload CSV File" />
+					    </div>
+					  </div>
+					</div>
+				</div>
+
+				<div class="tab-primary">
+					<ul class="nav nav-tabs" role="tablist">
+						<li class="nav-item"><a class="nav-link" [ngClass]="{'active':changer === 'sms'}" (click)="changer = 'sms'">SMS</a></li>
+						<li class="nav-item"><a class="nav-link" [ngClass]="{'active':changer === 'cards'}" (click)="changer = 'cards'">Cards</a></li>
+						<li class="nav-item"><a class="nav-link" [ngClass]="{'active':changer === 'site'}" (click)="changer = 'site'">Site</a></li>
+						<li class="nav-item"><a class="nav-link" [ngClass]="{'active':changer === 'yandex'}" (click)="changer = 'yandex'">Yandex</a></li>
+						<li class="nav-item"><a class="nav-link" [ngClass]="{'active':changer === 'alpha'}" (click)="changer = 'alpha'">Alpha</a></li>
+						<li class="nav-item"><a class="nav-link" [ngClass]="{'active':changer === 'webm'}" (click)="changer = 'webm'">WebM</a></li>
+						<li class="nav-item"><a class="nav-link" [ngClass]="{'active':changer === 'paypal'}" (click)="changer = 'paypal'">PayPal</a></li>
+					</ul>
+					<div class="tab-content">
+						<table class="table table-striped donations-table">
+							<thead>
+								<tr>
+									<th>Date</th>
+									<th>Real world Id</th>
+									<th>Tag</th>
+									<th>Amount</th>
+									<th>Event</th>
+									<th>Annual / Single</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="data" *ngFor="let incomingDonation of incomingDonations.slice(0, 10)" (click)="toDetails(incomingDonation)">
+									<td>01.02.2018</td>
+									<td>{{getRWID(incomingDonation)}}</td>
+									<td><opc-bitmask-tags-list *ngIf="isDonation(incomingDonation)" [tags]="incomingDonation.tags"></opc-bitmask-tags-list></td>
+									<td>{{getAmount(incomingDonation)}}</td>
+									<td>Event 1</td>
+									<td>Annual</td>
+									<td><button type="button" class="btn btn-link" (click)="openSendDonationFundsModal($event, incomingDonation)">Move funds to Charity Event</button><td>
+								</tr>
+							</tbody>
+						</table>
+						<!-- <div class="tab-pane fade" [ngClass]="{'in active':changer === 'events'}">
+							<div class="pdd-horizon-15 pdd-vertical-20 m-height-card">
+								<opc-charity-events-list [organizationContractAddress]="organizationContractAddress"></opc-charity-events-list>
+							</div>
+						</div>
+						<div class="tab-pane fade" [ngClass]="{'in active':changer === 'donations'}">
+							<div class="pdd-horizon-15 pdd-vertical-20	m-height-card">
+								<opc-incoming-donations-list
+									[organizationContractAddress]="organizationContractAddress"></opc-incoming-donations-list>
+							</div>
+						</div> -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

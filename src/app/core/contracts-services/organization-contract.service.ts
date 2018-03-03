@@ -64,7 +64,7 @@ export class OrganizationContractService {
 
 	public addIncomingDonation(address: string, realWorldsIdentifier: string, amount: string, note: string, tags: string, txOptions?: Tx) {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
-		const tx: Tx = merge(this.defaultTx, txOptions);
+		const tx: Tx = merge({}, this.defaultTx, txOptions);
 		return contract.methods.setIncomingDonation(realWorldsIdentifier, amount, note, tags).send(tx);
 	}
 
@@ -105,13 +105,19 @@ export class OrganizationContractService {
 		return result;
 	}
 
+	public moveFundsToCharityEvent(organizationAddress: string, incomingDonationAddress: string, charityEventAddress: string, amount: string, txOptions?: Tx): Promise<any> {
+		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
+		const tx: Tx = merge({}, this.defaultTx, txOptions);
+		return contract.methods.moveDonationFundsToCharityEvent(incomingDonationAddress, charityEventAddress, amount).send(tx);
+	}
+
 
 
 	// Charity Events Methods
 	public addCharityEvent(address: string, charityEvent: ContractCharityEvent, txOptions?: Tx): Promise<TransactionReceipt> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
-		const tx: Tx = merge(this.defaultTx, txOptions);
-		return contract.methods.addCharityEvent(charityEvent.name, charityEvent.target, charityEvent.payed, charityEvent.tags).send(tx);
+		const tx: Tx = merge({}, this.defaultTx, txOptions);
+		return contract.methods.addCharityEvent(charityEvent.name, charityEvent.target, charityEvent.payed, charityEvent.tags, charityEvent.metaStorageHash).send(tx);
 	}
 
 	public getCharityEvents(address: string, txOptions?: Tx): Observable<{ address: string, index: number }> {

@@ -26,7 +26,7 @@ contract('Organization', function(accounts) {
         const target = '100';
         const payed = '0';
 
-        const transactionDetails = await OrganizationInstance.addCharityEvent(name, target, payed, "0", {
+        const transactionDetails = await OrganizationInstance.addCharityEvent(name, target, payed, "0", "metahash", {
             from: ADMIN_ACCOUNTS[0]
         });
         const charityEventAddress = transactionDetails.logs[0].args.charityEvent;
@@ -36,20 +36,27 @@ contract('Organization', function(accounts) {
         const charityEvenName = await CharityEventInstance.name();
         const charityEventTarget = (await CharityEventInstance.target()).toString();
         const charityEventPayed = (await CharityEventInstance.payed()).toString();
+        const metaHash = (await CharityEventInstance.metaStorageHash()).toString();
+
+        console.log(metaHash);
+
+        await CharityEventInstance.updateMetaStorageHash('updated');
+
+        console.log((await CharityEventInstance.metaStorageHash()).toString());
 
         assert(charityEvenName === name, 'Wrong charityEvent name');
         assert(charityEventTarget === target, 'Wrong charityEvent target');
         assert(charityEventPayed === payed, 'Wrong charityEvent payed');
     });
 
-    // it('should throw an error if addCharityEvent method called by non-admin', async () => {
-    //     try {
-    //         await OrganizationInstance.addEmployee('Rick', 'Sanchez', {from: accounts[3]});
-    //         assert(false, 'Allow create users for account without admin rights');
-    //     } catch (exception) {
-    //         const transactionException = exception.message.search('Exception while processing transaction: revert') !== -1;
-    //         assert(transactionException, 'Allow create users for account without admin rights');
-    //     }
-    // });
+    it('should throw an error if addCharityEvent method called by non-admin', async () => {
+        try {
+            await OrganizationInstance.addEmployee('Rick', 'Sanchez', {from: accounts[3]});
+            assert(false, 'Allow create users for account without admin rights');
+        } catch (exception) {
+            const transactionException = exception.message.search('Exception while processing transaction: revert') !== -1;
+            assert(transactionException, 'Allow create users for account without admin rights');
+        }
+    });
 
 });

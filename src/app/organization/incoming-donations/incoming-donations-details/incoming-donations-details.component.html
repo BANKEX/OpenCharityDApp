@@ -1,0 +1,78 @@
+<div class="container-fluid">
+	<ol class="breadcrumb oc-breadcrumbs">
+		<li><a href="#" (click)="goBackToOrganization($event)">
+			<i class="fa fa-arrow-left"></i>
+			<span>Back to organization</span>
+		</a></li>
+	</ol>
+	<div class="page-title" *ngIf="isDonation()">
+		<h4>
+			{{incomingDonation.realWorldsIdentifier}}
+			<div>
+				<small>{{incomingDonation.address}}</small>
+			</div>
+		</h4>
+		<div class="row" *ngIf="isDonation()">
+			<div class="col-lg-12">
+				<div class="card calendar-event incoming-donation-card card-hover" [ngClass]="{'pending' : incomingDonation && isPending(incomingDonation)}">
+					<div class="loading-overlay" *ngIf="incomingDonation === null">
+						<i class="fa fa-spinner fa-spin"></i>
+					</div>
+					<div *ngIf="incomingDonation">
+						<div class="portlet">
+							<div class="portlet-item unconfirmed-loader" *ngIf="isPending(incomingDonation)" title="This incoming donation has not stored in blockchain yet">
+								Unconfirmed
+								<i class="fa fa-spinner fa-spin"></i>
+							</div>
+						</div>
+						<div class="card-block no-pdd-btm" >
+						<span class="title-wrap"><span class="title">Real World Identifier:</span><span
+							class="title-value mrg-left-10">{{incomingDonation.realWorldsIdentifier}}</span> </span>
+						</div>
+						<div class="card-block no-pdd-btm no-pdd-top">
+		                <span class="sub-title font-size-8">
+		                        {{incomingDonation.address}}
+		                    </span>
+						</div>
+						<div class="card-block no-pdd-btm pdd-top-5">
+							<opc-bitmask-tags-list [tags]="incomingDonation.tags"></opc-bitmask-tags-list>
+						</div>
+						<div class="card-block no-pdd-btm">
+							<ul class="event-list">
+								<li class="event-items">
+									<a class="">
+										<span class="bullet success"></span>
+										<span class="event-name">Amount:</span>
+										<div class="event-detail">
+											<span class="target">{{incomingDonation.amount}}</span>
+										</div>
+									</a>
+								</li>
+								<li class="event-items">
+									<a class="">
+										<span class="bullet success"></span>
+										<span class="event-name">Note</span>
+										<div class="event-detail">
+											<span class="payed">{{incomingDonation.note}}</span>
+										</div>
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="card-footer border top">
+						<ul class="list-unstyled list-inline text-right pdd-vertical-5">
+							<li class="list-inline-item">
+								<!-- <input type="text" [(ngModel)]="incomingDonation.targetEvent">
+		                        <input type="number" [(ngModel)]="incomingDonation.amountToMove"> -->
+								<a class="btn btn-success btn-inverse btn-rounded" (click)="openSendDonationFundsModal(incomingDonation)">Move
+									Funds To Charity Event</a>
+								<!-- <a class="btn btn-success btn-inverse btn-rounded" href="javascript:void(0)" (click)="moveToCharityEvent(incomingDonation)">Move Funds To Charity Event</a> -->
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

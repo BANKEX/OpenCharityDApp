@@ -29,6 +29,14 @@ export class CharityEventContractService {
 		};
 	}
 
+	/************************/
+	/** Get data methods ****/
+	/************************/
+
+	public getMetaStorageHash(address: string, txOptions?: Tx): Promise<string> {
+		return this.cloneContract(this.charityEventContract, address).methods.metaStorageHash().call(txOptions);
+	}
+
 	public getName(address: string, txOptions?: Tx): Promise<string> {
 		const contract: Contract = this.cloneContract(this.charityEventContract, address);
 		return contract.methods.name().call(txOptions);
@@ -38,7 +46,6 @@ export class CharityEventContractService {
 		const contract: Contract = this.cloneContract(this.charityEventContract, address);
 		return contract.methods.target().call(txOptions);
 	}
-
 
 	public getPayed(address: string, txOptions?: Tx): Promise<string> {
 		const contract: Contract = this.cloneContract(this.charityEventContract, address);
@@ -52,6 +59,7 @@ export class CharityEventContractService {
 
 	public async getCharityEventDetails(address: string, txOptions?: Tx): Promise<ContractCharityEvent> {
 		return {
+			metaStorageHash: await this.getMetaStorageHash(address, txOptions),
 			name: await this.getName(address, txOptions),
 			address: address,
 			target: await this.getTarget(address, txOptions),
@@ -74,6 +82,9 @@ export class CharityEventContractService {
 	}
 
 
+	/************************/
+	/** Utils ***************/
+	/************************/
 	private cloneContract(original: Contract, address: string): Contract {
 		const contract: any = (<any>original).clone();
 		const originalProvider = (<any>original).currentProvider;
