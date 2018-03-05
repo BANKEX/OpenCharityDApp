@@ -31,7 +31,7 @@ export class DashboardCharityEventsList extends CharityEventsListBaseComponent i
 	}
 
 	public toAllCharityEvents() {
-		this.router.navigate([`/organization/${this.organizationAddress}/charityeventsall`]);
+		this.router.navigate([`/organization/${this.organizationAddress}/events`]);
 	}
 
 }

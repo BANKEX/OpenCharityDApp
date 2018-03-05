@@ -21,7 +21,7 @@ import {IsAdminGuard} from './is-admin.guard';
 import {OrganizationSharedService} from './services/organization-shared.service';
 import {CharityEventCardComponent} from './charity-events/charity-event-card/charity-event-card.component';
 import {ActualIncomingDonationsComponent} from './incoming-donations/actual-donations/actual-donations.component';
-import {CharityEventsTransactionsHistoryComponent} from './charity-events/charity-events-transactions-history/charity-events-transactions-history.component';
+import {CharityEventTransactionsHistoryComponent} from './charity-events/charity-event-transactions-history/charity-event-transactions-history.component';
 import {CharityEventEditorComponent} from './charity-events/charity-event-editor/charity-event-editor.component';
 import {CharityEventsAllComponent} from './charity-events/charity-events-all/charity-events-all.component';
 import {IncomingDonationsDetailsComponent} from './incoming-donations/incoming-donations-details/incoming-donations-details.component';
@@ -44,7 +44,7 @@ import {DashboardCharityEventsList} from './charity-events/dashboard-charity-eve
 		CharityEventCardComponent,
 		DashboardCharityEventsList,
 		ActualIncomingDonationsComponent,
-		CharityEventsTransactionsHistoryComponent,
+		CharityEventTransactionsHistoryComponent,
 		CharityEventEditorComponent,
 		CharityEventsAllComponent,
 		IncomingDonationsDetailsComponent,

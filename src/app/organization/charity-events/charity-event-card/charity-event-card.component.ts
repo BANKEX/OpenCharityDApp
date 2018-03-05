@@ -46,11 +46,11 @@ export class CharityEventCardComponent implements OnInit {
 		if (!this.isConfirmed()) {
 			return;
 		}
-		this.router.navigate([`/organization/${this.organizationAddress}/charityevent/${this.charityEvent.address}/transactions`]);
+		this.router.navigate([`/organization/${this.organizationAddress}/event/${this.charityEvent.address}/transactions`]);
 	}
 
 	public editClick($event: Event): void {
-		this.router.navigate([`/organization/${this.organizationAddress}/charityevent/${this.charityEvent.address}/editor`]);
+		this.router.navigate([`/organization/${this.organizationAddress}/event/${this.charityEvent.address}/editor`]);
 		$event.stopPropagation();
 	}
 

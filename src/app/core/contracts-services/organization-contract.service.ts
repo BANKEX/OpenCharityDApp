@@ -21,6 +21,10 @@ export class OrganizationContractService {
 	private web3: Web3;
 	private defaultTx: Tx;
 
+	// Store last used contract to don't clone it all the time;
+	private lastContractAddress: string;
+	private lastContract: Contract;
+
 	constructor(private web3ProviderService: Web3ProviderService,) {
 		this.organizationContract = this.buildOrganizationContract();
 		this.web3 = this.web3ProviderService.web3;
@@ -34,6 +38,10 @@ export class OrganizationContractService {
 		};
 	}
 
+
+	/********************************/
+	/***  Get Organization Data *****/
+	/********************************/
 	public getName(address: string, txOptions?: Tx): Promise<any> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		return contract.methods.name().call(txOptions);
@@ -61,7 +69,6 @@ export class OrganizationContractService {
 	/********************************/
 	/***  IncomingDonations methods */
 	/********************************/
-
 	public addIncomingDonation(address: string, realWorldsIdentifier: string, amount: string, note: string, tags: string, txOptions?: Tx) {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		const tx: Tx = merge({}, this.defaultTx, txOptions);
@@ -113,7 +120,9 @@ export class OrganizationContractService {
 
 
 
-	// Charity Events Methods
+	/********************************/
+	/***  Charity Events Methods ****/
+	/********************************/
 	public addCharityEvent(address: string, charityEvent: ContractCharityEvent, txOptions?: Tx): Promise<TransactionReceipt> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		const tx: Tx = merge({}, this.defaultTx, txOptions);
@@ -156,10 +165,15 @@ export class OrganizationContractService {
 
 	// Utils
 	private cloneContract(original: Contract, address: string): Contract {
+		if (this.lastContractAddress === address) { return this.lastContract; }
+
 		const contract: any = (<any>original).clone();
 		const originalProvider = (<any>original).currentProvider;
 		contract.setProvider(contract.givenProvider || originalProvider);
 		contract.options.address = address;
+
+		this.lastContract = contract;
+		this.lastContractAddress = address;
 
 		return <Contract> contract;
 	}

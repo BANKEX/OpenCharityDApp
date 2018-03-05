@@ -111,7 +111,7 @@ export class ActualIncomingDonationsComponent implements OnInit, OnDestroy {
 	}
 
 	public toAllDonations() {
-		this.router.navigate([`/organization/${this.organizationContractAddress}/alldonations`]);
+		this.router.navigate([`/organization/${this.organizationContractAddress}/donations`]);
 	}
 
 	public addClick() {

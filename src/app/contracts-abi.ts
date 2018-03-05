@@ -283,7 +283,7 @@ export const OrganizationContractAbi = [
 			},
 			{
 				'indexed': true,
-				'name': 'who',
+				'name': 'sender',
 				'type': 'address'
 			},
 			{
@@ -338,7 +338,7 @@ export const OrganizationContractAbi = [
 				'type': 'bytes1'
 			},
 			{
-				'name': 'metaHashString',
+				'name': '_metaHashString',
 				'type': 'string'
 			}
 		],

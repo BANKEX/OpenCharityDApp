@@ -1,11 +1,13 @@
+//TODO: create reconnection process for events listeners;
 import {Injectable} from '@angular/core';
-import {Contract, EventEmitter} from 'web3/types';
+import {Contract, EventEmitter, EventLog, Tx} from 'web3/types';
 import {Web3ProviderService} from '../web3-provider.service';
 import Web3 from 'web3';
 import {Observable} from 'rxjs/Observable';
 import {OrganizationContractAbi} from '../../contracts-abi';
 import {ConnectableObservable} from 'rxjs/Rx';
 import {Observer} from 'rxjs/Observer';
+import {Subject} from 'rxjs/Subject';
 
 @Injectable()
 export class OrganizationContractEventsService {
@@ -114,6 +116,26 @@ export class OrganizationContractEventsService {
 			}
 
 		}).share();
+	}
+
+
+	public getCharityEventTransactions(organizationAddress: string, charityEventAddress: string, txOptions?: Tx): Observable<EventLog[]> {
+		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
+		const sourceSubject: Subject<EventLog[]> = new Subject<EventLog[]>();
+
+		contract.getPastEvents('FundsMovedToCharityEvent', {
+			filter: {charityEvent: charityEventAddress},
+			fromBlock: 0,
+			toBlock: 'latest'
+		}, (err, events) => {
+			if (err) {
+				sourceSubject.error(err);
+				return;
+			}
+			sourceSubject.next(events);
+		});
+
+		return sourceSubject.asObservable();
 	}
 
 

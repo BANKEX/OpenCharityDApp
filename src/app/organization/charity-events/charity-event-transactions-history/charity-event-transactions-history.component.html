@@ -32,15 +32,15 @@
 				<th>Date</th>
 				<th>From</th>
 				<th>Transaction</th>
-				<th>Amount</th>
+				<th class="text-right">Amount</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr class="data" *ngFor="let transaction of transactions" (click)="toDetails(incomingDonation)">
-				<td>01.02.2018</td>
-				<td>{{transaction.from}}</td>
-				<td>{{transaction.transaction}}</td>
-				<td><div class="transaction-value">+ {{transaction.value}}</div></td>
+				<td>{{transaction.date}}</td>
+				<td>{{transaction.incomingDonation}}</td>
+				<td>{{transaction.transactionHash}}</td>
+				<td><div class="transaction-value">+ {{transaction.amount}}</div></td>
 			</tr>
 		</tbody>
 	</table>
