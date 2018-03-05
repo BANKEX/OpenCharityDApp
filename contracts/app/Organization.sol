@@ -38,10 +38,10 @@ contract Organization {
 	/**
      * @dev Events emitted when donation funds moved to charity event
      * @param charityEvent address of target charity event
-     * @param who address which initiate transaction
+     * @param sender address which initiate transaction
      * @param amount how much tokens moved
      */
-	event FundsMovedToCharityEvent(address indexed incomingDonation, address indexed charityEvent, address indexed who, uint amount);
+	event FundsMovedToCharityEvent(address indexed incomingDonation, address indexed charityEvent, address indexed sender, uint amount);
 
 
 

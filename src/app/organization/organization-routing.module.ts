@@ -2,7 +2,7 @@ import {Routes} from '@angular/router';
 //Dashboard Components
 import {OrganizationDetailsComponent} from './organization-details/organization-details.component';
 import {OrganizationsListComponent} from './organizations-list/organizations-list.component';
-import {CharityEventsTransactionsHistoryComponent} from './charity-events/charity-events-transactions-history/charity-events-transactions-history.component';
+import {CharityEventTransactionsHistoryComponent} from './charity-events/charity-event-transactions-history/charity-event-transactions-history.component';
 import {CommonLayoutComponent} from '../common/common-layout.component';
 import {CharityEventEditorComponent} from './charity-events/charity-event-editor/charity-event-editor.component';
 import {CharityEventsAllComponent} from './charity-events/charity-events-all/charity-events-all.component';
@@ -24,7 +24,7 @@ export const OrganizationRoutes: Routes = [{
 		canActivate: [IsOrganizationAddressGuard, IsAdminGuard]
 	}, {
 		path: ':address/event/:event/transactions',
-		component: CharityEventsTransactionsHistoryComponent
+		component: CharityEventTransactionsHistoryComponent
 	}, {
 		path: ':address/event/:event/editor',
 		component: CharityEventEditorComponent
