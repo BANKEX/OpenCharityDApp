@@ -23,13 +23,13 @@ export const OrganizationRoutes: Routes = [{
 		component: OrganizationDetailsComponent,
 		canActivate: [IsOrganizationAddressGuard, IsAdminGuard]
 	}, {
-		path: ':address/charityevent/:event/transactions',
+		path: ':address/event/:event/transactions',
 		component: CharityEventsTransactionsHistoryComponent
 	}, {
-		path: ':address/charityevent/:event/editor',
+		path: ':address/event/:event/editor',
 		component: CharityEventEditorComponent
 	}, {
-		path: ':address/charityeventsall',
+		path: ':address/events',
 		component: CharityEventsAllComponent
 	}, {
 		path: ':address/donation/:donation/details',
@@ -38,7 +38,7 @@ export const OrganizationRoutes: Routes = [{
 		path: ':address/donation/editor',
 		component: IncomingDonationsEditorComponent
 	}, {
-		path: ':address/alldonations',
+		path: ':address/donations',
 		component: IncomingDonationsAllComponent
 	}]
 }];
