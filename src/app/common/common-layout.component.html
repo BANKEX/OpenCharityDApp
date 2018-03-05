@@ -1,9 +1,9 @@
 <div class="app" [ngClass]="
-    {
-        'is-collapsed': app.layout.isMenuCollapsed,
-        'is-opened': app.layout.isMenuOpened,
-        'rtl' : app.layout.rtlActived
-    }">
+		{
+				'is-collapsed': app.layout.isMenuCollapsed,
+				'is-opened': app.layout.isMenuOpened,
+				'rtl' : app.layout.rtlActived
+		}">
 	<div class="layout" [ngClass]="headerSelected">
 
 		<div [ngClass]="sidenavSelected">
@@ -19,7 +19,7 @@
 						</a>
 						<div class="mobile-toggle side-nav-toggle">
 							<a href="javascript:void(0);"
-							   (click)="app.layout.isMenuCollapsed = !app.layout.isMenuCollapsed">
+								 (click)="app.layout.isMenuCollapsed = !app.layout.isMenuCollapsed">
 								<i class="ti-arrow-circle-left"></i>
 							</a>
 						</div>
@@ -28,62 +28,12 @@
 
 						<li class="nav-item" routerLinkActive="active">
 							<a class="mrg-top-30" href="" [routerLink]="['/organization']">
-                                <span class="icon-holder">
-                                    <i class="fa fa-sitemap"></i>
-                                </span>
+																<span class="icon-holder">
+																		<i class="fa fa-sitemap"></i>
+																</span>
 								<span class="title">Organizations</span>
 							</a>
 						</li>
-						<!--<li class="nav-item dropdown" >-->
-						<!--<a class="dropdown-toggle" href="javascript:void(0);" >-->
-						<!--<span class="icon-holder">-->
-						<!--<i class="ti-layout-media-overlay"></i>-->
-						<!--</span>-->
-						<!--<span class="title">Dropdown</span>-->
-						<!--<span class="arrow">-->
-						<!--<i class="ti-angle-right"></i>-->
-						<!--</span>-->
-						<!--</a>-->
-						<!--<ul class="dropdown-menu">-->
-						<!--<li>-->
-						<!--<a href="">item 1</a>-->
-						<!--</li>-->
-						<!--<li>-->
-						<!--<a href="">item 2</a>-->
-						<!--</li>-->
-						<!--</ul>-->
-						<!--</li>-->
-						<!--<li class="nav-item dropdown">-->
-						<!--<a class="dropdown-toggle" href="javascript:void(0);">-->
-						<!--<span class="icon-holder">-->
-						<!--<i class="ti-view-list-alt"></i>-->
-						<!--</span>-->
-						<!--<span class="title">Multi Level</span>-->
-						<!--<span class="arrow">-->
-						<!--<i class="ti-angle-right"></i>-->
-						<!--</span>-->
-						<!--</a>-->
-						<!--<ul class="dropdown-menu">-->
-						<!--<li class="nav-item dropdown">-->
-						<!--<a href="javascript:void(0);">-->
-						<!--<span>Level 1.2</span>-->
-						<!--</a>-->
-						<!--</li>-->
-						<!--<li class="nav-item dropdown">-->
-						<!--<a href="javascript:void(0);">-->
-						<!--<span>Level 1.1</span>-->
-						<!--<span class="arrow">-->
-						<!--<i class="ti-angle-right"></i>-->
-						<!--</span>-->
-						<!--</a>-->
-						<!--<ul class="dropdown-menu">-->
-						<!--<li>-->
-						<!--<a href="javascript:void(0);">Level 2</a>-->
-						<!--</li>-->
-						<!--</ul>-->
-						<!--</li>-->
-						<!--</ul>-->
-						<!--</li>-->
 					</ul>
 				</div>
 			</div>
@@ -98,7 +48,7 @@
 						<ul class="nav-left">
 							<li>
 								<a class="side-nav-toggle" href="javascript:void(0);"
-								   (click)="app.layout.isMenuCollapsed = !app.layout.isMenuCollapsed">
+									 (click)="app.layout.isMenuCollapsed = !app.layout.isMenuCollapsed">
 									<i class="ti-view-grid"></i>
 								</a>
 							</li>
@@ -106,7 +56,7 @@
 						<ul class="nav-right">
 							<li>
 								<a class="side-panel-toggle" href="javascript:void(0);"
-								   (click)="app.layout.sidePanelOpen = !app.layout.sidePanelOpen">
+									 (click)="app.layout.sidePanelOpen = !app.layout.sidePanelOpen">
 									<i class="ti-align-right"></i>
 								</a>
 							</li>
@@ -121,32 +71,31 @@
 						<ul class="nav nav-tabs" role="tablist">
 							<li class="nav-item active">
 								<a class="nav-link" href="#tab1" role="tab" data-toggle="tab">
-									<span>Tab 1</span>
-								</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" href="#tab2" role="tab" data-toggle="tab">
-									<span>Tab 2</span>
-								</a>
-							</li>
-							<li class="nav-item ">
-								<a class="nav-link" href="#tab3" role="tab" data-toggle="tab">
-									<span>Tab 3</span>
+									<span>Pending Transactions</span>
 								</a>
 							</li>
 							<li class="panel-close">
 								<a class="side-panel-toggle" href="javascript:void(0);"
-								   (click)="app.layout.sidePanelOpen = !app.layout.sidePanelOpen">
+									 (click)="app.layout.sidePanelOpen = !app.layout.sidePanelOpen">
 									<i class="ti-close"></i>
 								</a>
 							</li>
 						</ul>
 						<div class="tab-content">
 							<div id="tab1" role="tabpanel" class="tab-pane fade in active">
-							</div>
-							<div id="tab2" role="tabpanel" class="tab-pane fade">
-							</div>
-							<div id="tab3" role="tabpanel" class="tab-pane fade">
+								<div class="pending-transactions">
+										<div class="pt-list scrollable">
+												<div class="pt-section">
+														<a href="javascript:void(0);" class="pt-message pt-toggle" *ngFor="let message of pendingTransactions">
+																<div class="message-info">
+																		<span class="message-name">{{message.title}}</span>
+																		<span class="message-text">{{message.text}}</span>
+																</div>
+																<span class="status" [ngClass]="{confirmed: isConfirmed(message), pending: isPending(message), failed: isFailed(message)}"><span></span></span>
+														</a>
+												</div>
+										</div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -165,9 +114,9 @@
 						<div class="copyright">
 							<span>Copyright © 2017</span>
 							<span class="go-right">
-                                <a href="" class="text-gray mrg-right-15">Link 1</a>
-                                <a href="" class="text-gray">Link 2</a>
-                            </span>
+																<a href="" class="text-gray mrg-right-15">Link 1</a>
+																<a href="" class="text-gray">Link 2</a>
+														</span>
 						</div>
 					</div>
 				</footer>
