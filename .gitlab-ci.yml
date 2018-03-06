@@ -11,6 +11,10 @@ stages:
   - deploy-stage
   - deploy-prod
 
+cache:
+  paths:
+    - node_modules/
+
 setup:
   image: node:alpine
   stage: setup
@@ -21,11 +25,6 @@ setup:
     - npm install
     - npm rebuild bcrypt --build-from-source
     - npm rebuild node-sass
-  cache:
-    key: ${CI_COMMIT_REF_NAME}
-    untracked: true
-    paths:
-      - node_modules/
 
 build-node-stage:
   image: node:alpine
