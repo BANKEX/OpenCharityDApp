@@ -5,8 +5,6 @@ services:
     image: ${IMAGE}
     container_name: oc_client
     restart: always
-    volumes:
-      - /data/contracts:/opt/contracts
     expose:
       - "80"
     environment:

@@ -107,6 +107,7 @@ deploy_stage:
     - docker pull $IMAGE
     - sleep 15
     - docker-compose -f docker/docker-compose.yml up -d
+    - docker cp oc_client:/opt/contracts /data
   environment:
     name: staging
     url: https://opencharity.staging.bankex.team
