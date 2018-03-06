@@ -23,12 +23,13 @@ deploy_stage:
     - docker login -u $DOCKER_USER -p $DOCKER_TOKEN
     - echo "IMAGE=$IMAGE" > .env ; echo "VIRTUAL_HOST=$SERVERNAME" >> .env ; echo "LETSENCRYPT_HOST=$SERVERNAME" >> .env; echo "LETSENCRYPT_EMAIL=$EMAIL" >> .env
   script:
+    - docker stop oc_donators_cab
     - docker-compose -f docker/docker-compose.yml down
+    - docker volume rm docker_contracts
     - docker rmi $IMAGE || echo "image not exist"
     - docker pull $IMAGE
     - docker-compose -f docker/docker-compose.yml up -d
-    - sleep 10
-    - docker cp oc_client:/opt/contracts /data
+    - docker start oc_donators_cab
   environment:
     name: staging
     url: https://opencharity.staging.bankex.team
