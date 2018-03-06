@@ -11,10 +11,6 @@ stages:
   - deploy-stage
   - deploy-prod
 
-cache:
-  paths:
-    - node_modules/
-
 setup:
   image: node:alpine
   stage: setup
@@ -33,6 +29,9 @@ build-node-stage:
     - npm install -g truffle
     - npm run build:aot:dev
     - truffle compile
+  cache:
+    paths:
+      - node_modules/
   artifacts:
     paths:
       - dist
@@ -107,7 +106,6 @@ deploy_stage:
     - docker pull $IMAGE
     - sleep 15
     - docker-compose -f docker/docker-compose.yml up -d
-    - docker cp oc_client:/opt/contracts/* /var/lib/docker/volumes/docker_contracts/_data/
   environment:
     name: staging
     url: https://opencharity.staging.bankex.team
