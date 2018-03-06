@@ -21,6 +21,11 @@ setup:
     - npm install
     - npm rebuild bcrypt --build-from-source
     - npm rebuild node-sass
+  cache:
+    key: ${CI_COMMIT_REF_NAME}
+    untracked: true
+    paths:
+      - node_modules/
 
 build-node-stage:
   image: node:alpine
@@ -29,9 +34,6 @@ build-node-stage:
     - npm install -g truffle
     - npm run build:aot:dev
     - truffle compile
-  cache:
-    paths:
-      - node_modules/
   artifacts:
     paths:
       - dist
