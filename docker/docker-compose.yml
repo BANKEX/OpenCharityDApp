@@ -16,4 +16,3 @@ networks:
   default:
     external:
       name: frontend_default
-
