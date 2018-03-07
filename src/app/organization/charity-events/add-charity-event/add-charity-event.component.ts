@@ -6,6 +6,8 @@ import {OrganizationSharedService} from '../../services/organization-shared.serv
 import {TransactionReceipt} from 'web3/types';
 import {ConfirmationStatusState, ContractCharityEvent} from '../../../open-charity-types';
 import {MetaDataStorageService} from '../../../core/meta-data-storage.service';
+import {PendingTransactionService} from '../../../core/pending-transactions.service';
+import {PendingTransaction} from '../../../pending-transaction.types';
 import {UploadFile} from 'ngx-file-drop';
 import {merge} from 'lodash';
 
@@ -28,7 +30,8 @@ export class AddCharityEventComponent implements OnInit {
 		private fb: FormBuilder,
 		private tagsBitmaskService: TagsBitmaskService,
 		private organizationSharedService: OrganizationSharedService,
-		private metaDataStorageService: MetaDataStorageService
+		private metaDataStorageService: MetaDataStorageService,
+		private pendingTransactionService: PendingTransactionService
 	) {
 	}
 
@@ -54,6 +57,7 @@ export class AddCharityEventComponent implements OnInit {
 		let charityEventInternalId: string = this.organizationSharedService.makePseudoRandomHash(newCharityEvent);
 		let newCharityEventAddress: string = null;
 
+		let pending: PendingTransaction = null;
 		try {
 			// save meta data into storage
 			const metaStorageHash: string = await this.storeToMetaStorage(newCharityEvent, f.details);
@@ -68,7 +72,10 @@ export class AddCharityEventComponent implements OnInit {
 			}));
 
 			// submit transaction to blockchain
+
+			pending = this.pendingTransactionService.addPending("Add new CE Transaction", newCharityEvent.name);
 			const receipt: TransactionReceipt = await this.organizationContractService.addCharityEvent(this.organizationContractAddress, newCharityEvent);
+			this.pendingTransactionService.confirmTransaction(pending);
 
 			// check if transaction succseed
 			if (receipt.events && receipt.events.CharityEventAdded) {
@@ -86,6 +93,9 @@ export class AddCharityEventComponent implements OnInit {
 				this.organizationSharedService.charityEventCanceled(charityEventInternalId, newCharityEventAddress);
 			} else {
 				// TODO:  global errors notifier
+				if(pending) {
+					this.pendingTransactionService.rejectTransaction(pending);
+				}
 				console.warn(e.message);
 			}
 		}

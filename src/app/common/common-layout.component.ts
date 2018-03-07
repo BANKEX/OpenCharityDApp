@@ -20,7 +20,10 @@ export class CommonLayoutComponent implements OnInit {
 
 	public pendingTransactions: PendingTransaction[] = [];
 
-	constructor(private pendingTransactionService: PendingTransactionService) {
+	constructor(
+		private pendingTransactionService: PendingTransactionService,
+		// private notificationService:
+	) {
 		this.app = {
 			layout: {
 				sidePanelOpen: false,
@@ -47,7 +50,20 @@ export class CommonLayoutComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		this.pendingTransactionService.message.subscribe(message => this.pendingTransactions.push(message));
+		this.pendingTransactionService.message.subscribe(message => {
+			if(message.state == PendingTransactionState.PENDING) {
+				this.pendingTransactions.push(message);
+				// this.notificationService.setOverlayMessage(`Transaction pending. CE: ${message.text}`);
+			} else {
+				this.pendingTransactions = this.pendingTransactions.filter(transaction => transaction.id != message.id);
+				if(message.state == PendingTransactionState.CONFIRMED) {
+					// this.notificationService.setOverlayMessage(`Transaction completed. CE: ${message.text}`);
+				}
+				else {
+					// this.notificationService.setOverlayMessage(`Transaction failed. CE: ${message.text}`);
+				}
+			}
+		});
 	}
 
 	public isConfirmed(message: PendingTransaction): boolean {

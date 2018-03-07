@@ -11,6 +11,7 @@ export enum PendingTransactionState {
 }
 
 export interface PendingTransaction {
+  id: number;
   title: string;
   text: string;
   state: PendingTransactionState;
