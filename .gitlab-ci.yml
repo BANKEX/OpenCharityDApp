@@ -2,8 +2,51 @@ variables:
   IMAGE: bankexlabs/$CI_PROJECT_NAME
 
 stages:
+  - setup
+  - build-node-stage
+  - deploy-contracts
   - deploy-stage
   - deploy-prod
+
+cache:
+  paths:
+    - node_modules/
+
+setup:
+  image: node:alpine
+  stage: setup
+  script:
+    - apk add --update git
+    - apk --no-cache add g++ gcc libgcc libstdc++ linux-headers make python
+    - npm install --quiet node-gyp -g
+    - npm install
+    - npm rebuild bcrypt --build-from-source
+    - npm rebuild node-sass
+
+build-node-stage:
+  image: node:alpine
+  stage: build-node-stage
+  script:
+    - npm install -g truffle
+    - npm run build:aot:dev
+    - truffle compile
+  artifacts:
+    paths:
+      - dist
+      - build/contracts
+    expire_in: 24h
+
+deploy-contracts:
+  image: ubuntu:latest
+  stage: deploy-contracts
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY_DEPLOY")
+    - mkdir -p ~/.ssh
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+  script:
+    - scp -r ./build/contracts root@charity-staging-do.bankex.team:/data
 
 deploy_stage:
   stage: deploy-stage

@@ -1,15 +1,10 @@
 version: '3'
 
-volumes:
-    contracts:
-
 services:
   oc_client:
     image: ${IMAGE}
     container_name: oc_client
     restart: always
-    volumes:
-      - contracts:/opt/contracts
     expose:
       - "80"
     environment:
