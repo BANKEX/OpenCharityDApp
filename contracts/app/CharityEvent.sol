@@ -1,9 +1,10 @@
 pragma solidity ^0.4.17;
 
 import "./lib/Tools.sol";
-import "./OrganizationInterface.sol";
+import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 
-contract CharityEvent {
+
+contract CharityEvent is Ownable {
 
     // name of event
     string public name;
@@ -37,8 +38,23 @@ contract CharityEvent {
         return true;
     }
 
-	function updateMetaStorageHash(string _metaStorageHash) public  {
+
+	/**
+     * @dev Update editable fields of charity event
+	 *
+     */
+	function updateDetails(string _name, uint256 _target, bytes1 _tags, string _metaStorageHash) public returns(bool) {
+		// all checks and validations have to be done in Organization method
+
+		name = _name;
+
+		target = _target;
+
+		tags = _tags;
+
 		metaStorageHash = _metaStorageHash;
+
+		return true;
 	}
 
 

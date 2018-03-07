@@ -72,7 +72,7 @@ export class OrganizationContractService {
 	public addIncomingDonation(address: string, realWorldsIdentifier: string, amount: string, note: string, tags: string, txOptions?: Tx) {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		const tx: Tx = merge({}, this.defaultTx, txOptions);
-		return contract.methods.setIncomingDonation(realWorldsIdentifier, amount, note, tags).send(tx);
+		return contract.methods.addIncomingDonation(realWorldsIdentifier, amount, note, tags).send(tx);
 	}
 
 	public async getIncomingDonationsCount(address: string, txOptions?: Tx): Promise<string> {
@@ -159,6 +159,12 @@ export class OrganizationContractService {
 		}
 
 		return result;
+	}
+
+	public updateCharityEvent(organizationAddress: string, name: string, target: string, tags: string, metaStorageHash: string, txOptions?: Tx): Promise<any> {
+		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
+		const tx: Tx = merge({}, this.defaultTx, txOptions);
+		return contract.methods.updateCharityEventDetails(name, target, tags, metaStorageHash).send(tx);
 	}
 
 

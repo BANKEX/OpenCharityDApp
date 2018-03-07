@@ -3,11 +3,11 @@ pragma solidity ^0.4.17;
 import "./Employee.sol";
 import "./CharityEvent.sol";
 import "./IncomingDonation.sol";
-import "../OpenCharityMintableToken.sol";
+import "./interfaces/OpenCharityTokenInterface.sol";
 
 
 contract Organization {
-    OpenCharityMintableToken token;
+    OpenCharityTokenInterface token;
 
     string public name;
 
@@ -26,6 +26,7 @@ contract Organization {
     mapping(uint => address) public charityEventIndex;
     uint public charityEventCount = 0;
     event CharityEventAdded(address indexed organization, address charityEvent);
+	event CharityEventEdited(address indexed charityEvent, address indexed sender);
 
 
     //list of IncomingDonations
@@ -33,6 +34,11 @@ contract Organization {
     mapping(uint => address) public incomingDonationIndex;
     uint public incomingDonationCount = 0;
     event IncomingDonationAdded(address indexed organization, address incomingDonation, address indexed who, uint amount);
+
+	// 0 in bytes format
+	bytes1 zeroBytes = 0x00;
+
+
 
 
 	/**
@@ -45,7 +51,7 @@ contract Organization {
 
 
 
-    function Organization(OpenCharityMintableToken _token, address[] _admins, string _name) public {
+    function Organization(address _token, address[] _admins, string _name) public {
         // at least one admin is required
         require(_admins.length > 0);
 
@@ -56,7 +62,7 @@ contract Organization {
         }
 
         name = _name;
-        token = OpenCharityMintableToken(_token);
+        token = OpenCharityTokenInterface(_token);
     }
 
 
@@ -95,20 +101,12 @@ contract Organization {
         return charityEvent;
     }
 
-    function setIncomingDonation(string _realWorldIdentifier, uint _amount, string _note, bytes1 _tags) public onlyAdmin returns(address) {
-        address incomingDonation = addIncomingDonation(_realWorldIdentifier, _amount, _note, _tags);
-
-        token.mint(incomingDonation, _amount);
-
-		return incomingDonation;
-    }
-
     /**
      * @dev Add new IncomingDonation to Organization
      */
-    function addIncomingDonation(string _realWorldIdentifier, uint _amount, string _note, bytes1 _tags) internal returns(address) {
+    function addIncomingDonation(string _realWorldIdentifier, uint _amount, string _note, bytes1 _tags) internal onlyAdmin returns(address) {
 
-        IncomingDonation incomingDonation = new IncomingDonation(token, _realWorldIdentifier, _note, _tags);
+        IncomingDonation incomingDonation = new IncomingDonation(_realWorldIdentifier, _note, _tags);
 
         // add incomingDonation to incomingDonations list
         incomingDonationIndex[incomingDonationCount] = incomingDonation;
@@ -118,21 +116,52 @@ contract Organization {
         // broadcast event
         IncomingDonationAdded(this, incomingDonation, msg.sender, _amount);
 
+		token.mint(incomingDonation, _amount);
+
         return incomingDonation;
     }
 
-	function moveDonationFundsToCharityEvent(address _incomingDonation, address _charityEvent, uint _amount) public {
-		// check that it is IncomingDonation contract
-		require(IncomingDonation(_incomingDonation).isIncomingDonation());
+	function moveDonationFundsToCharityEvent(address _incomingDonation, address _charityEvent, uint _amount) public returns(bool){
+		require(_amount > 0);
 
-		// check that it is CharityEvent contract
-		require(CharityEvent(_charityEvent).isCharityEvent());
+		CharityEvent charityEvent = CharityEvent(_charityEvent);
+		IncomingDonation incomingDonation = IncomingDonation(_incomingDonation);
 
-		// move funds
-		require(IncomingDonation(_incomingDonation).moveToCharityEvent(_charityEvent, _amount));
+		require(charityEvent.isCharityEvent());
+
+		require(validateTags(incomingDonation.tags(), charityEvent.tags()));
 
 		FundsMovedToCharityEvent(_incomingDonation, _charityEvent, msg.sender, _amount);
 
+		token.transfer(_charityEvent, _amount);
+
+		return true;
+
+	}
+
+	/**
+	 * @dev Update editable fields of charity event
+	 *
+	 */
+	function updateCharityEventDetails(address _charityEventAddress, string _name, uint256 _target, bytes1 _tags, string _metaStorageHash) public onlyAdmin returns(bool) {
+		require(CharityEvent(_charityEventAddress).isCharityEvent());
+
+		CharityEvent charityEvent = CharityEvent(_charityEventAddress);
+
+		require(charityEvent.updateDetails(_name, _target, _tags, _metaStorageHash));
+
+		return true;
+	}
+
+
+	/**
+ * @dev Compare target charity event and incoming donation tags
+ * returns true if at least one tag is the same
+ * @param donationTags tags of incoming donation
+ * @param eventTags tags of charity event
+ */
+	function validateTags(bytes1 donationTags, bytes1 eventTags) view public returns (bool)  {
+		return ( (donationTags & eventTags) > zeroBytes);
 	}
 
 
