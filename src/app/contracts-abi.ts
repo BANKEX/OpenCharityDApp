@@ -273,6 +273,23 @@ export const OrganizationContractAbi = [
 		'inputs': [
 			{
 				'indexed': true,
+				'name': 'ownerAddress',
+				'type': 'address'
+			},
+			{
+				'indexed': true,
+				'name': 'metaStorageHash',
+				'type': 'string'
+			}
+		],
+		'name': 'MetaStorageHashUpdated',
+		'type': 'event'
+	},
+	{
+		'anonymous': false,
+		'inputs': [
+			{
+				'indexed': true,
 				'name': 'incomingDonation',
 				'type': 'address'
 			},
@@ -338,7 +355,7 @@ export const OrganizationContractAbi = [
 				'type': 'bytes1'
 			},
 			{
-				'name': '_metaHashString',
+				'name': '_metaStorageHash',
 				'type': 'string'
 			}
 		],
@@ -401,6 +418,24 @@ export const OrganizationContractAbi = [
 			}
 		],
 		'name': 'moveDonationFundsToCharityEvent',
+		'outputs': [],
+		'payable': false,
+		'stateMutability': 'nonpayable',
+		'type': 'function'
+	},
+	{
+		'constant': false,
+		'inputs': [
+			{
+				'name': '_charityEvent',
+				'type': 'address'
+			},
+			{
+				'name': '_hash',
+				'type': 'string'
+			}
+		],
+		'name': 'updateCharityEventMetaStorageHash',
 		'outputs': [],
 		'payable': false,
 		'stateMutability': 'nonpayable',
