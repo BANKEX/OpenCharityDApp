@@ -34,6 +34,8 @@ contract Organization {
     uint public incomingDonationCount = 0;
     event IncomingDonationAdded(address indexed organization, address incomingDonation, address indexed who, uint amount);
 
+	event MetaStorageHashUpdated(address indexed ownerAddress, string indexed metaStorageHash);
+
 
 
 	/**
@@ -82,8 +84,8 @@ contract Organization {
     /**
    * @dev Add new CharityEvent to Organization
    */
-    function addCharityEvent(string _name, uint _target, uint _payed, bytes1 _tags, string _metaHashString) public onlyAdmin returns(address) {
-        CharityEvent charityEvent = new CharityEvent(_name, _target, _payed, _tags, _metaHashString);
+    function addCharityEvent(string _name, uint _target, uint _payed, bytes1 _tags, string _metaStorageHash) public onlyAdmin returns(address) {
+        CharityEvent charityEvent = new CharityEvent(_name, _target, _payed, _tags, _metaStorageHash);
 
         // add charityEvent to charityEvents list
         charityEventIndex[charityEventCount] = charityEvent;
@@ -92,6 +94,8 @@ contract Organization {
 
         // broadcast event
         CharityEventAdded(this, charityEvent);
+
+		MetaStorageHashUpdated(charityEvent, _metaStorageHash);
 
         return charityEvent;
     }
@@ -134,6 +138,15 @@ contract Organization {
 
 		FundsMovedToCharityEvent(_incomingDonation, _charityEvent, msg.sender, _amount);
 
+	}
+
+	function updateCharityEventMetaStorageHash(address _charityEvent, string _hash) public onlyAdmin {
+		// check that it is CharityEvent contract
+		require(CharityEvent(_charityEvent).isCharityEvent());
+
+		CharityEvent(_charityEvent).updateMetaStorageHash(_hash);
+
+		MetaStorageHashUpdated(_charityEvent, _hash);
 	}
 
 
