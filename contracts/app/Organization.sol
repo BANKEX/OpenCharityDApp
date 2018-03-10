@@ -34,9 +34,6 @@ contract Organization {
     uint public incomingDonationCount = 0;
     event IncomingDonationAdded(address indexed organization, address incomingDonation, address indexed who, uint amount);
 
-	// test for gitlab
-	// has to be removed
-	string public abi_test;
 
 
 	/**
