@@ -20,8 +20,9 @@ export interface AppCharityEvent extends ContractCharityEvent{
 	internalId?: string;
 	raised?: string;
 	confirmation: ConfirmationStatusState;
+	attachments?: any[],
+	image: any;
 	description: string;
-	image: string;
 }
 
 export interface ContractIncomingDonation {
@@ -36,3 +37,23 @@ export interface AppIncomingDonation extends ContractIncomingDonation {
 	internalId?: string;
 	confirmation: ConfirmationStatusState;
 }
+
+
+export interface MetaStorageData {
+	type: string;
+	searchDescription: string;
+	data: any;
+}
+
+export type MetaStorageFile = {
+	name: string;
+	size: number;
+	storageHash: string;
+}
+
+export interface CharityEventMetaStorageData {
+	description: string;
+	image: MetaStorageFile;
+	attachments: MetaStorageFile[]
+}
+

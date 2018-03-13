@@ -93,21 +93,30 @@ export class AddCharityEventComponent implements OnInit {
 
 	private async storeToMetaStorage(charityEvent: ContractCharityEvent, charityEventDetails: string): Promise<any> {
 
-		let attachmentHash: string;
+		let imageHash: string;
 		if(this.charityEventImage) {
-			attachmentHash = await this.storeImageToMetaStorage(this.charityEventImage);
+			imageHash = await this.storeFileToMetaStorage(this.charityEventImage);
 		}
 
 		return this.metaDataStorageService.storeData({
-			title: charityEvent.name,
-			description: charityEventDetails,
-			attachment: attachmentHash
-		}, true)
+			type: 'charity_event',
+			searchDescription: "",
+			data: {
+				title: charityEvent.name,
+				description: charityEventDetails,
+				image: {
+					name: 'test',
+					extension: 'png',
+					size: 123,
+					storageHash: imageHash
+				},
+				attachments: []
+			}}, true)
 			.first()
 			.toPromise();
 	}
 
-	private async storeImageToMetaStorage(image: UploadFile): Promise<any> {
+	private async storeFileToMetaStorage(image: UploadFile): Promise<any> {
 		return new Promise((resolve, reject) => {
 
 			image.fileEntry.file((file) => {
@@ -139,22 +148,6 @@ export class AddCharityEventComponent implements OnInit {
 			details: ''
 		});
 		this.charityEventImage = null;
-	}
-
-	public submitToMetaStorage() {
-		const name = this.charityEventForm.value.name;
-		const description = this.charityEventForm.value.name;
-
-		this.metaDataStorageService.storeData({
-			name: name,
-			description: description,
-			attachment: this.charityEventForm
-		})
-			.subscribe((metaStorageHash: string) => {
-
-			}, (err: any) => {
-				console.error(err.message);
-			})
 	}
 
 	public getData(hash: string) {
