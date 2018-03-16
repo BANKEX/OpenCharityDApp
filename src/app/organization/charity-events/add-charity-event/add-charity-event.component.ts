@@ -4,7 +4,10 @@ import {OrganizationContractService} from '../../../core/contracts-services/orga
 import {TagsBitmaskService} from '../../services/tags-bitmask.service';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
 import {TransactionReceipt} from 'web3/types';
-import {ConfirmationStatusState, ContractCharityEvent} from '../../../open-charity-types';
+import {
+	ConfirmationStatusState, ContractCharityEvent, MetaStorageDataType,
+	MetaStorageFile
+} from '../../../open-charity-types';
 import {MetaDataStorageService} from '../../../core/meta-data-storage.service';
 import {UploadFile} from 'ngx-file-drop';
 import {merge} from 'lodash';
@@ -57,7 +60,6 @@ export class AddCharityEventComponent implements OnInit {
 		try {
 			// save meta data into storage
 			const metaStorageHash: string = await this.storeToMetaStorage(newCharityEvent, f.details);
-			console.log(metaStorageHash);
 			merge(newCharityEvent, {metaStorageHash: metaStorageHash});
 
 
@@ -92,38 +94,39 @@ export class AddCharityEventComponent implements OnInit {
 	}
 
 	private async storeToMetaStorage(charityEvent: ContractCharityEvent, charityEventDetails: string): Promise<any> {
-
-		let imageHash: string;
-		if(this.charityEventImage) {
-			imageHash = await this.storeFileToMetaStorage(this.charityEventImage);
-		}
-
-		return this.metaDataStorageService.storeData({
-			type: 'charity_event',
-			searchDescription: "",
+		const dataToStore: any = {
+			type: MetaStorageDataType.CHARITY_EVENT,
+			searchDescription: '',
 			data: {
 				title: charityEvent.name,
-				description: charityEventDetails,
-				image: {
-					name: 'test',
-					extension: 'png',
-					size: 123,
-					storageHash: imageHash
-				},
-				attachments: []
-			}}, true)
+				description: charityEventDetails
+			}
+		};
+
+		debugger;
+
+		if(this.charityEventImage) {
+			dataToStore.data.image = await this.storeFileToMetaStorage(this.charityEventImage);
+		}
+
+		return this.metaDataStorageService.storeData(dataToStore, true)
 			.first()
 			.toPromise();
 	}
 
-	private async storeFileToMetaStorage(image: UploadFile): Promise<any> {
-		return new Promise((resolve, reject) => {
+	private async storeFileToMetaStorage(image: UploadFile): Promise<MetaStorageFile> {
+		return new Promise<MetaStorageFile>((resolve, reject) => {
 
 			image.fileEntry.file((file) => {
 				const reader: FileReader = new FileReader();
 
 				reader.addEventListener('load', async (e) => {
-					resolve(await this.metaDataStorageService.storeData((<any>e.target).result).first().toPromise());
+					resolve({
+						name: file.name,
+						type: file.type,
+						size: file.size,
+						storageHash: await this.metaDataStorageService.storeData((<any>e.target).result).first().toPromise()
+					});
 				});
 
 				reader.readAsArrayBuffer(file);
