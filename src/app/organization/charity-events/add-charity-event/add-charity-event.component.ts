@@ -4,7 +4,7 @@ import {OrganizationContractService} from '../../../core/contracts-services/orga
 import {TagsBitmaskService} from '../../services/tags-bitmask.service';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
 import {TransactionReceipt} from 'web3/types';
-import {ConfirmationStatusState, ContractCharityEvent} from '../../../open-charity-types';
+import {ConfirmationStatusState, ContractCharityEvent, MetaStorageDataType} from '../../../open-charity-types';
 import {MetaDataStorageService} from '../../../core/meta-data-storage.service';
 import {UploadFile} from 'ngx-file-drop';
 import {merge} from 'lodash';
@@ -57,7 +57,6 @@ export class AddCharityEventComponent implements OnInit {
 		try {
 			// save meta data into storage
 			const metaStorageHash: string = await this.storeToMetaStorage(newCharityEvent, f.details);
-			console.log(metaStorageHash);
 			merge(newCharityEvent, {metaStorageHash: metaStorageHash});
 
 
@@ -99,7 +98,7 @@ export class AddCharityEventComponent implements OnInit {
 		}
 
 		return this.metaDataStorageService.storeData({
-			type: 'charity_event',
+			type: MetaStorageDataType.CHARITY_EVENT,
 			searchDescription: "",
 			data: {
 				title: charityEvent.name,

@@ -66,10 +66,7 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 	}
 
 	protected async updateCharityEventMetaStorageData(charityEvent: AppCharityEvent): Promise<void> {
-		// TODO: add typescript itnerface for CE meta storage data
-
-		debugger;
-
+		// TODO: add typescript interface for CE meta storage data
 		let data: CharityEventMetaStorageData = (await this.getCharityEventMetaStorageData(charityEvent)).data;
 		if (!data) {
 			return

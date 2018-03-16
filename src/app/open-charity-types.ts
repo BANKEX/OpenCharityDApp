@@ -38,9 +38,15 @@ export interface AppIncomingDonation extends ContractIncomingDonation {
 	confirmation: ConfirmationStatusState;
 }
 
+export enum MetaStorageDataType {
+	ORGANIZATION,
+	CHARITY_EVENT,
+	INCOMING_DONATION,
+	FILE,
+}
 
 export interface MetaStorageData {
-	type: string;
+	type: MetaStorageDataType;
 	searchDescription: string;
 	data: any;
 }
