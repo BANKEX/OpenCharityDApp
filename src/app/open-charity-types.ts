@@ -54,6 +54,7 @@ export interface MetaStorageData {
 export type MetaStorageFile = {
 	name: string;
 	size: number;
+	type: string;
 	storageHash: string;
 }
 
