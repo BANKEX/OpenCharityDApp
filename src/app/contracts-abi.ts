@@ -277,7 +277,7 @@ export const OrganizationContractAbi = [
 				'type': 'address'
 			},
 			{
-				'indexed': true,
+				'indexed': false,
 				'name': 'metaStorageHash',
 				'type': 'string'
 			}
