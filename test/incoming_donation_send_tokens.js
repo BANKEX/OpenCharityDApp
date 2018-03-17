@@ -81,6 +81,10 @@ contract('Organization', function(accounts) {
 
     });
 
+    it('should throws an error if try to move tokens directly via IncomingDonation contract instead of using Organization contract', async () => {
+    	assert(false, 'Implement test');
+	});
+
 
 });
 

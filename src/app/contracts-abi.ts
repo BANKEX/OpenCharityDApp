@@ -29,6 +29,20 @@ export const OrganizationContractAbi = [
 	},
 	{
 		'constant': true,
+		'inputs': [],
+		'name': 'incomingDonationsSourceIds',
+		'outputs': [
+			{
+				'name': '',
+				'type': 'uint256'
+			}
+		],
+		'payable': false,
+		'stateMutability': 'view',
+		'type': 'function'
+	},
+	{
+		'constant': true,
 		'inputs': [
 			{
 				'name': '',
@@ -125,6 +139,25 @@ export const OrganizationContractAbi = [
 			{
 				'name': '',
 				'type': 'address'
+			}
+		],
+		'payable': false,
+		'stateMutability': 'view',
+		'type': 'function'
+	},
+	{
+		'constant': true,
+		'inputs': [
+			{
+				'name': '',
+				'type': 'uint256'
+			}
+		],
+		'name': 'incomingDonationsSourceName',
+		'outputs': [
+			{
+				'name': '',
+				'type': 'string'
 			}
 		],
 		'payable': false,
@@ -263,6 +296,11 @@ export const OrganizationContractAbi = [
 				'indexed': false,
 				'name': 'amount',
 				'type': 'uint256'
+			},
+			{
+				'indexed': false,
+				'name': 'sourceId',
+				'type': 'uint256'
 			}
 		],
 		'name': 'IncomingDonationAdded',
@@ -388,6 +426,10 @@ export const OrganizationContractAbi = [
 			{
 				'name': '_tags',
 				'type': 'bytes1'
+			},
+			{
+				'name': '_sourceId',
+				'type': 'uint256'
 			}
 		],
 		'name': 'setIncomingDonation',
@@ -437,6 +479,25 @@ export const OrganizationContractAbi = [
 		],
 		'name': 'updateCharityEventMetaStorageHash',
 		'outputs': [],
+		'payable': false,
+		'stateMutability': 'nonpayable',
+		'type': 'function'
+	},
+	{
+		'constant': false,
+		'inputs': [
+			{
+				'name': '_name',
+				'type': 'string'
+			}
+		],
+		'name': 'addIncomingDonationSource',
+		'outputs': [
+			{
+				'name': '',
+				'type': 'uint256'
+			}
+		],
 		'payable': false,
 		'stateMutability': 'nonpayable',
 		'type': 'function'
@@ -633,6 +694,20 @@ export const IncomingDonationContractAbi = [
 	{
 		'constant': true,
 		'inputs': [],
+		'name': 'sourceId',
+		'outputs': [
+			{
+				'name': '',
+				'type': 'uint256'
+			}
+		],
+		'payable': false,
+		'stateMutability': 'view',
+		'type': 'function'
+	},
+	{
+		'constant': true,
+		'inputs': [],
 		'name': 'tags',
 		'outputs': [
 			{
@@ -675,6 +750,10 @@ export const IncomingDonationContractAbi = [
 			{
 				'name': '_tags',
 				'type': 'bytes1'
+			},
+			{
+				'name': '_sourceId',
+				'type': 'uint256'
 			}
 		],
 		'payable': false,

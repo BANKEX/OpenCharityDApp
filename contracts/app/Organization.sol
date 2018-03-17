@@ -21,20 +21,30 @@ contract Organization {
 	uint public employeeCount = 0;
 	event EmployeeAdded(address indexed organization, address employee);
 
-	//list of CharityEvents
+	// list of CharityEvents
 	mapping(address => bool) public charityEvents;
 	mapping(uint => address) public charityEventIndex;
 	uint public charityEventCount = 0;
 	event CharityEventAdded(address indexed organization, address charityEvent);
 
 
-	//list of IncomingDonations
+	// list of IncomingDonations
 	mapping(address => bool) public incomingDonations;
 	mapping(uint => address) public incomingDonationIndex;
 	uint public incomingDonationCount = 0;
-	event IncomingDonationAdded(address indexed organization, address incomingDonation, address indexed who, uint amount);
+	event IncomingDonationAdded(address indexed organization, address incomingDonation, address indexed who, uint amount, uint sourceId);
 
+	// Triggered when meta storage of some smart contract is updated
 	event MetaStorageHashUpdated(address indexed ownerAddress, string metaStorageHash);
+
+	// Counter is used to represents ids of incoming donations
+	// for now names are hardcoded in front end,
+	// later they will be stored in meta storage
+	uint public incomingDonationsSourceIds = 0;
+
+	// names of incoming donations sources
+	mapping(uint => string) public incomingDonationsSourceName;
+
 
 
 
@@ -60,6 +70,7 @@ contract Organization {
 
 		name = _name;
 		token = OpenCharityMintableToken(_token);
+
 	}
 
 
@@ -100,8 +111,8 @@ contract Organization {
 		return charityEvent;
 	}
 
-	function setIncomingDonation(string _realWorldIdentifier, uint _amount, string _note, bytes1 _tags) public onlyAdmin returns(address) {
-		address incomingDonation = addIncomingDonation(_realWorldIdentifier, _amount, _note, _tags);
+	function setIncomingDonation(string _realWorldIdentifier, uint _amount, string _note, bytes1 _tags, uint _sourceId) public onlyAdmin returns(address) {
+		address incomingDonation = addIncomingDonation(_realWorldIdentifier, _amount, _note, _tags, _sourceId);
 
 		token.mint(incomingDonation, _amount);
 
@@ -111,9 +122,10 @@ contract Organization {
 	/**
      * @dev Add new IncomingDonation to Organization
      */
-	function addIncomingDonation(string _realWorldIdentifier, uint _amount, string _note, bytes1 _tags) internal returns(address) {
+	function addIncomingDonation(string _realWorldIdentifier, uint _amount, string _note, bytes1 _tags, uint _sourceId) internal returns(address) {
+		require(_sourceId >= 0 && _sourceId <= incomingDonationsSourceIds);
 
-		IncomingDonation incomingDonation = new IncomingDonation(token, _realWorldIdentifier, _note, _tags);
+		IncomingDonation incomingDonation = new IncomingDonation(token, _realWorldIdentifier, _note, _tags, _sourceId);
 
 		// add incomingDonation to incomingDonations list
 		incomingDonationIndex[incomingDonationCount] = incomingDonation;
@@ -121,7 +133,7 @@ contract Organization {
 		incomingDonationCount++;
 
 		// broadcast event
-		IncomingDonationAdded(this, incomingDonation, msg.sender, _amount);
+		IncomingDonationAdded(this, incomingDonation, msg.sender, _amount, _sourceId);
 
 		return incomingDonation;
 	}
@@ -150,7 +162,18 @@ contract Organization {
 	}
 
 
+	//Donations sources
+	/**
+     * @dev Add new incoming donations source
+     * @param _name Name of source
+     */
+	function addIncomingDonationSource(string _name) public onlyAdmin returns(uint) {
+		incomingDonationsSourceName[incomingDonationsSourceIds] = _name;
 
+		incomingDonationsSourceIds = incomingDonationsSourceIds + 1;
+
+		return incomingDonationsSourceIds - 1;
+	}
 
 
 	function isAdmin() view external returns (bool) {
