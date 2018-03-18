@@ -90,6 +90,8 @@ deploy-contracts:
   script:
     - scp -r ./build/contracts root@charity-staging-do.bankex.team:/data
     - scp -r ./build/contracts root@charity-prod-do.bankex.team:/data
+  only:
+    - master
 
 deploy_stage:
   stage: deploy-stage
