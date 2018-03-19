@@ -14,16 +14,17 @@ module.exports = async function(deployer, network, accounts) {
     await deployer.deploy(SafeMath, {overwrite: false});
     await deployer.link(SafeMath, [OpenCharityToken]);
     await deployer.link(Tools, [Organization, Employee, CharityEvent]);
-    await deployer.deploy(OpenCharityToken, tokenParams.name, tokenParams.symbol, tokenParams.decimals, {overwrite: false});
+    // await deployer.deploy(OpenCharityToken, tokenParams.name, tokenParams.symbol, tokenParams.decimals, {overwrite: false});
 
-    const openCharityTokenInstance = await OpenCharityToken.deployed();
+    // const openCharityTokenInstance = await OpenCharityToken.deployed();
     // await deployer.deploy(Organization, openCharityTokenInstance.address, adminAddresses, 'Test Organization Name');
     // const OrganizationInstance = await Organization.deployed();
     // await openCharityTokenInstance.setMintAgent(OrganizationInstance.address, true);
 
     // dev function to deploy new organizations
 	// const token = OpenCharityToken.at(openCharityTokenInstance.address);
-	// await createTestOrganizations(deployer, token, adminAddresses, ['Staging Organization Test 20', 'Staging Organization Test 21', 'Staging Organization Test 22']);
+	const token = OpenCharityToken.at('0x6a183381d14371b4a228cca37802c09bd166ba9e');
+	await createTestOrganizations(deployer, token, adminAddresses, ['Staging Organization Test 40', 'Staging Organization Test 41', 'Staging Organization Test 42']);
 
 };
 

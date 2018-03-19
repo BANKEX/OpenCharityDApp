@@ -65,6 +65,27 @@ export class OrganizationContractService {
 		return contract.methods.admins(walletAddress).call(txOptions);
 	}
 
+	public getIncomingDonationsSourcesIds(address: string, txOptions?: Tx): Promise<string> {
+		const contract: Contract = this.cloneContract(this.organizationContract, address);
+		return contract.methods.incomingDonationsSourceIds().call(txOptions);
+	}
+
+	public getIncomingDonationSourceName(address: string, sourceId: number, txOptions?: Tx): Promise<string> {
+		const contract: Contract = this.cloneContract(this.organizationContract, address);
+		return contract.methods.incomingDonationsSourceName(sourceId).call(txOptions);
+	}
+
+	/********************************/
+	/***  Get Organization Data *****/
+	/********************************/
+	public addNewIncomingDonationsSource(address: string, sourceName: string, txOptions?: Tx): Promise<void> {
+		const contract: Contract = this.cloneContract(this.organizationContract, address);
+		const tx = merge({}, this.defaultTx, txOptions);
+		return contract.methods.addIncomingDonationSource(sourceName).send(tx);
+	}
+
+
+
 
 	/********************************/
 	/***  IncomingDonations methods */

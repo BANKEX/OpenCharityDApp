@@ -157,7 +157,7 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 		const charityEvents = await this.charityEventContractService.getCharityEventsList(charityEventsAddresses);
 
 		const modalRef: NgbModalRef = this.modalService.open(IncomingDonationSendFundsModalComponent);
-		modalRef.componentInstance.organizationContractAddress = this.organizationContractAddress;
+		modalRef.componentInstance.organizationAddress = this.organizationContractAddress;
 		modalRef.componentInstance.incomingDonation = incomingDonation;
 		modalRef.componentInstance.charityEvents = charityEvents;
 		modalRef.componentInstance.fundsMoved.subscribe((incomingDonationAddress: string) => {

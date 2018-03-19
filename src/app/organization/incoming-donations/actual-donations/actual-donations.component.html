@@ -5,50 +5,81 @@
 			<div class="id-tools">
 				<button type="button" class="btn btn-primary" (click)="toAllDonations()">To All Incoming Donation</button>
 				<div class="btn-group">
-				  <button type="button" class="btn btn-primary" (click)="addClick()">Add new Incoming Donation</button>
-				  <div class="btn-group" ngbDropdown placement="bottom-right" role="group" aria-label="Upload CSV File">
-				    <button class="btn btn-primary strange-btn" ngbDropdownToggle><i class="fa fa-caret-down"></i></button>
-				    <div class="dropdown-menu" ngbDropdownMenu>
-				      <button class="dropdown-item">Upload CSV File</button>
+					<button type="button" class="btn btn-primary" (click)="addClick()">Add new Incoming Donation</button>
+					<div class="btn-group" ngbDropdown placement="bottom-right" role="group" aria-label="Upload CSV File">
+						<button class="btn btn-primary strange-btn" ngbDropdownToggle><i class="fa fa-caret-down"></i></button>
+						<div class="dropdown-menu" ngbDropdownMenu>
+							<button class="dropdown-item">Upload CSV File</button>
 							<input type="file" class="upload-btn" value="Upload CSV File" />
-				    </div>
-				  </div>
+						</div>
+					</div>
 				</div>
 			</div>
 
 			<div class="tab-primary">
+
 				<ul class="nav nav-tabs" role="tablist">
-					<li class="nav-item"><a class="nav-link" [ngClass]="{'active':changer === 'sms'}" (click)="changer = 'sms'">SMS</a></li>
-					<li class="nav-item"><a class="nav-link" [ngClass]="{'active':changer === 'cards'}" (click)="changer = 'cards'">Cards</a></li>
-					<li class="nav-item"><a class="nav-link" [ngClass]="{'active':changer === 'site'}" (click)="changer = 'site'">Site</a></li>
-					<li class="nav-item"><a class="nav-link" [ngClass]="{'active':changer === 'yandex'}" (click)="changer = 'yandex'">Yandex</a></li>
-					<li class="nav-item"><a class="nav-link" [ngClass]="{'active':changer === 'alpha'}" (click)="changer = 'alpha'">Alpha</a></li>
-					<li class="nav-item"><a class="nav-link" [ngClass]="{'active':changer === 'webm'}" (click)="changer = 'webm'">WebM</a></li>
-					<li class="nav-item"><a class="nav-link" [ngClass]="{'active':changer === 'paypal'}" (click)="changer = 'paypal'">PayPal</a></li>
+
+					<li class="nav-item">
+						<a class="nav-link" [ngClass]="{'active':selectedSource === -1 }">
+							All Incoming Donations
+						</a>
+					</li>
+
+					<li class="nav-item" *ngFor="let sourceName of sourcesNamesList; let sourceId = index;">
+						<a class="nav-link" [ngClass]="{'active':selectedSource === i }" (click)="changeSourceTab(sourceId)">
+							{{sourceName}}
+						</a>
+					</li>
+
+					<li class="nav-item add-new-source" (click)="showNewSourceForm()">
+						<div class="add-new-source-form" *ngIf="newSourceFormVisible">
+							<input type="text" name="new_source_name" placeholder="New Source Name" #newSourceName>
+
+							<a class="btn btn-primary" (click)="$event.stopPropagation(); submitNewSourceForm(newSourceName.value)">
+								<i class="fa fa-floppy"></i>
+								Add
+							</a>
+
+							<button class="btn btn-default" (click)="$event.stopPropagation(); cancelNewSourceForm()">
+								<i class="fa fa-times"></i>
+								Cancel
+							</button>
+
+						</div>
+
+
+						<a class="nav-link btn btn-primary" *ngIf="!newSourceFormVisible">
+							<i class="fa fa-plus" title="Add new source"></i>
+							Add New Source
+						</a>
+					</li>
+
 				</ul>
+
 				<div class="tab-content">
 					<table class="table table-striped donations-table">
 						<thead>
-							<tr>
-								<th>Date</th>
-								<th>Real world Id</th>
-								<th>Tag</th>
-								<th>Amount</th>
-								<th>Event</th>
-								<th>Annual / Single</th>
-								<th></th>
-							</tr>
+						<tr>
+							<th>Date</th>
+							<th>Real world Id</th>
+							<th>Tag</th>
+							<th>Amount</th>
+							<th>Event</th>
+							<th>Annual / Single</th>
+							<th></th>
+						</tr>
 						</thead>
 						<tbody>
-							<tr class="data" *ngFor="let incomingDonation of incomingDonations.slice(0, 10)" (click)="toDetails(incomingDonation)">
-								<td>01.02.2018</td>
-								<td>{{getRWID(incomingDonation)}}</td>
-								<td><opc-bitmask-tags-list *ngIf="isDonation(incomingDonation)" [tags]="incomingDonation.tags"></opc-bitmask-tags-list></td>
-								<td>{{getAmount(incomingDonation)}}</td>
-								<td>Event 1</td>
-								<td>Annual</td>
-								<td><button type="button" class="btn btn-link" (click)="openSendDonationFundsModal($event, incomingDonation)">Move funds to Charity Event</button><td>
-							</tr>
+						<tr class="data" *ngFor="let incomingDonation of incomingDonations.slice(0, 10)" (click)="toDetails(incomingDonation)">
+							<td>01.02.2018</td>
+							<td>{{getRWID(incomingDonation)}}</td>
+							<td><opc-bitmask-tags-list *ngIf="isDonation(incomingDonation)" [tags]="incomingDonation.tags"></opc-bitmask-tags-list></td>
+							<td>{{getAmount(incomingDonation)}}</td>
+							<td>Event 1</td>
+							<td>Annual</td>
+							<td><button type="button" class="btn btn-link" (click)="openSendDonationFundsModal($event, incomingDonation)">Move funds to Charity Event</button><td>
+						</tr>
 						</tbody>
 					</table>
 					<!-- <div class="tab-pane fade" [ngClass]="{'in active':changer === 'events'}">
