@@ -51,8 +51,15 @@
   cursor: pointer;
 }
 
+.sources-list {
+	.nav-item.active {
+		background: $theme-primary;
+		color: $default-white;
+	}
+
+}
+
 .add-new-source {
-	padding: 10px 15px;
 
 }
 

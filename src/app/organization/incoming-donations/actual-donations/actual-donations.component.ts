@@ -20,7 +20,7 @@ export class ActualIncomingDonationsComponent implements OnInit, OnDestroy {
 	@Input('organizationAddress') organizationAddress: string;
 	private componentDestroyed: Subject<void> = new Subject<void>();
 
-	public selectedSource: number = 0;
+	public selectedSource: number = -1;
 	public incomingDonations: AppIncomingDonation[] = [];
 	public sourcesNamesList: string[] = [];
 	public newSourceFormVisible: boolean = false;
