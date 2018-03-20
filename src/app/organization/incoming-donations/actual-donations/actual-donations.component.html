@@ -36,12 +36,12 @@
 						<div class="add-new-source-form" *ngIf="newSourceFormVisible">
 							<input type="text" name="new_source_name" placeholder="New Source Name" #newSourceName>
 
-							<a class="btn btn-primary" (click)="$event.stopPropagation(); submitNewSourceForm(newSourceName.value)">
+							<button class="btn btn-primary btn-xs" (click)="$event.stopPropagation(); submitNewSourceForm(newSourceName.value)">
 								<i class="fa fa-floppy"></i>
 								Add
-							</a>
+							</button>
 
-							<button class="btn btn-default" (click)="$event.stopPropagation(); cancelNewSourceForm()">
+							<button class="btn btn-default btn-xs" (click)="$event.stopPropagation(); cancelNewSourceForm()">
 								<i class="fa fa-times"></i>
 								Cancel
 							</button>
@@ -78,7 +78,7 @@
 							<td>{{getAmount(incomingDonation)}}</td>
 							<td>Event 1</td>
 							<td>Annual</td>
-							<td><button type="button" class="btn btn-link" (click)="openSendDonationFundsModal($event, incomingDonation)">Move funds to Charity Event</button><td>
+							<td><button type="button" class="btn btn-primary btn-sm" (click)="openSendDonationFundsModal($event, incomingDonation)">Move funds to Charity Event</button><td>
 						</tr>
 						</tbody>
 					</table>
