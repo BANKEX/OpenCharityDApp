@@ -50,8 +50,8 @@ export class IncomingDonationsEditorComponent implements OnInit, OnDestroy {
 
 
 	public goBackToOrganization(event: Event): void {
-		this.router.navigate(['/organization', this.organizationContractAddress]);
 		event.preventDefault();
+		this.router.navigate(['/organization', this.organizationContractAddress]);
 	}
 
 	ngOnDestroy(): void {

@@ -8,7 +8,7 @@ import {ConfirmationStatusState, ContractIncomingDonation} from '../../../open-c
 import {NgbTypeahead} from '@ng-bootstrap/ng-bootstrap';
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
-import {ActivatedRoute, Params} from '@angular/router';
+import {ActivatedRoute, Params, Router} from '@angular/router';
 
 
 @Component({
@@ -18,9 +18,11 @@ import {ActivatedRoute, Params} from '@angular/router';
 })
 export class AddIncomingDonationComponent implements OnInit {
 	public organizationAddress: string;
+	private componentDestroyed: Subject<void> = new Subject<void>();
 
 	constructor(
-		private route: ActivatedRoute
+		private route: ActivatedRoute,
+		private router: Router,
 	) {
 
 	}
@@ -29,6 +31,14 @@ export class AddIncomingDonationComponent implements OnInit {
 		this.route.params.subscribe((params: Params) => {
 			this.organizationAddress = params.address;
 		});
+	}
 
+	public goBackToOrganization(event: Event): void {
+		event.preventDefault();
+		this.router.navigate(['/organization', this.organizationAddress]);
+	}
+
+	ngOnDestroy(): void {
+		this.componentDestroyed.next();
 	}
 }

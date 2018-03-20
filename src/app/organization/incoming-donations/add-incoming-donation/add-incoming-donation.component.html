@@ -1,25 +1,32 @@
-<div class="row">
-	<div class="col-md-12">
-		<div class="card">
-			<div class="card-heading border bottom">
-				<h4 class="card-title">Add New Incoming Donation</h4>
-			</div>
-			<div class="card-block">
+<div class="container-fluid">
+	<ol class="breadcrumb oc-breadcrumbs">
+		<li><a href="javascript:" (click)="goBackToOrganization($event)">
+			<i class="fa fa-arrow-left"></i>
+			<span>Back to organization</span>
+		</a></li>
+	</ol>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="card">
+				<div class="card-heading border bottom">
+					<h4 class="card-title">Add New Incoming Donation</h4>
+				</div>
 				<div class="card-block">
-					<div class="row">
+					<div class="card-block">
+						<div class="row">
 
-						<div class="col-md-8 ml-auto mr-auto">
-							<opc-incoming-donation-form
-								[organizationAddress]="organizationAddress"
-							>
+							<div class="col-md-8 ml-auto mr-auto">
+								<opc-incoming-donation-form
+									[organizationAddress]="organizationAddress"
+									[incomingDonation]="incomingDonation"
+								>
 
-							</opc-incoming-donation-form>
-
+								</opc-incoming-donation-form>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-
 </div>
