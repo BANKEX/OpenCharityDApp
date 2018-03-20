@@ -5,6 +5,12 @@ import {Router, ActivatedRoute} from '@angular/router';
 import {IncomingDonationContractService} from '../../../core/contracts-services/incoming-donation-contract.service';
 import {ContractIncomingDonation} from '../../../open-charity-types';
 import {AppIncomingDonation, ConfirmationResponse, ConfirmationStatusState} from '../../../open-charity-types';
+import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
+import {IncomingDonationSendFundsModalComponent} from '../incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
+import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
+import {find} from 'lodash';
+import {TokenContractService} from '../../../core/contracts-services/token-contract.service';
+import {CharityEventContractService} from '../../../core/contracts-services/charity-event-contract.service';
 
 @Component({
 	templateUrl: 'incoming-donations-details.component.html',
@@ -15,12 +21,16 @@ export class IncomingDonationsDetailsComponent implements OnInit, OnDestroy {
 	public organizationAddress: string = null;
 	public incomingDonationAddress: string = null;
 	public incomingDonation: ContractIncomingDonation = null;
-	public name: string = "";
+	public name: string = '';
 
 	constructor(
 		private router: Router,
 		private route: ActivatedRoute,
-		private incomingDonationsContractService: IncomingDonationContractService
+		private incomingDonationsContractService: IncomingDonationContractService,
+		private organizationContractService: OrganizationContractService,
+		private tokenContractService: TokenContractService,
+		private charityEventContractService: CharityEventContractService,
+		private modalService: NgbModal
 	) { }
 
 	async ngOnInit(): Promise<void> {
@@ -59,4 +69,24 @@ export class IncomingDonationsDetailsComponent implements OnInit, OnDestroy {
 		this.router.navigate(['/organization', this.organizationAddress]);
 		event.preventDefault();
 	}
+
+	public async openSendDonationFundsModal(incomingDonation: AppIncomingDonation): Promise<void> {
+		const charityEventsAddresses: string[] = await this.organizationContractService.getCharityEventsAsync(this.organizationAddress);
+		const charityEvents = await this.charityEventContractService.getCharityEventsList(charityEventsAddresses);
+
+		const modalRef: NgbModalRef = this.modalService.open(IncomingDonationSendFundsModalComponent);
+		modalRef.componentInstance.organizationAddress = this.organizationAddress;
+		modalRef.componentInstance.incomingDonation = incomingDonation;
+		modalRef.componentInstance.charityEvents = charityEvents;
+		modalRef.componentInstance.fundsMoved.subscribe((incomingDonationAddress: string) => {
+			this.updateIncomingDonationAmount(this.incomingDonation);
+		});
+	}
+
+	public async updateIncomingDonationAmount(incomingDonation: ContractIncomingDonation): Promise<void> {
+		incomingDonation.amount = await this.tokenContractService.balanceOf(incomingDonation.address);
+	}
+
+
+
 }
