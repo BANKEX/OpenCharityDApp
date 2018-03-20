@@ -111,7 +111,7 @@ export class IncomingDonationsAllComponent implements OnInit, OnDestroy {
 	}
 
 	public addClick() {
-		this.router.navigate([`/organization/${this.organizationContractAddress}/donation/editor`]);
+		this.router.navigate([`/organization/${this.organizationContractAddress}/donation/add`]);
 	}
 
 	public goBackToOrganization(event: Event): void {

@@ -98,7 +98,6 @@ export class ActualIncomingDonationsComponent implements OnInit, OnDestroy {
 		for (let i = 0; i < sourceIds; i++) {
 			this.sourcesNamesList[i] = await this.organizationContractService.getIncomingDonationSourceName(this.organizationAddress, i);
 		}
-
 	}
 
 	public async openSendDonationFundsModal(event: Event, incomingDonation: AppIncomingDonation): Promise<void> {
@@ -127,7 +126,7 @@ export class ActualIncomingDonationsComponent implements OnInit, OnDestroy {
 	}
 
 	public addClick() {
-		this.router.navigate([`/organization/${this.organizationAddress}/donation/editor`]);
+		this.router.navigate([`/organization/${this.organizationAddress}/donation/add`]);
 	}
 
 	public changeSourceTab(sourceId: number) {

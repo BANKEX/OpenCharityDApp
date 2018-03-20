@@ -90,10 +90,10 @@ export class OrganizationContractService {
 	/********************************/
 	/***  IncomingDonations methods */
 	/********************************/
-	public addIncomingDonation(address: string, realWorldsIdentifier: string, amount: string, note: string, tags: string, txOptions?: Tx) {
+	public addIncomingDonation(address: string, realWorldsIdentifier: string, amount: string, note: string, tags: string, sourceId: string, txOptions?: Tx) {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		const tx: Tx = merge({}, this.defaultTx, txOptions);
-		return contract.methods.setIncomingDonation(realWorldsIdentifier, amount, note, tags).send(tx);
+		return contract.methods.setIncomingDonation(realWorldsIdentifier, amount, note, tags, sourceId).send(tx);
 	}
 
 	public async getIncomingDonationsCount(address: string, txOptions?: Tx): Promise<string> {

@@ -30,6 +30,7 @@ import {IncomingDonationsAllComponent} from './incoming-donations/incoming-donat
 import {FileDropModule} from 'ngx-file-drop';
 import {CharityEventsListBaseComponent} from './charity-events/charity-events-list-base.component';
 import {DashboardCharityEventsList} from './charity-events/dashboard-charity-events-list/dashboard-charity-events-list.component';
+import {IncomingDonationFormComponent} from './incoming-donations/incoming-donation-form/incoming-donation-form.component';
 
 @NgModule({
 	declarations: [
@@ -50,7 +51,8 @@ import {DashboardCharityEventsList} from './charity-events/dashboard-charity-eve
 		IncomingDonationsDetailsComponent,
 		IncomingDonationsEditorComponent,
 		IncomingDonationsAllComponent,
-		CharityEventsListBaseComponent
+		CharityEventsListBaseComponent,
+		IncomingDonationFormComponent
 	],
 	entryComponents: [IncomingDonationSendFundsModalComponent],
 	imports: [

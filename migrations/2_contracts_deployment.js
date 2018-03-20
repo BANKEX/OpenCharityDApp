@@ -23,7 +23,7 @@ module.exports = async function(deployer, network, accounts) {
 
     // dev function to deploy new organizations
 	// const token = OpenCharityToken.at(openCharityTokenInstance.address);
-	const token = OpenCharityToken.at('0x6a183381d14371b4a228cca37802c09bd166ba9e');
+	const token = OpenCharityToken.at('0xecfcab0a285d3380e488a39b4bb21e777f8a4eac');
 	await createTestOrganizations(deployer, token, adminAddresses, ['Staging Organization Test 40', 'Staging Organization Test 41', 'Staging Organization Test 42']);
 
 };

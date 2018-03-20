@@ -44,6 +44,12 @@ export class IncomingDonationContractService {
 		return contract.methods.tags().call(txOptions);
 	}
 
+	public getSourceId(address: string, txOptions?: Tx): Promise<string> {
+		const contract: Contract = this.cloneContract(this.incomingDonationContract, address);
+		return contract.methods.sourceId().call(txOptions);
+	}
+
+
 
 	public async getIncomingDonationDetails(address: string, txOptions?: Tx): Promise<ContractIncomingDonation> {
 		return {
@@ -51,7 +57,8 @@ export class IncomingDonationContractService {
 			address: address,
 			amount: await this.tokenContractService.balanceOf(address),
 			note: await this.getNote(address, txOptions),
-			tags: await this.getTags(address, txOptions)
+			tags: await this.getTags(address, txOptions),
+			sourceId: await this.getSourceId(address, txOptions)
 		};
 	}
 
