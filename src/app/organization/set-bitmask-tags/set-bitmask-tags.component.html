@@ -6,6 +6,7 @@
 			   [(ngModel)]="chosenTags"
 			   (onAdd)="toggleTag($event.value)"
 			   (onRemove)="toggleTag($event.value)"
+			   [inputClass]="'form-control'"
 			   theme="minimal">
 		<tag-input-dropdown [showDropdownIfEmpty]="true"
 							[identifyBy]="'value'"

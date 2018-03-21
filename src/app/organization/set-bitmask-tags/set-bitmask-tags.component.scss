@@ -3,6 +3,10 @@
 .tags-list {
 	display: flex;
 	flex-wrap: wrap;
+	border: 1px solid #e6ecf5;
+	border-radius: 2px;
+	padding-left: .35rem;
+
 	.tag {
 		border-radius: 3px;
 		cursor: pointer;
