@@ -32,6 +32,7 @@ import {CharityEventsListBaseComponent} from './charity-events/charity-events-li
 import {DashboardCharityEventsList} from './charity-events/dashboard-charity-events-list/dashboard-charity-events-list.component';
 import {IncomingDonationFormComponent} from './incoming-donations/incoming-donation-form/incoming-donation-form.component';
 import {IncomingDonationslistBaseComponent} from './incoming-donations/incoming-donations-list-base.component';
+import {TagInputModule} from 'ngx-chips';
 
 @NgModule({
 	declarations: [
@@ -64,7 +65,8 @@ import {IncomingDonationslistBaseComponent} from './incoming-donations/incoming-
 		ReactiveFormsModule,
 		NgSelectizeModule,
 		NgbModule,
-		FileDropModule
+		FileDropModule,
+		TagInputModule
 	],
 	providers: [
 		IsOrganizationAddressGuard,

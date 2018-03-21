@@ -12,13 +12,13 @@ export class SetBitmaskTagsComponent implements OnInit {
 
 	readonly tags = this.tagsBitmaskService.tags;
 
+	public chosenTags: Array<object> = [];
+
 	constructor(private tagsBitmaskService: TagsBitmaskService) {
 
 	}
 
-	ngOnInit() {
-
-	}
+	ngOnInit() {}
 
 	public toggleTag(tagValue: number): void {
 		this.bitmask = this.tagsBitmaskService.toggleTag(this.bitmask, tagValue);
@@ -28,5 +28,4 @@ export class SetBitmaskTagsComponent implements OnInit {
 	public isSelectedTag(tagValue: number): boolean {
 		return this.tagsBitmaskService.isSelectedTag(this.bitmask, tagValue);
 	}
-
 }

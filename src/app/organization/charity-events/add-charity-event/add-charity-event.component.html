@@ -41,6 +41,35 @@
 								</textarea>
 							</div>
 
+							<div class="form-group">
+								<label>
+									Files
+								</label>
+								<file-drop #fileDropAttachments
+										   (onFileDrop)="onFilesAdded($event)"
+										   class="file-drop-attachments"
+										   [style.width.%]="100"
+										   [style.height.%]="100">
+									<div>Drop files or press plus to select</div>
+									<div class="add-files">
+										<label for="file" class="btn btn-default">
+											<i class="fa fa-plus-circle"></i>
+										</label>
+										<input type="file"
+											   id="file"
+											   multiple
+											   (change)="onFilesAdded($event.target)">
+									</div>
+								</file-drop>
+								<div class="files-list" *ngIf="attachedFiles.length">
+									<ul class="list-group">
+										<li *ngFor="let item of attachedFiles; let i = index;" class="list-group-item">
+											<span>{{ item.name }}</span>
+											<i class="fa fa-remove pull-right" (click)="removeFile(i)"></i>
+										</li>
+									</ul>
+								</div>
+							</div>
 
 						</div>
 						<!-- /LEFT COLUMN -->
@@ -55,6 +84,14 @@
 								</div>
 							</div>
 
+							<div class="form-group" *ngIf="charityEventImagePreview">
+								<div class="charity-event-image-preview">
+									<button class="btn btn-default" (click)="removeCharityEventImage()">
+										<i class="fa fa-remove"></i>
+									</button>
+									<img [src]="charityEventImagePreview">
+								</div>
+							</div>
 
 							<!-- Event Target -->
 							<div class="form-group">
