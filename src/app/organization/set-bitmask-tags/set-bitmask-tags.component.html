@@ -1,6 +1,16 @@
-<div class="tags-list">
-	<div class="tag btn btn-default" *ngFor="let tag of tags" (click)="toggleTag(tag.value)"
-		 [ngClass]="{'selected': isSelectedTag(tag.value)}">
-		{{tag.name}}
-	</div>
+<div class="">
+	<tag-input class="tags-list"
+			   [onlyFromAutocomplete]="true"
+			   [identifyBy]="'value'"
+			   [displayBy]="'name'"
+			   [(ngModel)]="chosenTags"
+			   (onAdd)="toggleTag($event.value)"
+			   (onRemove)="toggleTag($event.value)"
+			   theme="minimal">
+		<tag-input-dropdown [showDropdownIfEmpty]="true"
+							[identifyBy]="'value'"
+							[displayBy]="'name'"
+							[autocompleteItems]="tags">
+		</tag-input-dropdown>
+	</tag-input>
 </div>

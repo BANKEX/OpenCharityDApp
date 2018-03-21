@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, Output} from '@angular/core';
+import {Component, Input, OnInit, Output, ViewChild, ElementRef} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
 import {TagsBitmaskService} from '../../services/tags-bitmask.service';
@@ -19,12 +19,15 @@ import {merge} from 'lodash';
 })
 export class AddCharityEventComponent implements OnInit {
 	@Input('organizationContractAddress') organizationContractAddress: string;
+	@ViewChild('fileDropAttachments', {read: ElementRef}) fileDropElement: ElementRef;
 
 	public charityEventForm: FormGroup;
 	public selectedTagsBitmask: number = 0;
 
 	public charityEventImage: UploadFile;
+	public charityEventImagePreview: string;
 
+	public attachedFiles: Array<File>;
 
 	constructor(
 		private organizationContractService: OrganizationContractService,
@@ -37,7 +40,7 @@ export class AddCharityEventComponent implements OnInit {
 
 	public ngOnInit(): void {
 		this.initForm();
-
+		this.changeStylesDropFiles();
 	}
 
 	public async submitForm(): Promise<void> {
@@ -105,8 +108,16 @@ export class AddCharityEventComponent implements OnInit {
 
 		debugger;
 
-		if(this.charityEventImage) {
+		if (this.charityEventImage) {
 			dataToStore.data.image = await this.storeFileToMetaStorage(this.charityEventImage);
+		}
+
+		if (this.attachedFiles.length) {
+			dataToStore.data.attachments = [];
+
+			await Promise.all(this.attachedFiles.map(async (file) => {
+				dataToStore.data.attachments.push(await this.storeFileToMetaStorage(file));
+			}));
 		}
 
 		return this.metaDataStorageService.storeData(dataToStore, true)
@@ -114,30 +125,50 @@ export class AddCharityEventComponent implements OnInit {
 			.toPromise();
 	}
 
-	private async storeFileToMetaStorage(image: UploadFile): Promise<MetaStorageFile> {
+	private async storeFileToMetaStorage(uploadFile: UploadFile | File): Promise<MetaStorageFile> {
 		return new Promise<MetaStorageFile>((resolve, reject) => {
 
-			image.fileEntry.file((file) => {
-				const reader: FileReader = new FileReader();
+			const reader: FileReader = new FileReader();
 
+			if (uploadFile instanceof UploadFile) {
+				uploadFile.fileEntry.file((file) => {
+					reader.addEventListener('load', async (e) => {
+						resolve({
+							name: file.name,
+							type: file.type,
+							size: file.size,
+							storageHash: await this.metaDataStorageService.storeData((<any>e.target).result).first().toPromise()
+						});
+					});
+
+					reader.readAsArrayBuffer(file);
+
+				}, (err) => {
+					reject(err);
+				});
+			} else {
 				reader.addEventListener('load', async (e) => {
 					resolve({
-						name: file.name,
-						type: file.type,
-						size: file.size,
+						name: uploadFile.name,
+						type: uploadFile.type,
+						size: uploadFile.size,
 						storageHash: await this.metaDataStorageService.storeData((<any>e.target).result).first().toPromise()
 					});
 				});
 
-				reader.readAsArrayBuffer(file);
-
-			}, (err) => {
-				reject(err);
-			});
-		})
+				reader.readAsArrayBuffer(uploadFile);
+			}
+		});
 
 	}
 
+	private changeStylesDropFiles() {
+		const dropContent: HTMLDivElement = this.fileDropElement.nativeElement.children[0].children[0];
+
+		dropContent.style.display = 'block';
+		dropContent.style.padding = '15px';
+		dropContent.style.textAlign = 'center';
+	}
 
 	public bitmaskChanged(bitmask: number) {
 		this.selectedTagsBitmask = bitmask;
@@ -151,6 +182,8 @@ export class AddCharityEventComponent implements OnInit {
 			details: ''
 		});
 		this.charityEventImage = null;
+		this.charityEventImagePreview = null;
+		this.attachedFiles = [];
 	}
 
 	public getData(hash: string) {
@@ -164,7 +197,39 @@ export class AddCharityEventComponent implements OnInit {
 
 	public onImageAdded($event) {
 		this.charityEventImage = $event.files[0];
+
+		const fileEntry = this.charityEventImage.fileEntry;
+
+		fileEntry.file((file: File) => {
+			const reader: FileReader = new FileReader();
+
+			reader.onload = () => {
+				this.charityEventImagePreview = reader.result;
+			};
+
+			reader.readAsDataURL(file);
+		});
 	}
 
+	public onFilesAdded($event) {
+		if ($event.files instanceof FileList)
+			Array.from($event.files).forEach((file: File) => {
+				this.attachedFiles.push(file);
+			});
+		else
+			$event.files.forEach((item: UploadFile) => {
+				item.fileEntry.file((file: File) => {
+					this.attachedFiles.push(file);
+				});
+			});
+	}
 
+	public removeFile(index: number) {
+		this.attachedFiles.splice(index, 1);
+	}
+
+	public removeCharityEventImage() {
+		this.charityEventImage = null;
+		this.charityEventImagePreview = null;
+	}
 }
