@@ -90,7 +90,6 @@ exports.MY_TEST_PLUGINS = [
 ]
 
 
-
 exports.DEV_ENVIRONMENT = {
 	'networkId': 488413,
 	'tokenAddress': '0x6a183381d14371b4a228cca37802c09bd166ba9e',
@@ -98,9 +97,9 @@ exports.DEV_ENVIRONMENT = {
 	'websocketProviderUrl': 'wss://wsprovider.staging.bankex.team:8636',
 	'metaStorageUrl': 'https://opencharity.staging.bankex.team/api/meta/',
 	'organizations':  [
-		'0x62d45408519e53d795008bc9489e8cccc3db1717',
-		'0x01bfd36327b9ff3bae7e801bb1be1091d68bfb21',
-		'0xa5a6c81e6607ae513e50fc5cc209d9359089cf59'
+		'0x400723d5696c60ccb5205682d3888644c7e373af',
+		'0xb7f5f2f6d8ec9341d98d2435bb00de9163e77476',
+		'0x314ff8c2768f33f68b7a1dd17dd7df8c819047f4'
 	]
 };
 

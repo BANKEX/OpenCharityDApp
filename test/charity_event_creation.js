@@ -26,7 +26,7 @@ contract('Organization', function(accounts) {
         const target = '100';
         const payed = '0';
 
-        const transactionDetails = await OrganizationInstance.addCharityEvent(name, target, payed, "0", "metahash", {
+        const transactionDetails = await OrganizationInstance.addCharityEvent(name, target, payed, '0', 'metahash', {
             from: ADMIN_ACCOUNTS[0]
         });
         const charityEventAddress = transactionDetails.logs[0].args.charityEvent;

@@ -1,6 +1,6 @@
 <div class="container-fluid">
 	<ol class="breadcrumb oc-breadcrumbs">
-		<li><a href="#" (click)="goBackToOrganization($event)">
+		<li><a href="javascript:" (click)="goBackToOrganization($event)">
 			<i class="fa fa-arrow-left"></i>
 			<span>Back to organization</span>
 		</a></li>
@@ -16,81 +16,12 @@
 						<div class="row">
 
 							<div class="col-md-8 ml-auto mr-auto">
-								<form role="form" novalidate [formGroup]="incomingDonationForm">
-									<div class="row">
-										<div class="col-md-6">
-											<div class="form-group">
-												<label>Real World Identifier
-													<small class="text-normal">*</small>
-												</label>
-												<input class="form-control"
-													   [ngClass]="{'error' : incomingDonationForm.get('realWorldIdentifier').touched && incomingDonationForm.get('realWorldIdentifier').invalid}"
-													   placeholder="Real World Identifier"
-													   formControlName="realWorldIdentifier">
-												<label class="error"
-													   *ngIf="incomingDonationForm.get('realWorldIdentifier').touched && incomingDonationForm.get('realWorldIdentifier').hasError('required')">Real
-													World Identifier is required</label>
-											</div>
-										</div>
-										<div class="col-md-6">
-											<div class="form-group">
-												<label>
-													Amount
-													<small class="text-normal">*</small>
-												</label>
-												<input type="url"
-													   class="form-control"
-													   placeholder="Amount"
-													   [ngClass]="{'error' : incomingDonationForm.get('amount').touched && incomingDonationForm.get('amount').invalid}"
-													   formControlName="amount">
-												<div *ngIf="incomingDonationForm.get('amount').touched && incomingDonationForm.get('amount').hasError('required')">
-													<label class="error">
-														Amount is required
-													</label>
-												</div>
-												<div *ngIf="incomingDonationForm.get('amount').touched && incomingDonationForm.get('amount').hasError('min')">
-													<label class="error">
-														Amount should be > 0
-													</label>
-												</div>
-												<div *ngIf="incomingDonationForm.get('amount').touched && incomingDonationForm.get('amount').hasError('pattern')">
-													<label class="error">
-														Amount should be a valid number
-													</label>
-												</div>
+								<!--<opc-incoming-donation-form-->
+									<!--[organizationAddress]="organizationAddress"-->
+									<!--[incomingDonation]="incomingDonation"-->
+								<!--&gt;-->
 
-											</div>
-										</div>
-									</div>
-									<div class="row">
-										<div class="col-md-12">
-											<div class="form-group">
-												<label>Note</label>
-												<textarea class="form-control" placeholder="Note" formControlName="note"
-														  cols="20" rows="10"></textarea>
-												<!--<label class="error" *ngIf="url?.errors?.url"></label>-->
-											</div>
-										</div>
-
-										<div class="col-md-12">
-											<div class="form-group">
-												<opc-set-bitmask-tags [bitmask]="selectedTagsBitmask"
-																	  (bitmaskChanged)="bitmaskChanged($event)"></opc-set-bitmask-tags>
-											</div>
-										</div>
-									</div>
-									<div class="row justify-content-center">
-										<div class="col-md-6">
-											<button type="submit"
-													class="btn btn-primary width-100"
-													[ngClass]="{'disabled': incomingDonationForm.invalid}"
-													(click)="submitForm()">
-												Submit
-											</button>
-										</div>
-									</div>
-
-								</form>
+								<!--</opc-incoming-donation-form>-->
 							</div>
 						</div>
 					</div>

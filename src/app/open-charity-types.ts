@@ -30,6 +30,7 @@ export interface ContractIncomingDonation {
 	address?: string;
 	amount: string;
 	note: string;
+	sourceId: string;
 	tags: string;
 }
 

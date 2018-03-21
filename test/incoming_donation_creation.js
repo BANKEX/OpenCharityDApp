@@ -7,7 +7,7 @@ const IncomingDonation = artifacts.require('IncomingDonation');
 const tokenParams = require('../contracts-params').token;
 
 
-contract('Organization', function(accounts) {
+contract('Incoming Donation', function(accounts) {
     let OrganizationInstance;
     const ADMIN_ACCOUNTS = [accounts[1], accounts[2]];
     let OpenCharityTokenInstance;
@@ -25,7 +25,7 @@ contract('Organization', function(accounts) {
 
     it('should create a new incoming donation contract with specified details', async () => {
         try {
-            const transactionDetails = await OrganizationInstance.setIncomingDonation('Test', '200', 'Test note', '0', {
+            const transactionDetails = await OrganizationInstance.setIncomingDonation('Test', '200', 'Test note', '0', '0', {
                 from: ADMIN_ACCOUNTS[0]
             });
 
@@ -35,10 +35,14 @@ contract('Organization', function(accounts) {
             const donationRealWorldIdentifier = await IncomingDonationInstance.realWorldIdentifier();
             const donationAmount = await OpenCharityTokenInstance.balanceOf(IncomingDonationInstance.address);
             const donationNote = await IncomingDonationInstance.note();
+            const donationSourceId = await IncomingDonationInstance.sourceId();
+
+            console.log(`donationSourceId: ${donationSourceId}`);
 
             assert(donationRealWorldIdentifier === 'Test', 'Wrong realWorldIdentifier');
             assert(donationAmount.toString() === '200', 'Wrong amount');
             assert(donationNote === 'Test note', 'Wrong note');
+			assert(donationSourceId.toString() === '0', 'Invalid donation sourceId 2');
         } catch (e) {
             console.log(e);
             assert(false, 'Error during incoming donation creation');
@@ -46,7 +50,13 @@ contract('Organization', function(accounts) {
 
 
     });
-
-
+	//
+	// it('should throw an error if try to create IncomingDonation with sourceId < 0', async() => {
+    	// assert(false, 'Implement test');
+	// });
+	//
+	// it('should throws an error if try to create IncomingDonations with non-existing source id', async() => {
+	// 	assert(false, 'Implement test');
+	// });
 
 });

@@ -31,7 +31,7 @@ contract('Organization', function(accounts) {
             from: ADMIN_ACCOUNTS[0]
         });
 
-        await OrganizationInstance.addCharityEvent('Test Charity Event', INCOMING_DONATION_AMOUNT+200, '0', '0x01', {
+        await OrganizationInstance.addCharityEvent('Test Charity Event', INCOMING_DONATION_AMOUNT+200, '0', '0x01', 'metahash', {
             from: ADMIN_ACCOUNTS[0]
         });
 
@@ -61,7 +61,7 @@ contract('Organization', function(accounts) {
 
     it('should not move tokens if charity event and incoming donation has no tags matches', async () => {
 
-        await OrganizationInstance.addCharityEvent('Test Charity Event With Unmatched Tags', INCOMING_DONATION_AMOUNT+200, '0', '0x55', {
+        await OrganizationInstance.addCharityEvent('Test Charity Event With Unmatched Tags', INCOMING_DONATION_AMOUNT+200, '0', '0xC0', 'metahash', {
             from: ADMIN_ACCOUNTS[0]
         });
 
@@ -80,6 +80,10 @@ contract('Organization', function(accounts) {
         }
 
     });
+
+    it('should throws an error if try to move tokens directly via IncomingDonation contract instead of using Organization contract', async () => {
+    	assert(false, 'Implement test');
+	});
 
 
 });
