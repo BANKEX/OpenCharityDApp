@@ -8,7 +8,7 @@ import {IncomingDonationContractService} from '../../../core/contracts-services/
 import {TagsBitmaskService} from '../../services/tags-bitmask.service';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
-import {ConfirmationStatusState, ContractIncomingDonation} from '../../../open-charity-types';
+import {AppIncomingDonation, ConfirmationStatusState, ContractIncomingDonation} from '../../../open-charity-types';
 import {NgbTypeahead} from '@ng-bootstrap/ng-bootstrap';
 
 
@@ -23,7 +23,8 @@ type IncomingDonationSource = {
 })
 export class IncomingDonationsEditorComponent implements OnInit, OnDestroy {
 	private componentDestroyed: Subject<void> = new Subject<void>();
-	public organizationContractAddress: string;
+	public organizationAddress: string;
+	public incomingDonation: AppIncomingDonation;
 	public incomingDonationForm: FormGroup;
 	public selectedTagsBitmask: number = 0;
 
@@ -42,8 +43,9 @@ export class IncomingDonationsEditorComponent implements OnInit, OnDestroy {
 	) { }
 
 	async ngOnInit(): Promise<void> {
-		this.route.params.subscribe(params => {
-			this.organizationContractAddress = params["address"];
+		this.route.params.subscribe(async (params) => {
+			this.organizationAddress = params['address'];
+			// this.incomingDonation =  await this.incomingDonationsContractService.getIncomingDonationDetails(params['donation']);
 		});
 	}
 
@@ -51,7 +53,7 @@ export class IncomingDonationsEditorComponent implements OnInit, OnDestroy {
 
 	public goBackToOrganization(event: Event): void {
 		event.preventDefault();
-		this.router.navigate(['/organization', this.organizationContractAddress]);
+		this.router.navigate(['/organization', this.organizationAddress]);
 	}
 
 	ngOnDestroy(): void {
