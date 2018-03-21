@@ -5,9 +5,9 @@ stages:
   - setup
   - build-node-stage
   - build-node-prod
-  - tests
   - release-nginx-stage
   - release-nginx-prod
+  - deploy-contracts
   - deploy-stage
   - deploy-prod
 
@@ -53,12 +53,6 @@ build-node-prod:
     expire_in: 24h
   only:
     - production
-    
-tests:
-  image: alpine
-  stage: tests
-  script:
-    - echo "Tests OK"
 
 release-nginx-stage:
   image: docker:latest
@@ -83,7 +77,22 @@ release-nginx-prod:
     - build-node-prod
   only:
     - production
-    
+
+deploy-contracts:
+  image: ubuntu:latest
+  stage: deploy-contracts
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY_DEPLOY")
+    - mkdir -p ~/.ssh
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+  script:
+    - scp -r ./build/contracts root@charity-staging-do.bankex.team:/data
+    - scp -r ./build/contracts root@charity-prod-do.bankex.team:/data
+  only:
+    - master
+
 deploy_stage:
   stage: deploy-stage
   image: tmaier/docker-compose
@@ -105,7 +114,6 @@ deploy_stage:
     - docker-compose -f docker/docker-compose.yml down
     - docker rmi $IMAGE || echo "image not exist"
     - docker pull $IMAGE
-    - sleep 15
     - docker-compose -f docker/docker-compose.yml up -d
   environment:
     name: staging

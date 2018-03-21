@@ -12,6 +12,7 @@ import {IncomingDonationContractService} from './contracts-services/incoming-don
 import {OrganizationContractService} from './contracts-services/organization-contract.service';
 import {OrganizationContractEventsService} from './contracts-services/organization-contract-events.service';
 import {MetaDataStorageService} from './meta-data-storage.service';
+import {PendingTransactionService} from './pending-transactions.service';
 
 export function windowFactory() {
 	return window;
@@ -39,6 +40,7 @@ const contractsServices = [
 		MetamaskCheckService,
 		{provide: 'Window', useFactory: windowFactory},
 		MetaDataStorageService,
+		PendingTransactionService,
 		...contractsServices
 	]
 })

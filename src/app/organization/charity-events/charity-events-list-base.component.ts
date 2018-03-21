@@ -1,6 +1,9 @@
 import {Component, Input, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
-import {AppCharityEvent, ConfirmationStatusState} from '../../open-charity-types';
+import {
+	AppCharityEvent, CharityEventMetaStorageData, ConfirmationStatusState,
+	MetaStorageData
+} from '../../open-charity-types';
 import {TokenContractService} from '../../core/contracts-services/token-contract.service';
 import {OrganizationContractService} from '../../core/contracts-services/organization-contract.service';
 import {constant, findIndex, merge, reverse, times} from 'lodash';
@@ -63,21 +66,20 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 	}
 
 	protected async updateCharityEventMetaStorageData(charityEvent: AppCharityEvent): Promise<void> {
-		// TODO: add typescript itnerface for CE meta storage data
-
-		let data: any = await this.getCharityEventMetaStorageData(charityEvent);
+		// TODO: add typescript interface for CE meta storage data
+		let data: CharityEventMetaStorageData = (await this.getCharityEventMetaStorageData(charityEvent)).data;
 		if (!data) {
 			return
 		}
 
-		if (data.attachment) {
-			charityEvent.image = this.metaDataStorageService.convertArrayBufferToBase64( await this.metaDataStorageService.getImage(data.attachment).toPromise() );
+		if (data.image) {
+			charityEvent.image = this.metaDataStorageService.convertArrayBufferToBase64( await this.metaDataStorageService.getImage(data.image.storageHash).toPromise() );
 		}
 
 		charityEvent.description = data.description;
 	}
 
-	protected getCharityEventMetaStorageData(charityEvent: AppCharityEvent): Promise<any> {
+	protected getCharityEventMetaStorageData(charityEvent: AppCharityEvent): Promise<MetaStorageData> {
 		return this.metaDataStorageService.getData(charityEvent.metaStorageHash).toPromise();
 	}
 

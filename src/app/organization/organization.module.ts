@@ -21,7 +21,7 @@ import {IsAdminGuard} from './is-admin.guard';
 import {OrganizationSharedService} from './services/organization-shared.service';
 import {CharityEventCardComponent} from './charity-events/charity-event-card/charity-event-card.component';
 import {ActualIncomingDonationsComponent} from './incoming-donations/actual-donations/actual-donations.component';
-import {CharityEventsTransactionsHistoryComponent} from './charity-events/charity-events-transactions-history/charity-events-transactions-history.component';
+import {CharityEventTransactionsHistoryComponent} from './charity-events/charity-event-transactions-history/charity-event-transactions-history.component';
 import {CharityEventEditorComponent} from './charity-events/charity-event-editor/charity-event-editor.component';
 import {CharityEventsAllComponent} from './charity-events/charity-events-all/charity-events-all.component';
 import {IncomingDonationsDetailsComponent} from './incoming-donations/incoming-donations-details/incoming-donations-details.component';
@@ -30,6 +30,8 @@ import {IncomingDonationsAllComponent} from './incoming-donations/incoming-donat
 import {FileDropModule} from 'ngx-file-drop';
 import {CharityEventsListBaseComponent} from './charity-events/charity-events-list-base.component';
 import {DashboardCharityEventsList} from './charity-events/dashboard-charity-events-list/dashboard-charity-events-list.component';
+import {IncomingDonationFormComponent} from './incoming-donations/incoming-donation-form/incoming-donation-form.component';
+import {IncomingDonationslistBaseComponent} from './incoming-donations/incoming-donations-list-base.component';
 
 @NgModule({
 	declarations: [
@@ -44,13 +46,15 @@ import {DashboardCharityEventsList} from './charity-events/dashboard-charity-eve
 		CharityEventCardComponent,
 		DashboardCharityEventsList,
 		ActualIncomingDonationsComponent,
-		CharityEventsTransactionsHistoryComponent,
+		CharityEventTransactionsHistoryComponent,
 		CharityEventEditorComponent,
 		CharityEventsAllComponent,
 		IncomingDonationsDetailsComponent,
 		IncomingDonationsEditorComponent,
 		IncomingDonationsAllComponent,
-		CharityEventsListBaseComponent
+		CharityEventsListBaseComponent,
+		IncomingDonationFormComponent,
+		IncomingDonationslistBaseComponent
 	],
 	entryComponents: [IncomingDonationSendFundsModalComponent],
 	imports: [

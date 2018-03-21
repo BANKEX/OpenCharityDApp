@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable, Subscribable} from 'rxjs/Observable';
+import {MetaStorageData} from '../open-charity-types';
 
 @Injectable()
 export class MetaDataStorageService {
@@ -25,6 +26,8 @@ export class MetaDataStorageService {
 		if (convertToBlob) {
 			data = new Blob([JSON.stringify(data)]);
 		}
+
+		// data.data = new Blob([JSON.stringify(data.data)]);
 
 		return this.httpClient.post(this.buildUrl('postData'), data, httpOptions);
 	}

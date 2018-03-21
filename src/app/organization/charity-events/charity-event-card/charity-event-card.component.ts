@@ -1,8 +1,7 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {Subject} from 'rxjs/Subject';
+import {Component, Input, OnInit} from '@angular/core';
 
 import {AppCharityEvent, ConfirmationStatusState} from '../../../open-charity-types';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
 
 @Component({
 	selector: 'opc-charity-events-card',
@@ -46,11 +45,11 @@ export class CharityEventCardComponent implements OnInit {
 		if (!this.isConfirmed()) {
 			return;
 		}
-		this.router.navigate([`/organization/${this.organizationAddress}/charityevent/${this.charityEvent.address}/transactions`]);
+		this.router.navigate([`/organization/${this.organizationAddress}/event/${this.charityEvent.address}/transactions`]);
 	}
 
 	public editClick($event: Event): void {
-		this.router.navigate([`/organization/${this.organizationAddress}/charityevent/${this.charityEvent.address}/editor`]);
+		this.router.navigate([`/organization/${this.organizationAddress}/event/${this.charityEvent.address}/editor`]);
 		$event.stopPropagation();
 	}
 

@@ -1,5 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 
+import {PendingTransactionService} from '../core/pending-transactions.service';
+import {PendingTransaction, PendingTransactionState, PendingTransactionSourceType} from '../pending-transaction.types';
+
 @Component({
 	selector: 'app-dashboard',
 	templateUrl: './common-layout.component.html'
@@ -15,7 +18,9 @@ export class CommonLayoutComponent implements OnInit {
 	public headerSelected: any;
 	public sidenavSelected: any;
 
-	constructor() {
+	public pendingTransactions: PendingTransaction[] = [];
+
+	constructor(private pendingTransactionService: PendingTransactionService) {
 		this.app = {
 			layout: {
 				sidePanelOpen: false,
@@ -41,7 +46,19 @@ export class CommonLayoutComponent implements OnInit {
 		}
 	}
 
-
 	ngOnInit() {
+		this.pendingTransactionService.message.subscribe(message => this.pendingTransactions.push(message));
+	}
+
+	public isConfirmed(message: PendingTransaction): boolean {
+		return message.state == PendingTransactionState.CONFIRMED;
+	}
+
+	public isPending(message: PendingTransaction): boolean {
+		return message.state == PendingTransactionState.PENDING;
+	}
+
+	public isFailed(message: PendingTransaction): boolean {
+		return message.state == PendingTransactionState.FAILED;
 	}
 }

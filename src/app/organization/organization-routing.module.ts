@@ -2,7 +2,7 @@ import {Routes} from '@angular/router';
 //Dashboard Components
 import {OrganizationDetailsComponent} from './organization-details/organization-details.component';
 import {OrganizationsListComponent} from './organizations-list/organizations-list.component';
-import {CharityEventsTransactionsHistoryComponent} from './charity-events/charity-events-transactions-history/charity-events-transactions-history.component';
+import {CharityEventTransactionsHistoryComponent} from './charity-events/charity-event-transactions-history/charity-event-transactions-history.component';
 import {CommonLayoutComponent} from '../common/common-layout.component';
 import {CharityEventEditorComponent} from './charity-events/charity-event-editor/charity-event-editor.component';
 import {CharityEventsAllComponent} from './charity-events/charity-events-all/charity-events-all.component';
@@ -11,6 +11,7 @@ import {IncomingDonationsEditorComponent} from './incoming-donations/incoming-do
 import {IncomingDonationsAllComponent} from './incoming-donations/incoming-donations-all/incoming-donations-all.component';
 import {IsOrganizationAddressGuard} from './is-organization-address.guard';
 import {IsAdminGuard} from './is-admin.guard';
+import {AddIncomingDonationComponent} from './incoming-donations/add-incoming-donation/add-incoming-donation.component';
 
 export const OrganizationRoutes: Routes = [{
 	path: 'organization',
@@ -23,22 +24,25 @@ export const OrganizationRoutes: Routes = [{
 		component: OrganizationDetailsComponent,
 		canActivate: [IsOrganizationAddressGuard, IsAdminGuard]
 	}, {
-		path: ':address/charityevent/:event/transactions',
-		component: CharityEventsTransactionsHistoryComponent
+		path: ':address/event/:event/transactions',
+		component: CharityEventTransactionsHistoryComponent
 	}, {
-		path: ':address/charityevent/:event/editor',
+		path: ':address/event/:event/editor',
 		component: CharityEventEditorComponent
 	}, {
-		path: ':address/charityeventsall',
+		path: ':address/events',
 		component: CharityEventsAllComponent
 	}, {
 		path: ':address/donation/:donation/details',
 		component: IncomingDonationsDetailsComponent
 	}, {
-		path: ':address/donation/editor',
+		path: ':address/donation/:donation/edit',
 		component: IncomingDonationsEditorComponent
 	}, {
-		path: ':address/alldonations',
+		path: ':address/donation/add',
+		component: AddIncomingDonationComponent
+	},{
+		path: ':address/donations',
 		component: IncomingDonationsAllComponent
 	}]
 }];
