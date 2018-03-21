@@ -105,13 +105,13 @@ exports.DEV_ENVIRONMENT = {
 
 exports.PROD_ENVIRONMENT = {
 	'networkId': 488423,
-	'tokenAddress': '0xa4580bdd864022a3874c57d35bf73d7717c40a48',
+	'tokenAddress': '0x7487a0251a0701a89cade302679b1d01c3d8a44f',
 	'rpcProviderUrl': 'https://rpcprovider.opencharity.bankex.team:8635',
 	'websocketProviderUrl': 'wss://wsprovider.opencharity.bankex.team:8636',
 	'metaStorageUrl': 'https://opencharity.bankex.team/api/meta/',
 	'organizations':  [
-		'0x13b07a2848b4baaea2599f37c2471c241d871c6a',
-		'0x8a4f9982ff799522307854bbec390aabeb8ad8e2',
-		'0x565bdf1efc1aa43cde7c643f8eee9de8702ce9d9'
+		'0xc423c6e735e7c61ea23d039b0534b5163f8b543e',
+		'0x8e40b81d3924f8ba764b8a79760dab33accdc39b',
+		'0xe8712453c708a868c68b9e9d6fa28da3ff8263ed'
 	]
 };
