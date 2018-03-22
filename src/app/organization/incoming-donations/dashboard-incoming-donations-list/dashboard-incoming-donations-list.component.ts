@@ -1,33 +1,28 @@
-import {Component, Input, NgZone, OnDestroy, OnInit} from '@angular/core';
-import {Router, ActivatedRoute} from '@angular/router';
+import {Component, Input, NgZone, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 import {constant, find, findIndex, merge, reverse, times} from 'lodash';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 import {AppIncomingDonation, ConfirmationStatusState} from '../../../open-charity-types';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
 import {IncomingDonationContractService} from '../../../core/contracts-services/incoming-donation-contract.service';
 import {TokenContractService} from '../../../core/contracts-services/token-contract.service';
-import {CharityEventContractService} from '../../../core/contracts-services/charity-event-contract.service';
-import {OrganizationSharedService} from '../../services/organization-shared.service';
 
 @Component({
 	selector: 'opc-dashboard-incoming-donations-list',
 	templateUrl: 'dashboard-incoming-donations-list.component.html',
 	styleUrls: ['dashboard-incoming-donations-list.component.scss']
 })
-export class DashboardIncomingDonationsListComponent  implements OnInit {
+export class DashboardIncomingDonationsListComponent implements OnInit {
 	@Input('organizationAddress') organizationAddress: string;
 
 	public incomingDonations: AppIncomingDonation[] = [];
 
-	constructor(
-		protected organizationContractService: OrganizationContractService,
-		protected incomingDonationContractService: IncomingDonationContractService,
-		protected tokenContractService: TokenContractService,
-		protected router: Router,
-		protected route: ActivatedRoute,
-		protected zone: NgZone
-	) {
+	constructor(protected organizationContractService: OrganizationContractService,
+				protected incomingDonationContractService: IncomingDonationContractService,
+				protected tokenContractService: TokenContractService,
+				protected router: Router,
+				protected route: ActivatedRoute,
+				protected zone: NgZone) {
 	}
 
 	async ngOnInit(): Promise<void> {
