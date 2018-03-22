@@ -15,7 +15,7 @@ import {OrganizationSharedService} from '../../services/organization-shared.serv
 	templateUrl: 'dashboard-incoming-donations-list.component.html',
 	styleUrls: ['dashboard-incoming-donations-list.component.scss']
 })
-export class DashboardIncomingDonationsListComponent  implements OnInit, OnDestroy {
+export class DashboardIncomingDonationsListComponent  implements OnInit {
 	@Input('organizationAddress') organizationAddress: string;
 
 	public incomingDonations: AppIncomingDonation[] = [];
@@ -78,10 +78,5 @@ export class DashboardIncomingDonationsListComponent  implements OnInit, OnDestr
 	public addClick() {
 		this.router.navigate([`/organization/${this.organizationAddress}/donation/add`]);
 	}
-
-	ngOnDestroy() {
-
-	}
-
 
 }
