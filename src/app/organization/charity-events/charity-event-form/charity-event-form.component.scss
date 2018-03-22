@@ -1,0 +1,37 @@
+
+.charity-event-image {
+	width: 100%;
+	height: 100%;
+}
+
+.charity-event-image-preview {
+	img {
+		width: 100%;
+		border: 1px solid #e6ecf5;
+		border-radius: 5px;
+	}
+
+	.btn {
+		position: absolute;
+		right: 10px;
+		cursor: pointer;
+		border-radius: 0 6px;
+	}
+}
+
+.files-list {
+	margin-top: 30px;
+
+	.fa-remove {
+		cursor: pointer;
+		margin-top: 3px;
+	}
+}
+
+.file-drop-attachments {
+	.add-files {
+		input {
+			display: none;
+		}
+	}
+}
