@@ -71,26 +71,6 @@ export class IncomingDonationsAllComponent implements OnInit, OnDestroy {
 		incomingDonation.amount = await this.tokenContractService.balanceOf(incomingDonation.address);
 	}
 
-	public getRWID(incomingDonation: AppIncomingDonation): string {
-		if (incomingDonation == null) return '';
-		return incomingDonation.realWorldsIdentifier;
-	}
-
-	public getTags(incomingDonation: AppIncomingDonation): string {
-		if (incomingDonation == null) return '';
-		return incomingDonation.tags;
-	}
-
-	public getAmount(incomingDonation: AppIncomingDonation): string {
-		if (incomingDonation == null) return '';
-		return incomingDonation.amount;
-	}
-
-	public isDonation(incomingDonation: AppIncomingDonation): boolean {
-		return incomingDonation != null;
-	}
-
-
 	public goBackToOrganization(event: Event): void {
 		this.router.navigate(['/organization', this.organizationAddress]);
 		event.preventDefault();
