@@ -10,6 +10,13 @@ type CharityEventData = {
 	metadataStorage: MetaStorageData
 };
 import {Location} from '@angular/common';
+import {ContractCharityEvent, MetaStorageData} from '../../../open-charity-types';
+import {MetaDataStorageService} from '../../../core/meta-data-storage.service';
+
+type CharityEventData = {
+	contract: ContractCharityEvent,
+	metadataStorage: MetaStorageData
+};
 
 @Component({
 	templateUrl: 'charity-event-editor.component.html',
