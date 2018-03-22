@@ -1,0 +1,38 @@
+<ul class="nav nav-tabs sources-list" role="tablist">
+
+	<li class="nav-item">
+		<a class="nav-link" [ngClass]="{'active':selectedSource === -1 }" (click)="changeSourceTab(-1)">
+			All Incoming Donations
+		</a>
+	</li>
+
+	<li class="nav-item" *ngFor="let sourceName of sourcesNamesList; let sourceId = index;">
+		<a class="nav-link" [ngClass]="{'active':sourceId === selectedSource }" (click)="changeSourceTab(sourceId)">
+			{{sourceName}}
+		</a>
+	</li>
+
+	<li class="nav-item add-new-source" (click)="showNewSourceForm()">
+		<div class="add-new-source-form" *ngIf="newSourceFormVisible">
+			<input type="text" name="new_source_name" placeholder="New Source Name" #newSourceName>
+
+			<button class="btn btn-primary btn-xs" (click)="$event.stopPropagation(); submitNewSourceForm(newSourceName.value)">
+				<i class="fa fa-floppy"></i>
+				Add
+			</button>
+
+			<button class="btn btn-default btn-xs" (click)="$event.stopPropagation(); cancelNewSourceForm()">
+				<i class="fa fa-times"></i>
+				Cancel
+			</button>
+
+		</div>
+
+
+		<a class="nav-link" *ngIf="!newSourceFormVisible">
+			<i class="fa fa-plus" title="Add new source"></i>
+			Add New Source
+		</a>
+	</li>
+
+</ul>

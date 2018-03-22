@@ -50,17 +50,3 @@
   opacity: 0;
   cursor: pointer;
 }
-
-.sources-list {
-	.nav-item.active {
-		background: $theme-primary;
-		color: $default-white;
-	}
-
-}
-
-.add-new-source {
-	display: flex;
-	align-items: center;
-}
-

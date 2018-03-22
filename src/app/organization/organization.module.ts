@@ -20,7 +20,7 @@ import {IncomingDonationSendFundsModalComponent} from './incoming-donations/inco
 import {IsAdminGuard} from './is-admin.guard';
 import {OrganizationSharedService} from './services/organization-shared.service';
 import {CharityEventCardComponent} from './charity-events/charity-event-card/charity-event-card.component';
-import {ActualIncomingDonationsComponent} from './incoming-donations/actual-donations/actual-donations.component';
+import {DashboardIncomingDonationsListComponent} from './incoming-donations/dashboard-incoming-donations-list/dashboard-incoming-donations-list.component';
 import {CharityEventTransactionsHistoryComponent} from './charity-events/charity-event-transactions-history/charity-event-transactions-history.component';
 import {CharityEventEditorComponent} from './charity-events/charity-event-editor/charity-event-editor.component';
 import {CharityEventsAllComponent} from './charity-events/charity-events-all/charity-events-all.component';
@@ -31,6 +31,7 @@ import {FileDropModule} from 'ngx-file-drop';
 import {CharityEventsListBaseComponent} from './charity-events/charity-events-list-base.component';
 import {DashboardCharityEventsList} from './charity-events/dashboard-charity-events-list/dashboard-charity-events-list.component';
 import {IncomingDonationFormComponent} from './incoming-donations/incoming-donation-form/incoming-donation-form.component';
+import {IncomingDonationsSourcesFilterComponent} from './incoming-donations/incoming-donations-sources-filter/incoming-donations-sources-filter.component';
 import {IncomingDonationslistBaseComponent} from './incoming-donations/incoming-donations-list-base.component';
 import {TagInputModule} from 'ngx-chips';
 
@@ -46,7 +47,7 @@ import {TagInputModule} from 'ngx-chips';
 		IncomingDonationSendFundsModalComponent,
 		CharityEventCardComponent,
 		DashboardCharityEventsList,
-		ActualIncomingDonationsComponent,
+		DashboardIncomingDonationsListComponent,
 		CharityEventTransactionsHistoryComponent,
 		CharityEventEditorComponent,
 		CharityEventsAllComponent,
@@ -55,7 +56,7 @@ import {TagInputModule} from 'ngx-chips';
 		IncomingDonationsAllComponent,
 		CharityEventsListBaseComponent,
 		IncomingDonationFormComponent,
-		IncomingDonationslistBaseComponent
+		IncomingDonationsSourcesFilterComponent
 	],
 	entryComponents: [IncomingDonationSendFundsModalComponent],
 	imports: [

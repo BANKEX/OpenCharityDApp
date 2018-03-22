@@ -9,7 +9,7 @@
 		<h4>
 			{{name}}
 			<div>
-				<small>{{organizationContractAddress}}</small>
+				<small>{{organizationAddress}}</small>
 			</div>
 		</h4>
 	</div>
@@ -32,40 +32,9 @@
 				</div>
 
 				<div class="tab-primary">
-					<ul class="nav nav-tabs" role="tablist">
-						<li class="nav-item"><a class="nav-link" [ngClass]="{'active':changer === 'sms'}" (click)="changer = 'sms'">SMS</a></li>
-						<li class="nav-item"><a class="nav-link" [ngClass]="{'active':changer === 'cards'}" (click)="changer = 'cards'">Cards</a></li>
-						<li class="nav-item"><a class="nav-link" [ngClass]="{'active':changer === 'site'}" (click)="changer = 'site'">Site</a></li>
-						<li class="nav-item"><a class="nav-link" [ngClass]="{'active':changer === 'yandex'}" (click)="changer = 'yandex'">Yandex</a></li>
-						<li class="nav-item"><a class="nav-link" [ngClass]="{'active':changer === 'alpha'}" (click)="changer = 'alpha'">Alpha</a></li>
-						<li class="nav-item"><a class="nav-link" [ngClass]="{'active':changer === 'webm'}" (click)="changer = 'webm'">WebM</a></li>
-						<li class="nav-item"><a class="nav-link" [ngClass]="{'active':changer === 'paypal'}" (click)="changer = 'paypal'">PayPal</a></li>
-					</ul>
+					<opc-incoming-donations-sources-filter [organizationAddress]="organizationAddress"></opc-incoming-donations-sources-filter>
 					<div class="tab-content">
-						<table class="table table-striped donations-table">
-							<thead>
-								<tr>
-									<th>Date</th>
-									<th>Real world Id</th>
-									<th>Tag</th>
-									<th>Amount</th>
-									<th>Event</th>
-									<th>Annual / Single</th>
-									<th></th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr class="data" *ngFor="let incomingDonation of incomingDonations.slice(0, 10)" (click)="toDetails(incomingDonation)">
-									<td>01.02.2018</td>
-									<td>{{getRWID(incomingDonation)}}</td>
-									<td><opc-bitmask-tags-list [tags]="incomingDonation.tags"></opc-bitmask-tags-list></td>
-									<td>{{getAmount(incomingDonation)}}</td>
-									<td>Event 1</td>
-									<td>Annual</td>
-									<td><button type="button" class="btn btn-primary btn-sm" (click)="openSendDonationFundsModal($event, incomingDonation)">Move funds to Charity Event</button><td>
-								</tr>
-							</tbody>
-						</table>
+						<opc-incoming-donations-list [organizationAddress]="organizationAddress" [incomingDonations]="incomingDonations"></opc-incoming-donations-list>
 					</div>
 				</div>
 			</div>
