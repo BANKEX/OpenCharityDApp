@@ -32,7 +32,6 @@ import {CharityEventsListBaseComponent} from './charity-events/charity-events-li
 import {DashboardCharityEventsList} from './charity-events/dashboard-charity-events-list/dashboard-charity-events-list.component';
 import {IncomingDonationFormComponent} from './incoming-donations/incoming-donation-form/incoming-donation-form.component';
 import {IncomingDonationsSourcesFilterComponent} from './incoming-donations/incoming-donations-sources-filter/incoming-donations-sources-filter.component';
-import {IncomingDonationslistBaseComponent} from './incoming-donations/incoming-donations-list-base.component';
 import {TagInputModule} from 'ngx-chips';
 
 @NgModule({
