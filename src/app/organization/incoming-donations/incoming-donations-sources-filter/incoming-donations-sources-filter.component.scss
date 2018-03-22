@@ -1,0 +1,14 @@
+@import 'src/assets/scss/variables';
+
+.sources-list {
+	.nav-item.active {
+		background: $theme-primary;
+		color: $default-white;
+	}
+
+}
+
+.add-new-source {
+	display: flex;
+	align-items: center;
+}

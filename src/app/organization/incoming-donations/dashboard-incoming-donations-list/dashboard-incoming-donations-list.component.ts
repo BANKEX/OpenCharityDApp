@@ -1,42 +1,32 @@
-import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
-import {Subject} from 'rxjs/Subject';
+import {Component, Input, NgZone, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {constant, find, findIndex, merge, reverse, times} from 'lodash';
-import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 
 import {AppIncomingDonation, ConfirmationStatusState} from '../../../open-charity-types';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
 import {IncomingDonationContractService} from '../../../core/contracts-services/incoming-donation-contract.service';
 import {TokenContractService} from '../../../core/contracts-services/token-contract.service';
-import {CharityEventContractService} from '../../../core/contracts-services/charity-event-contract.service';
-import {IncomingDonationSendFundsModalComponent} from '../incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
 
 @Component({
-	templateUrl: 'incoming-donations-all.component.html',
-	styleUrls: ['incoming-donations-all.component.scss']
+	selector: 'opc-dashboard-incoming-donations-list',
+	templateUrl: 'dashboard-incoming-donations-list.component.html',
+	styleUrls: ['dashboard-incoming-donations-list.component.scss']
 })
-export class IncomingDonationsAllComponent implements OnInit, OnDestroy {
-	private componentDestroyed: Subject<void> = new Subject<void>();
-	public organizationAddress: string;
-	public incomingDonations: AppIncomingDonation[] = [];
-	public name: string = '';
+export class DashboardIncomingDonationsListComponent implements OnInit {
+	@Input('organizationAddress') organizationAddress: string;
 
-	constructor(private organizationContractService: OrganizationContractService,
-				private incomingDonationContractService: IncomingDonationContractService,
-				private charityEventContractService: CharityEventContractService,
-				private tokenContractService: TokenContractService,
-				private modalService: NgbModal,
-				private router: Router,
-				private route: ActivatedRoute,
-				private zone: NgZone) {
+	public incomingDonations: AppIncomingDonation[] = [];
+
+	constructor(protected organizationContractService: OrganizationContractService,
+				protected incomingDonationContractService: IncomingDonationContractService,
+				protected tokenContractService: TokenContractService,
+				protected router: Router,
+				protected route: ActivatedRoute,
+				protected zone: NgZone) {
 	}
 
 	async ngOnInit(): Promise<void> {
-		this.route.params.subscribe(params => {
-			this.organizationAddress = params['address'];
-		});
-		await this.updateIncomingDonationsList();
-		this.name = await this.organizationContractService.getName(this.organizationAddress);
+		this.updateIncomingDonationsList();
 	}
 
 	public async updateIncomingDonationsList(): Promise<void> {
@@ -71,16 +61,17 @@ export class IncomingDonationsAllComponent implements OnInit, OnDestroy {
 		incomingDonation.amount = await this.tokenContractService.balanceOf(incomingDonation.address);
 	}
 
-	public goBackToOrganization(event: Event): void {
-		this.router.navigate(['/organization', this.organizationAddress]);
-		event.preventDefault();
+
+	public toDetails(incomingDonation: AppIncomingDonation): void {
+		this.router.navigate([`/organization/${this.organizationAddress}/donation/${incomingDonation.address}/details`]);
+	}
+
+	public toAllDonations() {
+		this.router.navigate([`/organization/${this.organizationAddress}/donations`]);
 	}
 
 	public addClick() {
 		this.router.navigate([`/organization/${this.organizationAddress}/donation/add`]);
 	}
 
-	ngOnDestroy(): void {
-		this.componentDestroyed.next();
-	}
 }

@@ -20,7 +20,7 @@ import {OrganizationContractService} from '../../../core/contracts-services/orga
 })
 
 export class IncomingDonationSendFundsModalComponent implements OnInit {
-	@Input('organizationContractAddress') organizationContractAddress: string;
+	@Input('organizationAddress') organizationAddress: string;
 	@Input('charityEvents') charityEvents: ContractCharityEvent[];
 	@Input('incomingDonation') incomingDonation: ContractIncomingDonation;
 	@Output('fundsMoved') fundsMoved: EventEmitter<string> = new EventEmitter<string>();
@@ -88,7 +88,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 
 	public async sendFunds(targetCharityEvent: ContractCharityEvent, amount: string): Promise<void> {
 		try {
-			const tran = await this.organizationContractService.moveFundsToCharityEvent(this.organizationContractAddress, this.incomingDonation.address, targetCharityEvent.address, amount);
+			const tran = await this.organizationContractService.moveFundsToCharityEvent(this.organizationAddress, this.incomingDonation.address, targetCharityEvent.address, amount);
 			console.log(tran);
 			this.fundsMoved.emit(this.incomingDonation.address);
 			this.activeModal.close();

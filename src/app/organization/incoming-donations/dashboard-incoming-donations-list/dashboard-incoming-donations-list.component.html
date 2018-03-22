@@ -1,0 +1,29 @@
+<div class="row incoming-donations-row">
+	<div class="card incoming-donations-actual">
+		<div class="incoming-donations-content">
+			<h4>Incoming Donations</h4>
+			<div class="id-tools">
+				<button type="button" class="btn btn-primary" (click)="toAllDonations()">To All Incoming Donation</button>
+				<div class="btn-group">
+					<button type="button" class="btn btn-primary" (click)="addClick()">Add new Incoming Donation</button>
+					<div class="btn-group" ngbDropdown placement="bottom-right" role="group" aria-label="Upload CSV File">
+						<button class="btn btn-primary strange-btn" ngbDropdownToggle><i class="fa fa-caret-down"></i></button>
+						<div class="dropdown-menu" ngbDropdownMenu>
+							<button class="dropdown-item">Upload CSV File</button>
+							<input type="file" class="upload-btn" value="Upload CSV File" />
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="tab-primary">
+
+				<opc-incoming-donations-sources-filter [organizationAddress]="organizationAddress"></opc-incoming-donations-sources-filter>
+
+				<div class="tab-content">
+					<opc-incoming-donations-list [organizationAddress]="organizationAddress" [incomingDonations]="incomingDonations.slice(0, 10)"></opc-incoming-donations-list>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
