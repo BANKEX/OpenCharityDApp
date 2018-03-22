@@ -66,26 +66,6 @@ export class DashboardIncomingDonationsListComponent  implements OnInit, OnDestr
 		incomingDonation.amount = await this.tokenContractService.balanceOf(incomingDonation.address);
 	}
 
-	public getRWID(incomingDonation: AppIncomingDonation): string {
-		if(incomingDonation == null) return "";
-		return incomingDonation.realWorldsIdentifier;
-	}
-
-	public getTags(incomingDonation: AppIncomingDonation): string {
-		if(incomingDonation == null) return "";
-		return incomingDonation.tags;
-	}
-
-	public getAmount(incomingDonation: AppIncomingDonation): string {
-		if(incomingDonation == null) return "";
-		return incomingDonation.amount;
-	}
-
-	public isDonation(incomingDonation: AppIncomingDonation): boolean {
-		return incomingDonation != null;
-	}
-
-
 
 	public toDetails(incomingDonation: AppIncomingDonation): void {
 		this.router.navigate([`/organization/${this.organizationAddress}/donation/${incomingDonation.address}/details`]);
