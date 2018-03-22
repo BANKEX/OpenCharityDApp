@@ -76,6 +76,10 @@ export class IncomingDonationsAllComponent implements OnInit, OnDestroy {
 		event.preventDefault();
 	}
 
+	public addClick() {
+		this.router.navigate([`/organization/${this.organizationAddress}/donation/add`]);
+	}
+
 	ngOnDestroy(): void {
 		this.componentDestroyed.next();
 	}
