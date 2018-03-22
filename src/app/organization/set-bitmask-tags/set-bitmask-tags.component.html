@@ -8,7 +8,8 @@
 			   (onRemove)="toggleTag($event.value)"
 			   [inputClass]="'form-control'"
 			   theme="minimal">
-		<tag-input-dropdown [showDropdownIfEmpty]="true"
+		<tag-input-dropdown [showDropdownIfEmpty]="false"
+							[focusFirstElement]="true"
 							[identifyBy]="'value'"
 							[displayBy]="'name'"
 							[autocompleteItems]="tags">
