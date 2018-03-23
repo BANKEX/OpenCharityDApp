@@ -14,17 +14,17 @@ module.exports = async function(deployer, network, accounts) {
     await deployer.deploy(SafeMath, {overwrite: false});
     await deployer.link(SafeMath, [OpenCharityToken]);
     await deployer.link(Tools, [Organization, Employee, CharityEvent]);
-    // await deployer.deploy(OpenCharityToken, tokenParams.name, tokenParams.symbol, tokenParams.decimals, {overwrite: false});
+    await deployer.deploy(OpenCharityToken, tokenParams.name, tokenParams.symbol, tokenParams.decimals, {overwrite: false});
 
-    // const openCharityTokenInstance = await OpenCharityToken.deployed();
-    // await deployer.deploy(Organization, openCharityTokenInstance.address, adminAddresses, 'Test Organization Name');
-    // const OrganizationInstance = await Organization.deployed();
-    // await openCharityTokenInstance.setMintAgent(OrganizationInstance.address, true);
+    const openCharityTokenInstance = await OpenCharityToken.deployed();
+    await deployer.deploy(Organization, openCharityTokenInstance.address, adminAddresses, 'Test Organization Name');
+    const OrganizationInstance = await Organization.deployed();
+    await openCharityTokenInstance.setMintAgent(OrganizationInstance.address, true);
 
     // dev function to deploy new organizations
-	// const token = OpenCharityToken.at(openCharityTokenInstance.address);
-	const token = OpenCharityToken.at('0xecfcab0a285d3380e488a39b4bb21e777f8a4eac');
-	await createTestOrganizations(deployer, token, adminAddresses, ['Staging Organization Test 40', 'Staging Organization Test 41', 'Staging Organization Test 42']);
+	const token = OpenCharityToken.at(openCharityTokenInstance.address);
+	/*const token = OpenCharityToken.at('0xa4580bdd864022a3874c57d35bf73d7717c40a48');*/
+	await createTestOrganizations(deployer, token, adminAddresses, ['Staging Organization Test 43', 'Staging Organization Test 44', 'Staging Organization Test 45']);
 
 };
 
