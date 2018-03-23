@@ -9,6 +9,7 @@ import {NgbTypeahead} from '@ng-bootstrap/ng-bootstrap';
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
 import {ActivatedRoute, Params, Router} from '@angular/router';
+import {Location} from '@angular/common';
 
 
 @Component({
@@ -22,7 +23,7 @@ export class AddIncomingDonationComponent implements OnInit {
 
 	constructor(
 		private route: ActivatedRoute,
-		private router: Router,
+		private location: Location,
 	) {
 
 	}
@@ -33,9 +34,9 @@ export class AddIncomingDonationComponent implements OnInit {
 		});
 	}
 
-	public goBackToOrganization(event: Event): void {
+	public goBackToPreviousPage(event: Event): void {
+		this.location.back();
 		event.preventDefault();
-		this.router.navigate(['/organization', this.organizationAddress]);
 	}
 
 	ngOnDestroy(): void {
