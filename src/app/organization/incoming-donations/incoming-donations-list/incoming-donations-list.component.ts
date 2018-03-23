@@ -37,7 +37,6 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 	}
 
 	public ngOnInit(): void {
-		this.updateIncomingDonationsList();
 		this.initEventsListeners();
 	}
 
@@ -96,53 +95,8 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 	}
 
 
-	// show ID cards with loading animation and replace it
-	// by data when it is loaded
-	public async updateIncomingDonationsList(): Promise<void> {
-		// get amount of organization incoming donations
-		const incomingDonationsCount: number = parseInt(await this.organizationContractService.getIncomingDonationsCount(this.organizationAddress), 10);
-
-		// initialize empty array
-		// null value means that incoming donation data is loading
-		// when data is loaded, replace null by data
-		this.incomingDonations = times(incomingDonationsCount, constant(null));
-
-
-		this.organizationContractService.getIncomingDonations(this.organizationAddress)
-			.take(incomingDonationsCount)
-			.subscribe(async (res: { address: string, index: number }) => {
-
-				// it is a hack. without zone.run it doesn't work properly:
-				// it doesn't update incoming donations in template
-				// if you change it to .detectChanges, it breaks further change detection of other components
-				// if you know how to fix it, please do it
-				this.zone.run(async () => {
-					this.incomingDonations[res.index] = merge({}, await this.incomingDonationContractService.getIncomingDonationDetails(res.address), {
-						confirmation: ConfirmationStatusState.CONFIRMED
-					});
-					await this.updateIncomingDonationAmount(this.incomingDonations[res.index]);
-				});
-
-			});
-	}
-
-
 	public toDetails(incomingDonation: AppIncomingDonation): void {
 		this.router.navigate([`/organization/${this.organizationAddress}/donation/${incomingDonation.address}/details`]);
-	}
-
-	public addClick() {
-		this.router.navigate([`/organization/${this.organizationAddress}/donation/add`]);
-	}
-
-	public async updateIncomingDonationAmount(incomingDonation: AppIncomingDonation): Promise<void> {
-		incomingDonation.amount = await this.tokenContractService.balanceOf(incomingDonation.address);
-	}
-
-	public async updateIncomingDonationsAmount(incomingDonations: AppIncomingDonation[]) {
-		incomingDonations.forEach((incomingDonation) => {
-			this.updateIncomingDonationAmount(incomingDonation);
-		});
 	}
 
 	public async openSendDonationFundsModal(incomingDonation: AppIncomingDonation): Promise<void> {
@@ -161,7 +115,9 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 		});
 	}
 
-
+	public async updateIncomingDonationAmount(incomingDonation: AppIncomingDonation): Promise<void> {
+		incomingDonation.amount = await this.tokenContractService.balanceOf(incomingDonation.address);
+	}
 
 	// Incoming Donations States
 	public isPending(incomingDonation: AppIncomingDonation): boolean {

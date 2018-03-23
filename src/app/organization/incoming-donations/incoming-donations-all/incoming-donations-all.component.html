@@ -7,7 +7,7 @@
 	</ol>
 	<div class="page-title">
 		<h4>
-			{{name}}
+			{{organizationName}}
 			<div>
 				<small>{{organizationAddress}}</small>
 			</div>
@@ -32,9 +32,9 @@
 				</div>
 
 				<div class="tab-primary">
-					<opc-incoming-donations-sources-filter [organizationAddress]="organizationAddress"></opc-incoming-donations-sources-filter>
+					<opc-incoming-donations-sources-filter [organizationAddress]="organizationAddress" (sourceChanged)="selectedSourceChanged($event)"></opc-incoming-donations-sources-filter>
 					<div class="tab-content">
-						<opc-incoming-donations-list [organizationAddress]="organizationAddress" [incomingDonations]="incomingDonations"></opc-incoming-donations-list>
+						<opc-incoming-donations-list [organizationAddress]="organizationAddress" [incomingDonations]="displayedIncomingDonations"></opc-incoming-donations-list>
 					</div>
 				</div>
 			</div>

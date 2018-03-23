@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
 
 @Component({
@@ -8,6 +8,7 @@ import {OrganizationContractService} from '../../../core/contracts-services/orga
 })
 export class IncomingDonationsSourcesFilterComponent implements OnInit {
 	@Input('organizationAddress') organizationAddress: string;
+	@Output('sourceChanged') sourceChanged: EventEmitter<number> = new EventEmitter<number>();
 
 	public selectedSource: number = -1;
 	public sourcesNamesList: string[] = [];
@@ -34,6 +35,7 @@ export class IncomingDonationsSourcesFilterComponent implements OnInit {
 
 	public changeSourceTab(sourceId: number) {
 		this.selectedSource = sourceId;
+		this.sourceChanged.emit(sourceId);
 	}
 
 	public async showNewSourceForm() {
