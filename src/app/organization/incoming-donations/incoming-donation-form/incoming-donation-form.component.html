@@ -51,7 +51,7 @@
 				<ng-template #rt let-r="result" let-t="term">
 					<span data-id="{{r.id}}">{{r.name}}</span>
 				</ng-template>
-				<label for="typeahead-focus">Source ID:</label>
+				<label for="typeahead-focus">Source ID <small class="text-normal">*</small></label>
 				<input id="typeahead-focus" type="text"
 					   class="form-control"
 					   [formControlName]="'source'"
@@ -59,8 +59,20 @@
 					   (click)="click$.next($event.target.value)"
 					   [ngbTypeahead]="search" [resultTemplate]="rt"
 					   [inputFormatter]="formatter"
+					   [ngClass]="{'error' : incomingDonationForm.get('source').touched && incomingDonationForm.get('source').invalid}"
 					   #typeahead="ngbTypeahead"
 				/>
+
+				<div *ngIf="incomingDonationForm.get('source').touched && incomingDonationForm.get('source').hasError('required')">
+					<label class="error">
+						Source ID is required
+					</label>
+				</div>
+				<div *ngIf="incomingDonationForm.get('source').touched && incomingDonationForm.get('source').hasError('min')">
+					<label class="error">
+						Source ID should be > 0
+					</label>
+				</div>
 			</div>
 		</div>
 	</div>

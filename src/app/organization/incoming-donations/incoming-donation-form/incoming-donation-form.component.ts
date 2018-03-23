@@ -1,6 +1,6 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {TagsBitmaskService} from '../../services/tags-bitmask.service';
 import {TransactionReceipt} from 'web3/types';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
@@ -9,11 +9,38 @@ import {NgbTypeahead} from '@ng-bootstrap/ng-bootstrap';
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
 import {find} from 'lodash';
+import {isString} from 'ng2-toasty/src/toasty.utils';
+import {isObject} from 'rxjs/util/isObject';
 
 
 type IncomingDonationSource = {
 	id: number;
 	name: string;
+};
+
+export function sourceMinValidator(): ValidatorFn {
+	return (control: AbstractControl): {[key: string]: any} => {
+		if (isObject(control.value) &&
+			Object.keys(control.value).length === 0) {
+			return {
+				'required': { value: control.value }
+			};
+		}
+
+		if (!control.value) {
+			return {
+				'required': { value: control.value }
+			};
+		}
+
+		if (isString(control.value) && parseInt(control.value, 10) <= 0) {
+			return {
+				'min': { value: control.value }
+			};
+		}
+
+		return null;
+	};
 }
 
 @Component({
@@ -21,6 +48,7 @@ type IncomingDonationSource = {
 	templateUrl: 'incoming-donation-form.component.html',
 	styleUrls: ['incoming-donation-form.component.scss']
 })
+
 export class IncomingDonationFormComponent implements OnInit {
 	@Input('organizationAddress') organizationAddress: string;
 	@Input('incomingDonation') incomingDonation: AppIncomingDonation;
@@ -61,7 +89,7 @@ export class IncomingDonationFormComponent implements OnInit {
 	}
 
 	public async submitForm() {
-		if (this.incomingDonationForm.invalid) {return;}
+		if (this.incomingDonationForm.invalid) { return; }
 		const f = this.incomingDonationForm.value;
 
 
@@ -138,7 +166,7 @@ export class IncomingDonationFormComponent implements OnInit {
 			this.incomingDonationForm = this.fb.group({
 				realWorldIdentifier: ['', Validators.required],
 				amount: ['', [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)]],
-				source: [{}, Validators.required],
+				source: [{}, [Validators.required, sourceMinValidator()]],
 				note: ''
 			});
 		}
@@ -147,5 +175,4 @@ export class IncomingDonationFormComponent implements OnInit {
 	private getSourceById(id: string): IncomingDonationSource  {
 		return find(this.sources, {id: id});
 	}
-
 }
