@@ -1,7 +1,7 @@
 @import 'src/assets/scss/variables';
 
 .charity-event-card {
-	min-height: 240px;
+	min-height: 164px;
 	position: relative;
 	cursor: pointer;
 
@@ -29,13 +29,7 @@
 	  z-index: 10;
 	}
 
-	.charity-event-raised {
-		position: absolute;
-		width: 100%;
-		bottom: 12px;
-	}
-
 	.charity-description {
-		margin-bottom: 92px;
+		margin-bottom: 40px;
 	}
 }
