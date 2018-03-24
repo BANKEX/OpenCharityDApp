@@ -11,6 +11,7 @@ import {OrganizationContractService} from '../../../core/contracts-services/orga
 import {find} from 'lodash';
 import {TokenContractService} from '../../../core/contracts-services/token-contract.service';
 import {CharityEventContractService} from '../../../core/contracts-services/charity-event-contract.service';
+import {Location} from '@angular/common';
 
 @Component({
 	templateUrl: 'incoming-donations-details.component.html',
@@ -30,13 +31,14 @@ export class IncomingDonationsDetailsComponent implements OnInit, OnDestroy {
 		private organizationContractService: OrganizationContractService,
 		private tokenContractService: TokenContractService,
 		private charityEventContractService: CharityEventContractService,
-		private modalService: NgbModal
+		private modalService: NgbModal,
+		private location: Location
 	) { }
 
 	async ngOnInit(): Promise<void> {
 		this.route.params.subscribe(params => {
-			this.organizationAddress = params["address"];
-			this.incomingDonationAddress = params["donation"];
+			this.organizationAddress = params['address'];
+			this.incomingDonationAddress = params['donation'];
 		});
 		this.incomingDonation = await this.incomingDonationsContractService.getIncomingDonationDetails(this.incomingDonationAddress);
 	}
@@ -65,8 +67,8 @@ export class IncomingDonationsDetailsComponent implements OnInit, OnDestroy {
 		this.componentDestroyed.next();
 	}
 
-	goBackToOrganization(event: Event): void {
-		this.router.navigate(['/organization', this.organizationAddress]);
+	public goBackToPreviousPage(event: Event): void {
+		this.location.back();
 		event.preventDefault();
 	}
 
