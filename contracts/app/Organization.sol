@@ -3,11 +3,11 @@ pragma solidity ^0.4.17;
 import "./Employee.sol";
 import "./CharityEvent.sol";
 import "./IncomingDonation.sol";
-import "../OpenCharityMintableToken.sol";
+import "./interfaces/OpenCharityTokenInterface.sol";
 
 
 contract Organization {
-	OpenCharityMintableToken token;
+	OpenCharityTokenInterface token;
 
 	string public name;
 
@@ -58,7 +58,7 @@ contract Organization {
 
 
 
-	function Organization(OpenCharityMintableToken _token, address[] _admins, string _name) public {
+	function Organization(OpenCharityTokenInterface _token, address[] _admins, string _name) public {
 		// at least one admin is required
 		require(_admins.length > 0);
 
@@ -69,7 +69,7 @@ contract Organization {
 		}
 
 		name = _name;
-		token = OpenCharityMintableToken(_token);
+		token = OpenCharityTokenInterface(_token);
 
 	}
 
@@ -159,6 +159,27 @@ contract Organization {
 		CharityEvent(_charityEvent).updateMetaStorageHash(_hash);
 
 		MetaStorageHashUpdated(_charityEvent, _hash);
+	}
+
+	/**
+     * @dev Update charity event data
+     * @param _name New name
+     * @param _target New target
+     * @param _tags New tags
+     * @param _metaStorageHash New metaStorageHash
+     */
+	function updateCharityEventDetails(address _charityEvent, string _name, uint _target, bytes1 _tags, string _metaStorageHash) public onlyAdmin returns(bool) {
+		require(_charityEvent != address(0x0));
+		// check that it is CharityEvent contract
+		CharityEvent charityEvent = CharityEvent(_charityEvent);
+		require(charityEvent.isCharityEvent());
+//
+		// new target cannot be less that raised amount
+		require(token.balanceOf(charityEvent) <= _target);
+//
+		require(charityEvent.updateCharityEventDetails(_name, _target, _tags, _metaStorageHash));
+//
+		return true;
 	}
 
 
