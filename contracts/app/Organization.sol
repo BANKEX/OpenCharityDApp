@@ -19,20 +19,20 @@ contract Organization {
 	mapping(address => bool) public employees;
 	mapping(uint => address) public employeeIndex;
 	uint public employeeCount = 0;
-	event EmployeeAdded(address indexed organization, address employee);
+	event EmployeeAdded(address employee, address indexed who);
 
 	// list of CharityEvents
 	mapping(address => bool) public charityEvents;
 	mapping(uint => address) public charityEventIndex;
 	uint public charityEventCount = 0;
-	event CharityEventAdded(address indexed organization, address charityEvent);
+	event CharityEventAdded(address charityEvent, address indexed who);
 
 
 	// list of IncomingDonations
 	mapping(address => bool) public incomingDonations;
 	mapping(uint => address) public incomingDonationIndex;
 	uint public incomingDonationCount = 0;
-	event IncomingDonationAdded(address indexed organization, address incomingDonation, address indexed who, uint amount, uint sourceId);
+	event IncomingDonationAdded(address incomingDonation, address indexed who, uint amount, uint sourceId);
 
 	// Triggered when meta storage of some smart contract is updated
 	event MetaStorageHashUpdated(address indexed ownerAddress, string metaStorageHash);
