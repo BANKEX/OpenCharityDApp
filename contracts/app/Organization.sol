@@ -26,6 +26,7 @@ contract Organization {
 	mapping(uint => address) public charityEventIndex;
 	uint public charityEventCount = 0;
 	event CharityEventAdded(address charityEvent);
+	event CharityEventEdited(address indexed charityEvent, address indexed who);
 
 
 	// list of IncomingDonations
@@ -173,12 +174,18 @@ contract Organization {
 		// check that it is CharityEvent contract
 		CharityEvent charityEvent = CharityEvent(_charityEvent);
 		require(charityEvent.isCharityEvent());
-//
+
 		// new target cannot be less that raised amount
 		require(token.balanceOf(charityEvent) <= _target);
-//
+
+		string initialMetaStorageHash = charityEvent.metaStorageHash();
+
 		require(charityEvent.updateCharityEventDetails(_name, _target, _tags, _metaStorageHash));
-//
+
+		CharityEventEdited(_charityEvent, msg.sender);
+
+		MetaStorageHashUpdated(charityEvent, _metaStorageHash);
+
 		return true;
 	}
 
