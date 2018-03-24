@@ -13,6 +13,8 @@ import {OrganizationContractService} from './contracts-services/organization-con
 import {OrganizationContractEventsService} from './contracts-services/organization-contract-events.service';
 import {MetaDataStorageService} from './meta-data-storage.service';
 import {PendingTransactionService} from './pending-transactions.service';
+import {LoadingTransparentOverlayComponent} from './loading-transparent-overlay/loading-transparent-overlay.component';
+import {LoadingTransparentOverlayService} from './loading-transparent-overlay.service';
 
 export function windowFactory() {
 	return window;
@@ -24,18 +26,20 @@ const contractsServices = [
 	OrganizationContractService,
 	OrganizationContractEventsService,
 	TokenContractService,
-]
+];
 
 @NgModule({
 	imports: [CommonModule],
 	declarations: [
 		LoadingOverlayComponent,
+		LoadingTransparentOverlayComponent,
 		BlockingNotificationOverlayComponent
 	],
-	exports: [LoadingOverlayComponent, BlockingNotificationOverlayComponent],
+	exports: [LoadingOverlayComponent, LoadingTransparentOverlayComponent, BlockingNotificationOverlayComponent],
 	providers: [
 		Web3ProviderService,
 		LoadingOverlayService,
+		LoadingTransparentOverlayService,
 		BlockingNotificationOverlayService,
 		MetamaskCheckService,
 		{provide: 'Window', useFactory: windowFactory},

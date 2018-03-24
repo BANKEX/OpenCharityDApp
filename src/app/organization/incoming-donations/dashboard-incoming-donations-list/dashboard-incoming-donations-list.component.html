@@ -21,7 +21,7 @@
 				<opc-incoming-donations-sources-filter [organizationAddress]="organizationAddress" (sourceChanged)="selectedSourceChanged($event)"></opc-incoming-donations-sources-filter>
 
 				<div class="tab-content">
-					<opc-incoming-donations-list [organizationAddress]="organizationAddress" [incomingDonations]="incomingDonations.slice(0, 10)"></opc-incoming-donations-list>
+					<opc-incoming-donations-list [organizationAddress]="organizationAddress" [incomingDonations]="displayedIncomingDonations.slice(0, 10)"></opc-incoming-donations-list>
 				</div>
 			</div>
 		</div>

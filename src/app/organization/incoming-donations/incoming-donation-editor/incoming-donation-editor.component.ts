@@ -10,6 +10,7 @@ import {OrganizationContractService} from '../../../core/contracts-services/orga
 import {OrganizationSharedService} from '../../services/organization-shared.service';
 import {AppIncomingDonation, ConfirmationStatusState, ContractIncomingDonation} from '../../../open-charity-types';
 import {NgbTypeahead} from '@ng-bootstrap/ng-bootstrap';
+import {Location} from '@angular/common';
 
 
 type IncomingDonationSource = {
@@ -39,7 +40,8 @@ export class IncomingDonationsEditorComponent implements OnInit, OnDestroy {
 		private fb: FormBuilder,
 		private tagsBitmaskService: TagsBitmaskService,
 		private organizationContractService: OrganizationContractService,
-		private organizationSharedService: OrganizationSharedService
+		private organizationSharedService: OrganizationSharedService,
+		private location: Location
 	) { }
 
 	async ngOnInit(): Promise<void> {
@@ -51,9 +53,9 @@ export class IncomingDonationsEditorComponent implements OnInit, OnDestroy {
 
 
 
-	public goBackToOrganization(event: Event): void {
+	public goBackToPreviousPage(event: Event): void {
+		this.location.back();
 		event.preventDefault();
-		this.router.navigate(['/organization', this.organizationAddress]);
 	}
 
 	ngOnDestroy(): void {

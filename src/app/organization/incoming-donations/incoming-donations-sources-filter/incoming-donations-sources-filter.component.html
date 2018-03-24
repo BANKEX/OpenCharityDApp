@@ -13,23 +13,27 @@
 	</li>
 
 	<li class="nav-item add-new-source" (click)="showNewSourceForm()">
-		<div class="add-new-source-form" *ngIf="newSourceFormVisible">
-			<input type="text" name="new_source_name" placeholder="New Source Name" #newSourceName>
-
-			<button class="btn btn-primary btn-xs" (click)="$event.stopPropagation(); submitNewSourceForm(newSourceName.value)">
-				<i class="fa fa-floppy"></i>
-				Add
-			</button>
-
-			<button class="btn btn-default btn-xs" (click)="$event.stopPropagation(); cancelNewSourceForm()">
-				<i class="fa fa-times"></i>
-				Cancel
-			</button>
-
+		<div class="add-new-source-form" *ngIf="newSourceFormVisible && !newSourceFormLoading">
+			<div class="input-group">
+				<input type="text" class="form-control" name="new_source_name" placeholder="New Source Name" [(ngModel)]="newSourceName">
+				<div class="input-group-append">
+					<button class="btn btn-primary"
+							[ngClass]="{ 'disabled': !newSourceName }"
+							(click)="$event.stopPropagation(); submitNewSourceForm(newSourceName)">
+						<i class="fa fa-plus-circle"></i>
+						Add
+					</button>
+					<button class="btn btn-default" (click)="$event.stopPropagation(); cancelNewSourceForm()">
+						<i class="fa fa-times"></i>
+						Cancel
+					</button>
+				</div>
+			</div>
 		</div>
 
+		<i class="fa fa-spinner fa-spin" *ngIf="newSourceFormLoading"></i>
 
-		<a class="nav-link" *ngIf="!newSourceFormVisible">
+		<a class="nav-link" *ngIf="!newSourceFormVisible && !newSourceFormLoading">
 			<i class="fa fa-plus" title="Add new source"></i>
 			Add New Source
 		</a>

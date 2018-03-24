@@ -13,6 +13,8 @@ export class IncomingDonationsSourcesFilterComponent implements OnInit {
 	public selectedSource: number = -1;
 	public sourcesNamesList: string[] = [];
 	public newSourceFormVisible: boolean = false;
+	public newSourceFormLoading: boolean = false;
+	public newSourceName: string = '';
 
 	constructor(
 		private organizationContractService: OrganizationContractService
@@ -20,17 +22,20 @@ export class IncomingDonationsSourcesFilterComponent implements OnInit {
 
 	}
 
-	ngOnInit() {
-		this.updateListOfSources();
-
+	async ngOnInit() {
+		await this.updateListOfSources();
 	}
 
 	public async updateListOfSources(): Promise<void>  {
+		this.newSourceFormLoading = true;
+
 		const sourceIds: number = parseInt(await this.organizationContractService.getIncomingDonationsSourcesIds(this.organizationAddress));
 
 		for (let i = 0; i < sourceIds; i++) {
 			this.sourcesNamesList[i] = await this.organizationContractService.getIncomingDonationSourceName(this.organizationAddress, i);
 		}
+
+		this.newSourceFormLoading = false;
 	}
 
 	public changeSourceTab(sourceId: number) {
@@ -43,9 +48,18 @@ export class IncomingDonationsSourcesFilterComponent implements OnInit {
 	}
 
 	public async submitNewSourceForm(newSourceName: string): Promise<void> {
-		if (!newSourceName) {return;}
+		if (!newSourceName) {
+			return;
+		}
+
+		this.newSourceFormLoading = true;
+
 		await this.organizationContractService.addNewIncomingDonationsSource(this.organizationAddress, newSourceName);
+
 		this.newSourceFormVisible = false;
+		this.newSourceFormLoading = false;
+
+		await this.updateListOfSources();
 	}
 
 	public cancelNewSourceForm() {
