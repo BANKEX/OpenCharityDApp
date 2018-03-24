@@ -244,11 +244,6 @@ export const OrganizationContractAbi = [
 		'anonymous': false,
 		'inputs': [
 			{
-				'indexed': true,
-				'name': 'organization',
-				'type': 'address'
-			},
-			{
 				'indexed': false,
 				'name': 'employee',
 				'type': 'address'
@@ -260,11 +255,6 @@ export const OrganizationContractAbi = [
 	{
 		'anonymous': false,
 		'inputs': [
-			{
-				'indexed': true,
-				'name': 'organization',
-				'type': 'address'
-			},
 			{
 				'indexed': false,
 				'name': 'charityEvent',
@@ -278,18 +268,8 @@ export const OrganizationContractAbi = [
 		'anonymous': false,
 		'inputs': [
 			{
-				'indexed': true,
-				'name': 'organization',
-				'type': 'address'
-			},
-			{
 				'indexed': false,
 				'name': 'incomingDonation',
-				'type': 'address'
-			},
-			{
-				'indexed': true,
-				'name': 'who',
 				'type': 'address'
 			},
 			{
