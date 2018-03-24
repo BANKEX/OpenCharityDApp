@@ -178,8 +178,6 @@ contract Organization {
 		// new target cannot be less that raised amount
 		require(token.balanceOf(charityEvent) <= _target);
 
-		string initialMetaStorageHash = charityEvent.metaStorageHash();
-
 		require(charityEvent.updateCharityEventDetails(_name, _target, _tags, _metaStorageHash));
 
 		CharityEventEdited(_charityEvent, msg.sender);
