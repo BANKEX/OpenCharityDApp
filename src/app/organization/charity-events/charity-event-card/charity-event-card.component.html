@@ -1,20 +1,34 @@
-<div class="card charity-event-card card-hover" [ngClass]="{'pending' : charityEvent && isPending()}" (click)="goToTransactions()">
+<div class="card charity-event-card card-hover" [ngClass]="{'pending' : charityEvent && isPending()}" (click)="goToTransactions($event)">
 	<div class="loading-overlay" *ngIf="charityEvent === null"><i class="fa fa-spinner fa-spin"></i></div>
 
 	<div *ngIf="isEvent()">
 
-		<div class="btn-group btn-group-sm charity-event-tools">
+		<div class="btn-group btn-group-sm charity-event-tools dropdown" (click)="$event.preventDefault()">
 			<button type="button" class="btn btn-default"
 					(click)="$event.stopPropagation()"
 					title="This charity event has not stored in blockchain yet"
-					*ngIf="isPending(charityEvent)"
-			>
+					*ngIf="isPending(charityEvent)">
 				<i class="fa fa-spinner fa-spin"></i>
 			</button>
 
 			<button type="button" class="btn btn-default" (click)="editClick($event)" *ngIf="!isPending(charityEvent)"><i class="fa fa-pencil"></i></button>
 			<button type="button" class="btn btn-default" (click)="removeClick($event)" *ngIf="!isPending(charityEvent)"><i class="fa fa-trash"></i></button>
-			<button type="button" class="btn btn-default" (click)="otherClick($event)" *ngIf="!isPending(charityEvent)"><i class="fa fa-ellipsis-h"></i></button>
+			<div class="btn-group" *ngIf="!isPending(charityEvent)" ngbDropdown role="group">
+				<button class="btn btn-default" ngbDropdownToggle><i class="fa fa-ellipsis-h"></i></button>
+				<div class="dropdown-menu" ngbDropdownMenu>
+					  <button class="dropdown-item" (click)="addDonationClick($event)">
+							<i class="ti-plus pdd-right-10"></i>
+							<span>New Donation</span>
+					  </button>
+				</div>
+			</div>
+			<!-- <opc-modal-dialog *ngIf="showDialog"
+					[(visible)]="showDialog"
+					[title]="'Add new incoming donation to ' + charityEvent.name"
+					(close)="showDialog = !showDialog">
+				<opc-add-incoming-donation-modal (close)="showDialog = !showDialog">
+				</opc-add-incoming-donation-modal>
+			</opc-modal-dialog> -->
 		</div>
 
 		<div class="card-media" *ngIf="charityEvent.image">
