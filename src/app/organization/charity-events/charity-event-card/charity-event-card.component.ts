@@ -1,25 +1,31 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {AppCharityEvent, ConfirmationStatusState} from '../../../open-charity-types';
+import {AppCharityEvent, ConfirmationStatusState, AppIncomingDonation} from '../../../open-charity-types';
 import {Router} from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AddIncomingDonationModalComponent } from '../../incoming-donations/add-incoming-donation-modal/add-incoming-donation-modal.component';
-
+import { IncomingDonationSendFundsModalComponent } from '../../incoming-donations/incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
+import { OrganizationContractService } from '../../../core/contracts-services/organization-contract.service';
+import { CharityEventContractService } from '../../../core/contracts-services/charity-event-contract.service';
+import { OrganizationSharedService } from '../../services/organization-shared.service';
+import { forkJoin } from 'rxjs/observable/forkJoin';
+import { NeatComponent } from '../../../shared/neat.component';
 @Component({
 	selector: 'opc-charity-events-card',
 	templateUrl: 'charity-event-card.component.html',
 	styleUrls: ['charity-event-card.component.scss']
 })
-export class CharityEventCardComponent implements OnInit {
+export class CharityEventCardComponent extends NeatComponent {
 	@Input('organizationAddress') organizationAddress: string;
 	@Input('charityEvent') public charityEvent: AppCharityEvent;
 
 	constructor(
 		private $router: Router,
 		private $modal: NgbModal,
+		private $organizationContractService: OrganizationContractService,
+		private $charityEventContractService: CharityEventContractService,
+		private $sharedService: OrganizationSharedService,
 	) {
-	}
-
-	ngOnInit() {
+		super();
 	}
 
 	public isEvent(): boolean {
@@ -58,10 +64,29 @@ export class CharityEventCardComponent implements OnInit {
 	}
 
 	public addDonationClick($event) {
-		const modalInstanse =
-			this.$modal.open(AddIncomingDonationModalComponent, {size: 'lg'}).componentInstance;
-	  	modalInstanse.out.subscribe((boom) => {
-	  	});
+		let modalInstance;
+		modalInstance =	this.$modal.open(AddIncomingDonationModalComponent, {size: 'lg'}).componentInstance;
+		modalInstance.charityEvent = this.charityEvent;
+		modalInstance.organizationAddress = this.organizationAddress;
+		let fromService$ = this.$sharedService.onIncomingDonationConfirmed();
+		fromService$.takeUntil(this.ngUnsubscribe).subscribe(async (donation) => {
+			console.log('Incoming donation created.');
+			console.log(donation);
+			const charityEventsAddresses: string[] = await this.$organizationContractService.getCharityEventsAsync(this.organizationAddress);
+			const charityEvents = await this.$charityEventContractService.getCharityEventsList(charityEventsAddresses);
+			modalInstance = this.$modal.open(IncomingDonationSendFundsModalComponent).componentInstance;
+			modalInstance.organizationAddress = this.organizationAddress;
+			modalInstance.incomingDonation = donation;
+			modalInstance.charityEvents = charityEvents;
+			modalInstance.fundsMoved.takeUntil(this.ngUnsubscribe).subscribe((donationAddress: string) => {
+				console.log('Funds sent.');
+				//TODO: Update components
+				// const incDonation = find(this.incomingDonations, {address: incomingDonationAddress});
+				// if (this.incomingDonations) {
+				// 	this.updateIncomingDonationAmount(incDonation);
+				// }
+			});
+		});
 	}
 
 	// public stopClickBubbling($event: Event): void {

@@ -20,6 +20,7 @@ import {OrganizationContractService} from '../../../core/contracts-services/orga
 })
 
 export class IncomingDonationSendFundsModalComponent implements OnInit {
+	@Input('charityEventAddress') charityEventAddress: string; // If spcified - move all funds to this CE
 	@Input('organizationAddress') organizationAddress: string;
 	@Input('charityEvents') charityEvents: ContractCharityEvent[];
 	@Input('incomingDonation') incomingDonation: ContractIncomingDonation;
@@ -70,7 +71,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 		this.moveFundsForm = this.fb.group({
 			targetCharityEvent: ['', [Validators.required]],
 			amount: ['', [Validators.required, this.validateAmount.bind(this)]]
-		})
+		});
 	}
 
 	private validateAmount(control: AbstractControl): ValidationErrors | null {
@@ -78,7 +79,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 			return { moreThanMax: true };
 		}
 
-		if( parseInt(control.value, 10) <= 0) {
+		if (parseInt(control.value, 10) <= 0) {
 			return { lessThanMin: true };
 		}
 
@@ -86,6 +87,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 	}
 
 
+	// tslint:disable-next-line:member-ordering
 	public async sendFunds(targetCharityEvent: ContractCharityEvent, amount: string): Promise<void> {
 		try {
 			const tran = await this.organizationContractService.moveFundsToCharityEvent(this.organizationAddress, this.incomingDonation.address, targetCharityEvent.address, amount);
