@@ -10,7 +10,7 @@ import 'rxjs/add/operator/distinctUntilChanged';
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {filter} from 'lodash';
 import {TagsBitmaskService} from '../../services/tags-bitmask.service';
-import {ContractCharityEvent, ContractIncomingDonation} from '../../../open-charity-types';
+import {ContractCharityEvent, ContractIncomingDonation, AppCharityEvent} from '../../../open-charity-types';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
 
 
@@ -20,7 +20,7 @@ import {OrganizationContractService} from '../../../core/contracts-services/orga
 })
 
 export class IncomingDonationSendFundsModalComponent implements OnInit {
-	@Input('charityEventAddress') charityEventAddress: string; // If spcified - move all funds to this CE
+	@Input('charityEvent') charityEvent: AppCharityEvent; // If spcified - move all funds to this CE
 	@Input('organizationAddress') organizationAddress: string;
 	@Input('charityEvents') charityEvents: ContractCharityEvent[];
 	@Input('incomingDonation') incomingDonation: ContractIncomingDonation;

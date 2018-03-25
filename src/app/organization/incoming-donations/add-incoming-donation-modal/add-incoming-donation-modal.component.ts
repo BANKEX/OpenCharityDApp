@@ -10,6 +10,8 @@ import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
+import { NeatComponent } from '../../../shared/neat.component';
+import { LoadingTransparentOverlayService } from '../../../core/loading-transparent-overlay.service';
 
 
 @Component({
@@ -17,30 +19,27 @@ import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
 	templateUrl: 'add-incoming-donation-modal.component.html',
 	styleUrls: ['add-incoming-donation-modal.component.scss']
 })
-export class AddIncomingDonationModalComponent implements OnInit, OnDestroy {
+export class AddIncomingDonationModalComponent extends NeatComponent {
 
-	// @Input() charityEvent: AppCharityEvent;
-	// @Input() organizationAddress: string;
+	@Input() charityEvent: AppCharityEvent;
+	@Input() organizationAddress: string;
 	@Output() close = new EventEmitter();
  	@Output() donationCreated$: Subject<string> = new Subject();
 
-	private componentDestroyed: Subject<void> = new Subject<void>();
-
 	constructor(
-		public activeModal: NgbActiveModal
+		public activeModal: NgbActiveModal,
+		private $loadingTransparentOverlayService: LoadingTransparentOverlayService,
+		private $sharedService: OrganizationSharedService,
 	) {
+		super();
+		$sharedService.onIncomingDonationAdded().takeUntil(this.ngUnsubscribe).subscribe(_ => $loadingTransparentOverlayService.showOverlay());
+		$sharedService.onIncomingDonationConfirmed().takeUntil(this.ngUnsubscribe).subscribe(_ => $loadingTransparentOverlayService.showOverlay());
 	}
 
 	onDonationCreated(donationAddress: string) {
+		console.log(donationAddress)
 		this.donationCreated$.next(donationAddress);
 		this.close.emit(true);
 		this.activeModal.close('Donation Created');
 	  }
-
-	ngOnInit() {
-	}
-
-	ngOnDestroy(): void {
-		this.componentDestroyed.next();
-	}
 }

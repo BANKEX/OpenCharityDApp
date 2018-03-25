@@ -9,6 +9,7 @@ import { CharityEventContractService } from '../../../core/contracts-services/ch
 import { OrganizationSharedService } from '../../services/organization-shared.service';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { NeatComponent } from '../../../shared/neat.component';
+import { LoadingTransparentOverlayService } from '../../../core/loading-transparent-overlay.service';
 @Component({
 	selector: 'opc-charity-events-card',
 	templateUrl: 'charity-event-card.component.html',
@@ -21,6 +22,7 @@ export class CharityEventCardComponent extends NeatComponent {
 	constructor(
 		private $router: Router,
 		private $modal: NgbModal,
+		private $loadingTransparentOverlayService: LoadingTransparentOverlayService,
 		private $organizationContractService: OrganizationContractService,
 		private $charityEventContractService: CharityEventContractService,
 		private $sharedService: OrganizationSharedService,
@@ -72,12 +74,15 @@ export class CharityEventCardComponent extends NeatComponent {
 		fromService$.takeUntil(this.ngUnsubscribe).subscribe(async (donation) => {
 			console.log('Incoming donation created.');
 			console.log(donation);
+			this.$loadingTransparentOverlayService.showOverlay();
 			const charityEventsAddresses: string[] = await this.$organizationContractService.getCharityEventsAsync(this.organizationAddress);
 			const charityEvents = await this.$charityEventContractService.getCharityEventsList(charityEventsAddresses);
+			this.$loadingTransparentOverlayService.hideOverlay();
 			modalInstance = this.$modal.open(IncomingDonationSendFundsModalComponent).componentInstance;
 			modalInstance.organizationAddress = this.organizationAddress;
 			modalInstance.incomingDonation = donation;
 			modalInstance.charityEvents = charityEvents;
+			modalInstance.charityEvent = this.charityEvent;
 			modalInstance.fundsMoved.takeUntil(this.ngUnsubscribe).subscribe((donationAddress: string) => {
 				console.log('Funds sent.');
 				//TODO: Update components
