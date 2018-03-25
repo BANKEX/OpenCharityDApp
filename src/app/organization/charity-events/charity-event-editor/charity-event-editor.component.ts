@@ -4,14 +4,7 @@ import {Router, ActivatedRoute} from '@angular/router';
 import {CharityEventContractService} from '../../../core/contracts-services/charity-event-contract.service';
 import {ContractCharityEvent, MetaStorageData} from '../../../open-charity-types';
 import {MetaDataStorageService} from '../../../core/meta-data-storage.service';
-
-type CharityEventData = {
-	contract: ContractCharityEvent,
-	metadataStorage: MetaStorageData
-};
 import {Location} from '@angular/common';
-import {ContractCharityEvent, MetaStorageData} from '../../../open-charity-types';
-import {MetaDataStorageService} from '../../../core/meta-data-storage.service';
 
 type CharityEventData = {
 	contract: ContractCharityEvent,

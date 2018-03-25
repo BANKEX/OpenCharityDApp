@@ -121,7 +121,7 @@ export class CharityEventFormComponent implements OnInit {
 				this.organizationSharedService.charityEventCanceled(charityEventInternalId, newCharityEventAddress);
 			} else {
 				// TODO:  global errors notifier
-				console.warn(e.message);
+				console.error(e.message);
 			}
 		}
 	}
@@ -135,7 +135,8 @@ export class CharityEventFormComponent implements OnInit {
 			target: f.target,
 			payed: (f.payed) ? f.payed : 0,
 			tags: tags,
-			metaStorageHash: this.charityEventData.contract.metaStorageHash
+			metaStorageHash: this.charityEventData.contract.metaStorageHash,
+			address: this.charityEventData.contract.address
 		};
 
 		let charityEventInternalId: string = this.organizationSharedService.makePseudoRandomHash(newCharityEvent);
@@ -187,7 +188,7 @@ export class CharityEventFormComponent implements OnInit {
 				this.organizationSharedService.charityEventCanceled(charityEventInternalId, charityEventAddress);
 			} else {
 				// TODO:  global errors notifier
-				console.warn(e.message);
+				console.error(e.message);
 			}
 		}
 	}
