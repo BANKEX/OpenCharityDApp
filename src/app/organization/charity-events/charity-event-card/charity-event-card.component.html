@@ -13,7 +13,7 @@
 
 			<button type="button" class="btn btn-default" (click)="editClick($event)" *ngIf="!isPending(charityEvent)"><i class="fa fa-pencil"></i></button>
 			<button type="button" class="btn btn-default" (click)="removeClick($event)" *ngIf="!isPending(charityEvent)"><i class="fa fa-trash"></i></button>
-			<div class="btn-group" *ngIf="!isPending(charityEvent)" ngbDropdown role="group">
+			<div class="btn-group btn-group-sm" *ngIf="!isPending(charityEvent)" ngbDropdown role="group">
 				<button class="btn btn-default" ngbDropdownToggle><i class="fa fa-ellipsis-h"></i></button>
 				<div class="dropdown-menu" ngbDropdownMenu>
 					  <button class="dropdown-item" (click)="addDonationClick($event)">
