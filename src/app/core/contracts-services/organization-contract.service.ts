@@ -182,6 +182,19 @@ export class OrganizationContractService {
 		return result;
 	}
 
+	public updateCharityEventMetaStorageHash(organizationAddress: string, charityEventAddress: string, newMetaStorageHash: string, txOptions?: Tx): Promise<TransactionReceipt> {
+		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
+		const tx: Tx = merge({}, this.defaultTx, txOptions);
+		return contract.methods.updateCharityEventMetaStorageHash(charityEventAddress, newMetaStorageHash).send(tx);
+	}
+
+	public async updateCharityEventDetails(organizationAddress: string, charityEvent: ContractCharityEvent, txOptions?: Tx): Promise<TransactionReceipt> {
+		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
+		const tx: Tx = merge({}, this.defaultTx, txOptions);
+		return contract.methods.updateCharityEventDetails(charityEvent.address, charityEvent.name, charityEvent.target, charityEvent.tags, charityEvent.metaStorageHash).send(tx);
+	}
+
+
 
 
 	// Utils

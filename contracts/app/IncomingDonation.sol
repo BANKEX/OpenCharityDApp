@@ -1,12 +1,12 @@
 // TO DO: add ownable contract to force calling of some methods only from Organization contract
 pragma solidity ^0.4.17;
 
-import '../OpenCharityToken.sol';
+import './interfaces/OpenCharityTokenInterface.sol';
 import './CharityEvent.sol';
 
 contract IncomingDonation {
 
-    OpenCharityToken public token;
+	OpenCharityTokenInterface public token;
 
     // this field helps to identify and link fiat payment
     // with entity inside the OpenCharity
@@ -32,7 +32,7 @@ contract IncomingDonation {
         require(_token != address(0x0));
 		require(_sourceId >= 0);
 
-        token = OpenCharityToken(_token);
+        token = OpenCharityTokenInterface(_token);
 
         realWorldIdentifier = _realWorldIdentifier;
         note = _note;
