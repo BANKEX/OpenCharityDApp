@@ -95,39 +95,6 @@ export const OrganizationContractAbi = [
 	},
 	{
 		'constant': true,
-		'inputs': [],
-		'name': 'employeeCount',
-		'outputs': [
-			{
-				'name': '',
-				'type': 'uint256'
-			}
-		],
-		'payable': false,
-		'stateMutability': 'view',
-		'type': 'function'
-	},
-	{
-		'constant': true,
-		'inputs': [
-			{
-				'name': '',
-				'type': 'uint256'
-			}
-		],
-		'name': 'employeeIndex',
-		'outputs': [
-			{
-				'name': '',
-				'type': 'address'
-			}
-		],
-		'payable': false,
-		'stateMutability': 'view',
-		'type': 'function'
-	},
-	{
-		'constant': true,
 		'inputs': [
 			{
 				'name': '',
@@ -158,25 +125,6 @@ export const OrganizationContractAbi = [
 			{
 				'name': '',
 				'type': 'string'
-			}
-		],
-		'payable': false,
-		'stateMutability': 'view',
-		'type': 'function'
-	},
-	{
-		'constant': true,
-		'inputs': [
-			{
-				'name': '',
-				'type': 'address'
-			}
-		],
-		'name': 'employees',
-		'outputs': [
-			{
-				'name': '',
-				'type': 'bool'
 			}
 		],
 		'payable': false,
@@ -239,18 +187,6 @@ export const OrganizationContractAbi = [
 		'payable': false,
 		'stateMutability': 'nonpayable',
 		'type': 'constructor'
-	},
-	{
-		'anonymous': false,
-		'inputs': [
-			{
-				'indexed': false,
-				'name': 'employee',
-				'type': 'address'
-			}
-		],
-		'name': 'EmployeeAdded',
-		'type': 'event'
 	},
 	{
 		'anonymous': false,
@@ -346,29 +282,6 @@ export const OrganizationContractAbi = [
 		],
 		'name': 'FundsMovedToCharityEvent',
 		'type': 'event'
-	},
-	{
-		'constant': false,
-		'inputs': [
-			{
-				'name': '_firstName',
-				'type': 'string'
-			},
-			{
-				'name': '_lastName',
-				'type': 'string'
-			}
-		],
-		'name': 'addEmployee',
-		'outputs': [
-			{
-				'name': '',
-				'type': 'address'
-			}
-		],
-		'payable': false,
-		'stateMutability': 'nonpayable',
-		'type': 'function'
 	},
 	{
 		'constant': false,

@@ -14,13 +14,6 @@ contract Organization {
 	// list of admins
 	mapping(address => bool) public admins;
 
-	// list of Employees
-	// additional mapping and counter provide iterability
-	mapping(address => bool) public employees;
-	mapping(uint => address) public employeeIndex;
-	uint public employeeCount = 0;
-	event EmployeeAdded(address employee);
-
 	// list of CharityEvents
 	mapping(address => bool) public charityEvents;
 	mapping(uint => address) public charityEventIndex;
@@ -72,25 +65,6 @@ contract Organization {
 		name = _name;
 		token = OpenCharityTokenInterface(_token);
 
-	}
-
-
-	/**
-   * @dev Add new employee to Organization
-   */
-	function addEmployee(string _firstName, string _lastName) public onlyAdmin returns(address) {
-		// create a new employee
-		Employee employee = new Employee(_firstName, _lastName);
-
-		// add employee to employees list
-		employeeIndex[employeeCount] = employee;
-		employees[employee] = true;
-		employeeCount++;
-
-		// broadcast event
-		EmployeeAdded(employee);
-
-		return employee;
 	}
 
 	/**
