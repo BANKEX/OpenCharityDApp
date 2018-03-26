@@ -46,7 +46,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 	}
 
 	public ngOnInit(): void {
-		this.statesWithFlags = this.filterContractCharityEventsByTags(this.charityEvents);
+		this.statesWithFlags = this.filterCharityEventsByTags(this.charityEvents);
 		this.search = (text$: Observable<string>) =>
 			text$
 				.debounceTime(200).distinctUntilChanged()
@@ -60,7 +60,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 		this.initForm();
 	}
 
-	private filterContractCharityEventsByTags(charityEvents: ContractCharityEvent[]): ContractCharityEvent[] {
+	private filterCharityEventsByTags(charityEvents: ContractCharityEvent[]): ContractCharityEvent[] {
 		const donationTags = parseInt(this.incomingDonation.tags, 16);
 		return charityEvents.filter((event) => {
 			return this.tagsBitmaskService.containSimilarTags(parseInt(event.tags, 16), donationTags);
