@@ -72,6 +72,13 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 			targetCharityEvent: ['', [Validators.required]],
 			amount: ['', [Validators.required, this.validateAmount.bind(this)]]
 		});
+		// set initial data to the form fields
+		if (this.charityEvent) {
+			this.moveFundsForm.setValue({
+				targetCharityEvent: this.charityEvent,
+				amount: this.incomingDonation.amount,
+			  });
+		}
 	}
 
 	private validateAmount(control: AbstractControl): ValidationErrors | null {

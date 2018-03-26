@@ -37,7 +37,6 @@ export class AddIncomingDonationModalComponent extends NeatComponent {
 	}
 
 	onDonationCreated(donationAddress: string) {
-		console.log(donationAddress)
 		this.donationCreated$.next(donationAddress);
 		this.close.emit(true);
 		this.activeModal.close('Donation Created');
