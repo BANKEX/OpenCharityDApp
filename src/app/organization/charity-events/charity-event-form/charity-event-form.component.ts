@@ -11,7 +11,9 @@ import {
 import {MetaDataStorageService} from '../../../core/meta-data-storage.service';
 import {UploadFile} from 'ngx-file-drop';
 import {merge} from 'lodash';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
+import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
+import {LoadingTransparentOverlayService} from '../../../core/loading-transparent-overlay.service';
 
 type CharityEventData = {
 	contract: ContractCharityEvent,
@@ -34,7 +36,7 @@ export class CharityEventFormComponent implements OnInit {
 	public selectedTagsBitmask: number = 0;
 
 	public charityEventImage: any;
-	public charityEventImagePreview: string;
+	public charityEventImagePreview: SafeUrl;
 	public charityEventTags: Array<Tag>;
 
 	public attachedFiles: Array<File>;
@@ -51,7 +53,8 @@ export class CharityEventFormComponent implements OnInit {
 		private organizationSharedService: OrganizationSharedService,
 		private metaDataStorageService: MetaDataStorageService,
 		private route: ActivatedRoute,
-		private router: Router
+		private sanitize: DomSanitizer,
+		private loadingTransparentOverlayService: LoadingTransparentOverlayService
 	) {}
 
 	public ngOnInit(): void {
@@ -143,45 +146,47 @@ export class CharityEventFormComponent implements OnInit {
 		let receipt: TransactionReceipt;
 		let charityEventAddress: string = null;
 
+		const isCharityEventChanged = this.isCharityEventChanged(newCharityEvent);
+		const isMetaStorageChanged = this.isMetaStorageChanged(f.details);
+		const isSubmitEnable = isCharityEventChanged || isMetaStorageChanged;
+
+		if (!isSubmitEnable) return;
+
 		try {
-			if (this.isMetaStorageChanged(f.details)) {
+			this.loadingTransparentOverlayService.showOverlay();
+
+			if (isMetaStorageChanged) {
 				const newMetaStorageHash: string = await this.storeToMetaStorage(newCharityEvent, f.details);
 				merge(newCharityEvent, {metaStorageHash: newMetaStorageHash});
 
-				if (!this.isCharityEventChanged(newCharityEvent))
-					console.log('updateCharityEventMetaStorageHash');
+				if (!isCharityEventChanged) {
 					receipt = await this.organizationContractService.updateCharityEventMetaStorageHash(
 						this.organizationAddress,
 						this.charityEventAddress,
 						newMetaStorageHash
 					);
+				}
 			}
 
-			if (this.isCharityEventChanged(newCharityEvent)) {
-				// submit transaction to blockchain
-
+			if (isCharityEventChanged) {
 				receipt = await this.organizationContractService.updateCharityEventDetails(
 					this.organizationAddress,
 					newCharityEvent
 				);
-
 			}
 
-			// if (receipt && receipt.events && receipt.events.CharityEventAdded) {
-			// 	charityEventAddress = receipt.events.CharityEventAdded.returnValues['charityEvent'];
-			// 	this.organizationSharedService.charityEventConfirmed(charityEventInternalId, charityEventAddress);
-			// } else {
-			// 	this.organizationSharedService.charityEventFailed(charityEventInternalId, charityEventAddress);
-			// }
+			if (receipt && receipt.events && receipt.events.CharityEventEdited) {
+				charityEventAddress = receipt.events.CharityEventEdited.returnValues['charityEvent'];
+				this.organizationSharedService.charityEventConfirmed(charityEventInternalId, charityEventAddress);
+			} else {
+				this.organizationSharedService.charityEventFailed(charityEventInternalId, charityEventAddress);
+			}
 
+			this.charityEventData = await this.getCharityEventData(newCharityEvent);
 
-			this.charityEventChanged.emit(true);
+			await this.initForm();
 
-			await this.delay(1500);
-
-			this.charityEventChanged.emit(false);
-
-			// this.router.navigate([`/organization/${this.organizationAddress}/event/${this.charityEventAddress}/editor`]);
+			this.loadingTransparentOverlayService.hideOverlay();
 		} catch (e) {
 			// TODO: listen for failed transaction
 			if (e.message.search('MetaMask Tx Signature: User denied transaction signature') !== -1) {
@@ -189,6 +194,7 @@ export class CharityEventFormComponent implements OnInit {
 			} else {
 				// TODO:  global errors notifier
 				console.error(e.message);
+				this.loadingTransparentOverlayService.hideOverlay();
 			}
 		}
 	}
@@ -246,10 +252,6 @@ export class CharityEventFormComponent implements OnInit {
 		return false;
 	}
 
-	delay (ms: number) {
-		return new Promise(resolve => setTimeout(resolve, ms));
-	}
-
 	public onImageAdded($event) {
 		this.charityEventImage = $event.files[0];
 
@@ -261,7 +263,7 @@ export class CharityEventFormComponent implements OnInit {
 			const reader: FileReader = new FileReader();
 
 			reader.onload = () => {
-				this.charityEventImagePreview = reader.result;
+				this.charityEventImagePreview = this.sanitize.bypassSecurityTrustUrl(reader.result);
 				this.loadingImage = false;
 			};
 
@@ -353,6 +355,22 @@ export class CharityEventFormComponent implements OnInit {
 		}
 	}
 
+	private async getCharityEventData(contractCharityEvent: ContractCharityEvent): Promise<CharityEventData> {
+		return new Promise<CharityEventData>(async(resolve, reject) => {
+
+			this.metaDataStorageService.getData(contractCharityEvent.metaStorageHash)
+				.subscribe((metadataStorage: MetaStorageData) => {
+						resolve({
+							contract: contractCharityEvent,
+							metadataStorage: metadataStorage
+						});
+					},
+					(err: any) => {
+						reject(err);
+					});
+		});
+	}
+
 	private async storeToMetaStorage(charityEvent: ContractCharityEvent, charityEventDetails: string): Promise<any> {
 		const dataToStore: any = {
 			type: MetaStorageDataType.CHARITY_EVENT,
@@ -371,13 +389,14 @@ export class CharityEventFormComponent implements OnInit {
 
 		if (this.attachedFiles.length) {
 			dataToStore.data.attachments = [];
+			let attachments = this.charityEventData.metadataStorage.data.attachments;
 
 			await Promise.all(this.attachedFiles.map(async (file) => {
 				let metaStorageFile;
 
-				metaStorageFile = this.charityEventData.metadataStorage.data.attachments.find((item) => {
+				metaStorageFile = attachments ? attachments.find((item) => {
 					return item.name === file.name;
-				});
+				}) : -1;
 
 				dataToStore.data.attachments.push(
 					metaStorageFile !== -1 ? metaStorageFile : await this.storeFileToMetaStorage(file)
@@ -459,14 +478,14 @@ export class CharityEventFormComponent implements OnInit {
 		});
 	}
 
-	private getPreviewImage(arrayBuffer: ArrayBuffer, type: string): Promise<string> {
-		return new Promise<string>((resolve, reject) => {
+	private getPreviewImage(arrayBuffer: ArrayBuffer, type: string): Promise<SafeUrl> {
+		return new Promise<SafeUrl>((resolve, reject) => {
 			const reader: FileReader = new FileReader();
 
 			const blob = new Blob( [ arrayBuffer ], { type: type } );
 
 			reader.onload = () => {
-				resolve(reader.result);
+				resolve(this.sanitize.bypassSecurityTrustUrl(reader.result));
 			};
 
 			reader.onerror = (err) => {

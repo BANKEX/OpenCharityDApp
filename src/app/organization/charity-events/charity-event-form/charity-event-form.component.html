@@ -95,7 +95,9 @@
 						   formControlName="target"
 						   [ngClass]="{'error' : charityEventForm.get('target').touched && charityEventForm.get('target').invalid}"
 					>
-					<span class="input-group-addon">Рублей</span>
+					<span class="input-group-append">
+						<span class="input-group-text">Рублей</span>
+					</span>
 				</div>
 				<div>
 					<label class="error"
