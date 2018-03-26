@@ -11,9 +11,6 @@ const STAGING_NETWORK = 'bankexStaging';
 
 
 module.exports = async function(deployer, network, accounts) {
-
-	console.log(network.id);
-
 	await deployer.deploy(Tools, {overwrite: false});
 	await deployer.deploy(SafeMath, {overwrite: false});
 	await deployer.link(SafeMath, [OpenCharityToken]);
@@ -60,18 +57,28 @@ async function createTestOrganizations(deployer, network, tokenInstance, adminAd
 	}
 
 	console.log(organizations);
+
+	return organizations;
 }
 
 function generateTestOrganizationName(network, i) {
-	const date = new Date().getDate();
-	const month = parseInt(new Date().getMonth())+1;
+	let date = parseInt(new Date().getDate());
+	if (date < 10) {
+		date = '0' + date;
+	}
+
+	let month = parseInt(new Date().getMonth())+1;
+	if (month < 10) {
+		month = '0'+month;
+	}
+
 	const year = new Date().getFullYear().toString().slice(-2);
 
 	if (network === STAGING_NETWORK ) {
-		return `Staging Organization Test ${date+month+year}_${i}`;
+		return `Staging Organization Test ${date}${month}${year}_${i}`;
 	} else if (network === PRODUCTION_NETWORK) {
-		return `Production Organization Test ${date+month+year}_${i}`;
+		return `Production Organization Test ${date}${month}${year}_${i}`;
 	} else {
-		return `Staging Organization Test ${date+month+year}_${i}`;
+		return `Staging Organization Test ${date}${month}${year}_${i}`;
 	}
 }
