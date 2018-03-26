@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, ViewChild, Output} from '@angular/core';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
 import {AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {TagsBitmaskService} from '../../services/tags-bitmask.service';
@@ -52,6 +52,7 @@ export function sourceMinValidator(): ValidatorFn {
 export class IncomingDonationFormComponent implements OnInit {
 	@Input('organizationAddress') organizationAddress: string;
 	@Input('incomingDonation') incomingDonation: AppIncomingDonation;
+	@Output('donationCreated') donationCreated: Subject<string> = new Subject();
 
 	@ViewChild('typeahead') sourceTypeahead: NgbTypeahead;
 	focus$ = new Subject<string>();
@@ -122,7 +123,10 @@ export class IncomingDonationFormComponent implements OnInit {
 			if (receipt.events && receipt.events.IncomingDonationAdded) {
 				newIncomingDonationAddress = receipt.events.IncomingDonationAdded.returnValues['incomingDonation'];
 				this.organizationSharedService.incomingDonationConfirmed(incomingDonationInternalId, newIncomingDonationAddress);
+				this.donationCreated.next(newIncomingDonationAddress);
+
 			} else {
+				this.donationCreated.next(null);
 				this.organizationSharedService.incomingDonationFailed(incomingDonationInternalId, newIncomingDonationAddress);
 			}
 

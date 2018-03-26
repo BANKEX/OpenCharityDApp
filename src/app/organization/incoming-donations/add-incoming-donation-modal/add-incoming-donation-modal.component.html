@@ -1,0 +1,18 @@
+<div class="card no-mrg">
+	<!-- <div>Address: {{organizationAddress}}</div> -->
+	<div class="card-heading border bottom">
+		<h4 class="card-title">Add New Incoming Donation to '{{charityEvent.name}}'</h4>
+	</div>
+	<div class="card-block">
+		<div class="card-block">
+			<div class="row">
+				<div class="col-md-8 ml-auto mr-auto">
+					<opc-incoming-donation-form
+						[organizationAddress]="organizationAddress"
+						(donationCreated)="onDonationCreated($event)" >
+					</opc-incoming-donation-form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

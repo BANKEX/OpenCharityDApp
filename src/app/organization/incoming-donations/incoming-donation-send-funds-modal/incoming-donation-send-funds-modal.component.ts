@@ -10,7 +10,7 @@ import 'rxjs/add/operator/distinctUntilChanged';
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {filter} from 'lodash';
 import {TagsBitmaskService} from '../../services/tags-bitmask.service';
-import {ContractCharityEvent, ContractIncomingDonation} from '../../../open-charity-types';
+import {ContractCharityEvent, ContractIncomingDonation, AppCharityEvent} from '../../../open-charity-types';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
 
 
@@ -20,6 +20,7 @@ import {OrganizationContractService} from '../../../core/contracts-services/orga
 })
 
 export class IncomingDonationSendFundsModalComponent implements OnInit {
+	@Input('charityEvent') charityEvent: AppCharityEvent; // If spcified - move all funds to this CE
 	@Input('organizationAddress') organizationAddress: string;
 	@Input('charityEvents') charityEvents: ContractCharityEvent[];
 	@Input('incomingDonation') incomingDonation: ContractIncomingDonation;
@@ -70,7 +71,14 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 		this.moveFundsForm = this.fb.group({
 			targetCharityEvent: ['', [Validators.required]],
 			amount: ['', [Validators.required, this.validateAmount.bind(this)]]
-		})
+		});
+		// set initial data to the form fields
+		if (this.charityEvent) {
+			this.moveFundsForm.setValue({
+				targetCharityEvent: this.charityEvent,
+				amount: this.incomingDonation.amount,
+			  });
+		}
 	}
 
 	private validateAmount(control: AbstractControl): ValidationErrors | null {
@@ -78,7 +86,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 			return { moreThanMax: true };
 		}
 
-		if( parseInt(control.value, 10) <= 0) {
+		if (parseInt(control.value, 10) <= 0) {
 			return { lessThanMin: true };
 		}
 
@@ -86,6 +94,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 	}
 
 
+	// tslint:disable-next-line:member-ordering
 	public async sendFunds(targetCharityEvent: ContractCharityEvent, amount: string): Promise<void> {
 		try {
 			const tran = await this.organizationContractService.moveFundsToCharityEvent(this.organizationAddress, this.incomingDonation.address, targetCharityEvent.address, amount);
