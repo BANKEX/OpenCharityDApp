@@ -11,9 +11,6 @@ const STAGING_NETWORK = 'bankexStaging';
 
 
 module.exports = async function(deployer, network, accounts) {
-
-	console.log(network.id);
-
 	await deployer.deploy(Tools, {overwrite: false});
 	await deployer.deploy(SafeMath, {overwrite: false});
 	await deployer.link(SafeMath, [OpenCharityToken]);
@@ -60,6 +57,8 @@ async function createTestOrganizations(deployer, network, tokenInstance, adminAd
 	}
 
 	console.log(organizations);
+
+	return organizations;
 }
 
 function generateTestOrganizationName(network, i) {
