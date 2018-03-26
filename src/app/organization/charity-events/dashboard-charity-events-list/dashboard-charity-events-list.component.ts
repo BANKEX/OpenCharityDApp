@@ -6,6 +6,8 @@ import {CharityEventContractService} from '../../../core/contracts-services/char
 import {TokenContractService} from '../../../core/contracts-services/token-contract.service';
 import {CharityEventsListBaseComponent} from '../charity-events-list-base.component';
 import {MetaDataStorageService} from '../../../core/meta-data-storage.service';
+import {ConfirmationResponse} from '../../../open-charity-types';
+import {OrganizationSharedService} from '../../services/organization-shared.service';
 
 @Component({
 	selector: 'opc-dashboard-charity-events-list',
@@ -21,6 +23,7 @@ export class DashboardCharityEventsList extends CharityEventsListBaseComponent i
 		protected route: ActivatedRoute,
 		protected metaDataStorageService: MetaDataStorageService,
 		private router: Router,
+		private organizationSharedService: OrganizationSharedService
 	) {
 		super(organizationContractService, tokenContractService, charityEventContractService, zone, metaDataStorageService);
 	}
@@ -28,10 +31,26 @@ export class DashboardCharityEventsList extends CharityEventsListBaseComponent i
 	ngOnInit(): void {
 		this.route.params.subscribe(params => { this.organizationAddress = params['address']; });
 		this.updateCharityEventsList();
+		this.initEventsListeners();
 	}
 
 	public toAllCharityEvents() {
 		this.router.navigate([`/organization/${this.organizationAddress}/events`]);
+	}
+
+	public initEventsListeners(): void {
+		this.organizationSharedService.onMoveFundsToCharityEventConfirmed()
+			.takeUntil(this.componentDestroyed)
+			.subscribe(async (res: ConfirmationResponse) => {
+				const i: number = findIndex(this.charityEvents, {address: res.address});
+
+				if (i !== -1) {
+					await this.updateCharityEventRaised(this.charityEvents[i]);
+				}
+			}, (err: any) => {
+				console.error(err);
+				alert(`Error ${err.message}`);
+			});
 	}
 
 }
