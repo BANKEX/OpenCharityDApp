@@ -63,6 +63,10 @@ contract IncomingDonation {
      * @param eventTags tags of charity event
      */
     function validateTags(bytes1 donationTags, bytes1 eventTags) view public returns (bool)  {
+		if (donationTags == zeroBytes || eventTags == zeroBytes) {
+			return true;
+		}
+
         return ( (donationTags & eventTags) > zeroBytes);
     }
 
