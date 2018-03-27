@@ -11,6 +11,7 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
 import { NeatComponent } from '../../../shared/neat.component';
 import { LoadingTransparentOverlayService } from '../../../core/loading-transparent-overlay.service';
 import { IncomingDonationContractService } from '../../../core/contracts-services/incoming-donation-contract.service';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 @Component({
 	selector: 'opc-charity-events-card',
 	templateUrl: 'charity-event-card.component.html',
@@ -28,6 +29,7 @@ export class CharityEventCardComponent extends NeatComponent {
 		private $incomingDonationContractService: IncomingDonationContractService,
 		private $charityEventContractService: CharityEventContractService,
 		private $sharedService: OrganizationSharedService,
+		private $sanitize: DomSanitizer
 	) {
 		super();
 	}
@@ -93,4 +95,8 @@ export class CharityEventCardComponent extends NeatComponent {
 	// public stopClickBubbling($event: Event): void {
 	// 	$event.preventDefault();
 	// }
+
+	public getSafeHTML(html: string): SafeHtml {
+		return this.$sanitize.bypassSecurityTrustHtml(html);
+	}
 }

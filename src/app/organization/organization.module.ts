@@ -35,6 +35,9 @@ import {AddIncomingDonationModalComponent} from './incoming-donations/add-incomi
 import {SharedModule} from '../shared/shared.module';
 import {CharityEventFormComponent} from './charity-events/charity-event-form/charity-event-form.component';
 
+import 'froala-editor/js/froala_editor.pkgd.min.js';
+import { FroalaEditorModule, FroalaViewModule } from 'angular-froala-wysiwyg';
+
 @NgModule({
 	declarations: [
 		OrganizationDetailsComponent,
@@ -71,7 +74,9 @@ import {CharityEventFormComponent} from './charity-events/charity-event-form/cha
 		RouterModule.forChild(OrganizationRoutes),
 		NgSelectizeModule,
 		FileDropModule,
-		TagInputModule
+		TagInputModule,
+		FroalaEditorModule.forRoot(),
+		FroalaViewModule.forRoot()
 	],
 	providers: [
 		IsOrganizationAddressGuard,

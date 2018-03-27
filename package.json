@@ -90,6 +90,7 @@
     "@types/googlemaps": "^3.30.3",
     "ammap3": "github:amcharts/ammap3",
     "angular-datatables": "^5.0.0",
+    "angular-froala-wysiwyg": "^2.7.6",
     "angular-idle-preload": "~2.0.4",
     "angular2-moment": "^1.7.0",
     "angular2-wizard": "^0.4.0",
