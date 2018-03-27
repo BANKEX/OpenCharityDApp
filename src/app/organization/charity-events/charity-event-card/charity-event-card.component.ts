@@ -86,14 +86,6 @@ export class CharityEventCardComponent extends NeatComponent {
 				modalInstance.incomingDonation = incomingDonation;
 				modalInstance.charityEvents = charityEvents;
 				modalInstance.charityEvent = this.charityEvent;
-				modalInstance.fundsMoved.takeUntil(this.ngUnsubscribe).subscribe((donationAddress: string) => {
-					//TODO: Update components
-					window.location.reload();
-					// const incDonation = find(this.incomingDonations, {address: incomingDonationAddress});
-					// if (this.incomingDonations) {
-					// 	this.updateIncomingDonationAmount(incDonation);
-					// }
-				});
 			}).catch((err) => console.error(err));
 		});
 	}

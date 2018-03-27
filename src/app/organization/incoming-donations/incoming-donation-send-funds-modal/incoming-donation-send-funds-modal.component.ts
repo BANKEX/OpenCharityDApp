@@ -12,6 +12,11 @@ import {filter} from 'lodash';
 import {TagsBitmaskService} from '../../services/tags-bitmask.service';
 import {ContractCharityEvent, ContractIncomingDonation, AppCharityEvent} from '../../../open-charity-types';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
+import {LoadingTransparentOverlayService} from '../../../core/loading-transparent-overlay.service';
+import {TransactionReceipt} from 'web3/types';
+import {OrganizationSharedService} from '../../services/organization-shared.service';
+import {PendingTransactionService} from '../../../core/pending-transactions.service';
+import {PendingTransactionSourceType} from '../../../pending-transaction.types';
 
 
 @Component({
@@ -41,7 +46,10 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 		private incomingDonationContractService: IncomingDonationContractService,
 		private tagsBitmaskService: TagsBitmaskService,
 		private fb: FormBuilder,
-		private activeModal: NgbActiveModal
+		private activeModal: NgbActiveModal,
+		private loadingTransparentOverlayService: LoadingTransparentOverlayService,
+		private organizationSharedService: OrganizationSharedService,
+		private pendingTransactionService: PendingTransactionService
 	) {
 	}
 
@@ -96,13 +104,54 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 
 	// tslint:disable-next-line:member-ordering
 	public async sendFunds(targetCharityEvent: ContractCharityEvent, amount: string): Promise<void> {
+		let charityEventInternalId: string = this.organizationSharedService.makePseudoRandomHash(targetCharityEvent);
+		let charityEventAddress: string = null;
+
 		try {
-			const tran = await this.organizationContractService.moveFundsToCharityEvent(this.organizationAddress, this.incomingDonation.address, targetCharityEvent.address, amount);
-			console.log(tran);
+			this.loadingTransparentOverlayService.showOverlay();
+			const receipt: TransactionReceipt = await this.organizationContractService.moveFundsToCharityEvent(
+				this.organizationAddress,
+				this.incomingDonation.address,
+				targetCharityEvent.address,
+				amount
+			);
+
+			this.pendingTransactionService.addPending(
+				amount + ' - ' + targetCharityEvent.name,
+				'Move funds transaction pending',
+				PendingTransactionSourceType.ID
+			);
+
+			if (receipt.events && receipt.events.FundsMovedToCharityEvent) {
+				charityEventAddress = receipt.events.FundsMovedToCharityEvent.returnValues['charityEvent'];
+				this.organizationSharedService.moveFundsToCharityEventConfirmed(charityEventInternalId, charityEventAddress);
+				this.pendingTransactionService.addConfirmed(
+					amount + ' - ' + targetCharityEvent.name,
+					'Move funds transaction confirmed',
+					PendingTransactionSourceType.ID
+				);
+			} else {
+				this.organizationSharedService.moveFundsToCharityEventFailed(charityEventInternalId, charityEventAddress);
+				this.pendingTransactionService.addFailed(
+					amount + ' - ' + targetCharityEvent.name,
+					'Move funds transaction failed',
+					PendingTransactionSourceType.ID
+				);
+			}
+
 			this.fundsMoved.emit(this.incomingDonation.address);
 			this.activeModal.close();
+			this.loadingTransparentOverlayService.hideOverlay();
 		} catch (e) {
-			console.log(e);
+			// TODO: listen for failed transaction
+			if (e.message.search('MetaMask Tx Signature: User denied transaction signature') !== -1) {
+				this.organizationSharedService.moveFundsToCharityEventCanceled(charityEventInternalId, charityEventAddress);
+				this.activeModal.close();
+				this.loadingTransparentOverlayService.hideOverlay();
+			} else {
+				// TODO:  global errors notifier
+				console.error(e.message);
+			}
 		}
 	}
 
