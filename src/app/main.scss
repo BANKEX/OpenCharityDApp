@@ -4,3 +4,15 @@
 section {
   margin-left: 15px;
 }
+
+tr.loading, tr.empty {
+  background: #fff !important;
+
+  .fa-spin {
+    margin-top: 16px;
+  }
+
+  .message {
+    margin-top: 16px;
+  }
+}
