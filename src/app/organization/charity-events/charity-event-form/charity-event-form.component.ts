@@ -14,6 +14,8 @@ import {merge} from 'lodash';
 import {ActivatedRoute} from '@angular/router';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {LoadingTransparentOverlayService} from '../../../core/loading-transparent-overlay.service';
+import {PendingTransactionService} from '../../../core/pending-transactions.service';
+import {PendingTransactionSourceType} from '../../../pending-transaction.types';
 
 type CharityEventData = {
 	contract: ContractCharityEvent,
@@ -54,7 +56,8 @@ export class CharityEventFormComponent implements OnInit {
 		private metaDataStorageService: MetaDataStorageService,
 		private route: ActivatedRoute,
 		private sanitize: DomSanitizer,
-		private loadingTransparentOverlayService: LoadingTransparentOverlayService
+		private loadingTransparentOverlayService: LoadingTransparentOverlayService,
+		private pendingTransactionService: PendingTransactionService
 	) {}
 
 	public ngOnInit(): void {
@@ -105,6 +108,12 @@ export class CharityEventFormComponent implements OnInit {
 				confirmation: ConfirmationStatusState.PENDING
 			}));
 
+			this.pendingTransactionService.addPending(
+				newCharityEvent.name,
+				'Adding ' + newCharityEvent.name + ' transaction pending',
+				PendingTransactionSourceType.CE
+			);
+
 			// submit transaction to blockchain
 			const receipt: TransactionReceipt = await this.organizationContractService.addCharityEvent(this.organizationContractAddress, newCharityEvent);
 
@@ -112,8 +121,18 @@ export class CharityEventFormComponent implements OnInit {
 			if (receipt.events && receipt.events.CharityEventAdded) {
 				newCharityEventAddress = receipt.events.CharityEventAdded.returnValues['charityEvent'];
 				this.organizationSharedService.charityEventConfirmed(charityEventInternalId, newCharityEventAddress);
+				this.pendingTransactionService.addConfirmed(
+					newCharityEvent.name,
+					'Adding ' + newCharityEvent.name + ' transaction confirmed',
+					PendingTransactionSourceType.CE
+				);
 			} else {
 				this.organizationSharedService.charityEventFailed(charityEventInternalId, newCharityEventAddress);
+				this.pendingTransactionService.addFailed(
+					newCharityEvent.name,
+					'Adding ' + newCharityEvent.name + ' transaction failed',
+					PendingTransactionSourceType.CE
+				);
 			}
 
 			// reset form values

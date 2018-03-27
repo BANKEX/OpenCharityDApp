@@ -11,6 +11,8 @@ import {Observable} from 'rxjs/Observable';
 import {find} from 'lodash';
 import {isString} from 'ng2-toasty/src/toasty.utils';
 import {isObject} from 'rxjs/util/isObject';
+import {PendingTransactionSourceType} from '../../../pending-transaction.types';
+import {PendingTransactionService} from '../../../core/pending-transactions.service';
 
 
 type IncomingDonationSource = {
@@ -68,7 +70,8 @@ export class IncomingDonationFormComponent implements OnInit {
 	constructor(private organizationContractService: OrganizationContractService,
 				private fb: FormBuilder,
 				private tagsBitmaskService: TagsBitmaskService,
-				private organizationSharedService: OrganizationSharedService
+				private organizationSharedService: OrganizationSharedService,
+				private pendingTransactionService: PendingTransactionService
 	) {
 	}
 
@@ -117,6 +120,12 @@ export class IncomingDonationFormComponent implements OnInit {
 				confirmation: ConfirmationStatusState.PENDING
 			});
 
+			this.pendingTransactionService.addPending(
+				newIncomingDonation.realWorldsIdentifier,
+				'Adding ' + newIncomingDonation.realWorldsIdentifier + ' transaction pending',
+				PendingTransactionSourceType.ID
+			);
+
 			const receipt: TransactionReceipt = await this.organizationContractService.addIncomingDonation(this.organizationAddress, f.realWorldIdentifier, f.amount, f.note, tags, f.source.id);
 
 
@@ -124,10 +133,19 @@ export class IncomingDonationFormComponent implements OnInit {
 				newIncomingDonationAddress = receipt.events.IncomingDonationAdded.returnValues['incomingDonation'];
 				this.organizationSharedService.incomingDonationConfirmed(incomingDonationInternalId, newIncomingDonationAddress);
 				this.donationCreated.next(newIncomingDonationAddress);
-
+				this.pendingTransactionService.addConfirmed(
+					newIncomingDonation.realWorldsIdentifier,
+					'Adding ' + newIncomingDonation.realWorldsIdentifier + ' transaction confirmed',
+					PendingTransactionSourceType.ID
+				);
 			} else {
 				this.donationCreated.next(null);
 				this.organizationSharedService.incomingDonationFailed(incomingDonationInternalId, newIncomingDonationAddress);
+				this.pendingTransactionService.addFailed(
+					newIncomingDonation.realWorldsIdentifier,
+					'Adding ' + newIncomingDonation.realWorldsIdentifier + ' transaction failed',
+					PendingTransactionSourceType.ID
+				);
 			}
 
 			this.initForm();
