@@ -4,6 +4,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {PerfectScrollbarModule} from 'ngx-perfect-scrollbar';
 import {OrganizationModule} from './organization/organization.module';
 import {FileDropModule} from 'ngx-file-drop';
+import { ToastyModule } from 'ng2-toasty';
 
 export const APP_IMPORTS = [
 	BrowserAnimationsModule,
@@ -11,6 +12,7 @@ export const APP_IMPORTS = [
 	PerfectScrollbarModule,
 	ReactiveFormsModule,
 	OrganizationModule,
-	FileDropModule
+	FileDropModule,
+	ToastyModule
 ];
 
