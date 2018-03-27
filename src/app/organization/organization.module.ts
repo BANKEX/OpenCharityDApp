@@ -37,6 +37,7 @@ import {CharityEventFormComponent} from './charity-events/charity-event-form/cha
 
 import 'froala-editor/js/froala_editor.pkgd.min.js';
 import { FroalaEditorModule, FroalaViewModule } from 'angular-froala-wysiwyg';
+import {ToastyConfig} from 'ng2-toasty';
 
 @NgModule({
 	declarations: [
@@ -88,4 +89,7 @@ import { FroalaEditorModule, FroalaViewModule } from 'angular-froala-wysiwyg';
 })
 
 export class OrganizationModule {
+	constructor(private toastyConfig: ToastyConfig) {
+		this.toastyConfig.theme = 'bootstrap';
+	}
 }

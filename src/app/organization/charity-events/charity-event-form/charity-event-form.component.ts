@@ -16,6 +16,7 @@ import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {LoadingTransparentOverlayService} from '../../../core/loading-transparent-overlay.service';
 import {PendingTransactionService} from '../../../core/pending-transactions.service';
 import {PendingTransactionSourceType} from '../../../pending-transaction.types';
+import {ToastyService} from 'ng2-toasty';
 
 type CharityEventData = {
 	contract: ContractCharityEvent,
@@ -57,7 +58,8 @@ export class CharityEventFormComponent implements OnInit {
 		private route: ActivatedRoute,
 		private sanitize: DomSanitizer,
 		private loadingTransparentOverlayService: LoadingTransparentOverlayService,
-		private pendingTransactionService: PendingTransactionService
+		private pendingTransactionService: PendingTransactionService,
+		private toastyService: ToastyService
 	) {}
 
 	public ngOnInit(): void {
@@ -101,7 +103,6 @@ export class CharityEventFormComponent implements OnInit {
 			const metaStorageHash: string = await this.storeToMetaStorage(newCharityEvent, f.details);
 			merge(newCharityEvent, {metaStorageHash: metaStorageHash});
 
-
 			// show pending charity event in ui
 			this.organizationSharedService.charityEventAdded(merge({}, newCharityEvent, {
 				internalId: charityEventInternalId,
@@ -113,6 +114,8 @@ export class CharityEventFormComponent implements OnInit {
 				'Adding ' + newCharityEvent.name + ' transaction pending',
 				PendingTransactionSourceType.CE
 			);
+
+			this.toastyService.warning('Adding ' + newCharityEvent.name + ' transaction pending');
 
 			// submit transaction to blockchain
 			const receipt: TransactionReceipt = await this.organizationContractService.addCharityEvent(this.organizationContractAddress, newCharityEvent);
@@ -126,6 +129,7 @@ export class CharityEventFormComponent implements OnInit {
 					'Adding ' + newCharityEvent.name + ' transaction confirmed',
 					PendingTransactionSourceType.CE
 				);
+				this.toastyService.success('Adding ' + newCharityEvent.name + ' transaction confirmed');
 			} else {
 				this.organizationSharedService.charityEventFailed(charityEventInternalId, newCharityEventAddress);
 				this.pendingTransactionService.addFailed(
@@ -133,6 +137,7 @@ export class CharityEventFormComponent implements OnInit {
 					'Adding ' + newCharityEvent.name + ' transaction failed',
 					PendingTransactionSourceType.CE
 				);
+				this.toastyService.error('Adding ' + newCharityEvent.name + ' transaction failed');
 			}
 
 			// reset form values
@@ -141,9 +146,11 @@ export class CharityEventFormComponent implements OnInit {
 			// TODO: listen for failed transaction
 			if (e.message.search('MetaMask Tx Signature: User denied transaction signature') !== -1) {
 				this.organizationSharedService.charityEventCanceled(charityEventInternalId, newCharityEventAddress);
+				this.toastyService.error('Adding ' + newCharityEvent.name + ' transaction canceled');
 			} else {
 				// TODO:  global errors notifier
 				console.error(e.message);
+				this.toastyService.error(e.message);
 			}
 		}
 	}
@@ -179,6 +186,16 @@ export class CharityEventFormComponent implements OnInit {
 				merge(newCharityEvent, {metaStorageHash: newMetaStorageHash});
 
 				if (!isCharityEventChanged) {
+					this.loadingTransparentOverlayService.hideOverlay();
+
+					this.pendingTransactionService.addPending(
+						newCharityEvent.name,
+						'Editing ' + newCharityEvent.name + ' transaction pending',
+						PendingTransactionSourceType.CE
+					);
+
+					this.toastyService.warning('Editing ' + newCharityEvent.name + ' transaction pending');
+
 					receipt = await this.organizationContractService.updateCharityEventMetaStorageHash(
 						this.organizationAddress,
 						this.charityEventAddress,
@@ -188,31 +205,58 @@ export class CharityEventFormComponent implements OnInit {
 			}
 
 			if (isCharityEventChanged) {
+				this.loadingTransparentOverlayService.hideOverlay();
+
+
+				this.pendingTransactionService.addPending(
+					newCharityEvent.name,
+					'Editing ' + newCharityEvent.name + ' transaction pending',
+					PendingTransactionSourceType.CE
+				);
+
+				this.toastyService.warning('Editing ' + newCharityEvent.name + ' transaction pending');
+
 				receipt = await this.organizationContractService.updateCharityEventDetails(
 					this.organizationAddress,
 					newCharityEvent
 				);
 			}
 
-			if (receipt && receipt.events && receipt.events.CharityEventEdited) {
-				charityEventAddress = receipt.events.CharityEventEdited.returnValues['charityEvent'];
+			if (receipt && receipt.events && receipt.events.CharityEventEdited || receipt.events.MetaStorageHashUpdated) {
 				this.organizationSharedService.charityEventConfirmed(charityEventInternalId, charityEventAddress);
+				this.pendingTransactionService.addConfirmed(
+					newCharityEvent.name,
+					'Editing ' + newCharityEvent.name + ' transaction confirmed',
+					PendingTransactionSourceType.CE
+				);
+				this.toastyService.success('Editing ' + newCharityEvent.name + ' transaction confirmed');
 			} else {
 				this.organizationSharedService.charityEventFailed(charityEventInternalId, charityEventAddress);
+				this.pendingTransactionService.addFailed(
+					newCharityEvent.name,
+					'Editing ' + newCharityEvent.name + ' transaction failed',
+					PendingTransactionSourceType.CE
+				);
+				this.toastyService.error('Editing ' + newCharityEvent.name + ' transaction failed');
 			}
 
 			this.charityEventData = await this.getCharityEventData(newCharityEvent);
 
 			await this.initForm();
-
-			this.loadingTransparentOverlayService.hideOverlay();
 		} catch (e) {
 			// TODO: listen for failed transaction
 			if (e.message.search('MetaMask Tx Signature: User denied transaction signature') !== -1) {
 				this.organizationSharedService.charityEventCanceled(charityEventInternalId, charityEventAddress);
+				this.pendingTransactionService.addFailed(
+					newCharityEvent.name,
+					'Editing ' + newCharityEvent.name + ' transaction canceled',
+					PendingTransactionSourceType.CE
+				);
+				this.toastyService.error('Editing ' + newCharityEvent.name + ' transaction canceled');
 			} else {
 				// TODO:  global errors notifier
 				console.error(e.message);
+				this.toastyService.error(e.message);
 				this.loadingTransparentOverlayService.hideOverlay();
 			}
 		}
