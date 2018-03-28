@@ -17,6 +17,7 @@ import {TransactionReceipt} from 'web3/types';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
 import {PendingTransactionService} from '../../../core/pending-transactions.service';
 import {PendingTransactionSourceType} from '../../../pending-transaction.types';
+import {ToastyService} from 'ng2-toasty';
 
 
 @Component({
@@ -49,7 +50,8 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 		private activeModal: NgbActiveModal,
 		private loadingTransparentOverlayService: LoadingTransparentOverlayService,
 		private organizationSharedService: OrganizationSharedService,
-		private pendingTransactionService: PendingTransactionService
+		private pendingTransactionService: PendingTransactionService,
+		private toastyService: ToastyService
 	) {
 	}
 
@@ -108,7 +110,16 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 		let charityEventAddress: string = null;
 
 		try {
-			this.loadingTransparentOverlayService.showOverlay();
+			this.activeModal.close();
+
+			this.pendingTransactionService.addPending(
+				amount + ' - ' + targetCharityEvent.name,
+				'Move funds ' + targetCharityEvent.name + ' transaction pending',
+				PendingTransactionSourceType.ID
+			);
+
+			this.toastyService.warning('Move funds ' + targetCharityEvent.name + ' transaction pending');
+
 			const receipt: TransactionReceipt = await this.organizationContractService.moveFundsToCharityEvent(
 				this.organizationAddress,
 				this.incomingDonation.address,
@@ -116,20 +127,15 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 				amount
 			);
 
-			this.pendingTransactionService.addPending(
-				amount + ' - ' + targetCharityEvent.name,
-				'Move funds transaction pending',
-				PendingTransactionSourceType.ID
-			);
-
 			if (receipt.events && receipt.events.FundsMovedToCharityEvent) {
 				charityEventAddress = receipt.events.FundsMovedToCharityEvent.returnValues['charityEvent'];
 				this.organizationSharedService.moveFundsToCharityEventConfirmed(charityEventInternalId, charityEventAddress);
 				this.pendingTransactionService.addConfirmed(
 					amount + ' - ' + targetCharityEvent.name,
-					'Move funds transaction confirmed',
+					'Move funds ' + targetCharityEvent.name + ' transaction confirmed',
 					PendingTransactionSourceType.ID
 				);
+				this.toastyService.success('Move funds ' + targetCharityEvent.name + ' transaction confirmed');
 			} else {
 				this.organizationSharedService.moveFundsToCharityEventFailed(charityEventInternalId, charityEventAddress);
 				this.pendingTransactionService.addFailed(
@@ -137,17 +143,22 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 					'Move funds transaction failed',
 					PendingTransactionSourceType.ID
 				);
+				this.toastyService.error('Move funds ' + targetCharityEvent.name + ' transaction failed');
 			}
 
 			this.fundsMoved.emit(this.incomingDonation.address);
-			this.activeModal.close();
-			this.loadingTransparentOverlayService.hideOverlay();
 		} catch (e) {
 			// TODO: listen for failed transaction
 			if (e.message.search('MetaMask Tx Signature: User denied transaction signature') !== -1) {
 				this.organizationSharedService.moveFundsToCharityEventCanceled(charityEventInternalId, charityEventAddress);
 				this.activeModal.close();
 				this.loadingTransparentOverlayService.hideOverlay();
+				this.pendingTransactionService.addFailed(
+					amount + ' - ' + targetCharityEvent.name,
+					'Move funds transaction canceled',
+					PendingTransactionSourceType.ID
+				);
+				this.toastyService.error('Move funds ' + targetCharityEvent.name + ' transaction canceled');
 			} else {
 				// TODO:  global errors notifier
 				console.error(e.message);
