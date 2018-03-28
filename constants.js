@@ -103,9 +103,9 @@ exports.DEV_ENVIRONMENT = {
 	'websocketProviderUrl': 'wss://wsprovider.staging.bankex.team:8636',
 	'metaStorageUrl': 'https://opencharity.staging.bankex.team/api/meta/',
 	'organizations':  [
-		'0x0131b9ee2239a3aa554856034ad81d301bea497b',
-		'0x53b81e07a4fd2191eaccf7f20a9b368a8951d016',
-		'0x410e736392b1aa940d476033c0a17e6c5207122d'
+		'0x613a9dcba334c8b75ba2a1190b3f6498c9af3e01',
+		'0x0d8d530f578c9816c4415d60821482e74433edf3',
+		'0x7037d461fe08daf2f9ea6f3a343870c8e94b773e'
 	]
 };
 
