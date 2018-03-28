@@ -34,9 +34,7 @@ import {IncomingDonationsListBaseComponent} from './incoming-donations/incoming-
 import {AddIncomingDonationModalComponent} from './incoming-donations/add-incoming-donation-modal/add-incoming-donation-modal.component';
 import {SharedModule} from '../shared/shared.module';
 import {CharityEventFormComponent} from './charity-events/charity-event-form/charity-event-form.component';
-
-import 'froala-editor/js/froala_editor.pkgd.min.js';
-import { FroalaEditorModule, FroalaViewModule } from 'angular-froala-wysiwyg';
+import {QuillEditorModule} from 'ngx-quill-editor';
 
 @NgModule({
 	declarations: [
@@ -75,8 +73,7 @@ import { FroalaEditorModule, FroalaViewModule } from 'angular-froala-wysiwyg';
 		NgSelectizeModule,
 		FileDropModule,
 		TagInputModule,
-		FroalaEditorModule.forRoot(),
-		FroalaViewModule.forRoot()
+		QuillEditorModule
 	],
 	providers: [
 		IsOrganizationAddressGuard,
