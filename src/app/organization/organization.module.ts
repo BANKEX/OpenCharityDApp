@@ -35,8 +35,7 @@ import {AddIncomingDonationModalComponent} from './incoming-donations/add-incomi
 import {SharedModule} from '../shared/shared.module';
 import {CharityEventFormComponent} from './charity-events/charity-event-form/charity-event-form.component';
 
-import 'froala-editor/js/froala_editor.pkgd.min.js';
-import { FroalaEditorModule, FroalaViewModule } from 'angular-froala-wysiwyg';
+import {QuillModule} from 'ngx-quill/src/quill.module';
 import {ToastyConfig} from 'ng2-toasty';
 
 @NgModule({
@@ -76,8 +75,7 @@ import {ToastyConfig} from 'ng2-toasty';
 		NgSelectizeModule,
 		FileDropModule,
 		TagInputModule,
-		FroalaEditorModule.forRoot(),
-		FroalaViewModule.forRoot()
+		QuillModule
 	],
 	providers: [
 		IsOrganizationAddressGuard,
