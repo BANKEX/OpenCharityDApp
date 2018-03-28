@@ -3,8 +3,6 @@ import {RouterModule} from '@angular/router';
 import {OrganizationRoutes} from './organization-routing.module';
 import {OrganizationDetailsComponent} from './organization-details/organization-details.component';
 import {AddCharityEventComponent} from './charity-events/add-charity-event/add-charity-event.component';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {CommonModule} from '@angular/common';
 // tslint:disable-next-line:max-line-length
 import {IncomingDonationsListComponent} from './incoming-donations/incoming-donations-list/incoming-donations-list.component';
 // tslint:disable-next-line:max-line-length
@@ -15,7 +13,6 @@ import {IsOrganizationAddressGuard} from './is-organization-address.guard';
 import {TagsBitmaskService} from './services/tags-bitmask.service';
 import {SetBitmaskTagsComponent} from './set-bitmask-tags/set-bitmask-tags.component';
 import {BitmaskTagsListComponent} from './bitmask-tags-list/bitmask-tags-list.component';
-import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {IncomingDonationSendFundsModalComponent} from './incoming-donations/incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
 import {IsAdminGuard} from './is-admin.guard';
 import {OrganizationSharedService} from './services/organization-shared.service';
@@ -34,6 +31,13 @@ import {IncomingDonationFormComponent} from './incoming-donations/incoming-donat
 import {IncomingDonationsSourcesFilterComponent} from './incoming-donations/incoming-donations-sources-filter/incoming-donations-sources-filter.component';
 import {TagInputModule} from 'ngx-chips';
 import {IncomingDonationsListBaseComponent} from './incoming-donations/incoming-donations-list-base.component';
+import {AddIncomingDonationModalComponent} from './incoming-donations/add-incoming-donation-modal/add-incoming-donation-modal.component';
+import {SharedModule} from '../shared/shared.module';
+import {CharityEventFormComponent} from './charity-events/charity-event-form/charity-event-form.component';
+
+import 'froala-editor/js/froala_editor.pkgd.min.js';
+import { FroalaEditorModule, FroalaViewModule } from 'angular-froala-wysiwyg';
+import {ToastyConfig} from 'ng2-toasty';
 
 @NgModule({
 	declarations: [
@@ -57,18 +61,23 @@ import {IncomingDonationsListBaseComponent} from './incoming-donations/incoming-
 		CharityEventsListBaseComponent,
 		IncomingDonationFormComponent,
 		IncomingDonationsSourcesFilterComponent,
-		IncomingDonationsListBaseComponent
+		IncomingDonationsListBaseComponent,
+		AddIncomingDonationModalComponent,
+		IncomingDonationsListBaseComponent,
+		CharityEventFormComponent
 	],
-	entryComponents: [IncomingDonationSendFundsModalComponent],
+	entryComponents: [
+		IncomingDonationSendFundsModalComponent,
+		AddIncomingDonationModalComponent
+	],
 	imports: [
-		FormsModule,
-		CommonModule,
+		SharedModule,
 		RouterModule.forChild(OrganizationRoutes),
-		ReactiveFormsModule,
 		NgSelectizeModule,
-		NgbModule,
 		FileDropModule,
-		TagInputModule
+		TagInputModule,
+		FroalaEditorModule.forRoot(),
+		FroalaViewModule.forRoot()
 	],
 	providers: [
 		IsOrganizationAddressGuard,
@@ -80,4 +89,7 @@ import {IncomingDonationsListBaseComponent} from './incoming-donations/incoming-
 })
 
 export class OrganizationModule {
+	constructor(private toastyConfig: ToastyConfig) {
+		this.toastyConfig.theme = 'bootstrap';
+	}
 }

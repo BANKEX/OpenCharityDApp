@@ -33,7 +33,7 @@ export class MetaDataStorageService {
 	}
 
 	public getData(hash: string): Observable<any> {
-		return this.httpClient.get(this.buildUrl('getData/'+hash));
+		return this.httpClient.get(this.buildUrl('getData/' + hash));
 	}
 
 	public getImage(hash: string): Observable<any> {
@@ -44,7 +44,7 @@ export class MetaDataStorageService {
 			responseType: 'arraybuffer' as 'arraybuffer'
 		};
 
-		return this.httpClient.get(this.buildUrl('getData/'+hash), httpOptions);
+		return this.httpClient.get(this.buildUrl('getData/' + hash), httpOptions);
 	}
 
 	public convertArrayBufferToBase64(arrayBuffer: ArrayBuffer) {
@@ -57,8 +57,12 @@ export class MetaDataStorageService {
 		return window.btoa( binary );
 	}
 
+	public convertArrayBufferToFile(arrayBuffer: ArrayBuffer, type: string, name: string): File {
+		return new File([new Blob( [ arrayBuffer ], { type: type } )], name);
+	}
+
 	private buildUrl(url: string): string {
-		return this.metaStorageUrl+url;
+		return this.metaStorageUrl + url;
 	}
 
 }

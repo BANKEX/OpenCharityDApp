@@ -1,10 +1,10 @@
 <div class="modal-dialog modal-md">
 	<div class="modal-content">
-		<div class="modal-body">
-			<div class="modal-header no-pdd-left">
-				<h4>Move More Funds</h4>
+		<div class="card no-mrg">
+			<div class="card-heading border bottom">
+				<h4 class="card-title">Move Funds</h4>
 			</div>
-			<form [formGroup]="moveFundsForm">
+			<form [formGroup]="moveFundsForm" class="card-block no-pdd-top">
 				<div class="mrg-top-20">
 					<ng-template #rt let-r="result" let-t="term">
 						<span data-id="{{r.address}}">{{r.name}}</span>

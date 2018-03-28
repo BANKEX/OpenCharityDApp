@@ -36,6 +36,9 @@ export class CharityEventTransactionsHistoryComponent implements OnInit, OnDestr
 	public name: string = '';
 	public transactions: CharityEventTransaction[] = [];
 
+	private transactionsLoading: boolean = false;
+	private transactionsEmpty: boolean = false;
+
 	constructor(
 		private router: Router,
 		private route: ActivatedRoute,
@@ -53,6 +56,8 @@ export class CharityEventTransactionsHistoryComponent implements OnInit, OnDestr
 		this.name = await this.charityEventContractService.getName(this.charityEventAddress);
 		this.transactions = [];
 
+		this.setTransactionsLoading(true);
+
 		this.organizationContractEventsService.getCharityEventTransactions(this.organizationAddress, this.charityEventAddress)
 			.subscribe(async (res: EventLog[]) => {
 				res.forEach(async (log: EventLog) => {
@@ -66,6 +71,8 @@ export class CharityEventTransactionsHistoryComponent implements OnInit, OnDestr
 						sender: eventValues.sender,
 					});
 				});
+				this.setTransactionsLoading(false);
+				this.setTransactionsEmpty(!res.length);
 			}, (err: any) => {
 				console.error(err);
 			});
@@ -74,6 +81,22 @@ export class CharityEventTransactionsHistoryComponent implements OnInit, OnDestr
 	public goBackToPreviousPage(event: Event): void {
 		this.location.back();
 		event.preventDefault();
+	}
+
+	public setTransactionsLoading(loading): void {
+		this.transactionsLoading = loading;
+	}
+
+	public isTransactionsLoading(): boolean {
+		return this.transactionsLoading;
+	}
+
+	public setTransactionsEmpty(empty): void {
+		this.transactionsEmpty = empty;
+	}
+
+	public isTransactionsEmpty(): boolean {
+		return this.transactionsEmpty;
 	}
 
 	ngOnDestroy(): void {

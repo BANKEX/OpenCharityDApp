@@ -55,6 +55,20 @@ export class OrganizationSharedService {
 	private _onIncomingDonationCanceled: Subject<ConfirmationResponse> = new Subject<ConfirmationResponse>();
 	private onIncomingDonationCanceledSource = this._onIncomingDonationCanceled.asObservable().share<ConfirmationResponse>();
 
+	/*********************************/
+
+	// triggered when transaction succeed i.e CE stored in blockchain
+	private _onMoveFundsToCharityEventConfirmed: Subject<ConfirmationResponse> = new Subject<ConfirmationResponse>();
+	private onMoveFundsToCharityEventConfirmedSource = this._onMoveFundsToCharityEventConfirmed.asObservable().share<ConfirmationResponse>();
+
+
+	// triggered when transaction failed  i.e CE is not stored in blockchain
+	private _onMoveFundsToCharityEventFailed: Subject<ConfirmationResponse> = new Subject<ConfirmationResponse>();
+	private onMoveFundsToCharityEventFailedSource = this._onMoveFundsToCharityEventFailed.asObservable().share<ConfirmationResponse>();
+
+	// triggered when transaction canceled by user
+	private _onMoveFundsToCharityEventCanceled: Subject<ConfirmationResponse> = new Subject<ConfirmationResponse>();
+	private onMoveFundsToCharityEventCanceledSource = this._onMoveFundsToCharityEventCanceled.asObservable().share<ConfirmationResponse>();
 
 	constructor(private web3ProviderService: Web3ProviderService) {
 
@@ -97,6 +111,18 @@ export class OrganizationSharedService {
 		this._onIncomingDonationCanceled.next({internalId: incomingDonationInternalId, address: address});
 	}
 
+	public moveFundsToCharityEventConfirmed(charityEventInternalId: string, address: string): void {
+		this._onMoveFundsToCharityEventConfirmed.next({internalId: charityEventInternalId, address: address});
+	}
+
+	public moveFundsToCharityEventFailed(charityEventInternalId: string, address: string): void {
+		this._onMoveFundsToCharityEventFailed.next({internalId: charityEventInternalId, address: address});
+	}
+
+	public moveFundsToCharityEventCanceled(charityEventInternalId: string, address: string): void {
+		this._onMoveFundsToCharityEventCanceled.next({internalId: charityEventInternalId, address: address});
+	}
+
 	/***********************************/
 	/** Methods to subscribe to events **/
 
@@ -133,6 +159,19 @@ export class OrganizationSharedService {
 
 	public onIncomingDonationCanceled(): Observable<ConfirmationResponse> {
 		return this.onIncomingDonationCanceledSource;
+	}
+
+
+	public onMoveFundsToCharityEventConfirmed(): Observable<ConfirmationResponse> {
+		return this.onMoveFundsToCharityEventConfirmedSource;
+	}
+
+	public onMoveFundsToCharityEventFailed(): Observable<ConfirmationResponse> {
+		return this.onMoveFundsToCharityEventFailedSource;
+	}
+
+	public onMoveFundsToCharityEventCanceled(): Observable<ConfirmationResponse> {
+		return this.onMoveFundsToCharityEventCanceledSource;
 	}
 
 

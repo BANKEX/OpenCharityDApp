@@ -6,6 +6,7 @@ import {TokenContractService} from '../../core/contracts-services/token-contract
 import {OrganizationContractService} from '../../core/contracts-services/organization-contract.service';
 import {assign, constant, filter, find, findIndex, merge, reverse, times} from 'lodash';
 import {IncomingDonationContractService} from '../../core/contracts-services/incoming-donation-contract.service';
+import {OrganizationSharedService} from '../services/organization-shared.service';
 
 @Component({
 	selector: 'opc-incoming-donations-list-base',
@@ -23,14 +24,13 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 				protected tokenContractService: TokenContractService,
 				protected organizationContractService: OrganizationContractService,
 				protected incomingDonationContractService: IncomingDonationContractService,
-				protected zone: NgZone
-	) {
-
-	}
+				protected zone: NgZone,
+				protected organizationSharedService: OrganizationSharedService
+	) {}
 
 	ngOnInit() {
 		console.log('base ngInit');
-		if( !this.organizationAddress) {
+		if ( !this.organizationAddress) {
 			this.route.params.subscribe(params => {
 				this.organizationAddress = params['address'];
 			});
@@ -39,6 +39,17 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 
 	ngOnDestroy() {
 		this.componentDestroyed.next();
+	}
+
+	public initEventsListeners(): void {
+		this.organizationSharedService.onIncomingDonationAdded()
+			.takeUntil(this.componentDestroyed)
+			.subscribe((res: AppIncomingDonation) => {
+				this.displayedIncomingDonations.push(res);
+			}, (err: any) => {
+				console.error(err);
+				alert('`Error ${err.message}');
+			});
 	}
 
 	public async updateIncomingDonationsList(): Promise<void> {

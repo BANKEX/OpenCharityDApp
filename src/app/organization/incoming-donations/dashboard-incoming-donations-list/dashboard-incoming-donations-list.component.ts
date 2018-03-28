@@ -1,12 +1,12 @@
-import {Component, Input, NgZone, OnInit} from '@angular/core';
+import {Component, NgZone, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {constant, find, findIndex, merge, reverse, times} from 'lodash';
 
-import {AppIncomingDonation, ConfirmationStatusState} from '../../../open-charity-types';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
 import {IncomingDonationContractService} from '../../../core/contracts-services/incoming-donation-contract.service';
 import {TokenContractService} from '../../../core/contracts-services/token-contract.service';
 import {IncomingDonationsListBaseComponent} from '../incoming-donations-list-base.component';
+import {OrganizationSharedService} from '../../services/organization-shared.service';
 
 @Component({
 	selector: 'opc-dashboard-incoming-donations-list',
@@ -21,12 +21,14 @@ export class DashboardIncomingDonationsListComponent extends IncomingDonationsLi
 				protected tokenContractService: TokenContractService,
 				protected router: Router,
 				protected route: ActivatedRoute,
-				protected zone: NgZone) {
-		super(router, route, tokenContractService, organizationContractService, incomingDonationContractService, zone)
+				protected zone: NgZone,
+				protected organizationSharedService: OrganizationSharedService) {
+		super(router, route, tokenContractService, organizationContractService, incomingDonationContractService, zone, organizationSharedService);
 	}
 
 	async ngOnInit(): Promise<void> {
 		this.updateIncomingDonationsList();
+		this.initEventsListeners();
 	}
 
 	public toAllDonations() {

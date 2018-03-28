@@ -1,0 +1,150 @@
+<form role="form" novalidate [formGroup]="charityEventForm">
+	<div class="row">
+
+
+		<!-- LEFT COLUMN -->
+		<div class="col-md-8 col-sm-6">
+
+			<div class="form-group">
+				<label>Event Name
+					<small class="text-normal">*</small>
+				</label>
+				<input class="form-control"
+					   [ngClass]="{'error' : charityEventForm.get('name').touched && charityEventForm.get('name').hasError('required')}"
+					   placeholder="Event Name"
+					   formControlName="name">
+				<label class="error"
+					   *ngIf="charityEventForm.get('name').touched && charityEventForm.get('name').hasError('required')">
+					Name is required
+				</label>
+			</div>
+
+
+			<div class="form-group">
+				<label>
+					Details
+				</label>
+				<textarea class="form-control"
+						  [froalaEditor]
+						  placeholder="Details"
+						  formControlName="details"
+				></textarea>
+			</div>
+
+			<div class="form-group">
+				<label>
+					Files
+				</label>
+				<file-drop #fileDropAttachments
+						   (onFileDrop)="onFilesAdded($event)"
+						   class="file-drop-attachments"
+						   [style.width.%]="100"
+						   [style.height.%]="100">
+					<div>Drop files or press plus to select</div>
+					<div class="add-files">
+						<label for="file" class="btn btn-default">
+							<i class="fa fa-plus-circle"></i>
+						</label>
+						<input type="file"
+							   id="file"
+							   multiple
+							   (change)="onFilesAdded($event.target)">
+					</div>
+				</file-drop>
+				<div class="files-list" *ngIf="attachedFiles.length">
+					<ul class="list-group">
+						<li *ngFor="let item of attachedFiles; let i = index;" class="list-group-item">
+							<span>{{ item.name }}</span>
+							<i class="fa fa-remove pull-right" (click)="removeFile(i)"></i>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+		</div>
+		<!-- /LEFT COLUMN -->
+
+
+		<!-- RIGHT COLUMN -->
+		<div class="col-md-4 col-sm-6">
+
+			<div class="form-group" *ngIf="!loadingImage && !charityEventImagePreview">
+				<div class="charity-event-image">
+					<file-drop headertext="Drop event image" (onFileDrop)="onImageAdded($event)" [style.width.%]="100" [style.height.%]="100"></file-drop>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="charity-event-image-preview" *ngIf="charityEventImagePreview">
+					<button class="btn btn-default" (click)="removeCharityEventImage()">
+						<i class="fa fa-remove"></i>
+					</button>
+					<img [src]="charityEventImagePreview">
+				</div>
+				<div *ngIf="loadingImage" class="text-center"><i class="fa fa-spinner fa-spin fa-3x"></i></div>
+			</div>
+
+			<!-- Event Target -->
+			<div class="form-group">
+				<label>Target
+					<small class="text-normal">*</small>
+				</label>
+				<div class="input-group">
+					<input type="text" class="form-control" placeholder="Target"
+						   formControlName="target"
+						   [ngClass]="{'error' : charityEventForm.get('target').touched && charityEventForm.get('target').invalid}"
+					>
+					<span class="input-group-append">
+						<span class="input-group-text">Рублей</span>
+					</span>
+				</div>
+				<div>
+					<label class="error"
+						   *ngIf="charityEventForm.get('target').touched && charityEventForm.get('target').hasError('required')">
+						Target is required
+					</label>
+				</div>
+				<div>
+					<label class="error"
+						   *ngIf="charityEventForm.get('target').touched && charityEventForm.get('target').hasError('pattern')">
+						Target should be a number
+					</label>
+				</div>
+				<div>
+					<label class="error"
+						   *ngIf="charityEventForm.get('target').touched && charityEventForm.get('target').hasError('min')">
+						Target should be > 0
+					</label>
+				</div>
+			</div>
+			<!-- Event /Target -->
+
+			<!-- Event tags -->
+			<div class="form-group">
+				<opc-set-bitmask-tags [bitmask]="selectedTagsBitmask"
+									  [chosenTags]="charityEventTags"
+									  (bitmaskChanged)="bitmaskChanged($event)"></opc-set-bitmask-tags>
+			</div>
+			<!-- /Event tags -->
+
+			<!-- Buttons -->
+			<div class="buttons">
+
+				<button type="submit"
+						class="btn btn-primary width-100"
+						[ngClass]="{'disabled': charityEventForm.invalid }"
+						(click)="submitForm()">
+					Submit
+				</button>
+			</div>
+			<!-- /Buttons -->
+
+		</div>
+		<!-- /RIGHT COLUMN -->
+
+
+
+
+
+	</div>
+</form>

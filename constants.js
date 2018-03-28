@@ -1,6 +1,7 @@
 "use strict";
-const root = require('./helpers.js').root
+const root = require('./helpers.js').root;
 const ip = require('ip');
+const webpack = require('webpack');
 
 exports.HOST = ip.address();
 exports.DEV_PORT = 3000;
@@ -71,6 +72,11 @@ exports.MY_VENDOR_DLLS = [
 
 exports.MY_CLIENT_PLUGINS = [
 	// use this to import your own webpack config Client plugins.
+
+    new webpack.ProvidePlugin({
+        $: "jquery",
+        jQuery: "jquery"
+    })
 ]
 
 exports.MY_CLIENT_PRODUCTION_PLUGINS = [
@@ -97,9 +103,9 @@ exports.DEV_ENVIRONMENT = {
 	'websocketProviderUrl': 'wss://wsprovider.staging.bankex.team:8636',
 	'metaStorageUrl': 'https://opencharity.staging.bankex.team/api/meta/',
 	'organizations':  [
-		'0x47f6aa20c90b81b5b1115b989ed853e9efa8f5b0',
-		'0xf51dbaa3264f2dc1a950378416583be7a639ce17',
-		'0x184435d6c65fd01f3ef4bb1018dc75503c3f802f'
+		'0x0131b9ee2239a3aa554856034ad81d301bea497b',
+		'0x53b81e07a4fd2191eaccf7f20a9b368a8951d016',
+		'0x410e736392b1aa940d476033c0a17e6c5207122d'
 	]
 };
 
@@ -110,8 +116,8 @@ exports.PROD_ENVIRONMENT = {
 	'websocketProviderUrl': 'wss://wsprovider.opencharity.bankex.team:8636',
 	'metaStorageUrl': 'https://opencharity.bankex.team/api/meta/',
 	'organizations':  [
-		'0x2e0268044f33024812fb24fdd430209b3df4a698',
-		'0x0dad7834b59ed599d1c9241ed5a07fc761a9c690',
-		'0x90dc8e34192e589dc0b48d574194e81abe6e2de1'
+		'0xb61785efbb382f5a31e4b193cc3f95bfafbf9f02',
+		'0x8e32283dde3b65a13094422f2a9cd74194780580',
+		'0xc51a3c307edc40a0294555f0d83c04e1f75a3d81'
 	]
 };

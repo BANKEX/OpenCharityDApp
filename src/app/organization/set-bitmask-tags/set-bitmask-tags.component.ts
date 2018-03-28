@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {TagsBitmaskService} from '../services/tags-bitmask.service';
+import {Tag, TagsBitmaskService} from '../services/tags-bitmask.service';
 
 @Component({
 	selector: 'opc-set-bitmask-tags',
@@ -8,11 +8,10 @@ import {TagsBitmaskService} from '../services/tags-bitmask.service';
 })
 export class SetBitmaskTagsComponent implements OnInit {
 	@Input() bitmask: number;
+	@Input() chosenTags: Array<Tag> = [];
 	@Output() bitmaskChanged: EventEmitter<number> = new EventEmitter<number>();
 
 	readonly tags = this.tagsBitmaskService.tags;
-
-	public chosenTags: Array<object> = [];
 
 	constructor(private tagsBitmaskService: TagsBitmaskService) {
 

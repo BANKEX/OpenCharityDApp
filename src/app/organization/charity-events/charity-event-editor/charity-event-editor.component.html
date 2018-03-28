@@ -5,12 +5,46 @@
 			<span>Back</span>
 		</a></li>
 	</ol>
-	<div class="page-title">
+	<div class="page-title" *ngIf="charityEventData">
 		<h4>
-			{{name}}
+			{{charityEventData.contract.name}}
 			<div>
 				<small>{{charityEventAddress}}</small>
 			</div>
 		</h4>
+	</div>
+
+	<div class="row" *ngIf="charityEventSaved">
+		<div class="col-md-12">
+			<div class="alert alert-info">
+				Saved!
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			<div class="card">
+				<div class="card-heading border bottom">
+					<h4 class="card-title">Edit Charity Event</h4>
+				</div>
+
+				<div class="card-block">
+
+					<div class="text-center" *ngIf="!charityEventData">
+						<i class="fa fa-spinner fa-spin fa-5x"></i>
+					</div>
+
+					<opc-charity-event-form
+							*ngIf="charityEventData"
+							[charityEventData]="charityEventData"
+							(charityEventChanged)="charityEventChanged($event)"
+							[organizationContractAddress]="organizationAddress"
+					></opc-charity-event-form>
+
+				</div>
+
+			</div>
+		</div>
 	</div>
 </div>

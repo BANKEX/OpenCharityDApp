@@ -10,8 +10,13 @@ import 'rxjs/add/operator/distinctUntilChanged';
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {filter} from 'lodash';
 import {TagsBitmaskService} from '../../services/tags-bitmask.service';
-import {ContractCharityEvent, ContractIncomingDonation} from '../../../open-charity-types';
+import {ContractCharityEvent, ContractIncomingDonation, AppCharityEvent} from '../../../open-charity-types';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
+import {LoadingTransparentOverlayService} from '../../../core/loading-transparent-overlay.service';
+import {TransactionReceipt} from 'web3/types';
+import {OrganizationSharedService} from '../../services/organization-shared.service';
+import {PendingTransactionService} from '../../../core/pending-transactions.service';
+import {PendingTransactionSourceType} from '../../../pending-transaction.types';
 
 
 @Component({
@@ -20,6 +25,7 @@ import {OrganizationContractService} from '../../../core/contracts-services/orga
 })
 
 export class IncomingDonationSendFundsModalComponent implements OnInit {
+	@Input('charityEvent') charityEvent: AppCharityEvent; // If spcified - move all funds to this CE
 	@Input('organizationAddress') organizationAddress: string;
 	@Input('charityEvents') charityEvents: ContractCharityEvent[];
 	@Input('incomingDonation') incomingDonation: ContractIncomingDonation;
@@ -40,12 +46,15 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 		private incomingDonationContractService: IncomingDonationContractService,
 		private tagsBitmaskService: TagsBitmaskService,
 		private fb: FormBuilder,
-		private activeModal: NgbActiveModal
+		private activeModal: NgbActiveModal,
+		private loadingTransparentOverlayService: LoadingTransparentOverlayService,
+		private organizationSharedService: OrganizationSharedService,
+		private pendingTransactionService: PendingTransactionService
 	) {
 	}
 
 	public ngOnInit(): void {
-		this.statesWithFlags = this.filterContractCharityEventsByTags(this.charityEvents);
+		this.statesWithFlags = this.filterCharityEventsByTags(this.charityEvents);
 		this.search = (text$: Observable<string>) =>
 			text$
 				.debounceTime(200).distinctUntilChanged()
@@ -59,7 +68,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 		this.initForm();
 	}
 
-	private filterContractCharityEventsByTags(charityEvents: ContractCharityEvent[]): ContractCharityEvent[] {
+	private filterCharityEventsByTags(charityEvents: ContractCharityEvent[]): ContractCharityEvent[] {
 		const donationTags = parseInt(this.incomingDonation.tags, 16);
 		return charityEvents.filter((event) => {
 			return this.tagsBitmaskService.containSimilarTags(parseInt(event.tags, 16), donationTags);
@@ -70,7 +79,14 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 		this.moveFundsForm = this.fb.group({
 			targetCharityEvent: ['', [Validators.required]],
 			amount: ['', [Validators.required, this.validateAmount.bind(this)]]
-		})
+		});
+		// set initial data to the form fields
+		if (this.charityEvent) {
+			this.moveFundsForm.setValue({
+				targetCharityEvent: this.charityEvent,
+				amount: this.incomingDonation.amount,
+			  });
+		}
 	}
 
 	private validateAmount(control: AbstractControl): ValidationErrors | null {
@@ -78,7 +94,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 			return { moreThanMax: true };
 		}
 
-		if( parseInt(control.value, 10) <= 0) {
+		if (parseInt(control.value, 10) <= 0) {
 			return { lessThanMin: true };
 		}
 
@@ -86,14 +102,56 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 	}
 
 
+	// tslint:disable-next-line:member-ordering
 	public async sendFunds(targetCharityEvent: ContractCharityEvent, amount: string): Promise<void> {
+		let charityEventInternalId: string = this.organizationSharedService.makePseudoRandomHash(targetCharityEvent);
+		let charityEventAddress: string = null;
+
 		try {
-			const tran = await this.organizationContractService.moveFundsToCharityEvent(this.organizationAddress, this.incomingDonation.address, targetCharityEvent.address, amount);
-			console.log(tran);
+			this.loadingTransparentOverlayService.showOverlay();
+			const receipt: TransactionReceipt = await this.organizationContractService.moveFundsToCharityEvent(
+				this.organizationAddress,
+				this.incomingDonation.address,
+				targetCharityEvent.address,
+				amount
+			);
+
+			this.pendingTransactionService.addPending(
+				amount + ' - ' + targetCharityEvent.name,
+				'Move funds transaction pending',
+				PendingTransactionSourceType.ID
+			);
+
+			if (receipt.events && receipt.events.FundsMovedToCharityEvent) {
+				charityEventAddress = receipt.events.FundsMovedToCharityEvent.returnValues['charityEvent'];
+				this.organizationSharedService.moveFundsToCharityEventConfirmed(charityEventInternalId, charityEventAddress);
+				this.pendingTransactionService.addConfirmed(
+					amount + ' - ' + targetCharityEvent.name,
+					'Move funds transaction confirmed',
+					PendingTransactionSourceType.ID
+				);
+			} else {
+				this.organizationSharedService.moveFundsToCharityEventFailed(charityEventInternalId, charityEventAddress);
+				this.pendingTransactionService.addFailed(
+					amount + ' - ' + targetCharityEvent.name,
+					'Move funds transaction failed',
+					PendingTransactionSourceType.ID
+				);
+			}
+
 			this.fundsMoved.emit(this.incomingDonation.address);
 			this.activeModal.close();
+			this.loadingTransparentOverlayService.hideOverlay();
 		} catch (e) {
-			console.log(e);
+			// TODO: listen for failed transaction
+			if (e.message.search('MetaMask Tx Signature: User denied transaction signature') !== -1) {
+				this.organizationSharedService.moveFundsToCharityEventCanceled(charityEventInternalId, charityEventAddress);
+				this.activeModal.close();
+				this.loadingTransparentOverlayService.hideOverlay();
+			} else {
+				// TODO:  global errors notifier
+				console.error(e.message);
+			}
 		}
 	}
 
