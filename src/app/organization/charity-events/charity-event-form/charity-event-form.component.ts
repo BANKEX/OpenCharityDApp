@@ -34,7 +34,6 @@ export class CharityEventFormComponent implements OnInit {
 	@Output() charityEventChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
 
 	@ViewChild('fileDropAttachments', {read: ElementRef}) fileDropElement: ElementRef;
-	@ViewChild('froalaEditor', {read: ElementRef}) froalaEditor: ElementRef;
 
 	public charityEventForm: FormGroup;
 	public selectedTagsBitmask: number = 0;
@@ -66,7 +65,6 @@ export class CharityEventFormComponent implements OnInit {
 	public ngOnInit(): void {
 		this.initForm();
 		this.changeStylesDropFiles();
-		this.changeFroalaEditorStyles();
 
 		this.route.params.subscribe(params => {
 			this.organizationAddress = params['address'];
@@ -517,14 +515,6 @@ export class CharityEventFormComponent implements OnInit {
 		dropContent.style.display = 'block';
 		dropContent.style.padding = '15px';
 		dropContent.style.textAlign = 'center';
-	}
-
-	private async changeFroalaEditorStyles() {
-		const div: HTMLDivElement = await this.froalaEditor.nativeElement;
-		const editor: Element = div.children[1];
-		const license: Element = editor.children[2].children[0];
-
-		license.remove();
 	}
 
 	private getData(hash: string): Promise<MetaStorageFile> {
