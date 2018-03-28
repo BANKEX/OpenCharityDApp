@@ -24,11 +24,7 @@
 				<label>
 					Details
 				</label>
-				<textarea class="form-control"
-						  [froalaEditor]
-						  placeholder="Details"
-						  formControlName="details"
-				></textarea>
+				<quill-editor [formControl]="charityEventForm.controls.details"></quill-editor>
 			</div>
 
 			<div class="form-group">
