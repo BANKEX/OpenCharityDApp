@@ -1,5 +1,5 @@
 import {Component, Input, NgZone, OnDestroy, OnInit} from '@angular/core';
-import {AppIncomingDonation, ConfirmationStatusState} from '../../open-charity-types';
+import {AppIncomingDonation, ConfirmationResponse, ConfirmationStatusState} from '../../open-charity-types';
 import {Subject} from 'rxjs/Subject';
 import {ActivatedRoute, Router} from '@angular/router';
 import {TokenContractService} from '../../core/contracts-services/token-contract.service';
@@ -7,6 +7,9 @@ import {OrganizationContractService} from '../../core/contracts-services/organiz
 import {assign, constant, filter, find, findIndex, merge, reverse, times} from 'lodash';
 import {IncomingDonationContractService} from '../../core/contracts-services/incoming-donation-contract.service';
 import {OrganizationSharedService} from '../services/organization-shared.service';
+import {AddIncomingDonationModalComponent} from './add-incoming-donation-modal/add-incoming-donation-modal.component';
+import {IncomingDonationSendFundsModalComponent} from './incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
 	selector: 'opc-incoming-donations-list-base',
@@ -25,7 +28,8 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 				protected organizationContractService: OrganizationContractService,
 				protected incomingDonationContractService: IncomingDonationContractService,
 				protected zone: NgZone,
-				protected organizationSharedService: OrganizationSharedService
+				protected organizationSharedService: OrganizationSharedService,
+				protected modal: NgbModal
 	) {}
 
 	ngOnInit() {
@@ -46,6 +50,46 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 			.takeUntil(this.componentDestroyed)
 			.subscribe((res: AppIncomingDonation) => {
 				this.displayedIncomingDonations.push(res);
+			}, (err: any) => {
+				console.error(err);
+				alert('`Error ${err.message}');
+			});
+
+		this.organizationSharedService.onIncomingDonationConfirmed()
+			.takeUntil(this.componentDestroyed)
+			.subscribe((res: ConfirmationResponse) => {
+
+				const i: number = findIndex(this.displayedIncomingDonations, {internalId: res.internalId});
+				if (i !== -1) {
+					this.displayedIncomingDonations[i].address = res.address;
+					this.displayedIncomingDonations[i].confirmation = ConfirmationStatusState.CONFIRMED;
+				}
+			}, (err: any) => {
+				console.error(err);
+				alert('`Error ${err.message}');
+			});
+
+		this.organizationSharedService.onIncomingDonationFailed()
+			.takeUntil(this.componentDestroyed)
+			.subscribe((res: ConfirmationResponse) => {
+
+				const i: number = findIndex(this.displayedIncomingDonations, {internalId: res.internalId});
+				if (i !== -1) {
+					this.displayedIncomingDonations[i].confirmation = ConfirmationStatusState.FAILED;
+				}
+			}, (err: any) => {
+				console.error(err);
+				alert('`Error ${err.message}');
+			});
+
+		this.organizationSharedService.onIncomingDonationCanceled()
+			.takeUntil(this.componentDestroyed)
+			.subscribe((res: ConfirmationResponse) => {
+
+				const i: number = findIndex(this.displayedIncomingDonations, {internalId: res.internalId});
+				if (i !== -1) {
+					this.displayedIncomingDonations.splice(i, 1);
+				}
 			}, (err: any) => {
 				console.error(err);
 				alert('`Error ${err.message}');
@@ -92,7 +136,9 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 	}
 
 	public addClick() {
-		this.router.navigate([`/organization/${this.organizationAddress}/donation/add`]);
+		let modalInstance;
+		modalInstance =	this.modal.open(AddIncomingDonationModalComponent, {size: 'lg'}).componentInstance;
+		modalInstance.organizationAddress = this.organizationAddress;
 	}
 
 	public selectedSourceChanged(sourceId: number) {

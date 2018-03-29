@@ -32,8 +32,12 @@ export class AddIncomingDonationModalComponent extends NeatComponent {
 		private $sharedService: OrganizationSharedService,
 	) {
 		super();
-		$sharedService.onIncomingDonationAdded().takeUntil(this.ngUnsubscribe).subscribe(_ => $loadingTransparentOverlayService.showOverlay());
-		$sharedService.onIncomingDonationConfirmed().takeUntil(this.ngUnsubscribe).subscribe(_ => $loadingTransparentOverlayService.showOverlay());
+		if (this.charityEvent) {
+			$sharedService.onIncomingDonationAdded().takeUntil(this.ngUnsubscribe).subscribe(_ => $loadingTransparentOverlayService.showOverlay());
+			$sharedService.onIncomingDonationConfirmed().takeUntil(this.ngUnsubscribe).subscribe(_ => $loadingTransparentOverlayService.showOverlay());
+		} else {
+			$sharedService.onIncomingDonationAdded().takeUntil(this.ngUnsubscribe).subscribe(_ => this.activeModal.close('Donation Pending'));
+		}
 	}
 
 	onDonationCreated(donationAddress: string) {
