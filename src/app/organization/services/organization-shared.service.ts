@@ -23,6 +23,10 @@ export class OrganizationSharedService {
 	private _onCharityEventAdded: Subject<AppCharityEvent> = new Subject<AppCharityEvent>();
 	private onCharityEventAddedSource = this._onCharityEventAdded.asObservable().share<AppCharityEvent>();
 
+	// triggered when user try to edit charity event
+	private _onCharityEventEdited: Subject<AppCharityEvent> = new Subject<AppCharityEvent>();
+	private onCharityEventEditedSource = this._onCharityEventEdited.asObservable().share<AppCharityEvent>();
+
 	// triggered when transaction succeed i.e CE stored in blockchain
 	private _onCharityEventConfirmed: Subject<ConfirmationResponse> = new Subject<ConfirmationResponse>();
 	private onCharityEventConfirmedSource = this._onCharityEventConfirmed.asObservable().share<ConfirmationResponse>();
@@ -83,6 +87,10 @@ export class OrganizationSharedService {
 		this._onCharityEventAdded.next(charityEvent);
 	}
 
+	public charityEventEdited(charityEvent: AppCharityEvent): void {
+		this._onCharityEventEdited.next(charityEvent);
+	}
+
 	public charityEventConfirmed(charityEventInternalId: string, address: string): void {
 		this._onCharityEventConfirmed.next({internalId: charityEventInternalId, address: address});
 	}
@@ -130,6 +138,10 @@ export class OrganizationSharedService {
 
 	public onCharityEventAdded(): Observable<AppCharityEvent> {
 		return this.onCharityEventAddedSource;
+	}
+
+	public onCharityEventEdited(): Observable<AppCharityEvent> {
+		return this.onCharityEventEditedSource;
 	}
 
 	public onCharityEventConfirmed(): Observable<ConfirmationResponse> {

@@ -39,6 +39,7 @@ import {QuillModule} from 'ngx-quill/src/quill.module';
 import {ToastyConfig} from 'ng2-toasty';
 import {AddCharityEventModalComponent} from './charity-events/add-charity-event-modal/add-charity-event-modal.component';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
+import {CharityEventEditorModalComponent} from './charity-events/charity-event-editor-modal/charity-event-editor-modal.component';
 
 @NgModule({
 	declarations: [
@@ -66,12 +67,14 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 		AddIncomingDonationModalComponent,
 		IncomingDonationsListBaseComponent,
 		CharityEventFormComponent,
-		AddCharityEventModalComponent
+		AddCharityEventModalComponent,
+		CharityEventEditorModalComponent
 	],
 	entryComponents: [
 		IncomingDonationSendFundsModalComponent,
 		AddIncomingDonationModalComponent,
-		AddCharityEventModalComponent
+		AddCharityEventModalComponent,
+		CharityEventEditorModalComponent
 	],
 	imports: [
 		SharedModule,

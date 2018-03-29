@@ -153,6 +153,11 @@ export class CharityEventFormComponent implements OnInit {
 			// TODO: listen for failed transaction
 			if (e.message.search('MetaMask Tx Signature: User denied transaction signature') !== -1) {
 				this.organizationSharedService.charityEventCanceled(charityEventInternalId, newCharityEventAddress);
+				this.pendingTransactionService.addFailed(
+					newCharityEvent.name,
+					'Adding ' + newCharityEvent.name + ' transaction canceled',
+					PendingTransactionSourceType.CE
+				);
 				this.toastyService.error('Adding ' + newCharityEvent.name + ' transaction canceled');
 			} else {
 				// TODO:  global errors notifier
@@ -179,7 +184,7 @@ export class CharityEventFormComponent implements OnInit {
 
 		let charityEventInternalId: string = this.organizationSharedService.makePseudoRandomHash(newCharityEvent);
 		let receipt: TransactionReceipt;
-		let charityEventAddress: string = null;
+		let charityEventAddress: string = this.charityEventData.contract.address;
 
 		const isCharityEventChanged = this.isCharityEventChanged(newCharityEvent);
 		const isMetaStorageChanged = this.isMetaStorageChanged(f.details);
@@ -189,6 +194,12 @@ export class CharityEventFormComponent implements OnInit {
 
 		try {
 			this.loadingTransparentOverlayService.showOverlay();
+
+			// show pending charity event in ui
+			this.organizationSharedService.charityEventEdited(merge({}, newCharityEvent, {
+				internalId: charityEventInternalId,
+				confirmation: ConfirmationStatusState.PENDING
+			}));
 
 			if (isMetaStorageChanged) {
 				const newMetaStorageHash: string = await this.storeToMetaStorage(newCharityEvent, f.details);
@@ -205,8 +216,10 @@ export class CharityEventFormComponent implements OnInit {
 
 					this.toastyService.warning('Editing ' + newCharityEvent.name + ' transaction pending');
 
+					this.activeModal.close();
+
 					receipt = await this.organizationContractService.updateCharityEventMetaStorageHash(
-						this.organizationAddress,
+						this.organizationContractAddress,
 						this.charityEventAddress,
 						newMetaStorageHash
 					);
@@ -216,7 +229,6 @@ export class CharityEventFormComponent implements OnInit {
 			if (isCharityEventChanged) {
 				this.loadingTransparentOverlayService.hideOverlay();
 
-
 				this.pendingTransactionService.addPending(
 					newCharityEvent.name,
 					'Editing ' + newCharityEvent.name + ' transaction pending',
@@ -225,8 +237,10 @@ export class CharityEventFormComponent implements OnInit {
 
 				this.toastyService.warning('Editing ' + newCharityEvent.name + ' transaction pending');
 
+				this.activeModal.close();
+
 				receipt = await this.organizationContractService.updateCharityEventDetails(
-					this.organizationAddress,
+					this.organizationContractAddress,
 					newCharityEvent
 				);
 			}
@@ -266,8 +280,8 @@ export class CharityEventFormComponent implements OnInit {
 				// TODO:  global errors notifier
 				console.error(e.message);
 				this.toastyService.error(e.message);
-				this.loadingTransparentOverlayService.hideOverlay();
 			}
+			this.loadingTransparentOverlayService.hideOverlay();
 		}
 	}
 
