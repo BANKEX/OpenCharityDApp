@@ -163,7 +163,12 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 
 	public showAddCharityEventModal() {
 		let modalInstance;
-		modalInstance =	this.modal.open(AddCharityEventModalComponent, {size: 'lg'}).componentInstance;
+		modalInstance =	this.modal.open(
+			AddCharityEventModalComponent,
+			{
+				size: 'lg',
+				windowClass: 'modal-more-lg'
+			}).componentInstance;
 		modalInstance.organizationContractAddress = this.organizationAddress;
 	}
 

@@ -16,3 +16,36 @@ tr.loading, tr.empty {
     margin-top: 16px;
   }
 }
+
+@media (min-width: 1250px) {
+  .modal-more-lg {
+    .modal-dialog {
+      max-width: 1200px !important;
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  .modal-more-lg {
+    .modal-dialog {
+      max-width: 80% !important;
+    }
+  }
+}
+
+@media (min-width: 882px) {
+  .modal-more-lg {
+    .modal-dialog {
+      max-width: 80% !important;
+    }
+  }
+}
+
+@media (min-width: 576px) {
+  .modal-more-lg {
+    .modal-dialog {
+      max-width: 80% !important;
+    }
+  }
+}
+
