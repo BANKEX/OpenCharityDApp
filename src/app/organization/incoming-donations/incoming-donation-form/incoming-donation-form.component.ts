@@ -13,6 +13,7 @@ import {isString} from 'ng2-toasty/src/toasty.utils';
 import {isObject} from 'rxjs/util/isObject';
 import {PendingTransactionSourceType} from '../../../pending-transaction.types';
 import {PendingTransactionService} from '../../../core/pending-transactions.service';
+import {ToastyService} from 'ng2-toasty';
 
 
 type IncomingDonationSource = {
@@ -71,7 +72,8 @@ export class IncomingDonationFormComponent implements OnInit {
 				private fb: FormBuilder,
 				private tagsBitmaskService: TagsBitmaskService,
 				private organizationSharedService: OrganizationSharedService,
-				private pendingTransactionService: PendingTransactionService
+				private pendingTransactionService: PendingTransactionService,
+				private toastyService: ToastyService
 	) {
 	}
 
@@ -125,9 +127,9 @@ export class IncomingDonationFormComponent implements OnInit {
 				'Adding ' + newIncomingDonation.realWorldsIdentifier + ' transaction pending',
 				PendingTransactionSourceType.ID
 			);
+			this.toastyService.warning('Adding ' + newIncomingDonation.realWorldsIdentifier + ' transaction pending');
 
 			const receipt: TransactionReceipt = await this.organizationContractService.addIncomingDonation(this.organizationAddress, f.realWorldIdentifier, f.amount, f.note, tags, f.source.id);
-
 
 			if (receipt.events && receipt.events.IncomingDonationAdded) {
 				newIncomingDonationAddress = receipt.events.IncomingDonationAdded.returnValues['incomingDonation'];
@@ -138,6 +140,7 @@ export class IncomingDonationFormComponent implements OnInit {
 					'Adding ' + newIncomingDonation.realWorldsIdentifier + ' transaction confirmed',
 					PendingTransactionSourceType.ID
 				);
+				this.toastyService.success('Adding ' + newIncomingDonation.realWorldsIdentifier + ' transaction confirmed');
 			} else {
 				this.donationCreated.next(null);
 				this.organizationSharedService.incomingDonationFailed(incomingDonationInternalId, newIncomingDonationAddress);
@@ -146,6 +149,7 @@ export class IncomingDonationFormComponent implements OnInit {
 					'Adding ' + newIncomingDonation.realWorldsIdentifier + ' transaction failed',
 					PendingTransactionSourceType.ID
 				);
+				this.toastyService.error('Adding ' + newIncomingDonation.realWorldsIdentifier + ' transaction failed');
 			}
 
 			this.initForm();
@@ -153,6 +157,12 @@ export class IncomingDonationFormComponent implements OnInit {
 		} catch (e) {
 			if (e.message.search('MetaMask Tx Signature: User denied transaction signature') !== -1) {
 				this.organizationSharedService.incomingDonationCanceled(incomingDonationInternalId, newIncomingDonationAddress);
+				this.pendingTransactionService.addFailed(
+					newIncomingDonation.realWorldsIdentifier,
+					'Adding ' + newIncomingDonation.realWorldsIdentifier + ' transaction canceled',
+					PendingTransactionSourceType.ID
+				);
+				this.toastyService.error('Adding ' + newIncomingDonation.realWorldsIdentifier + ' transaction canceled');
 			} else {
 				// TODO:  global errors notifier
 				console.warn(e.message);

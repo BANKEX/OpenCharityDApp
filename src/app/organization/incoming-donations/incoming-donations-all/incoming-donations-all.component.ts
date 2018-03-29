@@ -7,6 +7,7 @@ import {IncomingDonationContractService} from '../../../core/contracts-services/
 import {TokenContractService} from '../../../core/contracts-services/token-contract.service';
 import {IncomingDonationsListBaseComponent} from '../incoming-donations-list-base.component';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
 	templateUrl: 'incoming-donations-all.component.html',
@@ -21,8 +22,18 @@ export class IncomingDonationsAllComponent extends IncomingDonationsListBaseComp
 				protected router: Router,
 				protected route: ActivatedRoute,
 				protected zone: NgZone,
-				protected rganizationSharedService: OrganizationSharedService) {
-		super(router, route, tokenContractService, organizationContractService, incomingDonationContractService, zone, rganizationSharedService);
+				protected organizationSharedService: OrganizationSharedService,
+				protected modal: NgbModal) {
+		super(
+			router,
+			route,
+			tokenContractService,
+			organizationContractService,
+			incomingDonationContractService,
+			zone,
+			organizationSharedService,
+			modal
+		);
 	}
 
 	async ngOnInit(): Promise<void> {

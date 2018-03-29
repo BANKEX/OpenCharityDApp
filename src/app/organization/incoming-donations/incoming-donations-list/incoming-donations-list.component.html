@@ -11,7 +11,10 @@
 	</tr>
 	</thead>
 	<tbody>
-	<tr class="data" *ngFor="let incomingDonation of incomingDonations" (click)="toDetails(incomingDonation)">
+	<tr class="data"
+		*ngFor="let incomingDonation of incomingDonations"
+		[ngClass]="{'pending' : incomingDonation && isPending(incomingDonation)}"
+		(click)="toDetails(incomingDonation)">
 		<td>01.02.2018</td>
 		<td>{{incomingDonation?.realWorldsIdentifier}}</td>
 		<td><opc-bitmask-tags-list *ngIf="incomingDonation" [tags]="incomingDonation.tags"></opc-bitmask-tags-list></td>
@@ -19,9 +22,14 @@
 		<td>Event 1</td>
 		<td>Annual</td>
 		<td>
-			<button type="button" class="btn btn-primary btn-sm" *ngIf="incomingDonation"
+			<button type="button"
+					class="btn btn-primary btn-sm"
+					*ngIf="incomingDonation && !isPending(incomingDonation)"
 					(click)="$event.stopPropagation(); openSendDonationFundsModal(incomingDonation)">
 				Move funds to Charity Event
+			</button>
+			<button class="btn btn-default" *ngIf="incomingDonation && isPending(incomingDonation)">
+				<i class="fa fa-spin fa-spinner"></i>
 			</button>
 		<td>
 	</tr>
