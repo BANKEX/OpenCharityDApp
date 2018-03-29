@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {merge} from 'lodash';
+import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
 	selector: 'opc-add-charity-event-modal',
@@ -9,7 +10,9 @@ import {merge} from 'lodash';
 export class AddCharityEventModalComponent implements OnInit {
 	@Input('organizationContractAddress') organizationContractAddress: string;
 
-	constructor() {}
+	constructor(
+		public activeModal: NgbActiveModal
+	) {}
 
 	public ngOnInit() {}
 }

@@ -4,7 +4,7 @@
 		<button class="btn btn-primary" type="button" (click)="toAllCharityEvents()">To all Charity Events</button>
 	</div>
 	<opc-charity-events-card class="col-lg-4"
-							 *ngFor="let charityEvent of charityEvents.reverse().slice(0, 6)"
+							 *ngFor="let charityEvent of charityEvents.slice().reverse().slice(0, 6)"
 							 [charityEvent]="charityEvent"
 							 [organizationAddress]="organizationAddress"
 	>
