@@ -17,6 +17,7 @@ import {LoadingTransparentOverlayService} from '../../../core/loading-transparen
 import {PendingTransactionService} from '../../../core/pending-transactions.service';
 import {PendingTransactionSourceType} from '../../../pending-transaction.types';
 import {ToastyService} from 'ng2-toasty';
+import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 
 type CharityEventData = {
 	contract: ContractCharityEvent,
@@ -59,7 +60,8 @@ export class CharityEventFormComponent implements OnInit {
 		private sanitize: DomSanitizer,
 		private loadingTransparentOverlayService: LoadingTransparentOverlayService,
 		private pendingTransactionService: PendingTransactionService,
-		private toastyService: ToastyService
+		private toastyService: ToastyService,
+		private activeModal: NgbActiveModal
 	) {}
 
 	public ngOnInit(): void {
@@ -99,9 +101,14 @@ export class CharityEventFormComponent implements OnInit {
 		let newCharityEventAddress: string = null;
 
 		try {
+			this.loadingTransparentOverlayService.showOverlay();
 			// save meta data into storage
 			const metaStorageHash: string = await this.storeToMetaStorage(newCharityEvent, f.details);
 			merge(newCharityEvent, {metaStorageHash: metaStorageHash});
+
+			this.loadingTransparentOverlayService.hideOverlay();
+
+			this.activeModal.close();
 
 			// show pending charity event in ui
 			this.organizationSharedService.charityEventAdded(merge({}, newCharityEvent, {
@@ -152,6 +159,8 @@ export class CharityEventFormComponent implements OnInit {
 				console.error(e.message);
 				this.toastyService.error(e.message);
 			}
+			this.loadingTransparentOverlayService.hideOverlay();
+			this.activeModal.close();
 		}
 	}
 
@@ -452,7 +461,7 @@ export class CharityEventFormComponent implements OnInit {
 
 		if (this.attachedFiles.length) {
 			dataToStore.data.attachments = [];
-			let attachments = this.charityEventData.metadataStorage.data.attachments;
+			let attachments = this.charityEventData && this.charityEventData.metadataStorage.data.attachments;
 
 			await Promise.all(this.attachedFiles.map(async (file) => {
 				let metaStorageFile;

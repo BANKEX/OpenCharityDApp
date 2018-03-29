@@ -37,6 +37,8 @@ import {CharityEventFormComponent} from './charity-events/charity-event-form/cha
 
 import {QuillModule} from 'ngx-quill/src/quill.module';
 import {ToastyConfig} from 'ng2-toasty';
+import {AddCharityEventModalComponent} from './charity-events/add-charity-event-modal/add-charity-event-modal.component';
+import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
 	declarations: [
@@ -63,11 +65,13 @@ import {ToastyConfig} from 'ng2-toasty';
 		IncomingDonationsListBaseComponent,
 		AddIncomingDonationModalComponent,
 		IncomingDonationsListBaseComponent,
-		CharityEventFormComponent
+		CharityEventFormComponent,
+		AddCharityEventModalComponent
 	],
 	entryComponents: [
 		IncomingDonationSendFundsModalComponent,
-		AddIncomingDonationModalComponent
+		AddIncomingDonationModalComponent,
+		AddCharityEventModalComponent
 	],
 	imports: [
 		SharedModule,
@@ -83,6 +87,7 @@ import {ToastyConfig} from 'ng2-toasty';
 		IsOrganizationAddressGuard,
 		IsAdminGuard,
 		OrganizationSharedService,
+		NgbActiveModal
 	]
 })
 

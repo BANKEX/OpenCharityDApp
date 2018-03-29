@@ -1,7 +1,7 @@
 import {Component, Input, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
 import {
-	AppCharityEvent, CharityEventMetaStorageData, ConfirmationStatusState,
+	AppCharityEvent, CharityEventMetaStorageData, ConfirmationResponse, ConfirmationStatusState,
 	MetaStorageData
 } from '../../open-charity-types';
 import {TokenContractService} from '../../core/contracts-services/token-contract.service';
@@ -9,6 +9,9 @@ import {OrganizationContractService} from '../../core/contracts-services/organiz
 import {constant, findIndex, merge, reverse, times} from 'lodash';
 import {CharityEventContractService} from '../../core/contracts-services/charity-event-contract.service';
 import {MetaDataStorageService} from '../../core/meta-data-storage.service';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {AddCharityEventModalComponent} from './add-charity-event-modal/add-charity-event-modal.component';
+import {OrganizationSharedService} from '../services/organization-shared.service';
 
 @Component({
 	selector: 'opc-charity-events-list-base',
@@ -26,13 +29,84 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 		protected tokenContractService: TokenContractService,
 		protected charityEventContractService: CharityEventContractService,
 		protected zone: NgZone,
-		protected metaDataStorageService: MetaDataStorageService
+		protected metaDataStorageService: MetaDataStorageService,
+		protected modal: NgbModal,
+		protected organizationSharedService: OrganizationSharedService
 	) {
 
 	}
 
 	ngOnInit(): void {
 
+	}
+
+	public initEventsListeners(): void {
+		this.organizationSharedService.onCharityEventAdded()
+			.takeUntil(this.componentDestroyed)
+			.subscribe((res: AppCharityEvent) => {
+				this.charityEvents.push(merge({}, res, {raised: 0}));
+
+				// console.log(this.charityEvents.slice(0, 6).reverse());
+
+				this.updateCharityEventMetaStorageData(this.charityEvents[this.charityEvents.length - 1]);
+			}, (err: any) => {
+				console.error(err);
+				alert(`Error ${err.message}`);
+			});
+
+
+		this.organizationSharedService.onCharityEventConfirmed()
+			.takeUntil(this.componentDestroyed)
+			.subscribe((res: ConfirmationResponse) => {
+				const i: number = findIndex(this.charityEvents, {internalId: res.internalId});
+				if (i !== -1) {
+					this.charityEvents[i].address = res.address;
+					this.charityEvents[i].confirmation = ConfirmationStatusState.CONFIRMED;
+				}
+			}, (err: any) => {
+				console.error(err);
+				alert(`Error ${err.message}`);
+			});
+
+		this.organizationSharedService.onCharityEventFailed()
+			.takeUntil(this.componentDestroyed)
+			.subscribe((res: ConfirmationResponse) => {
+
+				const i: number = findIndex(this.charityEvents, {internalId: res.internalId});
+				if (i !== -1) {
+					this.charityEvents[i].confirmation = ConfirmationStatusState.FAILED;
+				}
+			}, (err: any) => {
+				console.error(err);
+				alert(`Error ${err.message}`);
+			});
+
+
+		this.organizationSharedService.onCharityEventCanceled()
+			.takeUntil(this.componentDestroyed)
+			.subscribe((res: ConfirmationResponse) => {
+
+				const i: number = findIndex(this.charityEvents, {internalId: res.internalId});
+				if (i !== -1) {
+					this.charityEvents.splice(i, 1);
+				}
+			}, (err: any) => {
+				console.error(err);
+				alert(`Error ${err.message}`);
+			});
+
+		this.organizationSharedService.onMoveFundsToCharityEventConfirmed()
+			.takeUntil(this.componentDestroyed)
+			.subscribe(async (res: ConfirmationResponse) => {
+				const i: number = findIndex(this.charityEvents, {address: res.address});
+
+				if (i !== -1) {
+					await this.updateCharityEventRaised(this.charityEvents[i]);
+				}
+			}, (err: any) => {
+				console.error(err);
+				alert(`Error ${err.message}`);
+			});
 	}
 
 	public async updateCharityEventsList(): Promise<void> {
@@ -46,7 +120,7 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 		this.charityEvents = times(charityEventsCount, constant(null));
 
 
-		this.organizationContractService.getCharityEvents(this.organizationAddress)
+		await this.organizationContractService.getCharityEvents(this.organizationAddress)
 			.take(charityEventsCount)
 			.subscribe(async (res: { address: string, index: number }) => {
 
@@ -69,7 +143,7 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 		// TODO: add typescript interface for CE meta storage data
 		let data: CharityEventMetaStorageData = (await this.getCharityEventMetaStorageData(charityEvent)).data;
 		if (!data) {
-			return
+			return;
 		}
 
 		if (data.image) {
@@ -85,6 +159,12 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 
 	protected async updateCharityEventRaised(charityEvent: AppCharityEvent) {
 		charityEvent.raised = await this.tokenContractService.balanceOf(charityEvent.address);
+	}
+
+	public showAddCharityEventModal() {
+		let modalInstance;
+		modalInstance =	this.modal.open(AddCharityEventModalComponent, {size: 'lg'}).componentInstance;
+		modalInstance.organizationContractAddress = this.organizationAddress;
 	}
 
 	ngOnDestroy(): void {
