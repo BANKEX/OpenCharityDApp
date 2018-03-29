@@ -32,9 +32,7 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 		protected metaDataStorageService: MetaDataStorageService,
 		protected modal: NgbModal,
 		protected organizationSharedService: OrganizationSharedService
-	) {
-
-	}
+	) {}
 
 	ngOnInit(): void {
 
@@ -45,23 +43,37 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 			.takeUntil(this.componentDestroyed)
 			.subscribe((res: AppCharityEvent) => {
 				this.charityEvents.push(merge({}, res, {raised: 0}));
-
-				// console.log(this.charityEvents.slice(0, 6).reverse());
-
 				this.updateCharityEventMetaStorageData(this.charityEvents[this.charityEvents.length - 1]);
 			}, (err: any) => {
 				console.error(err);
 				alert(`Error ${err.message}`);
 			});
 
+		this.organizationSharedService.onCharityEventEdited()
+			.takeUntil(this.componentDestroyed)
+			.subscribe((res: AppCharityEvent) => {
+				const i: number = findIndex(this.charityEvents, {address: res.address});
+				if (i !== -1) {
+					this.charityEvents[i] = res;
+					this.charityEvents[i].address = res.address;
+					this.charityEvents[i].confirmation = ConfirmationStatusState.PENDING;
+				}
+			}, (err: any) => {
+				console.error(err);
+				alert(`Error ${err.message}`);
+			});
 
 		this.organizationSharedService.onCharityEventConfirmed()
 			.takeUntil(this.componentDestroyed)
-			.subscribe((res: ConfirmationResponse) => {
-				const i: number = findIndex(this.charityEvents, {internalId: res.internalId});
+			.subscribe(async (res: ConfirmationResponse) => {
+				let i: number = findIndex(this.charityEvents, {address: res.address});
+
+				i = i !== -1 ? i : findIndex(this.charityEvents, {internalId: res.internalId});
+
 				if (i !== -1) {
 					this.charityEvents[i].address = res.address;
 					this.charityEvents[i].confirmation = ConfirmationStatusState.CONFIRMED;
+					this.updateCharityEventMetaStorageData(this.charityEvents[i]);
 				}
 			}, (err: any) => {
 				console.error(err);
@@ -80,7 +92,6 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 				console.error(err);
 				alert(`Error ${err.message}`);
 			});
-
 
 		this.organizationSharedService.onCharityEventCanceled()
 			.takeUntil(this.componentDestroyed)

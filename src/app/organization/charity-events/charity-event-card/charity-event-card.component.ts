@@ -12,6 +12,7 @@ import { NeatComponent } from '../../../shared/neat.component';
 import { LoadingTransparentOverlayService } from '../../../core/loading-transparent-overlay.service';
 import { IncomingDonationContractService } from '../../../core/contracts-services/incoming-donation-contract.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import {CharityEventEditorModalComponent} from '../charity-event-editor-modal/charity-event-editor-modal.component';
 @Component({
 	selector: 'opc-charity-events-card',
 	templateUrl: 'charity-event-card.component.html',
@@ -19,7 +20,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 })
 export class CharityEventCardComponent extends NeatComponent {
 	@Input('organizationAddress') organizationAddress: string;
-	@Input('charityEvent') public charityEvent: AppCharityEvent;
+	@Input('charityEvent') charityEvent: AppCharityEvent;
 
 	constructor(
 		private $router: Router,
@@ -63,7 +64,15 @@ export class CharityEventCardComponent extends NeatComponent {
 	}
 
 	public editClick($event: Event): void {
-		this.$router.navigate([`/organization/${this.organizationAddress}/event/${this.charityEvent.address}/editor`]);
+		let modalInstance;
+		modalInstance =	this.$modal.open(
+			CharityEventEditorModalComponent,
+			{
+				size: 'lg',
+				windowClass: 'modal-more-lg'
+			}).componentInstance;
+		modalInstance.organizationAddress = this.organizationAddress;
+		modalInstance.charityEventAddress = this.charityEvent.address;
 	}
 
 	public removeClick($event: Event): void {
