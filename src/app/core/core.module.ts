@@ -15,6 +15,7 @@ import {MetaDataStorageService} from './meta-data-storage.service';
 import {PendingTransactionService} from './pending-transactions.service';
 import {LoadingTransparentOverlayComponent} from './loading-transparent-overlay/loading-transparent-overlay.component';
 import {LoadingTransparentOverlayService} from './loading-transparent-overlay.service';
+import {LoginFormComponent} from './login-form/login-form.component';
 
 export function windowFactory() {
 	return window;
@@ -33,9 +34,10 @@ const contractsServices = [
 	declarations: [
 		LoadingOverlayComponent,
 		LoadingTransparentOverlayComponent,
-		BlockingNotificationOverlayComponent
+		BlockingNotificationOverlayComponent,
+		LoginFormComponent
 	],
-	exports: [LoadingOverlayComponent, LoadingTransparentOverlayComponent, BlockingNotificationOverlayComponent],
+	exports: [LoadingOverlayComponent, LoadingTransparentOverlayComponent, BlockingNotificationOverlayComponent, LoginFormComponent],
 	providers: [
 		Web3ProviderService,
 		LoadingOverlayService,
