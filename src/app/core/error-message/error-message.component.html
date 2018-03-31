@@ -1,0 +1,13 @@
+<div class="error-messages" *ngIf="errorMessages.length">
+    <div class="alert alert-danger"
+         *ngFor="let message of errorMessages.slice().reverse(); let i = index">
+            {{ message }}
+
+        <button type="button" (click)="closeMessage(i)"
+                class="close mrg-left-15"
+                data-dismiss="alert"
+                aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</div>
