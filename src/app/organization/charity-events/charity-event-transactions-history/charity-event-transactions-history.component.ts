@@ -9,6 +9,7 @@ import {EventLog} from 'web3/types';
 import {Web3ProviderService} from '../../../core/web3-provider.service';
 import { Location } from '@angular/common';
 import * as moment from 'moment';
+import {ErrorMessageService} from '../../../core/error-message.service';
 
 export interface CharityEventTransaction {
 	date?: string;
@@ -45,7 +46,8 @@ export class CharityEventTransactionsHistoryComponent implements OnInit, OnDestr
 		private charityEventContractService: CharityEventContractService,
 		private organizationContractEventsService: OrganizationContractEventsService,
 		private web3ProviderService: Web3ProviderService,
-		private location: Location
+		private location: Location,
+		private errorMessageService: ErrorMessageService
 	) { }
 
 	async ngOnInit(): Promise<void> {
@@ -74,7 +76,7 @@ export class CharityEventTransactionsHistoryComponent implements OnInit, OnDestr
 				this.setTransactionsLoading(false);
 				this.setTransactionsEmpty(!res.length);
 			}, (err: any) => {
-				console.error(err);
+				this.errorMessageService.addError(err, 'getCharityEventTransactions');
 			});
 	}
 

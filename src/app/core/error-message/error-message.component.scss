@@ -7,13 +7,21 @@
 	.alert {
 		border-radius: 0;
 		margin-bottom: 10px;
+		display: inline-block;
+
+		.alert-content {
+			display: inline-block;
+		}
+
+		.alert-heading {
+			cursor: pointer;
+			&:hover {
+				text-decoration: underline;
+			}
+		}
 
 		&.alert-danger {
 			box-shadow: 0 0 10px #f5c6cb;
-		}
-
-		&:last-child {
-			margin-bottom: 0;
 		}
 	}
 }

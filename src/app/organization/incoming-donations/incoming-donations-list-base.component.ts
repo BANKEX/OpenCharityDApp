@@ -10,6 +10,7 @@ import {OrganizationSharedService} from '../services/organization-shared.service
 import {AddIncomingDonationModalComponent} from './add-incoming-donation-modal/add-incoming-donation-modal.component';
 import {IncomingDonationSendFundsModalComponent} from './incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {ErrorMessageService} from '../../core/error-message.service';
 
 @Component({
 	selector: 'opc-incoming-donations-list-base',
@@ -29,7 +30,8 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 				protected incomingDonationContractService: IncomingDonationContractService,
 				protected zone: NgZone,
 				protected organizationSharedService: OrganizationSharedService,
-				protected modal: NgbModal
+				protected modal: NgbModal,
+				protected errorMessageService: ErrorMessageService
 	) {}
 
 	ngOnInit() {
@@ -51,8 +53,7 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 			.subscribe((res: AppIncomingDonation) => {
 				this.displayedIncomingDonations.push(res);
 			}, (err: any) => {
-				console.error(err);
-				alert('`Error ${err.message}');
+				this.errorMessageService.addError(err.message, 'onIncomingDonationAdded');
 			});
 
 		this.organizationSharedService.onIncomingDonationConfirmed()
@@ -65,8 +66,7 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 					this.displayedIncomingDonations[i].confirmation = ConfirmationStatusState.CONFIRMED;
 				}
 			}, (err: any) => {
-				console.error(err);
-				alert('`Error ${err.message}');
+				this.errorMessageService.addError(err.message, 'onIncomingDonationConfirmed');
 			});
 
 		this.organizationSharedService.onIncomingDonationFailed()
@@ -78,8 +78,7 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 					this.displayedIncomingDonations[i].confirmation = ConfirmationStatusState.FAILED;
 				}
 			}, (err: any) => {
-				console.error(err);
-				alert('`Error ${err.message}');
+				this.errorMessageService.addError(err.message, 'onIncomingDonationFailed');
 			});
 
 		this.organizationSharedService.onIncomingDonationCanceled()
@@ -91,8 +90,7 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 					this.displayedIncomingDonations.splice(i, 1);
 				}
 			}, (err: any) => {
-				console.error(err);
-				alert('`Error ${err.message}');
+				this.errorMessageService.addError(err.message, 'onIncomingDonationCanceled');
 			});
 	}
 

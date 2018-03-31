@@ -1,19 +1,20 @@
 import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
+import {AlertMessage} from '../open-charity-types';
 
 @Injectable()
 export class ErrorMessageService {
 
-	private onErrorMessageAddSource: Subject<string> = new Subject<string>();
+	private onErrorMessageAddSource: Subject<AlertMessage> = new Subject<AlertMessage>();
 
 	constructor() {}
 
-	public addError(message: string): void {
-		this.onErrorMessageAddSource.next(message);
+	public addError(message: string, title?: string): void {
+		this.onErrorMessageAddSource.next({ title, message });
 	}
 
-	public onErrorMessageChanged(): Observable<string> {
+	public onErrorMessageChanged(): Observable<AlertMessage> {
 		return this.onErrorMessageAddSource.asObservable().share();
 	}
 

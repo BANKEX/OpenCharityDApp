@@ -8,6 +8,7 @@ import {CharityEventsListBaseComponent} from '../charity-events-list-base.compon
 import {MetaDataStorageService} from '../../../core/meta-data-storage.service';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {ErrorMessageService} from '../../../core/error-message.service';
 
 @Component({
 	selector: 'opc-dashboard-charity-events-list',
@@ -24,6 +25,7 @@ export class DashboardCharityEventsList extends CharityEventsListBaseComponent i
 		protected metaDataStorageService: MetaDataStorageService,
 		protected modal: NgbModal,
 		protected organizationSharedService: OrganizationSharedService,
+		protected errorMessageService: ErrorMessageService,
 		private router: Router
 	) {
 		super(
@@ -33,7 +35,8 @@ export class DashboardCharityEventsList extends CharityEventsListBaseComponent i
 			zone,
 			metaDataStorageService,
 			modal,
-			organizationSharedService
+			organizationSharedService,
+			errorMessageService
 		);
 	}
 

@@ -14,6 +14,7 @@ import {isObject} from 'rxjs/util/isObject';
 import {PendingTransactionSourceType} from '../../../pending-transaction.types';
 import {PendingTransactionService} from '../../../core/pending-transactions.service';
 import {ToastyService} from 'ng2-toasty';
+import {ErrorMessageService} from '../../../core/error-message.service';
 
 
 type IncomingDonationSource = {
@@ -73,7 +74,8 @@ export class IncomingDonationFormComponent implements OnInit {
 				private tagsBitmaskService: TagsBitmaskService,
 				private organizationSharedService: OrganizationSharedService,
 				private pendingTransactionService: PendingTransactionService,
-				private toastyService: ToastyService
+				private toastyService: ToastyService,
+				private errorMessageService: ErrorMessageService
 	) {
 	}
 
@@ -165,7 +167,7 @@ export class IncomingDonationFormComponent implements OnInit {
 				this.toastyService.error('Adding ' + newIncomingDonation.realWorldsIdentifier + ' transaction canceled');
 			} else {
 				// TODO:  global errors notifier
-				console.warn(e.message);
+				this.errorMessageService.addError(e.message, 'submitForm');
 			}
 		}
 
@@ -178,7 +180,7 @@ export class IncomingDonationFormComponent implements OnInit {
 			this.sources[i] = {
 				id: i,
 				name: await this.organizationContractService.getIncomingDonationSourceName(this.organizationAddress, i)
-			}
+			};
 		}
 	}
 

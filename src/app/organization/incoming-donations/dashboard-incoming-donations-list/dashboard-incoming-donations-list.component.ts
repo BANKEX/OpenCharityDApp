@@ -8,6 +8,7 @@ import {TokenContractService} from '../../../core/contracts-services/token-contr
 import {IncomingDonationsListBaseComponent} from '../incoming-donations-list-base.component';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {ErrorMessageService} from '../../../core/error-message.service';
 
 @Component({
 	selector: 'opc-dashboard-incoming-donations-list',
@@ -24,7 +25,8 @@ export class DashboardIncomingDonationsListComponent extends IncomingDonationsLi
 				protected route: ActivatedRoute,
 				protected zone: NgZone,
 				protected organizationSharedService: OrganizationSharedService,
-				protected modal: NgbModal) {
+				protected modal: NgbModal,
+				protected errorMessageService: ErrorMessageService) {
 		super(
 			router,
 			route,
@@ -33,7 +35,8 @@ export class DashboardIncomingDonationsListComponent extends IncomingDonationsLi
 			incomingDonationContractService,
 			zone,
 			organizationSharedService,
-			modal
+			modal,
+			errorMessageService
 		);
 	}
 

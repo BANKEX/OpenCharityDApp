@@ -12,6 +12,7 @@ import {OrganizationSharedService} from '../../services/organization-shared.serv
 import {Router} from '@angular/router';
 import {Subject} from 'rxjs/Subject';
 import {LoadingTransparentOverlayService} from '../../../core/loading-transparent-overlay.service';
+import {ErrorMessageService} from '../../../core/error-message.service';
 
 
 @Component({
@@ -33,7 +34,8 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 				protected organizationSharedService: OrganizationSharedService,
 				protected zone: NgZone,
 				protected router: Router,
-				protected loadingTransparentOverlayService: LoadingTransparentOverlayService
+				protected loadingTransparentOverlayService: LoadingTransparentOverlayService,
+				protected errorMessageService: ErrorMessageService
 	) {
 
 	}
@@ -48,8 +50,7 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 			.subscribe((res: AppIncomingDonation) => {
 				this.incomingDonations.push(res);
 			}, (err: any) => {
-				console.error(err);
-				alert('`Error ${err.message}');
+				this.errorMessageService.addError(err.message, 'onIncomingDonationAdded');
 			});
 
 
@@ -63,8 +64,7 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 					this.incomingDonations[i].confirmation = ConfirmationStatusState.CONFIRMED;
 				}
 			}, (err: any) => {
-				console.error(err);
-				alert('`Error ${err.message}');
+				this.errorMessageService.addError(err.message, 'onIncomingDonationConfirmed');
 			});
 
 		this.organizationSharedService.onIncomingDonationFailed()
@@ -76,8 +76,7 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 					this.incomingDonations[i].confirmation = ConfirmationStatusState.FAILED;
 				}
 			}, (err: any) => {
-				console.error(err);
-				alert('`Error ${err.message}');
+				this.errorMessageService.addError(err.message, 'onIncomingDonationFailed');
 			});
 
 
@@ -90,8 +89,7 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 					this.incomingDonations.splice(i, 1);
 				}
 			}, (err: any) => {
-				console.error(err);
-				alert('`Error ${err.message}');
+				this.errorMessageService.addError(err.message, 'onIncomingDonationCanceled');
 			});
 
 	}

@@ -4,7 +4,7 @@ export enum ConfirmationStatusState {
 	FAILED,
 	ERROR
 }
-export type ConfirmationResponse = { internalId: string; address: string; }
+export type ConfirmationResponse = { internalId: string; address: string; };
 
 export interface ContractCharityEvent {
 	metaStorageHash?: string;
@@ -16,11 +16,11 @@ export interface ContractCharityEvent {
 }
 
 
-export interface AppCharityEvent extends ContractCharityEvent{
+export interface AppCharityEvent extends ContractCharityEvent {
 	internalId?: string;
 	raised?: string;
 	confirmation: ConfirmationStatusState;
-	attachments?: any[],
+	attachments?: any[];
 	image: any;
 	description: string;
 }
@@ -57,11 +57,16 @@ export type MetaStorageFile = {
 	size: number;
 	type: string;
 	storageHash: string;
-}
+};
 
 export interface CharityEventMetaStorageData {
 	description: string;
 	image: MetaStorageFile;
-	attachments: MetaStorageFile[]
+	attachments: MetaStorageFile[];
 }
+
+export type AlertMessage = {
+	title: string,
+	message: string
+};
 

@@ -8,6 +8,7 @@ import {TokenContractService} from '../../../core/contracts-services/token-contr
 import {IncomingDonationsListBaseComponent} from '../incoming-donations-list-base.component';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {ErrorMessageService} from '../../../core/error-message.service';
 
 @Component({
 	templateUrl: 'incoming-donations-all.component.html',
@@ -23,7 +24,8 @@ export class IncomingDonationsAllComponent extends IncomingDonationsListBaseComp
 				protected route: ActivatedRoute,
 				protected zone: NgZone,
 				protected organizationSharedService: OrganizationSharedService,
-				protected modal: NgbModal) {
+				protected modal: NgbModal,
+				protected errorMessageService: ErrorMessageService) {
 		super(
 			router,
 			route,
@@ -32,7 +34,8 @@ export class IncomingDonationsAllComponent extends IncomingDonationsListBaseComp
 			incomingDonationContractService,
 			zone,
 			organizationSharedService,
-			modal
+			modal,
+			errorMessageService
 		);
 	}
 
