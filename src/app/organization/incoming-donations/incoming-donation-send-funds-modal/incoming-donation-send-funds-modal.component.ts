@@ -18,6 +18,7 @@ import {OrganizationSharedService} from '../../services/organization-shared.serv
 import {PendingTransactionService} from '../../../core/pending-transactions.service';
 import {PendingTransactionSourceType} from '../../../pending-transaction.types';
 import {ToastyService} from 'ng2-toasty';
+import {ErrorMessageService} from '../../../core/error-message.service';
 
 
 @Component({
@@ -51,7 +52,8 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 		private loadingTransparentOverlayService: LoadingTransparentOverlayService,
 		private organizationSharedService: OrganizationSharedService,
 		private pendingTransactionService: PendingTransactionService,
-		private toastyService: ToastyService
+		private toastyService: ToastyService,
+		private errorMessageService: ErrorMessageService
 	) {
 	}
 
@@ -161,7 +163,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 				this.toastyService.error('Move funds ' + targetCharityEvent.name + ' transaction canceled');
 			} else {
 				// TODO:  global errors notifier
-				console.error(e.message);
+				this.errorMessageService.addError(e.message, 'sendFunds');
 			}
 		}
 	}

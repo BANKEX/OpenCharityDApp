@@ -13,6 +13,7 @@ import { LoadingTransparentOverlayService } from '../../../core/loading-transpar
 import { IncomingDonationContractService } from '../../../core/contracts-services/incoming-donation-contract.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import {CharityEventEditorModalComponent} from '../charity-event-editor-modal/charity-event-editor-modal.component';
+import {ErrorMessageService} from '../../../core/error-message.service';
 @Component({
 	selector: 'opc-charity-events-card',
 	templateUrl: 'charity-event-card.component.html',
@@ -30,7 +31,8 @@ export class CharityEventCardComponent extends NeatComponent {
 		private $incomingDonationContractService: IncomingDonationContractService,
 		private $charityEventContractService: CharityEventContractService,
 		private $sharedService: OrganizationSharedService,
-		private $sanitize: DomSanitizer
+		private $sanitize: DomSanitizer,
+		private errorMessageService: ErrorMessageService
 	) {
 		super();
 	}
@@ -97,7 +99,7 @@ export class CharityEventCardComponent extends NeatComponent {
 				modalInstance.incomingDonation = incomingDonation;
 				modalInstance.charityEvents = charityEvents;
 				modalInstance.charityEvent = this.charityEvent;
-			}).catch((err) => console.error(err));
+			}).catch((err) => this.errorMessageService.addError(err));
 		});
 	}
 

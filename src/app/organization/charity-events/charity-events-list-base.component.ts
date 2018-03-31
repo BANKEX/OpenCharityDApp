@@ -12,6 +12,7 @@ import {MetaDataStorageService} from '../../core/meta-data-storage.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {AddCharityEventModalComponent} from './add-charity-event-modal/add-charity-event-modal.component';
 import {OrganizationSharedService} from '../services/organization-shared.service';
+import {ErrorMessageService} from '../../core/error-message.service';
 
 @Component({
 	selector: 'opc-charity-events-list-base',
@@ -31,7 +32,8 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 		protected zone: NgZone,
 		protected metaDataStorageService: MetaDataStorageService,
 		protected modal: NgbModal,
-		protected organizationSharedService: OrganizationSharedService
+		protected organizationSharedService: OrganizationSharedService,
+		protected errorMessageService: ErrorMessageService
 	) {}
 
 	ngOnInit(): void {
@@ -45,8 +47,7 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 				this.charityEvents.push(merge({}, res, {raised: 0}));
 				this.updateCharityEventMetaStorageData(this.charityEvents[this.charityEvents.length - 1]);
 			}, (err: any) => {
-				console.error(err);
-				alert(`Error ${err.message}`);
+				this.errorMessageService.addError(err.message, 'onCharityEventAdded');
 			});
 
 		this.organizationSharedService.onCharityEventEdited()
@@ -59,8 +60,7 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 					this.charityEvents[i].confirmation = ConfirmationStatusState.PENDING;
 				}
 			}, (err: any) => {
-				console.error(err);
-				alert(`Error ${err.message}`);
+				this.errorMessageService.addError(err.message, 'onCharityEventEdited');
 			});
 
 		this.organizationSharedService.onCharityEventConfirmed()
@@ -76,8 +76,7 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 					this.updateCharityEventMetaStorageData(this.charityEvents[i]);
 				}
 			}, (err: any) => {
-				console.error(err);
-				alert(`Error ${err.message}`);
+				this.errorMessageService.addError(err.message, 'onCharityEventConfirmed');
 			});
 
 		this.organizationSharedService.onCharityEventFailed()
@@ -89,8 +88,7 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 					this.charityEvents[i].confirmation = ConfirmationStatusState.FAILED;
 				}
 			}, (err: any) => {
-				console.error(err);
-				alert(`Error ${err.message}`);
+				this.errorMessageService.addError(err.message, 'onCharityEventFailed');
 			});
 
 		this.organizationSharedService.onCharityEventCanceled()
@@ -102,8 +100,7 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 					this.charityEvents.splice(i, 1);
 				}
 			}, (err: any) => {
-				console.error(err);
-				alert(`Error ${err.message}`);
+				this.errorMessageService.addError(err.message, 'onCharityEventCanceled');
 			});
 
 		this.organizationSharedService.onMoveFundsToCharityEventConfirmed()
@@ -115,8 +112,7 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 					await this.updateCharityEventRaised(this.charityEvents[i]);
 				}
 			}, (err: any) => {
-				console.error(err);
-				alert(`Error ${err.message}`);
+				this.errorMessageService.addError(err.message, 'onMoveFundsToCharityEventConfirmed');
 			});
 	}
 

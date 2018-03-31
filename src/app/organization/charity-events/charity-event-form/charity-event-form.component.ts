@@ -18,6 +18,7 @@ import {PendingTransactionService} from '../../../core/pending-transactions.serv
 import {PendingTransactionSourceType} from '../../../pending-transaction.types';
 import {ToastyService} from 'ng2-toasty';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
+import {ErrorMessageService} from '../../../core/error-message.service';
 
 type CharityEventData = {
 	contract: ContractCharityEvent,
@@ -61,7 +62,8 @@ export class CharityEventFormComponent implements OnInit {
 		private loadingTransparentOverlayService: LoadingTransparentOverlayService,
 		private pendingTransactionService: PendingTransactionService,
 		private toastyService: ToastyService,
-		private activeModal: NgbActiveModal
+		private activeModal: NgbActiveModal,
+		private errorMessageService: ErrorMessageService
 	) {}
 
 	public ngOnInit(): void {
@@ -161,8 +163,7 @@ export class CharityEventFormComponent implements OnInit {
 				this.toastyService.error('Adding ' + newCharityEvent.name + ' transaction canceled');
 			} else {
 				// TODO:  global errors notifier
-				console.error(e.message);
-				this.toastyService.error(e.message);
+				this.errorMessageService.addError(e.message, 'addCharityEvent');
 			}
 			this.loadingTransparentOverlayService.hideOverlay();
 			this.activeModal.close();
@@ -278,8 +279,7 @@ export class CharityEventFormComponent implements OnInit {
 				this.toastyService.error('Editing ' + newCharityEvent.name + ' transaction canceled');
 			} else {
 				// TODO:  global errors notifier
-				console.error(e.message);
-				this.toastyService.error(e.message);
+				this.errorMessageService.addError(e.message, 'editCharityEvent');
 			}
 			this.loadingTransparentOverlayService.hideOverlay();
 		}
@@ -351,6 +351,10 @@ export class CharityEventFormComponent implements OnInit {
 			reader.onload = () => {
 				this.charityEventImagePreview = this.sanitize.bypassSecurityTrustUrl(reader.result);
 				this.loadingImage = false;
+			};
+
+			reader.onerror = (err: ErrorEvent) => {
+				this.errorMessageService.addError(err.message, 'onImageAdded');
 			};
 
 			reader.readAsDataURL(file);
@@ -453,6 +457,7 @@ export class CharityEventFormComponent implements OnInit {
 					},
 					(err: any) => {
 						reject(err);
+						this.errorMessageService.addError(err, 'getCharityEventData');
 					});
 		});
 	}
@@ -515,6 +520,7 @@ export class CharityEventFormComponent implements OnInit {
 
 				}, (err) => {
 					reject(err);
+					this.errorMessageService.addError(err, 'storeFileToMetaStorage');
 				});
 			} else {
 				reader.addEventListener('load', async (e) => {
@@ -560,6 +566,7 @@ export class CharityEventFormComponent implements OnInit {
 					},
 					(err: any) => {
 						reject(err);
+						this.errorMessageService.addError(err, 'getImage');
 					});
 		});
 	}
@@ -576,6 +583,7 @@ export class CharityEventFormComponent implements OnInit {
 
 			reader.onerror = (err) => {
 				reject(err);
+				this.errorMessageService.addError(err.message, 'getPreviewImage');
 			};
 
 			reader.readAsDataURL(blob);

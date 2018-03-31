@@ -5,6 +5,7 @@ import {CharityEventContractService} from '../../../core/contracts-services/char
 import {ContractCharityEvent, MetaStorageData} from '../../../open-charity-types';
 import {MetaDataStorageService} from '../../../core/meta-data-storage.service';
 import {Location} from '@angular/common';
+import {ErrorMessageService} from '../../../core/error-message.service';
 
 type CharityEventData = {
 	contract: ContractCharityEvent,
@@ -30,7 +31,8 @@ export class CharityEventEditorComponent implements OnInit, OnDestroy {
 		private route: ActivatedRoute,
 		private charityEventContractService: CharityEventContractService,
 		private location: Location,
-		private metaDataStorageService: MetaDataStorageService
+		private metaDataStorageService: MetaDataStorageService,
+		private errorMessageService: ErrorMessageService
 	) { }
 
 	async ngOnInit(): Promise<void> {
@@ -64,6 +66,7 @@ export class CharityEventEditorComponent implements OnInit, OnDestroy {
 					},
 					(err: any) => {
 						reject(err);
+						this.errorMessageService.addError(err, 'getCharityEventData');
 					});
 		});
 	}

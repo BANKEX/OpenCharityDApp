@@ -16,6 +16,8 @@ import {PendingTransactionService} from './pending-transactions.service';
 import {LoadingTransparentOverlayComponent} from './loading-transparent-overlay/loading-transparent-overlay.component';
 import {LoadingTransparentOverlayService} from './loading-transparent-overlay.service';
 import {LoginFormComponent} from './login-form/login-form.component';
+import {ErrorMessageService} from './error-message.service';
+import {ErrorMessageComponent} from './error-message/error-message.component';
 
 export function windowFactory() {
 	return window;
@@ -35,9 +37,16 @@ const contractsServices = [
 		LoadingOverlayComponent,
 		LoadingTransparentOverlayComponent,
 		BlockingNotificationOverlayComponent,
-		LoginFormComponent
+		LoginFormComponent,
+		ErrorMessageComponent
 	],
-	exports: [LoadingOverlayComponent, LoadingTransparentOverlayComponent, BlockingNotificationOverlayComponent, LoginFormComponent],
+	exports: [
+		LoadingOverlayComponent,
+		LoadingTransparentOverlayComponent,
+		BlockingNotificationOverlayComponent,
+		LoginFormComponent,
+		ErrorMessageComponent
+	],
 	providers: [
 		Web3ProviderService,
 		LoadingOverlayService,
@@ -47,6 +56,7 @@ const contractsServices = [
 		{provide: 'Window', useFactory: windowFactory},
 		MetaDataStorageService,
 		PendingTransactionService,
+		ErrorMessageService,
 		...contractsServices
 	]
 })
