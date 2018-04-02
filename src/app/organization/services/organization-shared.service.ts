@@ -6,7 +6,8 @@ import {
 	AppIncomingDonation,
 	ConfirmationResponse,
 	ContractCharityEvent,
-	ContractIncomingDonation
+	ContractIncomingDonation,
+	IncomingDonationTransaction
 } from '../../open-charity-types';
 import {Web3ProviderService} from '../../core/web3-provider.service';
 
@@ -61,12 +62,16 @@ export class OrganizationSharedService {
 
 	/*********************************/
 
-	// triggered when transaction succeed i.e CE stored in blockchain
+	// triggered when user try to add new move funds
+	private _onMoveFundsToCharityEventAdded: Subject<IncomingDonationTransaction> = new Subject<IncomingDonationTransaction>();
+	private onMoveFundsToCharityEventAddedSource = this._onMoveFundsToCharityEventAdded.asObservable().share<IncomingDonationTransaction>();
+
+	// triggered when transaction succeed i.e move funds stored in blockchain
 	private _onMoveFundsToCharityEventConfirmed: Subject<ConfirmationResponse> = new Subject<ConfirmationResponse>();
 	private onMoveFundsToCharityEventConfirmedSource = this._onMoveFundsToCharityEventConfirmed.asObservable().share<ConfirmationResponse>();
 
 
-	// triggered when transaction failed  i.e CE is not stored in blockchain
+	// triggered when transaction failed i.e move funds is not stored in blockchain
 	private _onMoveFundsToCharityEventFailed: Subject<ConfirmationResponse> = new Subject<ConfirmationResponse>();
 	private onMoveFundsToCharityEventFailedSource = this._onMoveFundsToCharityEventFailed.asObservable().share<ConfirmationResponse>();
 
@@ -117,6 +122,10 @@ export class OrganizationSharedService {
 
 	public incomingDonationCanceled(incomingDonationInternalId: string, address: string): void {
 		this._onIncomingDonationCanceled.next({internalId: incomingDonationInternalId, address: address});
+	}
+
+	public moveFundsToCharityEventAdded(incomingDonationTransaction: IncomingDonationTransaction): void {
+		this._onMoveFundsToCharityEventAdded.next(incomingDonationTransaction);
 	}
 
 	public moveFundsToCharityEventConfirmed(charityEventInternalId: string, address: string): void {
@@ -173,6 +182,9 @@ export class OrganizationSharedService {
 		return this.onIncomingDonationCanceledSource;
 	}
 
+	public onMoveFundsToCharityEventAdded(): Observable<IncomingDonationTransaction> {
+		return this.onMoveFundsToCharityEventAddedSource;
+	}
 
 	public onMoveFundsToCharityEventConfirmed(): Observable<ConfirmationResponse> {
 		return this.onMoveFundsToCharityEventConfirmedSource;
