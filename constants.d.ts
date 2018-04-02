@@ -31,7 +31,7 @@ interface Environment {
 	tokenAddress: string;
 	rpcProviderUrl: string;
 	websocketProviderUrl: string;
-	metaStorageUrl: string;
+	apiUrl: string;
 	organizations: string[];
 }
 export declare const DEV_ENVIRONMENT: Environment;

@@ -6,8 +6,6 @@ import {MetaStorageData, MetaStorageFile} from '../open-charity-types';
 @Injectable()
 export class MetaDataStorageService {
 
-	private metaStorageUrl: string = environment.metaStorageUrl;
-
 	constructor(private httpClient: HttpClient) {
 
 	}
@@ -63,7 +61,7 @@ export class MetaDataStorageService {
 	}
 
 	private buildUrl(url: string): string {
-		return this.metaStorageUrl + url;
+		return environment.apiUrl+'meta/' + url;
 	}
 
 }
