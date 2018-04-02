@@ -11,7 +11,7 @@ import {AppIncomingDonation, ConfirmationResponse, ConfirmationStatusState} from
 import {OrganizationSharedService} from '../../services/organization-shared.service';
 import {Router} from '@angular/router';
 import {Subject} from 'rxjs/Subject';
-import {LoadingTransparentOverlayService} from '../../../core/loading-transparent-overlay.service';
+import {LoadingOverlayService} from '../../../core/loading-overlay.service';
 import {ErrorMessageService} from '../../../core/error-message.service';
 
 
@@ -34,7 +34,7 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 				protected organizationSharedService: OrganizationSharedService,
 				protected zone: NgZone,
 				protected router: Router,
-				protected loadingTransparentOverlayService: LoadingTransparentOverlayService,
+				protected loadingOverlayService: LoadingOverlayService,
 				protected errorMessageService: ErrorMessageService
 	) {
 
@@ -100,12 +100,12 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 	}
 
 	public async openSendDonationFundsModal(incomingDonation: AppIncomingDonation): Promise<void> {
-		this.loadingTransparentOverlayService.showOverlay();
+		this.loadingOverlayService.showOverlay(true);
 
 		const charityEventsAddresses: string[] = await this.organizationContractService.getCharityEventsAsync(this.organizationAddress);
 		const charityEvents = await this.charityEventContractService.getCharityEventsList(charityEventsAddresses);
 
-		this.loadingTransparentOverlayService.hideOverlay();
+		this.loadingOverlayService.hideOverlay();
 
 		const modalRef: NgbModalRef = this.modalService.open(IncomingDonationSendFundsModalComponent);
 		modalRef.componentInstance.organizationAddress = this.organizationAddress;

@@ -17,7 +17,7 @@ import * as moment from 'moment';
 import {OrganizationContractEventsService} from '../../../core/contracts-services/organization-contract-events.service';
 import {Web3ProviderService} from '../../../core/web3-provider.service';
 import {ErrorMessageService} from '../../../core/error-message.service';
-import {LoadingTransparentOverlayService} from '../../../core/loading-transparent-overlay.service';
+import {LoadingOverlayService} from '../../../core/loading-overlay.service';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
 
 @Component({
@@ -49,7 +49,7 @@ export class IncomingDonationsDetailsComponent implements OnInit, OnDestroy {
 		private organizationContractEventsService: OrganizationContractEventsService,
 		private web3ProviderService: Web3ProviderService,
 		private errorMessageService: ErrorMessageService,
-		private loadingTransparentOverlayService: LoadingTransparentOverlayService,
+		private loadingOverlayService: LoadingOverlayService,
 		private organizationSharedService: OrganizationSharedService
 	) { }
 
@@ -138,12 +138,12 @@ export class IncomingDonationsDetailsComponent implements OnInit, OnDestroy {
 	}
 
 	public async openSendDonationFundsModal(incomingDonation: AppIncomingDonation): Promise<void> {
-		this.loadingTransparentOverlayService.showOverlay();
+		this.loadingOverlayService.showOverlay(true);
 
 		const charityEventsAddresses: string[] = await this.organizationContractService.getCharityEventsAsync(this.organizationAddress);
 		const charityEvents = await this.charityEventContractService.getCharityEventsList(charityEventsAddresses);
 
-		this.loadingTransparentOverlayService.hideOverlay();
+		this.loadingOverlayService.hideOverlay();
 
 		this.modalRef = this.modalService.open(IncomingDonationSendFundsModalComponent);
 		this.modalRef.componentInstance.organizationAddress = this.organizationAddress;

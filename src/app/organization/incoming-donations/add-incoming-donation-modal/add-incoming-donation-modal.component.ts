@@ -11,7 +11,7 @@ import {Observable} from 'rxjs/Observable';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import { OnDestroy, AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { NeatComponent } from '../../../shared/neat.component';
-import { LoadingTransparentOverlayService } from '../../../core/loading-transparent-overlay.service';
+import { LoadingOverlayService } from '../../../core/loading-overlay.service';
 
 
 @Component({
@@ -26,7 +26,7 @@ export class AddIncomingDonationModalComponent extends NeatComponent implements 
 
 	constructor(
 		public activeModal: NgbActiveModal,
-		private $loadingTransparentOverlayService: LoadingTransparentOverlayService,
+		private $loadingOverlayService: LoadingOverlayService,
 		private $sharedService: OrganizationSharedService,
 	) {
 		super();
@@ -43,8 +43,8 @@ export class AddIncomingDonationModalComponent extends NeatComponent implements 
 
 	ngAfterViewInit() {
 		if (this.charityEvent) {
-			this.$sharedService.onIncomingDonationAdded().takeUntil(this.ngUnsubscribe).subscribe(_ => this.$loadingTransparentOverlayService.showOverlay());
-			this.$sharedService.onIncomingDonationConfirmed().takeUntil(this.ngUnsubscribe).subscribe(_ => this.$loadingTransparentOverlayService.showOverlay());
+			this.$sharedService.onIncomingDonationAdded().takeUntil(this.ngUnsubscribe).subscribe(_ => this.$loadingOverlayService.showOverlay(true));
+			this.$sharedService.onIncomingDonationConfirmed().takeUntil(this.ngUnsubscribe).subscribe(_ => this.$loadingOverlayService.showOverlay(true));
 		} else {
 			this.$sharedService.onIncomingDonationAdded().takeUntil(this.ngUnsubscribe).subscribe(_ => this.activeModal.close('Donation Pending'));
 		}

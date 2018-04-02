@@ -85,3 +85,8 @@ export interface IncomingDonationTransaction {
 	sender?: string;
 	confirmation: ConfirmationStatusState;
 }
+
+export type loadingOverlayConfig = {
+	showOverlay: boolean,
+	transparent: boolean
+}

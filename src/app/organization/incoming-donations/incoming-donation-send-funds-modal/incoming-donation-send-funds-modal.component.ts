@@ -12,7 +12,7 @@ import {filter} from 'lodash';
 import {TagsBitmaskService} from '../../services/tags-bitmask.service';
 import {ContractCharityEvent, ContractIncomingDonation, AppCharityEvent, ConfirmationStatusState} from '../../../open-charity-types';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
-import {LoadingTransparentOverlayService} from '../../../core/loading-transparent-overlay.service';
+import {LoadingOverlayService} from '../../../core/loading-overlay.service';
 import {TransactionReceipt} from 'web3/types';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
 import {PendingTransactionService} from '../../../core/pending-transactions.service';
@@ -50,7 +50,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 		private tagsBitmaskService: TagsBitmaskService,
 		private fb: FormBuilder,
 		private activeModal: NgbActiveModal,
-		private loadingTransparentOverlayService: LoadingTransparentOverlayService,
+		private loadingOverlayService: LoadingOverlayService,
 		private organizationSharedService: OrganizationSharedService,
 		private pendingTransactionService: PendingTransactionService,
 		private toastyService: ToastyService,
@@ -160,7 +160,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 			if (e.message.search('MetaMask Tx Signature: User denied transaction signature') !== -1) {
 				this.organizationSharedService.moveFundsToCharityEventCanceled(charityEventInternalId, charityEventAddress);
 				this.activeModal.close();
-				this.loadingTransparentOverlayService.hideOverlay();
+				this.loadingOverlayService.hideOverlay();
 				this.pendingTransactionService.addFailed(
 					amount + ' - ' + targetCharityEvent.name,
 					'Move funds transaction canceled',
@@ -170,7 +170,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 			} else {
 				// TODO:  global errors notifier
 				this.errorMessageService.addError(e.message, 'sendFunds');
-				this.loadingTransparentOverlayService.hideOverlay();
+				this.loadingOverlayService.hideOverlay();
 			}
 		}
 	}
