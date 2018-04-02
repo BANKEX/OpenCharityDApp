@@ -33,7 +33,7 @@ export class IncomingDonationsDetailsComponent implements OnInit, OnDestroy {
 	public transactions: IncomingDonationTransaction[] = [];
 
 	private transactionsLoading: boolean = false;
-	private transactionsEmpty: boolean = true;
+	private transactionsEmpty: boolean = false;
 
 	private modalRef: NgbModalRef;
 
