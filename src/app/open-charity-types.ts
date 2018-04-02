@@ -70,3 +70,18 @@ export type AlertMessage = {
 	message: string
 };
 
+export interface FundsMovedToCharityEvent {
+	incomingDonation: string;
+	charityEvent: string;
+	sender: string;
+	amount: string;
+}
+
+export interface IncomingDonationTransaction {
+	date?: string;
+	amount: string;
+	transactionHash?: string;
+	charityEvent: string;
+	sender?: string;
+	confirmation: ConfirmationStatusState;
+}

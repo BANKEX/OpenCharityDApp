@@ -1,4 +1,4 @@
-//TODO: create reconnection process for events listeners;
+// TODO: create reconnection process for events listeners;
 import {Injectable} from '@angular/core';
 import {Contract, EventEmitter, EventLog, Tx} from 'web3/types';
 import {Web3ProviderService} from '../web3-provider.service';
@@ -21,8 +21,8 @@ export class OrganizationContractEventsService {
 	private incomingDonationAddedObservable: {[key: string]: ConnectableObservable<any>} = {};
 
 	private readonly eventsSignatures = {
-		CHARITY_EVENT_ADDED: "CharityEventAdded(address,address)",
-		INCOMING_DONATION_ADDED: "IncomingDonationAdded(address,address,address,uint256)"
+		CHARITY_EVENT_ADDED: 'CharityEventAdded(address,address)',
+		INCOMING_DONATION_ADDED: 'IncomingDonationAdded(address,address,address,uint256)'
 	};
 
 
@@ -125,6 +125,25 @@ export class OrganizationContractEventsService {
 
 		contract.getPastEvents('FundsMovedToCharityEvent', {
 			filter: {charityEvent: charityEventAddress},
+			fromBlock: 0,
+			toBlock: 'latest'
+		}, (err, events) => {
+			if (err) {
+				sourceSubject.error(err);
+				return;
+			}
+			sourceSubject.next(events);
+		});
+
+		return sourceSubject.asObservable();
+	}
+
+	public getCharityEventsByID(organizationAddress: string, incomingDonationAddress: string, txOptions?: Tx): Observable<EventLog[]> {
+		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
+		const sourceSubject: Subject<EventLog[]> = new Subject<EventLog[]>();
+
+		contract.getPastEvents('FundsMovedToCharityEvent', {
+			filter: {incomingDonation: incomingDonationAddress},
 			fromBlock: 0,
 			toBlock: 'latest'
 		}, (err, events) => {

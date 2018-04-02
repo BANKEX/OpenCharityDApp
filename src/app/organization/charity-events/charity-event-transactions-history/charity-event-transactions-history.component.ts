@@ -10,6 +10,7 @@ import {Web3ProviderService} from '../../../core/web3-provider.service';
 import { Location } from '@angular/common';
 import * as moment from 'moment';
 import {ErrorMessageService} from '../../../core/error-message.service';
+import {FundsMovedToCharityEvent} from '../../../open-charity-types';
 
 export interface CharityEventTransaction {
 	date?: string;
@@ -17,13 +18,6 @@ export interface CharityEventTransaction {
 	transactionHash: string;
 	incomingDonation: string;
 	sender: string;
-}
-
-interface FundsMovedToCharityEvent {
-	incomingDonation: string;
-	charityEvent: string;
-	sender: string;
-	amount: string;
 }
 
 @Component({
@@ -99,6 +93,10 @@ export class CharityEventTransactionsHistoryComponent implements OnInit, OnDestr
 
 	public isTransactionsEmpty(): boolean {
 		return this.transactionsEmpty;
+	}
+
+	public toDetails(incomingDonationAddress: string): void {
+		this.router.navigate([`/organization/${this.organizationAddress}/donation/${incomingDonationAddress}/details`]);
 	}
 
 	ngOnDestroy(): void {

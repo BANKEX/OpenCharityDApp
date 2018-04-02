@@ -10,7 +10,7 @@ import 'rxjs/add/operator/distinctUntilChanged';
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {filter} from 'lodash';
 import {TagsBitmaskService} from '../../services/tags-bitmask.service';
-import {ContractCharityEvent, ContractIncomingDonation, AppCharityEvent} from '../../../open-charity-types';
+import {ContractCharityEvent, ContractIncomingDonation, AppCharityEvent, ConfirmationStatusState} from '../../../open-charity-types';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
 import {LoadingTransparentOverlayService} from '../../../core/loading-transparent-overlay.service';
 import {TransactionReceipt} from 'web3/types';
@@ -110,9 +110,15 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 	// tslint:disable-next-line:member-ordering
 	public async sendFunds(targetCharityEvent: ContractCharityEvent, amount: string): Promise<void> {
 		let charityEventInternalId: string = this.organizationSharedService.makePseudoRandomHash(targetCharityEvent);
-		let charityEventAddress: string = null;
+		let charityEventAddress: string = targetCharityEvent.address;
 		try {
 			this.disabled = true;
+
+			this.organizationSharedService.moveFundsToCharityEventAdded({
+				amount: amount,
+				charityEvent: targetCharityEvent.address,
+				confirmation: ConfirmationStatusState.PENDING
+			});
 
 			this.pendingTransactionService.addPending(
 				amount + ' - ' + targetCharityEvent.name,
