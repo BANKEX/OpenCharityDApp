@@ -1,7 +1,7 @@
-<div class="opc-loading-overlay" *ngIf="showOverlay">
+<div class="opc-loading-overlay" *ngIf="showOverlay" [ngClass]="{'transparent': transparent}">
 	<div class="loading-center-container">
 
-		<img src="assets/images/logo/logo.png" alt="Bankex Foundation Open Charity" class="loading-overlay-logo">
+		<img *ngIf="!transparent" src="assets/images/logo/logo.png" alt="Bankex Foundation Open Charity" class="loading-overlay-logo">
 
 		<div class="loading-indicator">
 			<div class="loading-bar"></div>

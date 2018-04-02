@@ -9,7 +9,7 @@ import { CharityEventContractService } from '../../../core/contracts-services/ch
 import { OrganizationSharedService } from '../../services/organization-shared.service';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { NeatComponent } from '../../../shared/neat.component';
-import { LoadingTransparentOverlayService } from '../../../core/loading-transparent-overlay.service';
+import { LoadingOverlayService } from '../../../core/loading-overlay.service';
 import { IncomingDonationContractService } from '../../../core/contracts-services/incoming-donation-contract.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CharityEventEditorModalComponent } from '../charity-event-editor-modal/charity-event-editor-modal.component';
@@ -30,7 +30,7 @@ export class CharityEventCardComponent extends NeatComponent {
 	constructor(
 		private $charityEventContractService: CharityEventContractService,
 		private $incomingDonationContractService: IncomingDonationContractService,
-		private $loadingTransparentOverlayService: LoadingTransparentOverlayService,
+		private $loadingOverlayService: LoadingOverlayService,
 		private $modal: NgbModal,
 		private $organizationContractService: OrganizationContractService,
 		private $router: Router,
@@ -96,7 +96,7 @@ export class CharityEventCardComponent extends NeatComponent {
 			modalInstance.charityEvent = this.charityEvent;
 			modalInstance.organizationAddress = this.organizationAddress;
 			this.modal = modalInstance.activeModal; // save link to active modal
-			this.$sharedService.onIncomingDonationAdded().take(1).subscribe(_ => this.$loadingTransparentOverlayService.showOverlay());
+			this.$sharedService.onIncomingDonationAdded().take(1).subscribe(_ => this.$loadingOverlayService.showOverlay(true));
 			this.$sharedService.onIncomingDonationConfirmed().takeUntil(this.ngUnsubscribe).subscribe(async (donation) => {
 				const charityEventsAddresses = await this.$organizationContractService.getCharityEventsAsync(this.organizationAddress);
 				this.modal.close();
@@ -118,7 +118,7 @@ export class CharityEventCardComponent extends NeatComponent {
 			});
 		} catch (err) {
 			this.cancelActions();
-			this.$errorMessageService.addError(err)
+			this.$errorMessageService.addError(err, 'addDonationClick');
 		}
 	}
 
@@ -135,6 +135,6 @@ export class CharityEventCardComponent extends NeatComponent {
 		msg && console.warn(msg, '...');
 		this.modal && this.modal.close();
 		this.subs.forEach((sub: Subscription) => sub.unsubscribe());
-		this.$loadingTransparentOverlayService.hideOverlay();
+		this.$loadingOverlayService.hideOverlay();
 	}
 }

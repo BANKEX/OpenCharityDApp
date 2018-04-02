@@ -13,8 +13,6 @@ import {OrganizationContractService} from './contracts-services/organization-con
 import {OrganizationContractEventsService} from './contracts-services/organization-contract-events.service';
 import {MetaDataStorageService} from './meta-data-storage.service';
 import {PendingTransactionService} from './pending-transactions.service';
-import {LoadingTransparentOverlayComponent} from './loading-transparent-overlay/loading-transparent-overlay.component';
-import {LoadingTransparentOverlayService} from './loading-transparent-overlay.service';
 import {LoginFormComponent} from './login-form/login-form.component';
 import {ErrorMessageService} from './error-message.service';
 import {ErrorMessageComponent} from './error-message/error-message.component';
@@ -35,14 +33,12 @@ const contractsServices = [
 	imports: [CommonModule],
 	declarations: [
 		LoadingOverlayComponent,
-		LoadingTransparentOverlayComponent,
 		BlockingNotificationOverlayComponent,
 		LoginFormComponent,
 		ErrorMessageComponent
 	],
 	exports: [
 		LoadingOverlayComponent,
-		LoadingTransparentOverlayComponent,
 		BlockingNotificationOverlayComponent,
 		LoginFormComponent,
 		ErrorMessageComponent
@@ -50,7 +46,6 @@ const contractsServices = [
 	providers: [
 		Web3ProviderService,
 		LoadingOverlayService,
-		LoadingTransparentOverlayService,
 		BlockingNotificationOverlayService,
 		MetamaskCheckService,
 		{provide: 'Window', useFactory: windowFactory},

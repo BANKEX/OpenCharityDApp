@@ -13,7 +13,7 @@ import {UploadFile} from 'ngx-file-drop';
 import {merge} from 'lodash';
 import {ActivatedRoute} from '@angular/router';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {LoadingTransparentOverlayService} from '../../../core/loading-transparent-overlay.service';
+import {LoadingOverlayService} from '../../../core/loading-overlay.service';
 import {PendingTransactionService} from '../../../core/pending-transactions.service';
 import {PendingTransactionSourceType} from '../../../pending-transaction.types';
 import {ToastyService} from 'ng2-toasty';
@@ -59,7 +59,7 @@ export class CharityEventFormComponent implements OnInit {
 		private metaDataStorageService: MetaDataStorageService,
 		private route: ActivatedRoute,
 		private sanitize: DomSanitizer,
-		private loadingTransparentOverlayService: LoadingTransparentOverlayService,
+		private loadingOverlayService: LoadingOverlayService,
 		private pendingTransactionService: PendingTransactionService,
 		private toastyService: ToastyService,
 		private activeModal: NgbActiveModal,
@@ -103,12 +103,12 @@ export class CharityEventFormComponent implements OnInit {
 		let newCharityEventAddress: string = null;
 
 		try {
-			this.loadingTransparentOverlayService.showOverlay();
+			this.loadingOverlayService.showOverlay(true);
 			// save meta data into storage
 			const metaStorageHash: string = await this.storeToMetaStorage(newCharityEvent, f.details);
 			merge(newCharityEvent, {metaStorageHash: metaStorageHash});
 
-			this.loadingTransparentOverlayService.hideOverlay();
+			this.loadingOverlayService.hideOverlay();
 
 			this.activeModal.close();
 
@@ -165,7 +165,7 @@ export class CharityEventFormComponent implements OnInit {
 				// TODO:  global errors notifier
 				this.errorMessageService.addError(e.message, 'addCharityEvent');
 			}
-			this.loadingTransparentOverlayService.hideOverlay();
+			this.loadingOverlayService.hideOverlay();
 			this.activeModal.close();
 		}
 	}
@@ -194,7 +194,7 @@ export class CharityEventFormComponent implements OnInit {
 		if (!isSubmitEnable) return;
 
 		try {
-			this.loadingTransparentOverlayService.showOverlay();
+			this.loadingOverlayService.showOverlay(true);
 
 			// show pending charity event in ui
 			this.organizationSharedService.charityEventEdited(merge({}, newCharityEvent, {
@@ -207,7 +207,7 @@ export class CharityEventFormComponent implements OnInit {
 				merge(newCharityEvent, {metaStorageHash: newMetaStorageHash});
 
 				if (!isCharityEventChanged) {
-					this.loadingTransparentOverlayService.hideOverlay();
+					this.loadingOverlayService.hideOverlay();
 
 					this.pendingTransactionService.addPending(
 						newCharityEvent.name,
@@ -228,7 +228,7 @@ export class CharityEventFormComponent implements OnInit {
 			}
 
 			if (isCharityEventChanged) {
-				this.loadingTransparentOverlayService.hideOverlay();
+				this.loadingOverlayService.hideOverlay();
 
 				this.pendingTransactionService.addPending(
 					newCharityEvent.name,
@@ -281,7 +281,7 @@ export class CharityEventFormComponent implements OnInit {
 				// TODO:  global errors notifier
 				this.errorMessageService.addError(e.message, 'editCharityEvent');
 			}
-			this.loadingTransparentOverlayService.hideOverlay();
+			this.loadingOverlayService.hideOverlay();
 		}
 	}
 

@@ -8,6 +8,10 @@
 	background: white;
 	z-index: 1100;
 
+	&.transparent {
+		background: rgba(255, 255, 255, 0.5);
+	}
+
 	.loading-center-container {
 		width: 200px;
 		height: 200px;
