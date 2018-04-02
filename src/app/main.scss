@@ -16,6 +16,13 @@ tr.loading, tr.empty {
     margin-top: 16px;
   }
 }
+.modal {
+	.close {
+		position: absolute;
+		right: 20px;
+    	top: 15px;
+	}
+}
 
 @media (min-width: 1250px) {
   .modal-more-lg {

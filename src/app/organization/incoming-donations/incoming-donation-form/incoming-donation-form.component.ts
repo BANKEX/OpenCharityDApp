@@ -4,7 +4,7 @@ import {AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Valid
 import {TagsBitmaskService} from '../../services/tags-bitmask.service';
 import {TransactionReceipt} from 'web3/types';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
-import {AppIncomingDonation, ConfirmationStatusState, ContractIncomingDonation} from '../../../open-charity-types';
+import {AppIncomingDonation, ConfirmationStatusState, ContractIncomingDonation, AppCharityEvent} from '../../../open-charity-types';
 import {NgbTypeahead} from '@ng-bootstrap/ng-bootstrap';
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
@@ -54,6 +54,7 @@ export function sourceMinValidator(): ValidatorFn {
 })
 
 export class IncomingDonationFormComponent implements OnInit {
+	@Input('charityEvent' ) charityEvent: AppCharityEvent;
 	@Input('organizationAddress') organizationAddress: string;
 	@Input('incomingDonation') incomingDonation: AppIncomingDonation;
 	@Output('donationCreated') donationCreated: Subject<string> = new Subject();
@@ -101,7 +102,8 @@ export class IncomingDonationFormComponent implements OnInit {
 		const f = this.incomingDonationForm.value;
 
 
-		const tags = '0x' + this.tagsBitmaskService.convertToHexWithLeadingZeros(this.selectedTagsBitmask);
+		const tags = this.charityEvent ? this.charityEvent.tags :
+			'0x' + this.tagsBitmaskService.convertToHexWithLeadingZeros(this.selectedTagsBitmask);
 		const newIncomingDonation: ContractIncomingDonation = {
 			realWorldsIdentifier: f.realWorldIdentifier,
 			amount: f.amount,

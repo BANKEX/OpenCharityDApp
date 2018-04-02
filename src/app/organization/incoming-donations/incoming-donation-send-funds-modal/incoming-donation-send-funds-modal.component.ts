@@ -36,6 +36,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 	focus$ = new Subject<string>();
 	click$ = new Subject<string>();
 
+	public disabled: boolean;
 	public formatter: any;
 	public search: any;
 	public statesWithFlags: any;
@@ -110,9 +111,8 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 	public async sendFunds(targetCharityEvent: ContractCharityEvent, amount: string): Promise<void> {
 		let charityEventInternalId: string = this.organizationSharedService.makePseudoRandomHash(targetCharityEvent);
 		let charityEventAddress: string = null;
-
 		try {
-			this.activeModal.close();
+			this.disabled = true;
 
 			this.pendingTransactionService.addPending(
 				amount + ' - ' + targetCharityEvent.name,
@@ -128,7 +128,6 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 				targetCharityEvent.address,
 				amount
 			);
-
 			if (receipt.events && receipt.events.FundsMovedToCharityEvent) {
 				charityEventAddress = receipt.events.FundsMovedToCharityEvent.returnValues['charityEvent'];
 				this.organizationSharedService.moveFundsToCharityEventConfirmed(charityEventInternalId, charityEventAddress);
@@ -147,9 +146,10 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 				);
 				this.toastyService.error('Move funds ' + targetCharityEvent.name + ' transaction failed');
 			}
-
+			this.activeModal.close();
 			this.fundsMoved.emit(this.incomingDonation.address);
 		} catch (e) {
+			this.activeModal.close();
 			// TODO: listen for failed transaction
 			if (e.message.search('MetaMask Tx Signature: User denied transaction signature') !== -1) {
 				this.organizationSharedService.moveFundsToCharityEventCanceled(charityEventInternalId, charityEventAddress);
@@ -164,6 +164,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 			} else {
 				// TODO:  global errors notifier
 				this.errorMessageService.addError(e.message, 'sendFunds');
+				this.loadingTransparentOverlayService.hideOverlay();
 			}
 		}
 	}
