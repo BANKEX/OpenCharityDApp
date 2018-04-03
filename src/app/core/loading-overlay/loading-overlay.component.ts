@@ -17,15 +17,14 @@ export class LoadingOverlayComponent implements OnInit {
 
 	}
 
-	ngOnInit(): void {
+	public ngOnInit(): void {
 		this.loadingOverlayService.onOverlayStateChanged()
 			.debounceTime(200)
 			.subscribe((config: loadingOverlayConfig) => {
 					this.showOverlay = config.showOverlay;
 					this.transparent = config.transparent;
-					console.log(config);
 				},
-				(err: any) => {
+				(err: Error) => {
 					console.error(err.message);
 				});
 

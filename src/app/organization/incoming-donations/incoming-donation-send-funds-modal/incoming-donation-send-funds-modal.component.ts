@@ -27,19 +27,19 @@ import {ErrorMessageService} from '../../../core/error-message.service';
 })
 
 export class IncomingDonationSendFundsModalComponent implements OnInit {
-	@Input('charityEvent') charityEvent: AppCharityEvent; // If spcified - move all funds to this CE
-	@Input('organizationAddress') organizationAddress: string;
-	@Input('charityEvents') charityEvents: ContractCharityEvent[];
-	@Input('incomingDonation') incomingDonation: ContractIncomingDonation;
-	@Output('fundsMoved') fundsMoved: EventEmitter<string> = new EventEmitter<string>();
-	@ViewChild('typeahead') typeahead: NgbTypeahead;
-	focus$ = new Subject<string>();
-	click$ = new Subject<string>();
+	@Input('charityEvent') public charityEvent: AppCharityEvent; // If spcified - move all funds to this CE
+	@Input('organizationAddress') public organizationAddress: string;
+	@Input('charityEvents') public charityEvents: ContractCharityEvent[];
+	@Input('incomingDonation') public incomingDonation: ContractIncomingDonation;
+	@Output('fundsMoved') public fundsMoved: EventEmitter<string> = new EventEmitter<string>();
+	@ViewChild('typeahead') public typeahead: NgbTypeahead;
+	public focus$ = new Subject<string>();
+	public click$ = new Subject<string>();
 
 	public disabled: boolean;
-	public formatter: any;
-	public search: any;
-	public statesWithFlags: any;
+	public formatter: Function;
+	public search: Function;
+	public statesWithFlags: ContractCharityEvent[];
 
 	public amount: string;
 	public moveFundsForm: FormGroup;

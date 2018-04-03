@@ -12,13 +12,13 @@ import * as moment from 'moment';
 import {ErrorMessageService} from '../../../core/error-message.service';
 import {FundsMovedToCharityEvent} from '../../../open-charity-types';
 
-export interface CharityEventTransaction {
+export type CharityEventTransaction = {
 	date?: string;
 	amount: string;
 	transactionHash: string;
 	incomingDonation: string;
 	sender: string;
-}
+};
 
 @Component({
 	templateUrl: 'charity-event-transactions-history.component.html',
@@ -43,7 +43,7 @@ export class CharityEventTransactionsHistoryComponent implements OnInit, OnDestr
 				private errorMessageService: ErrorMessageService) {
 	}
 
-	async ngOnInit(): Promise<void> {
+	public async ngOnInit(): Promise<void> {
 		this.route.params.subscribe(params => {
 			this.organizationAddress = params['address'];
 			this.charityEventAddress = params['event'];
@@ -68,8 +68,8 @@ export class CharityEventTransactionsHistoryComponent implements OnInit, OnDestr
 				});
 				this.setTransactionsLoading(false);
 				this.setTransactionsEmpty(!res.length);
-			}, (err: any) => {
-				this.errorMessageService.addError(err, 'getCharityEventTransactions');
+			}, (err: Error) => {
+				this.errorMessageService.addError(err.message, 'getCharityEventTransactions');
 			});
 	}
 
@@ -98,7 +98,7 @@ export class CharityEventTransactionsHistoryComponent implements OnInit, OnDestr
 		this.router.navigate([`/organization/${this.organizationAddress}/donation/${incomingDonationAddress}/details`]);
 	}
 
-	ngOnDestroy(): void {
+	public ngOnDestroy(): void {
 		this.componentDestroyed.next();
 	}
 }

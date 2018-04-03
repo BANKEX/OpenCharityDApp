@@ -7,7 +7,7 @@ export class IsOrganizationAddressGuard implements CanActivate {
 	constructor(private router: Router) {
 	}
 
-	canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+	public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
 		const address = route.params.address;
 		if (address.length > 10) {
 			return true;

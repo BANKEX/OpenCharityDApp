@@ -46,7 +46,7 @@ export class CharityEventsAllComponent extends CharityEventsListBaseComponent im
 		);
 	}
 
-	async ngOnInit(): Promise<void> {
+	public async ngOnInit(): Promise<void> {
 		this.route.params.subscribe(params => { this.organizationAddress = params['address']; });
 		this.name = await this.organizationContractService.getName(this.organizationAddress);
 		this.updateCharityEventsList();
@@ -66,7 +66,7 @@ export class CharityEventsAllComponent extends CharityEventsListBaseComponent im
 		this.isAddCharityFormEnabled = false;
 	}
 
-	ngOnDestroy(): void {
+	public ngOnDestroy(): void {
 		this.componentDestroyed.next();
 	}
 }

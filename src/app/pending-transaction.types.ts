@@ -10,9 +10,9 @@ export enum PendingTransactionState {
   FAILED
 }
 
-export interface PendingTransaction {
+export type PendingTransaction = {
   title: string;
   text: string;
   state: PendingTransactionState;
   source: PendingTransactionSourceType;
-}
+};

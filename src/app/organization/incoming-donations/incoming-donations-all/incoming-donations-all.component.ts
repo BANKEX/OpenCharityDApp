@@ -39,7 +39,7 @@ export class IncomingDonationsAllComponent extends IncomingDonationsListBaseComp
 		);
 	}
 
-	async ngOnInit(): Promise<void> {
+	public async ngOnInit(): Promise<void> {
 		this.route.params.subscribe(params => {
 			this.organizationAddress = params['address'];
 		});

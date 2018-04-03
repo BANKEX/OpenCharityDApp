@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
 import Web3 from 'web3';
 
-declare var window: any;
+declare var window;
 
 @Injectable()
 export class Web3ProviderService {
-	public web3: any;
+	public web3;
 
 	constructor() {
 		this.web3 = this.checkAndInstantiateWeb3();

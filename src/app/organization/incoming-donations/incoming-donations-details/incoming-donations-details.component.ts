@@ -52,7 +52,7 @@ export class IncomingDonationsDetailsComponent implements OnInit, OnDestroy {
 				private organizationSharedService: OrganizationSharedService) {
 	}
 
-	async ngOnInit(): Promise<void> {
+	public async ngOnInit(): Promise<void> {
 		this.route.params.subscribe(params => {
 			this.organizationAddress = params['address'];
 			this.incomingDonationAddress = params['donation'];
@@ -83,7 +83,7 @@ export class IncomingDonationsDetailsComponent implements OnInit, OnDestroy {
 		return (incomingDonation.confirmation === ConfirmationStatusState.ERROR);
 	}
 
-	ngOnDestroy(): void {
+	public ngOnDestroy(): void {
 		this.componentDestroyed.next();
 	}
 
@@ -140,7 +140,7 @@ export class IncomingDonationsDetailsComponent implements OnInit, OnDestroy {
 				this.transactions.push(res);
 				this.modalRef.close();
 				this.setTransactionsEmpty(false);
-			}, (err: any) => {
+			}, (err: Error) => {
 				this.errorMessageService.addError(err.message, 'onMoveFundsToCharityEventAdded');
 			});
 
@@ -148,7 +148,7 @@ export class IncomingDonationsDetailsComponent implements OnInit, OnDestroy {
 			.takeUntil(this.componentDestroyed)
 			.subscribe(async () => {
 				this.getCharityEventsByID();
-			}, (err: any) => {
+			}, (err: Error) => {
 				this.errorMessageService.addError(err.message, 'onMoveFundsToCharityEventConfirmed');
 			});
 
@@ -162,7 +162,7 @@ export class IncomingDonationsDetailsComponent implements OnInit, OnDestroy {
 				if (i !== -1) {
 					this.transactions.splice(i, 1);
 				}
-			}, (err: any) => {
+			}, (err: Error) => {
 				this.errorMessageService.addError(err.message, 'onMoveFundsToCharityEventFailed');
 			});
 
@@ -176,7 +176,7 @@ export class IncomingDonationsDetailsComponent implements OnInit, OnDestroy {
 				if (i !== -1) {
 					this.transactions.splice(i, 1);
 				}
-			}, (err: any) => {
+			}, (err: Error) => {
 				this.errorMessageService.addError(err.message, 'onMoveFundsToCharityEventCanceled');
 			});
 	}
@@ -203,8 +203,8 @@ export class IncomingDonationsDetailsComponent implements OnInit, OnDestroy {
 
 				this.setTransactionsLoading(false);
 				this.setTransactionsEmpty(!res.length);
-			}, (err: any) => {
-				this.errorMessageService.addError(err, 'getCharityEventTransactions');
+			}, (err: Error) => {
+				this.errorMessageService.addError(err.message, 'getCharityEventTransactions');
 			});
 	}
 

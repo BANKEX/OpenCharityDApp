@@ -24,9 +24,9 @@ type IncomingDonationSource = {
 })
 
 export class IncomingDonationsEditorComponent implements OnInit, OnDestroy {
-	@ViewChild('typeahead') typeahead: NgbTypeahead;
-	focus$ = new Subject<string>();
-	click$ = new Subject<string>();
+	@ViewChild('typeahead') public typeahead: NgbTypeahead;
+	public focus$ = new Subject<string>();
+	public click$ = new Subject<string>();
 
 	public organizationAddress: string;
 	public incomingDonation: AppIncomingDonation;
@@ -45,7 +45,7 @@ export class IncomingDonationsEditorComponent implements OnInit, OnDestroy {
 				private location: Location) {
 	}
 
-	async ngOnInit(): Promise<void> {
+	public async ngOnInit(): Promise<void> {
 		this.route.params.subscribe(async (params) => {
 			this.organizationAddress = params['address'];
 			// this.incomingDonation =  await this.incomingDonationsContractService.getIncomingDonationDetails(params['donation']);
@@ -57,7 +57,7 @@ export class IncomingDonationsEditorComponent implements OnInit, OnDestroy {
 		event.preventDefault();
 	}
 
-	ngOnDestroy(): void {
+	public ngOnDestroy(): void {
 		this.componentDestroyed.next();
 	}
 }

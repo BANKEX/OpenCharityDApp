@@ -7,7 +7,7 @@ import {merge} from 'lodash';
 	styleUrls: ['add-charity-event.component.scss']
 })
 export class AddCharityEventComponent implements OnInit {
-	@Input('organizationContractAddress') organizationContractAddress: string;
+	@Input('organizationContractAddress') public organizationContractAddress: string;
 
 	constructor() {}
 

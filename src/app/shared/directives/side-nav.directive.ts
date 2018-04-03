@@ -10,7 +10,7 @@ export class SidebarTogglerDirective {
 	}
 
 	@HostListener('click', ['$event'])
-	toggleOpen($event: any) {
+	public toggleOpen($event: Event) {
 		$event.preventDefault();
 		document.querySelector('.app').classList.toggle('is-collapsed');
 	}
@@ -24,7 +24,7 @@ export class SidebarDropdownDirective implements OnInit {
 	constructor(private el: ElementRef) {
 	}
 
-	ngOnInit(): any {
+	public ngOnInit(): void {
 		$('.side-nav .side-nav-menu li a').click(function (event) {
 			if ($(this).parent().hasClass('open')) {
 

@@ -15,13 +15,13 @@ export class ErrorMessageComponent implements OnInit {
 		private errorMessageService: ErrorMessageService
 	) {}
 
-	ngOnInit(): void {
+	public ngOnInit(): void {
 		this.errorMessageService.onErrorMessageChanged()
 			.debounceTime(200)
 			.subscribe((alertMessage: AlertMessage) => {
 					this.errorMessages.push(alertMessage);
 				},
-				(err: any) => {
+				(err: Error) => {
 					this.errorMessageService.addError(err.message);
 				});
 

@@ -40,7 +40,7 @@ export class DashboardIncomingDonationsListComponent extends IncomingDonationsLi
 		);
 	}
 
-	async ngOnInit(): Promise<void> {
+	public async ngOnInit(): Promise<void> {
 		this.updateIncomingDonationsList();
 		this.initEventsListeners();
 	}

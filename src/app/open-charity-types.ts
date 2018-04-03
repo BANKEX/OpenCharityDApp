@@ -1,3 +1,5 @@
+/* tslint:disable */
+
 export enum ConfirmationStatusState {
 	PENDING,
 	CONFIRMED,
@@ -49,7 +51,7 @@ export enum MetaStorageDataType {
 export interface MetaStorageData {
 	type: MetaStorageDataType;
 	searchDescription: string;
-	data: any;
+	data: CharityEventMetaStorageData;
 }
 
 export type MetaStorageFile = {
@@ -60,9 +62,10 @@ export type MetaStorageFile = {
 };
 
 export interface CharityEventMetaStorageData {
+	title?: string,
 	description: string;
-	image: MetaStorageFile;
-	attachments: MetaStorageFile[];
+	image?: MetaStorageFile;
+	attachments?: MetaStorageFile[];
 }
 
 export type AlertMessage = {

@@ -38,7 +38,7 @@ export class DashboardCharityEventsListComponent extends CharityEventsListBaseCo
 		);
 	}
 
-	async ngOnInit() {
+	public async ngOnInit() {
 		this.route.params.subscribe(params => {
 			this.organizationAddress = params['address'];
 		});

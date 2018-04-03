@@ -8,11 +8,11 @@ import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 import {ContractCharityEvent, ContractIncomingDonation} from '../../open-charity-types';
 
-export interface Organization {
+export type Organization = {
 	name: string;
 	address: string;
 	charityEventsCount: number;
-}
+};
 
 @Injectable()
 export class OrganizationContractService {
@@ -31,7 +31,7 @@ export class OrganizationContractService {
 		this.init();
 	}
 
-	async init(): Promise<void> {
+	public async init(): Promise<void> {
 		const accounts: string[] = await this.web3.eth.getAccounts();
 		this.defaultTx = {
 			from: accounts[0]
@@ -42,7 +42,7 @@ export class OrganizationContractService {
 	/***  Get Organization Data *****/
 	/********************************/
 
-	public getName(address: string, txOptions?: Tx): Promise<any> {
+	public getName(address: string, txOptions?: Tx): Promise<string> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		return contract.methods.name().call(txOptions);
 	}
@@ -121,7 +121,7 @@ export class OrganizationContractService {
 		return source.asObservable();
 	}
 
-	public moveFundsToCharityEvent(organizationAddress: string, incomingDonationAddress: string, charityEventAddress: string, amount: string, txOptions?: Tx): Promise<any> {
+	public moveFundsToCharityEvent(organizationAddress: string, incomingDonationAddress: string, charityEventAddress: string, amount: string, txOptions?: Tx): Promise<TransactionReceipt> {
 		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
 		const tx: Tx = merge({}, this.defaultTx, txOptions);
 		return contract.methods.moveDonationFundsToCharityEvent(incomingDonationAddress, charityEventAddress, amount).send(tx);
@@ -185,9 +185,10 @@ export class OrganizationContractService {
 		if (this.lastContractAddress === address) {
 			return this.lastContract;
 		}
-
+		/* tslint:disable */
 		const contract: any = (<any>original).clone();
 		const originalProvider = (<any>original).currentProvider;
+		/* tslint:enable */
 		contract.setProvider(contract.givenProvider || originalProvider);
 		contract.options.address = address;
 

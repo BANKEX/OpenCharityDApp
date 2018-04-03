@@ -25,7 +25,7 @@ export class AddIncomingDonationComponent implements OnInit, OnDestroy {
 				private location: Location) {
 	}
 
-	ngOnInit() {
+	public ngOnInit() {
 		this.route.params.subscribe((params: Params) => {
 			this.organizationAddress = params.address;
 		});
@@ -36,7 +36,7 @@ export class AddIncomingDonationComponent implements OnInit, OnDestroy {
 		event.preventDefault();
 	}
 
-	ngOnDestroy(): void {
+	public ngOnDestroy(): void {
 		this.componentDestroyed.next();
 	}
 }

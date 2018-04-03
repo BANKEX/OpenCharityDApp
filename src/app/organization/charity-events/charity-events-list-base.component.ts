@@ -20,7 +20,7 @@ import {ErrorMessageService} from '../../core/error-message.service';
 })
 
 export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
-	@Input('organizationAddress') organizationAddress: string;
+	@Input('organizationAddress') public organizationAddress: string;
 	public charityEvents: AppCharityEvent[] = [];
 
 	protected componentDestroyed: Subject<void> = new Subject<void>();
@@ -36,7 +36,7 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 		protected errorMessageService: ErrorMessageService
 	) {}
 
-	ngOnInit(): void {
+	public ngOnInit(): void {
 
 	}
 
@@ -46,7 +46,7 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 			.subscribe((res: AppCharityEvent) => {
 				this.charityEvents.push(merge({}, res, {raised: 0}));
 				this.updateCharityEventMetaStorageData(this.charityEvents[this.charityEvents.length - 1]);
-			}, (err: any) => {
+			}, (err: Error) => {
 				this.errorMessageService.addError(err.message, 'onCharityEventAdded');
 			});
 
@@ -59,7 +59,7 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 					this.charityEvents[i].address = res.address;
 					this.charityEvents[i].confirmation = ConfirmationStatusState.PENDING;
 				}
-			}, (err: any) => {
+			}, (err: Error) => {
 				this.errorMessageService.addError(err.message, 'onCharityEventEdited');
 			});
 
@@ -75,7 +75,7 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 					this.charityEvents[i].confirmation = ConfirmationStatusState.CONFIRMED;
 					this.updateCharityEventMetaStorageData(this.charityEvents[i]);
 				}
-			}, (err: any) => {
+			}, (err: Error) => {
 				this.errorMessageService.addError(err.message, 'onCharityEventConfirmed');
 			});
 
@@ -87,7 +87,7 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 				if (i !== -1) {
 					this.charityEvents[i].confirmation = ConfirmationStatusState.FAILED;
 				}
-			}, (err: any) => {
+			}, (err: Error) => {
 				this.errorMessageService.addError(err.message, 'onCharityEventFailed');
 			});
 
@@ -99,7 +99,7 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 				if (i !== -1) {
 					this.charityEvents.splice(i, 1);
 				}
-			}, (err: any) => {
+			}, (err: Error) => {
 				this.errorMessageService.addError(err.message, 'onCharityEventCanceled');
 			});
 
@@ -111,7 +111,7 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 				if (i !== -1) {
 					await this.updateCharityEventRaised(this.charityEvents[i]);
 				}
-			}, (err: any) => {
+			}, (err: Error) => {
 				this.errorMessageService.addError(err.message, 'onMoveFundsToCharityEventConfirmed');
 			});
 	}
@@ -179,7 +179,7 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 		modalInstance.organizationContractAddress = this.organizationAddress;
 	}
 
-	ngOnDestroy(): void {
+	public ngOnDestroy(): void {
 		this.componentDestroyed.next();
 
 	}

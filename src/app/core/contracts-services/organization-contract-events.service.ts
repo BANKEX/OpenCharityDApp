@@ -8,6 +8,7 @@ import {ORGANIZATION_CONTRACT_ABI} from '../../contracts-abi';
 import {ConnectableObservable} from 'rxjs/Rx';
 import {Observer} from 'rxjs/Observer';
 import {Subject} from 'rxjs/Subject';
+import {ContractCharityEvent, ContractIncomingDonation} from '../../open-charity-types';
 
 @Injectable()
 export class OrganizationContractEventsService {
@@ -17,8 +18,8 @@ export class OrganizationContractEventsService {
 
 	// tracks Observables for different organizations
 	// key is organization address
-	private charityEventAddedObservable: {[key: string]: ConnectableObservable<any>} = {};
-	private incomingDonationAddedObservable: {[key: string]: ConnectableObservable<any>} = {};
+	private charityEventAddedObservable: {[key: string]: ConnectableObservable<ContractCharityEvent>} = {};
+	private incomingDonationAddedObservable: {[key: string]: ConnectableObservable<ContractIncomingDonation>} = {};
 
 	private readonly eventsSignatures = {
 		CHARITY_EVENT_ADDED: 'CharityEventAdded(address,address)',
@@ -36,7 +37,7 @@ export class OrganizationContractEventsService {
 
 
 	// listen for CharityEventAdded event
-	public onCharityEventAdded(address: string): Observable<any> {
+	public onCharityEventAdded(address: string): Observable<ContractCharityEvent> {
 		if (!this.charityEventAddedObservable[address]) {
 			this.charityEventAddedObservable[address] = this.buildOnCharityEventAddedObservable(address);
 		}
@@ -44,7 +45,7 @@ export class OrganizationContractEventsService {
 		return this.charityEventAddedObservable[address];
 	}
 
-	public onIncomingDonationAdded(address: string): Observable<any> {
+	public onIncomingDonationAdded(address: string): Observable<ContractIncomingDonation> {
 		if (!this.incomingDonationAddedObservable[address]) {
 			this.incomingDonationAddedObservable[address] = this.buildOnIncomingDonationAddedObservable(address);
 		}
@@ -90,7 +91,7 @@ export class OrganizationContractEventsService {
 
 		return sourceSubject.asObservable();
 	}
-
+	/* tslint:disable */
 	private buildOnCharityEventAddedObservable(address: string): ConnectableObservable<any> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		(<any>contract).setProvider(new Web3.providers.WebsocketProvider(environment.websocketProviderUrl));
@@ -164,7 +165,7 @@ export class OrganizationContractEventsService {
 
 		return <Contract> contract;
 	}
-
+	/* tslint:enable */
 	private buildOrganizationContract(): Contract {
 		return new this.web3.eth.Contract(ORGANIZATION_CONTRACT_ABI);
 	}

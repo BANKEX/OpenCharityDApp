@@ -18,11 +18,10 @@ type CharityEventData = {
 })
 
 export class CharityEventEditorModalComponent implements OnInit, OnDestroy {
-	@Input('charityEventAddress') charityEventAddress: string;
-	@Input('organizationAddress') organizationAddress: string;
+	@Input('charityEventAddress') public charityEventAddress: string;
+	@Input('organizationAddress') public organizationAddress: string;
 
 	public name: string = '';
-	public transactions: any[] = [];
 	public contractCharityEvent: ContractCharityEvent;
 	public charityEventData: CharityEventData = null;
 	public charityEventSaved: boolean = false;
@@ -37,10 +36,6 @@ export class CharityEventEditorModalComponent implements OnInit, OnDestroy {
 				private errorMessageService: ErrorMessageService) {
 	}
 
-	async ngOnInit(): Promise<void> {
-		this.charityEventData = await this.getCharityEventData();
-	}
-
 	public goBackToPreviousPage(event: Event): void {
 		this.location.back();
 		event.preventDefault();
@@ -50,7 +45,11 @@ export class CharityEventEditorModalComponent implements OnInit, OnDestroy {
 		this.charityEventSaved = saved;
 	}
 
-	ngOnDestroy(): void {
+	public async ngOnInit(): Promise<void> {
+		this.charityEventData = await this.getCharityEventData();
+	}
+
+	public ngOnDestroy(): void {
 		this.componentDestroyed.next();
 	}
 
@@ -65,9 +64,9 @@ export class CharityEventEditorModalComponent implements OnInit, OnDestroy {
 							metadataStorage: metadataStorage
 						});
 					},
-					(err: any) => {
+					(err: Error) => {
 						reject(err);
-						this.errorMessageService.addError(err, 'getCharityEventData');
+						this.errorMessageService.addError(err.message, 'getCharityEventData');
 					});
 		});
 	}

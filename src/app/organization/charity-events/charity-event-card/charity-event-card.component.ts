@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {AppCharityEvent, ConfirmationStatusState, AppIncomingDonation} from '../../../open-charity-types';
 import {Router} from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import { AddIncomingDonationModalComponent } from '../../incoming-donations/add-incoming-donation-modal/add-incoming-donation-modal.component';
 import { IncomingDonationSendFundsModalComponent } from '../../incoming-donations/incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
 import { OrganizationContractService } from '../../../core/contracts-services/organization-contract.service';
@@ -21,11 +21,11 @@ import { Subscription } from 'rxjs/Subscription';
 	styleUrls: ['charity-event-card.component.scss']
 })
 export class CharityEventCardComponent extends NeatComponent {
-	@Input('organizationAddress') organizationAddress: string;
-	@Input('charityEvent') charityEvent: AppCharityEvent;
+	@Input('organizationAddress') public organizationAddress: string;
+	@Input('charityEvent') public charityEvent: AppCharityEvent;
 
 	public subs: Subscription[];
-	public modal: any;
+	public modal: NgbActiveModal;
 
 	constructor(
 		private $charityEventContractService: CharityEventContractService,

@@ -2,10 +2,10 @@ import {Injectable} from '@angular/core';
 import {filter} from 'lodash';
 
 
-export interface Tag {
+export type Tag = {
 	name: string;
 	value: number;
-}
+};
 
 @Injectable()
 export class TagsBitmaskService {
