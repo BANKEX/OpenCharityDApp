@@ -32,7 +32,6 @@ interface Environment {
 	rpcProviderUrl: string;
 	websocketProviderUrl: string;
 	apiUrl: string;
-	organizations: string[];
 }
 export declare const DEV_ENVIRONMENT: Environment;
 export declare const PROD_ENVIRONMENT: Environment;
