@@ -1,11 +1,11 @@
-import {Component, Input, OnInit, ViewChild, Output} from '@angular/core';
+import {Component, Input, OnInit, ViewChild, Output, EventEmitter} from '@angular/core';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
 import {AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {TagsBitmaskService} from '../../services/tags-bitmask.service';
-import {TransactionReceipt} from 'web3/types';
+import {TransactionReceipt, PromiEvent} from 'web3/types';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
 import {AppIncomingDonation, ConfirmationStatusState, ContractIncomingDonation, AppCharityEvent} from '../../../open-charity-types';
-import {NgbTypeahead} from '@ng-bootstrap/ng-bootstrap';
+import {NgbTypeahead, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
 import {find} from 'lodash';
@@ -15,6 +15,7 @@ import {PendingTransactionSourceType} from '../../../pending-transaction.types';
 import {PendingTransactionService} from '../../../core/pending-transactions.service';
 import {ToastyService} from 'ng2-toasty';
 import {ErrorMessageService} from '../../../core/error-message.service';
+import { LoadingOverlayService } from '../../../core/loading-overlay.service';
 
 
 type IncomingDonationSource = {
@@ -57,26 +58,28 @@ export class IncomingDonationFormComponent implements OnInit {
 	@Input('charityEvent' ) public charityEvent: AppCharityEvent;
 	@Input('organizationAddress') public organizationAddress: string;
 	@Input('incomingDonation') public incomingDonation: AppIncomingDonation;
-	@Output('donationCreated') public donationCreated: Subject<string> = new Subject();
+	@Output('transactionHash$') public transactionHash$: EventEmitter<string> = new EventEmitter();
 
 	@ViewChild('typeahead') public sourceTypeahead: NgbTypeahead;
 	public focus$ = new Subject<string>();
 	public click$ = new Subject<string>();
 
+	public formatter: Function;
 	public incomingDonationForm: FormGroup;
+	public search: Function;
 	public selectedTagsBitmask: number = 0;
 	public sources: IncomingDonationSource[] = [];
 
-	public search: Function;
-	public formatter: Function;
-
-	constructor(private organizationContractService: OrganizationContractService,
-				private fb: FormBuilder,
-				private tagsBitmaskService: TagsBitmaskService,
-				private organizationSharedService: OrganizationSharedService,
-				private pendingTransactionService: PendingTransactionService,
-				private toastyService: ToastyService,
-				private errorMessageService: ErrorMessageService
+	constructor(
+		private errorMessageService: ErrorMessageService,
+		private fb: FormBuilder,
+		private activeModal: NgbActiveModal,
+		private loadingOverlayService: LoadingOverlayService,
+		private organizationContractService: OrganizationContractService,
+		private organizationSharedService: OrganizationSharedService,
+		private pendingTransactionService: PendingTransactionService,
+		private tagsBitmaskService: TagsBitmaskService,
+		private toastyService: ToastyService,
 	) {
 	}
 
@@ -100,8 +103,6 @@ export class IncomingDonationFormComponent implements OnInit {
 	public async submitForm() {
 		if (this.incomingDonationForm.invalid) { return; }
 		const f = this.incomingDonationForm.value;
-
-
 		const tags = this.charityEvent ? this.charityEvent.tags :
 			'0x' + this.tagsBitmaskService.convertToHexWithLeadingZeros(this.selectedTagsBitmask);
 		const newIncomingDonation: ContractIncomingDonation = {
@@ -113,8 +114,9 @@ export class IncomingDonationFormComponent implements OnInit {
 		};
 
 		let incomingDonationInternalId: string = this.organizationSharedService.makePseudoRandomHash(newIncomingDonation);
+		let receipt: TransactionReceipt;
+		let transaction: PromiEvent<TransactionReceipt>;
 		let newIncomingDonationAddress: string = null;
-
 		try {
 			this.organizationSharedService.incomingDonationAdded({
 				realWorldsIdentifier: f.realWorldIdentifier,
@@ -125,20 +127,24 @@ export class IncomingDonationFormComponent implements OnInit {
 				internalId: incomingDonationInternalId,
 				confirmation: ConfirmationStatusState.PENDING
 			});
-
 			this.pendingTransactionService.addPending(
 				newIncomingDonation.realWorldsIdentifier,
 				'Adding ' + newIncomingDonation.realWorldsIdentifier + ' transaction pending',
 				PendingTransactionSourceType.ID
 			);
 			this.toastyService.warning('Adding ' + newIncomingDonation.realWorldsIdentifier + ' transaction pending');
-
-			const receipt: TransactionReceipt = await this.organizationContractService.addIncomingDonation(this.organizationAddress, f.realWorldIdentifier, f.amount, f.note, tags, f.source.id);
+			this.loadingOverlayService.showOverlay(true);
+			transaction = this.organizationContractService.addIncomingDonation(this.organizationAddress, f.realWorldIdentifier, f.amount, f.note, tags, f.source.id);
+			transaction.on('transactionHash', (hash) => {
+				this.loadingOverlayService.hideOverlay();
+				this.transactionHash$.emit(hash);
+				this.organizationSharedService.incomingDonationSubmited(incomingDonationInternalId, undefined , hash);
+			});
+			receipt = await transaction;
 
 			if (receipt.events && receipt.events.IncomingDonationAdded) {
 				newIncomingDonationAddress = receipt.events.IncomingDonationAdded.returnValues['incomingDonation'];
-				this.organizationSharedService.incomingDonationConfirmed(incomingDonationInternalId, newIncomingDonationAddress);
-				this.donationCreated.next(newIncomingDonationAddress);
+				this.organizationSharedService.incomingDonationConfirmed(incomingDonationInternalId, newIncomingDonationAddress, receipt.transactionHash);
 				this.pendingTransactionService.addConfirmed(
 					newIncomingDonation.realWorldsIdentifier,
 					'Adding ' + newIncomingDonation.realWorldsIdentifier + ' transaction confirmed',
@@ -146,7 +152,6 @@ export class IncomingDonationFormComponent implements OnInit {
 				);
 				this.toastyService.success('Adding ' + newIncomingDonation.realWorldsIdentifier + ' transaction confirmed');
 			} else {
-				this.donationCreated.next(null);
 				this.organizationSharedService.incomingDonationFailed(incomingDonationInternalId, newIncomingDonationAddress);
 				this.pendingTransactionService.addFailed(
 					newIncomingDonation.realWorldsIdentifier,
@@ -159,6 +164,8 @@ export class IncomingDonationFormComponent implements OnInit {
 			this.initForm();
 
 		} catch (e) {
+			this.loadingOverlayService.hideOverlay();
+			this.activeModal.close();
 			if (e.message.search('MetaMask Tx Signature: User denied transaction signature') !== -1) {
 				this.organizationSharedService.incomingDonationCanceled(incomingDonationInternalId, newIncomingDonationAddress);
 				this.pendingTransactionService.addFailed(

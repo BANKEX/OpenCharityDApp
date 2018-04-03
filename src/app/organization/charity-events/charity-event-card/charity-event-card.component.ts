@@ -1,7 +1,7 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {AppCharityEvent, ConfirmationStatusState, AppIncomingDonation} from '../../../open-charity-types';
-import {Router} from '@angular/router';
-import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import { Component, Input, OnInit } from '@angular/core';
+import { AppCharityEvent, ConfirmationStatusState, AppIncomingDonation } from '../../../open-charity-types';
+import { Router} from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AddIncomingDonationModalComponent } from '../../incoming-donations/add-incoming-donation-modal/add-incoming-donation-modal.component';
 import { IncomingDonationSendFundsModalComponent } from '../../incoming-donations/incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
 import { OrganizationContractService } from '../../../core/contracts-services/organization-contract.service';
@@ -24,19 +24,16 @@ export class CharityEventCardComponent extends NeatComponent {
 	@Input('organizationAddress') public organizationAddress: string;
 	@Input('charityEvent') public charityEvent: AppCharityEvent;
 
-	public subs: Subscription[];
-	public modal: NgbActiveModal;
-
 	constructor(
-		private $charityEventContractService: CharityEventContractService,
-		private $incomingDonationContractService: IncomingDonationContractService,
-		private $loadingOverlayService: LoadingOverlayService,
-		private $modal: NgbModal,
-		private $organizationContractService: OrganizationContractService,
-		private $router: Router,
-		private $sanitize: DomSanitizer,
-		private $sharedService: OrganizationSharedService,
-		private $errorMessageService: ErrorMessageService
+		private charityEventContractService: CharityEventContractService,
+		private incomingDonationContractService: IncomingDonationContractService,
+		private loadingOverlayService: LoadingOverlayService,
+		private modalService: NgbModal,
+		private organizationContractService: OrganizationContractService,
+		private router: Router,
+		private sanitize: DomSanitizer,
+		private sharedService: OrganizationSharedService,
+		private errorMessageService: ErrorMessageService
 	) {
 		super();
 	}
@@ -66,12 +63,12 @@ export class CharityEventCardComponent extends NeatComponent {
 		if (!this.isConfirmed() || $event.defaultPrevented) {
 			return;
 		}
-		this.$router.navigate([`/organization/${this.organizationAddress}/event/${this.charityEvent.address}/transactions`]);
+		this.router.navigate([`/organization/${this.organizationAddress}/event/${this.charityEvent.address}/transactions`]);
 	}
 
 	public editClick($event: Event): void {
 		let modalInstance;
-		modalInstance =	this.$modal.open(
+		modalInstance =	this.modalService.open(
 			CharityEventEditorModalComponent,
 			{
 				size: 'lg',
@@ -85,56 +82,33 @@ export class CharityEventCardComponent extends NeatComponent {
 	}
 
 	public addDonationClick($event) {
-		this.subs = [];
-		let modalInstance;
-		this.subs.push(this.$sharedService.onMoveFundsToCharityEventCanceled().takeUntil(this.ngUnsubscribe).subscribe(_ => this.cancelActions('Fund transfer canceled by user')));
-		this.subs.push(this.$sharedService.onMoveFundsToCharityEventFailed().takeUntil(this.ngUnsubscribe).subscribe(_ => this.cancelActions('Fund transfer failed')));
-		this.subs.push(this.$sharedService.onIncomingDonationCanceled().takeUntil(this.ngUnsubscribe).subscribe(_ => this.cancelActions('Donation canceled by user')));
-		this.subs.push(this.$sharedService.onIncomingDonationFailed().takeUntil(this.ngUnsubscribe).subscribe(_ => this.cancelActions('Donation createon failed')));
+		let modalInstance; 		// store link to current modal here
+		let txHash: string; 			// store current transaction hash here
 		try {
-			modalInstance =	this.$modal.open(AddIncomingDonationModalComponent, {size: 'lg'}).componentInstance;
+			modalInstance =	this.modalService.open(AddIncomingDonationModalComponent, {size: 'lg'}).componentInstance;
 			modalInstance.charityEvent = this.charityEvent;
 			modalInstance.organizationAddress = this.organizationAddress;
-			this.modal = modalInstance.activeModal; // save link to active modal
-			this.$sharedService.onIncomingDonationAdded().take(1).subscribe(_ => this.$loadingOverlayService.showOverlay(true));
-			this.$sharedService.onIncomingDonationConfirmed().takeUntil(this.ngUnsubscribe).subscribe(async (donation) => {
-				const charityEventsAddresses = await this.$organizationContractService.getCharityEventsAsync(this.organizationAddress);
-				this.modal.close();
+			modalInstance.donationTxHash$.subscribe(_txHash => txHash = _txHash);
+			this.sharedService.onIncomingDonationConfirmed().takeUntil(this.ngUnsubscribe).filter(donation => donation.txHash === txHash).subscribe(async (donation) => {
+				const charityEventsAddresses = await this.organizationContractService.getCharityEventsAsync(this.organizationAddress);
 				Promise.all([
-					this.$incomingDonationContractService.getIncomingDonationDetails(donation.address),
-					this.$charityEventContractService.getCharityEventsList(charityEventsAddresses),
+					this.incomingDonationContractService.getIncomingDonationDetails(donation.address),
+					this.charityEventContractService.getCharityEventsList(charityEventsAddresses),
 				]).then(([incomingDonation, charityEvents]) => {
-					modalInstance = this.$modal.open(IncomingDonationSendFundsModalComponent).componentInstance;
+					modalInstance = this.modalService.open(IncomingDonationSendFundsModalComponent).componentInstance;
 					modalInstance.organizationAddress = this.organizationAddress;
 					modalInstance.incomingDonation = incomingDonation;
 					modalInstance.charityEvents = charityEvents;
 					modalInstance.charityEvent = this.charityEvent;
 					modalInstance.sendFunds(this.charityEvent, incomingDonation.amount);
-					this.modal = modalInstance.activeModal;
-					this.$sharedService.onMoveFundsToCharityEventConfirmed().takeUntil(this.ngUnsubscribe).subscribe(async (transaction) => {
-						this.cancelActions();
-					});
 				});
 			});
 		} catch (err) {
-			this.cancelActions();
-			this.$errorMessageService.addError(err, 'addDonationClick');
+			this.errorMessageService.addError(err, 'addDonationClick');
 		}
 	}
 
-	// public stopClickBubbling($event: Event): void {
-	// 	$event.preventDefault();
-	// }
-
 	public getSafeHTML(html: string): SafeHtml {
-		return this.$sanitize.bypassSecurityTrustHtml(html);
-	}
-
-	private cancelActions(msg?) {
-		// tslint:disable:no-unused-expression
-		msg && console.warn(msg, '...');
-		this.modal && this.modal.close();
-		this.subs.forEach((sub: Subscription) => sub.unsubscribe());
-		this.$loadingOverlayService.hideOverlay();
+		return this.sanitize.bypassSecurityTrustHtml(html);
 	}
 }

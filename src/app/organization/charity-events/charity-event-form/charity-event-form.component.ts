@@ -3,7 +3,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
 import {Tag, TagsBitmaskService} from '../../services/tags-bitmask.service';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
-import {TransactionReceipt} from 'web3/types';
+import {TransactionReceipt, PromiEvent, Transaction} from 'web3/types';
 import {
 	ConfirmationStatusState, ContractCharityEvent, MetaStorageData, MetaStorageDataType,
 	MetaStorageFile
@@ -108,10 +108,6 @@ export class CharityEventFormComponent implements OnInit {
 			const metaStorageHash: string = await this.storeToMetaStorage(newCharityEvent, f.details);
 			merge(newCharityEvent, {metaStorageHash: metaStorageHash});
 
-			this.loadingOverlayService.hideOverlay();
-
-			this.activeModal.close();
-
 			// show pending charity event in ui
 			this.organizationSharedService.charityEventAdded(merge({}, newCharityEvent, {
 				internalId: charityEventInternalId,
@@ -126,8 +122,15 @@ export class CharityEventFormComponent implements OnInit {
 
 			this.toastyService.warning('Adding ' + newCharityEvent.name + ' transaction pending');
 
+			const transaction: PromiEvent<TransactionReceipt> =
+				this.organizationContractService.addCharityEvent(this.organizationContractAddress, newCharityEvent);
+			transaction.on('transactionHash', (hash) => {
+				this.activeModal.close();
+				this.loadingOverlayService.hideOverlay();
+				this.organizationSharedService.transactionSubmited(hash);
+			});
 			// submit transaction to blockchain
-			const receipt: TransactionReceipt = await this.organizationContractService.addCharityEvent(this.organizationContractAddress, newCharityEvent);
+			const receipt: TransactionReceipt = await transaction;
 
 			// check if transaction succseed
 			if (receipt.events && receipt.events.CharityEventAdded) {
@@ -183,9 +186,10 @@ export class CharityEventFormComponent implements OnInit {
 			address: this.charityEventData.contract.address
 		};
 
+		let charityEventAddress: string = this.charityEventData.contract.address;
 		let charityEventInternalId: string = this.organizationSharedService.makePseudoRandomHash(newCharityEvent);
 		let receipt: TransactionReceipt;
-		let charityEventAddress: string = this.charityEventData.contract.address;
+		let transaction: PromiEvent<TransactionReceipt>;
 
 		const isCharityEventChanged = this.isCharityEventChanged(newCharityEvent);
 		const isMetaStorageChanged = this.isMetaStorageChanged(f.details);
@@ -207,7 +211,6 @@ export class CharityEventFormComponent implements OnInit {
 				merge(newCharityEvent, {metaStorageHash: newMetaStorageHash});
 
 				if (!isCharityEventChanged) {
-					this.loadingOverlayService.hideOverlay();
 
 					this.pendingTransactionService.addPending(
 						newCharityEvent.name,
@@ -217,18 +220,18 @@ export class CharityEventFormComponent implements OnInit {
 
 					this.toastyService.warning('Editing ' + newCharityEvent.name + ' transaction pending');
 
-					this.activeModal.close();
 
-					receipt = await this.organizationContractService.updateCharityEventMetaStorageHash(
+					transaction = this.organizationContractService.updateCharityEventMetaStorageHash(
 						this.organizationContractAddress,
 						this.charityEventAddress,
 						newMetaStorageHash
 					);
+					this.handleSubmit(transaction);
+					receipt = await transaction;
 				}
 			}
 
 			if (isCharityEventChanged) {
-				this.loadingOverlayService.hideOverlay();
 
 				this.pendingTransactionService.addPending(
 					newCharityEvent.name,
@@ -238,12 +241,10 @@ export class CharityEventFormComponent implements OnInit {
 
 				this.toastyService.warning('Editing ' + newCharityEvent.name + ' transaction pending');
 
-				this.activeModal.close();
-
-				receipt = await this.organizationContractService.updateCharityEventDetails(
-					this.organizationContractAddress,
-					newCharityEvent
-				);
+				transaction =
+					this.organizationContractService.updateCharityEventDetails(this.organizationContractAddress, newCharityEvent);
+				this.handleSubmit(transaction);
+				receipt = await transaction;
 			}
 
 			if (receipt && receipt.events && receipt.events.CharityEventEdited || receipt.events.MetaStorageHashUpdated) {
@@ -594,5 +595,13 @@ export class CharityEventFormComponent implements OnInit {
 		this.selectedTagsBitmask = bitmask;
 
 		return this.tagsBitmaskService.parseBitmaskIntoTags(bitmask);
+	}
+
+	private handleSubmit(transaction: PromiEvent<TransactionReceipt>) {
+		transaction.on('transactionHash', (hash) => {
+			this.activeModal.close();
+			this.loadingOverlayService.hideOverlay();
+			this.organizationSharedService.transactionSubmited(hash);
+		});
 	}
 }

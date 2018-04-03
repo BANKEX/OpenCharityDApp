@@ -13,7 +13,7 @@ import {TagsBitmaskService} from '../../services/tags-bitmask.service';
 import {ContractCharityEvent, ContractIncomingDonation, AppCharityEvent, ConfirmationStatusState} from '../../../open-charity-types';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
 import {LoadingOverlayService} from '../../../core/loading-overlay.service';
-import {TransactionReceipt} from 'web3/types';
+import {TransactionReceipt, PromiEvent} from 'web3/types';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
 import {PendingTransactionService} from '../../../core/pending-transactions.service';
 import {PendingTransactionSourceType} from '../../../pending-transaction.types';
@@ -111,6 +111,8 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 	public async sendFunds(targetCharityEvent: ContractCharityEvent, amount: string): Promise<void> {
 		let charityEventInternalId: string = this.organizationSharedService.makePseudoRandomHash(targetCharityEvent);
 		let charityEventAddress: string = targetCharityEvent.address;
+		let receipt: TransactionReceipt;
+		let transaction: PromiEvent<TransactionReceipt>;
 		try {
 			this.disabled = true;
 
@@ -127,13 +129,19 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 			);
 
 			this.toastyService.warning('Move funds ' + targetCharityEvent.name + ' transaction pending');
-
-			const receipt: TransactionReceipt = await this.organizationContractService.moveFundsToCharityEvent(
+			this.loadingOverlayService.showOverlay(true);
+			transaction = this.organizationContractService.moveFundsToCharityEvent(
 				this.organizationAddress,
 				this.incomingDonation.address,
 				targetCharityEvent.address,
 				amount
 			);
+			transaction.on('transactionHash', (hash) => {
+				this.activeModal.close();
+				this.loadingOverlayService.hideOverlay();
+				this.organizationSharedService.incomingDonationSubmited(charityEventInternalId, undefined, hash);
+			});
+			receipt = await transaction;
 			if (receipt.events && receipt.events.FundsMovedToCharityEvent) {
 				charityEventAddress = receipt.events.FundsMovedToCharityEvent.returnValues['charityEvent'];
 				this.organizationSharedService.moveFundsToCharityEventConfirmed(charityEventInternalId, charityEventAddress);
@@ -152,14 +160,12 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 				);
 				this.toastyService.error('Move funds ' + targetCharityEvent.name + ' transaction failed');
 			}
-			this.activeModal.close();
 			this.fundsMoved.emit(this.incomingDonation.address);
 		} catch (e) {
 			this.activeModal.close();
 			// TODO: listen for failed transaction
 			if (e.message.search('MetaMask Tx Signature: User denied transaction signature') !== -1) {
 				this.organizationSharedService.moveFundsToCharityEventCanceled(charityEventInternalId, charityEventAddress);
-				this.activeModal.close();
 				this.loadingOverlayService.hideOverlay();
 				this.pendingTransactionService.addFailed(
 					amount + ' - ' + targetCharityEvent.name,
@@ -174,9 +180,4 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 			}
 		}
 	}
-
-
-
-
 }
-
