@@ -1,4 +1,4 @@
-export const OrganizationContractAbi = [
+export const ORGANIZATION_CONTRACT_ABI = [
 	{
 		'constant': true,
 		'inputs': [],
@@ -480,7 +480,7 @@ export const OrganizationContractAbi = [
 		'type': 'function'
 	}
 ];
-export const CharityEventContractAbi = [
+export const CHARITY_EVENT_CONTRACT_ABI = [
 	{
 		'constant': true,
 		'inputs': [],
@@ -683,7 +683,7 @@ export const CharityEventContractAbi = [
 		'type': 'function'
 	}
 ];
-export const IncomingDonationContractAbi = [
+export const INCOMING_DONATION_CONTRACT_ABI = [
 	{
 		'constant': true,
 		'inputs': [],
@@ -842,7 +842,7 @@ export const IncomingDonationContractAbi = [
 		'type': 'function'
 	}
 ];
-export const OpenCharityTokenContractAbi = [
+export const OPEN_CHARITY_TOKEN_CONTRACT_ABI = [
 	{
 		'constant': true,
 		'inputs': [],

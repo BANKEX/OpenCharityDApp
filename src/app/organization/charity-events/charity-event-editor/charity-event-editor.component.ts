@@ -16,8 +16,8 @@ type CharityEventData = {
 	templateUrl: 'charity-event-editor.component.html',
 	styleUrls: ['charity-event-editor.component.scss']
 })
+
 export class CharityEventEditorComponent implements OnInit, OnDestroy {
-	private componentDestroyed: Subject<void> = new Subject<void>();
 	public organizationAddress: string = null;
 	public charityEventAddress: string = null;
 	public name: string = '';
@@ -25,15 +25,15 @@ export class CharityEventEditorComponent implements OnInit, OnDestroy {
 	public contractCharityEvent: ContractCharityEvent;
 	public charityEventData: CharityEventData = null;
 	public charityEventSaved: boolean = false;
+	private componentDestroyed: Subject<void> = new Subject<void>();
 
-	constructor(
-		private router: Router,
-		private route: ActivatedRoute,
-		private charityEventContractService: CharityEventContractService,
-		private location: Location,
-		private metaDataStorageService: MetaDataStorageService,
-		private errorMessageService: ErrorMessageService
-	) { }
+	constructor(private router: Router,
+				private route: ActivatedRoute,
+				private charityEventContractService: CharityEventContractService,
+				private location: Location,
+				private metaDataStorageService: MetaDataStorageService,
+				private errorMessageService: ErrorMessageService) {
+	}
 
 	async ngOnInit(): Promise<void> {
 		this.route.params.subscribe(params => {
@@ -53,8 +53,12 @@ export class CharityEventEditorComponent implements OnInit, OnDestroy {
 		event.preventDefault();
 	}
 
+	public charityEventChanged(saved: boolean) {
+		this.charityEventSaved = saved;
+	}
+
 	private async getCharityEventData(): Promise<CharityEventData> {
-		return new Promise<CharityEventData>(async(resolve, reject) => {
+		return new Promise<CharityEventData>(async (resolve, reject) => {
 			this.contractCharityEvent = await this.charityEventContractService.getCharityEventDetails(this.charityEventAddress);
 
 			this.metaDataStorageService.getData(this.contractCharityEvent.metaStorageHash)
@@ -69,9 +73,5 @@ export class CharityEventEditorComponent implements OnInit, OnDestroy {
 						this.errorMessageService.addError(err, 'getCharityEventData');
 					});
 		});
-	}
-
-	public charityEventChanged(saved: boolean) {
-		this.charityEventSaved = saved;
 	}
 }

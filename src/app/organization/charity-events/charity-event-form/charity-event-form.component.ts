@@ -285,6 +285,55 @@ export class CharityEventFormComponent implements OnInit {
 		}
 	}
 
+	public onImageAdded($event) {
+		this.charityEventImage = $event.files[0];
+
+		const fileEntry = this.charityEventImage.fileEntry;
+
+		this.loadingImage = true;
+
+		fileEntry.file((file: File) => {
+			const reader: FileReader = new FileReader();
+
+			reader.onload = () => {
+				this.charityEventImagePreview = this.sanitize.bypassSecurityTrustUrl(reader.result);
+				this.loadingImage = false;
+			};
+
+			reader.onerror = (err: ErrorEvent) => {
+				this.errorMessageService.addError(err.message, 'onImageAdded');
+			};
+
+			reader.readAsDataURL(file);
+		});
+	}
+
+	public onFilesAdded($event) {
+		if ($event.files instanceof FileList)
+			Array.from($event.files).forEach((file: File) => {
+				this.attachedFiles.push(file);
+			});
+		else
+			$event.files.forEach((item: UploadFile) => {
+				item.fileEntry.file((file: File) => {
+					this.attachedFiles.push(file);
+				});
+			});
+	}
+
+	public removeFile(index: number) {
+		this.attachedFiles.splice(index, 1);
+	}
+
+	public removeCharityEventImage() {
+		this.charityEventImage = null;
+		this.charityEventImagePreview = null;
+	}
+
+	public bitmaskChanged(bitmask: number) {
+		this.selectedTagsBitmask = bitmask;
+	}
+
 	private isCharityEventChanged(newCharityEvent: ContractCharityEvent): boolean {
 		const charityEvent: ContractCharityEvent = this.charityEventData.contract;
 
@@ -336,55 +385,6 @@ export class CharityEventFormComponent implements OnInit {
 			return true;
 
 		return false;
-	}
-
-	public onImageAdded($event) {
-		this.charityEventImage = $event.files[0];
-
-		const fileEntry = this.charityEventImage.fileEntry;
-
-		this.loadingImage = true;
-
-		fileEntry.file((file: File) => {
-			const reader: FileReader = new FileReader();
-
-			reader.onload = () => {
-				this.charityEventImagePreview = this.sanitize.bypassSecurityTrustUrl(reader.result);
-				this.loadingImage = false;
-			};
-
-			reader.onerror = (err: ErrorEvent) => {
-				this.errorMessageService.addError(err.message, 'onImageAdded');
-			};
-
-			reader.readAsDataURL(file);
-		});
-	}
-
-	public onFilesAdded($event) {
-		if ($event.files instanceof FileList)
-			Array.from($event.files).forEach((file: File) => {
-				this.attachedFiles.push(file);
-			});
-		else
-			$event.files.forEach((item: UploadFile) => {
-				item.fileEntry.file((file: File) => {
-					this.attachedFiles.push(file);
-				});
-			});
-	}
-
-	public removeFile(index: number) {
-		this.attachedFiles.splice(index, 1);
-	}
-
-	public removeCharityEventImage() {
-		this.charityEventImage = null;
-		this.charityEventImagePreview = null;
-	}
-
-	public bitmaskChanged(bitmask: number) {
-		this.selectedTagsBitmask = bitmask;
 	}
 
 	private async initForm() {

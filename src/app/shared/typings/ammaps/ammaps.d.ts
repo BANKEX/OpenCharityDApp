@@ -3,6 +3,8 @@
 // Definitions by: aleksey-bykov <https://github.com/aleksey-bykov>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 /// AmCharts object (it's not a class) is create automatically when amcharts.js or amstock.js file is included in a web page.
+
+/* tslint:disable */
 declare namespace AmCharts {
 
 	/** Set it to true if you have base href set for your page. This will fix rendering problems in Firefox caused by base href. */

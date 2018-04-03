@@ -51,14 +51,14 @@ export class CommonLayoutComponent implements OnInit {
 	}
 
 	public isConfirmed(message: PendingTransaction): boolean {
-		return message.state == PendingTransactionState.CONFIRMED;
+		return message.state === PendingTransactionState.CONFIRMED;
 	}
 
 	public isPending(message: PendingTransaction): boolean {
-		return message.state == PendingTransactionState.PENDING;
+		return message.state === PendingTransactionState.PENDING;
 	}
 
 	public isFailed(message: PendingTransaction): boolean {
-		return message.state == PendingTransactionState.FAILED;
+		return message.state === PendingTransactionState.FAILED;
 	}
 }

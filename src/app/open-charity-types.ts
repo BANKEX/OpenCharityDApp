@@ -89,4 +89,4 @@ export interface IncomingDonationTransaction {
 export type loadingOverlayConfig = {
 	showOverlay: boolean,
 	transparent: boolean
-}
+};

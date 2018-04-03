@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {TagsBitmaskService} from '../../services/tags-bitmask.service';
@@ -11,21 +11,18 @@ import {Observable} from 'rxjs/Observable';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {Location} from '@angular/common';
 
-
 @Component({
 	selector: 'opc-add-incoming-donation',
 	templateUrl: 'add-incoming-donation.component.html',
 	styleUrls: ['add-incoming-donation.component.scss']
 })
-export class AddIncomingDonationComponent implements OnInit {
+
+export class AddIncomingDonationComponent implements OnInit, OnDestroy {
 	public organizationAddress: string;
 	private componentDestroyed: Subject<void> = new Subject<void>();
 
-	constructor(
-		private route: ActivatedRoute,
-		private location: Location,
-	) {
-
+	constructor(private route: ActivatedRoute,
+				private location: Location) {
 	}
 
 	ngOnInit() {

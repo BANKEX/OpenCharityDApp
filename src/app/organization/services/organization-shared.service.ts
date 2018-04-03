@@ -141,7 +141,7 @@ export class OrganizationSharedService {
 	}
 
 	/***********************************/
-	/** Methods to subscribe to events **/
+	/*** Methods to subscribe to events ***/
 
 	/***********************************/
 

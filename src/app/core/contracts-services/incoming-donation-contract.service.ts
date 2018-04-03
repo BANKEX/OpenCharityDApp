@@ -4,7 +4,7 @@ import {Web3ProviderService} from '../web3-provider.service';
 import {merge} from 'lodash';
 import Web3 from 'web3';
 import {TokenContractService} from './token-contract.service';
-import {IncomingDonationContractAbi} from '../../contracts-abi';
+import {INCOMING_DONATION_CONTRACT_ABI} from '../../contracts-abi';
 import {ContractIncomingDonation} from '../../open-charity-types';
 
 
@@ -72,7 +72,7 @@ export class IncomingDonationContractService {
 	}
 
 	private buildIncomingDonationContract(): Contract {
-		return new this.web3ProviderService.web3.eth.Contract(IncomingDonationContractAbi);
+		return new this.web3ProviderService.web3.eth.Contract(INCOMING_DONATION_CONTRACT_ABI);
 	}
 
 }

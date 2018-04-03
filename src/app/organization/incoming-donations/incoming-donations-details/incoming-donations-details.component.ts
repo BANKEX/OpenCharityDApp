@@ -25,33 +25,32 @@ import {OrganizationSharedService} from '../../services/organization-shared.serv
 	styleUrls: ['incoming-donations-details.component.scss']
 })
 export class IncomingDonationsDetailsComponent implements OnInit, OnDestroy {
-	private componentDestroyed: Subject<void> = new Subject<void>();
 	public organizationAddress: string = null;
 	public incomingDonationAddress: string = null;
 	public incomingDonation: ContractIncomingDonation = null;
 	public name: string = '';
 	public transactions: IncomingDonationTransaction[] = [];
 
+	private componentDestroyed: Subject<void> = new Subject<void>();
 	private transactionsLoading: boolean = false;
 	private transactionsEmpty: boolean = false;
 
 	private modalRef: NgbModalRef;
 
-	constructor(
-		private router: Router,
-		private route: ActivatedRoute,
-		private incomingDonationsContractService: IncomingDonationContractService,
-		private organizationContractService: OrganizationContractService,
-		private tokenContractService: TokenContractService,
-		private charityEventContractService: CharityEventContractService,
-		private modalService: NgbModal,
-		private location: Location,
-		private organizationContractEventsService: OrganizationContractEventsService,
-		private web3ProviderService: Web3ProviderService,
-		private errorMessageService: ErrorMessageService,
-		private loadingOverlayService: LoadingOverlayService,
-		private organizationSharedService: OrganizationSharedService
-	) { }
+	constructor(private router: Router,
+				private route: ActivatedRoute,
+				private incomingDonationsContractService: IncomingDonationContractService,
+				private organizationContractService: OrganizationContractService,
+				private tokenContractService: TokenContractService,
+				private charityEventContractService: CharityEventContractService,
+				private modalService: NgbModal,
+				private location: Location,
+				private organizationContractEventsService: OrganizationContractEventsService,
+				private web3ProviderService: Web3ProviderService,
+				private errorMessageService: ErrorMessageService,
+				private loadingOverlayService: LoadingOverlayService,
+				private organizationSharedService: OrganizationSharedService) {
+	}
 
 	async ngOnInit(): Promise<void> {
 		this.route.params.subscribe(params => {
@@ -62,50 +61,6 @@ export class IncomingDonationsDetailsComponent implements OnInit, OnDestroy {
 		this.getCharityEventsByID();
 
 		this.initEventsListeners();
-	}
-
-	private initEventsListeners(): void {
-		this.organizationSharedService.onMoveFundsToCharityEventAdded()
-			.takeUntil(this.componentDestroyed)
-			.subscribe(async (res: IncomingDonationTransaction) => {
-				this.transactions.push(res);
-				this.modalRef.close();
-				this.setTransactionsEmpty(false);
-			}, (err: any) => {
-				this.errorMessageService.addError(err.message, 'onMoveFundsToCharityEventAdded');
-			});
-
-		this.organizationSharedService.onMoveFundsToCharityEventConfirmed()
-			.takeUntil(this.componentDestroyed)
-			.subscribe(async () => {
-				this.getCharityEventsByID();
-			}, (err: any) => {
-				this.errorMessageService.addError(err.message, 'onMoveFundsToCharityEventConfirmed');
-			});
-
-		this.organizationSharedService.onMoveFundsToCharityEventFailed()
-			.takeUntil(this.componentDestroyed)
-			.subscribe(async (res: ConfirmationResponse) => {
-				const i: number = this.transactions.findIndex(item => { return item.charityEvent === res.address && item.confirmation === ConfirmationStatusState.PENDING; });
-
-				if (i !== -1) {
-					this.transactions.splice(i, 1);
-				}
-			}, (err: any) => {
-				this.errorMessageService.addError(err.message, 'onMoveFundsToCharityEventFailed');
-			});
-
-		this.organizationSharedService.onMoveFundsToCharityEventCanceled()
-			.takeUntil(this.componentDestroyed)
-			.subscribe(async (res: ConfirmationResponse) => {
-				const i: number = this.transactions.findIndex(item => { return item.charityEvent === res.address && item.confirmation === ConfirmationStatusState.PENDING; });
-
-				if (i !== -1) {
-					this.transactions.splice(i, 1);
-				}
-			}, (err: any) => {
-				this.errorMessageService.addError(err.message, 'onMoveFundsToCharityEventCanceled');
-			});
 	}
 
 	public isDonation(): boolean {
@@ -158,6 +113,74 @@ export class IncomingDonationsDetailsComponent implements OnInit, OnDestroy {
 		incomingDonation.amount = await this.tokenContractService.balanceOf(incomingDonation.address);
 	}
 
+	public goToTransactions(charityEventAddress: string): void {
+		this.router.navigate([`/organization/${this.organizationAddress}/event/${charityEventAddress}/transactions`]);
+	}
+
+	public setTransactionsLoading(loading): void {
+		this.transactionsLoading = loading;
+	}
+
+	public isTransactionsLoading(): boolean {
+		return this.transactionsLoading;
+	}
+
+	public setTransactionsEmpty(empty): void {
+		this.transactionsEmpty = empty;
+	}
+
+	public isTransactionsEmpty(): boolean {
+		return this.transactionsEmpty;
+	}
+
+	private initEventsListeners(): void {
+		this.organizationSharedService.onMoveFundsToCharityEventAdded()
+			.takeUntil(this.componentDestroyed)
+			.subscribe(async (res: IncomingDonationTransaction) => {
+				this.transactions.push(res);
+				this.modalRef.close();
+				this.setTransactionsEmpty(false);
+			}, (err: any) => {
+				this.errorMessageService.addError(err.message, 'onMoveFundsToCharityEventAdded');
+			});
+
+		this.organizationSharedService.onMoveFundsToCharityEventConfirmed()
+			.takeUntil(this.componentDestroyed)
+			.subscribe(async () => {
+				this.getCharityEventsByID();
+			}, (err: any) => {
+				this.errorMessageService.addError(err.message, 'onMoveFundsToCharityEventConfirmed');
+			});
+
+		this.organizationSharedService.onMoveFundsToCharityEventFailed()
+			.takeUntil(this.componentDestroyed)
+			.subscribe(async (res: ConfirmationResponse) => {
+				const i: number = this.transactions.findIndex(item => {
+					return item.charityEvent === res.address && item.confirmation === ConfirmationStatusState.PENDING;
+				});
+
+				if (i !== -1) {
+					this.transactions.splice(i, 1);
+				}
+			}, (err: any) => {
+				this.errorMessageService.addError(err.message, 'onMoveFundsToCharityEventFailed');
+			});
+
+		this.organizationSharedService.onMoveFundsToCharityEventCanceled()
+			.takeUntil(this.componentDestroyed)
+			.subscribe(async (res: ConfirmationResponse) => {
+				const i: number = this.transactions.findIndex(item => {
+					return item.charityEvent === res.address && item.confirmation === ConfirmationStatusState.PENDING;
+				});
+
+				if (i !== -1) {
+					this.transactions.splice(i, 1);
+				}
+			}, (err: any) => {
+				this.errorMessageService.addError(err.message, 'onMoveFundsToCharityEventCanceled');
+			});
+	}
+
 	private getCharityEventsByID() {
 		this.transactions = [];
 
@@ -183,26 +206,6 @@ export class IncomingDonationsDetailsComponent implements OnInit, OnDestroy {
 			}, (err: any) => {
 				this.errorMessageService.addError(err, 'getCharityEventTransactions');
 			});
-	}
-
-	public goToTransactions(charityEventAddress: string): void {
-		this.router.navigate([`/organization/${this.organizationAddress}/event/${charityEventAddress}/transactions`]);
-	}
-
-	public setTransactionsLoading(loading): void {
-		this.transactionsLoading = loading;
-	}
-
-	public isTransactionsLoading(): boolean {
-		return this.transactionsLoading;
-	}
-
-	public setTransactionsEmpty(empty): void {
-		this.transactionsEmpty = empty;
-	}
-
-	public isTransactionsEmpty(): boolean {
-		return this.transactionsEmpty;
 	}
 
 }

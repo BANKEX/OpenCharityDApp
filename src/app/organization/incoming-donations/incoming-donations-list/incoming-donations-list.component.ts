@@ -14,12 +14,12 @@ import {Subject} from 'rxjs/Subject';
 import {LoadingOverlayService} from '../../../core/loading-overlay.service';
 import {ErrorMessageService} from '../../../core/error-message.service';
 
-
 @Component({
 	selector: 'opc-incoming-donations-list',
 	templateUrl: 'incoming-donations-list.component.html',
 	styleUrls: ['incoming-donations-list.component.scss']
 })
+
 export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 	@Input('organizationAddress') organizationAddress: string;
 	@Input('incomingDonations') incomingDonations: AppIncomingDonation[];
@@ -35,13 +35,61 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 				protected zone: NgZone,
 				protected router: Router,
 				protected loadingOverlayService: LoadingOverlayService,
-				protected errorMessageService: ErrorMessageService
-	) {
+				protected errorMessageService: ErrorMessageService) {
 
 	}
 
 	public ngOnInit(): void {
 		this.initEventsListeners();
+	}
+
+	public toDetails(incomingDonation: AppIncomingDonation): void {
+		this.router.navigate([`/organization/${this.organizationAddress}/donation/${incomingDonation.address}/details`]);
+	}
+
+	public async openSendDonationFundsModal(incomingDonation: AppIncomingDonation): Promise<void> {
+		this.loadingOverlayService.showOverlay(true);
+
+		const charityEventsAddresses: string[] = await this.organizationContractService.getCharityEventsAsync(this.organizationAddress);
+		const charityEvents = await this.charityEventContractService.getCharityEventsList(charityEventsAddresses);
+
+		this.loadingOverlayService.hideOverlay();
+
+		const modalRef: NgbModalRef = this.modalService.open(IncomingDonationSendFundsModalComponent);
+		modalRef.componentInstance.organizationAddress = this.organizationAddress;
+		modalRef.componentInstance.incomingDonation = incomingDonation;
+		modalRef.componentInstance.charityEvents = charityEvents;
+		modalRef.componentInstance.fundsMoved.subscribe((incomingDonationAddress: string) => {
+			const incDonation = find(this.incomingDonations, {address: incomingDonationAddress});
+			if (this.incomingDonations) {
+				this.updateIncomingDonationAmount(incDonation);
+			}
+		});
+	}
+
+	public async updateIncomingDonationAmount(incomingDonation: AppIncomingDonation): Promise<void> {
+		incomingDonation.amount = await this.tokenContractService.balanceOf(incomingDonation.address);
+	}
+
+	// Incoming Donations States
+	public isPending(incomingDonation: AppIncomingDonation): boolean {
+		return (incomingDonation.confirmation === ConfirmationStatusState.PENDING);
+	}
+
+	public isConfirmed(incomingDonation: AppIncomingDonation): boolean {
+		return (incomingDonation.confirmation === ConfirmationStatusState.CONFIRMED);
+	}
+
+	public isFailed(incomingDonation: AppIncomingDonation): boolean {
+		return (incomingDonation.confirmation === ConfirmationStatusState.FAILED);
+	}
+
+	public isErrored(incomingDonation: AppIncomingDonation): boolean {
+		return (incomingDonation.confirmation === ConfirmationStatusState.ERROR);
+	}
+
+	ngOnDestroy() {
+		this.componentDestroyed.next();
 	}
 
 	private initEventsListeners(): void {
@@ -93,55 +141,4 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 			});
 
 	}
-
-
-	public toDetails(incomingDonation: AppIncomingDonation): void {
-		this.router.navigate([`/organization/${this.organizationAddress}/donation/${incomingDonation.address}/details`]);
-	}
-
-	public async openSendDonationFundsModal(incomingDonation: AppIncomingDonation): Promise<void> {
-		this.loadingOverlayService.showOverlay(true);
-
-		const charityEventsAddresses: string[] = await this.organizationContractService.getCharityEventsAsync(this.organizationAddress);
-		const charityEvents = await this.charityEventContractService.getCharityEventsList(charityEventsAddresses);
-
-		this.loadingOverlayService.hideOverlay();
-
-		const modalRef: NgbModalRef = this.modalService.open(IncomingDonationSendFundsModalComponent);
-		modalRef.componentInstance.organizationAddress = this.organizationAddress;
-		modalRef.componentInstance.incomingDonation = incomingDonation;
-		modalRef.componentInstance.charityEvents = charityEvents;
-		modalRef.componentInstance.fundsMoved.subscribe((incomingDonationAddress: string) => {
-			const incDonation = find(this.incomingDonations, {address: incomingDonationAddress});
-			if (this.incomingDonations) {
-				this.updateIncomingDonationAmount(incDonation);
-			}
-		});
-	}
-
-	public async updateIncomingDonationAmount(incomingDonation: AppIncomingDonation): Promise<void> {
-		incomingDonation.amount = await this.tokenContractService.balanceOf(incomingDonation.address);
-	}
-
-	// Incoming Donations States
-	public isPending(incomingDonation: AppIncomingDonation): boolean {
-		return (incomingDonation.confirmation === ConfirmationStatusState.PENDING);
-	}
-
-	public isConfirmed(incomingDonation: AppIncomingDonation): boolean {
-		return (incomingDonation.confirmation === ConfirmationStatusState.CONFIRMED);
-	}
-
-	public isFailed(incomingDonation: AppIncomingDonation): boolean {
-		return (incomingDonation.confirmation === ConfirmationStatusState.FAILED);
-	}
-
-	public isErrored(incomingDonation: AppIncomingDonation): boolean {
-		return (incomingDonation.confirmation === ConfirmationStatusState.ERROR);
-	}
-
-	ngOnDestroy() {
-		this.componentDestroyed.next();
-	}
-
 }

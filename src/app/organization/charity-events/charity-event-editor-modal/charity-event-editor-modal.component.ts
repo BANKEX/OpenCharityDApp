@@ -16,32 +16,29 @@ type CharityEventData = {
 	templateUrl: 'charity-event-editor-modal.component.html',
 	styleUrls: ['charity-event-editor-modal.component.scss']
 })
+
 export class CharityEventEditorModalComponent implements OnInit, OnDestroy {
 	@Input('charityEventAddress') charityEventAddress: string;
 	@Input('organizationAddress') organizationAddress: string;
 
-	private componentDestroyed: Subject<void> = new Subject<void>();
 	public name: string = '';
 	public transactions: any[] = [];
 	public contractCharityEvent: ContractCharityEvent;
 	public charityEventData: CharityEventData = null;
 	public charityEventSaved: boolean = false;
 
-	constructor(
-		private router: Router,
-		private route: ActivatedRoute,
-		private charityEventContractService: CharityEventContractService,
-		private location: Location,
-		private metaDataStorageService: MetaDataStorageService,
-		private errorMessageService: ErrorMessageService
-	) { }
+	private componentDestroyed: Subject<void> = new Subject<void>();
+
+	constructor(private router: Router,
+				private route: ActivatedRoute,
+				private charityEventContractService: CharityEventContractService,
+				private location: Location,
+				private metaDataStorageService: MetaDataStorageService,
+				private errorMessageService: ErrorMessageService) {
+	}
 
 	async ngOnInit(): Promise<void> {
 		this.charityEventData = await this.getCharityEventData();
-	}
-
-	ngOnDestroy(): void {
-		this.componentDestroyed.next();
 	}
 
 	public goBackToPreviousPage(event: Event): void {
@@ -49,8 +46,16 @@ export class CharityEventEditorModalComponent implements OnInit, OnDestroy {
 		event.preventDefault();
 	}
 
+	public charityEventChanged(saved: boolean) {
+		this.charityEventSaved = saved;
+	}
+
+	ngOnDestroy(): void {
+		this.componentDestroyed.next();
+	}
+
 	private async getCharityEventData(): Promise<CharityEventData> {
-		return new Promise<CharityEventData>(async(resolve, reject) => {
+		return new Promise<CharityEventData>(async (resolve, reject) => {
 			this.contractCharityEvent = await this.charityEventContractService.getCharityEventDetails(this.charityEventAddress);
 
 			this.metaDataStorageService.getData(this.contractCharityEvent.metaStorageHash)
@@ -65,9 +70,5 @@ export class CharityEventEditorModalComponent implements OnInit, OnDestroy {
 						this.errorMessageService.addError(err, 'getCharityEventData');
 					});
 		});
-	}
-
-	public charityEventChanged(saved: boolean) {
-		this.charityEventSaved = saved;
 	}
 }
