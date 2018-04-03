@@ -3,18 +3,18 @@
         "node_modules/codelyzer"
     ],
     "rules": {
-        "member-access": false,
+        "member-access": true,
         "member-ordering": [
             true,
             "public-before-private",
             "static-before-instance",
             "variables-before-functions"
         ],
-        "no-any": false,
+        "no-any": true,
         "no-inferrable-types": false,
         "no-internal-module": true,
-        "no-var-requires": false,
-        "typedef": false,
+        "no-var-requires": true,
+        "typedef": true,
         "typedef-whitespace": [
             true,
             {
@@ -49,7 +49,7 @@
             "trace"
         ],
         "no-construct": true,
-        "no-debugger": false,
+        "no-debugger": true,
         "no-duplicate-variable": true,
         "no-empty": false,
         "no-eval": true,
@@ -73,10 +73,6 @@
             "tabs",
             4
         ],
-        "max-line-length": [
-            true,
-            200
-        ],
         "no-require-imports": false,
         "no-trailing-whitespace": true,
         "object-literal-sort-keys": false,
@@ -94,7 +90,7 @@
             true,
             "check-space"
         ],
-        "interface-name": false,
+        "interface-name": true,
         "jsdoc-format": true,
         "no-consecutive-blank-lines": false,
         "one-line": [
