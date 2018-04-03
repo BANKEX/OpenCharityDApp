@@ -16,33 +16,34 @@ import {Location} from '@angular/common';
 type IncomingDonationSource = {
 	id: number;
 	name: string;
-}
+};
 
 @Component({
 	templateUrl: 'incoming-donation-editor.component.html',
 	styleUrls: ['incoming-donation-editor.component.scss']
 })
+
 export class IncomingDonationsEditorComponent implements OnInit, OnDestroy {
-	private componentDestroyed: Subject<void> = new Subject<void>();
+	@ViewChild('typeahead') typeahead: NgbTypeahead;
+	focus$ = new Subject<string>();
+	click$ = new Subject<string>();
+
 	public organizationAddress: string;
 	public incomingDonation: AppIncomingDonation;
 	public incomingDonationForm: FormGroup;
 	public selectedTagsBitmask: number = 0;
 
-	@ViewChild('typeahead') typeahead: NgbTypeahead;
-	focus$ = new Subject<string>();
-	click$ = new Subject<string>();
+	private componentDestroyed: Subject<void> = new Subject<void>();
 
-	constructor(
-		private router: Router,
-		private route: ActivatedRoute,
-		private incomingDonationsContractService: IncomingDonationContractService,
-		private fb: FormBuilder,
-		private tagsBitmaskService: TagsBitmaskService,
-		private organizationContractService: OrganizationContractService,
-		private organizationSharedService: OrganizationSharedService,
-		private location: Location
-	) { }
+	constructor(private router: Router,
+				private route: ActivatedRoute,
+				private incomingDonationsContractService: IncomingDonationContractService,
+				private fb: FormBuilder,
+				private tagsBitmaskService: TagsBitmaskService,
+				private organizationContractService: OrganizationContractService,
+				private organizationSharedService: OrganizationSharedService,
+				private location: Location) {
+	}
 
 	async ngOnInit(): Promise<void> {
 		this.route.params.subscribe(async (params) => {
@@ -50,8 +51,6 @@ export class IncomingDonationsEditorComponent implements OnInit, OnDestroy {
 			// this.incomingDonation =  await this.incomingDonationsContractService.getIncomingDonationDetails(params['donation']);
 		});
 	}
-
-
 
 	public goBackToPreviousPage(event: Event): void {
 		this.location.back();

@@ -6,14 +6,14 @@ import {Tag, TagsBitmaskService} from '../services/tags-bitmask.service';
 	templateUrl: 'bitmask-tags-list.component.html',
 	styleUrls: ['bitmask-tags-list.component.scss']
 })
+
 export class BitmaskTagsListComponent implements OnInit {
-	parsedTags: Tag[] = [];
+	public parsedTags: Tag[] = [];
+	private _tags: string;
 
 	constructor(private tagsBitmaskService: TagsBitmaskService) {
 
 	}
-
-	_tags: string;
 
 	get tags(): string {
 		return this._tags;
@@ -28,7 +28,6 @@ export class BitmaskTagsListComponent implements OnInit {
 
 	ngOnInit(): void {
 	}
-
 
 	public parseBitmaskIntoTags(tags: string): Tag[] {
 		const bitmask = parseInt(tags, 16);

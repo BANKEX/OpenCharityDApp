@@ -1,5 +1,5 @@
 import {Routes} from '@angular/router';
-//Dashboard Components
+// Dashboard Components
 import {OrganizationDetailsComponent} from './organization-details/organization-details.component';
 import {OrganizationsListComponent} from './organizations-list/organizations-list.component';
 import {CharityEventTransactionsHistoryComponent} from './charity-events/charity-event-transactions-history/charity-event-transactions-history.component';
@@ -13,7 +13,7 @@ import {IsOrganizationAddressGuard} from './is-organization-address.guard';
 import {IsAdminGuard} from './is-admin.guard';
 import {AddIncomingDonationComponent} from './incoming-donations/add-incoming-donation/add-incoming-donation.component';
 
-export const OrganizationRoutes: Routes = [{
+export const organizationRoutes: Routes = [{
 	path: 'organization',
 	component: CommonLayoutComponent,
 	children: [{
@@ -41,7 +41,7 @@ export const OrganizationRoutes: Routes = [{
 	}, {
 		path: ':address/donation/add',
 		component: AddIncomingDonationComponent
-	},{
+	}, {
 		path: ':address/donations',
 		component: IncomingDonationsAllComponent
 	}]

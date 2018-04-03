@@ -15,19 +15,17 @@ import {ErrorMessageService} from '../../../core/error-message.service';
 	templateUrl: 'dashboard-charity-events-list.component.html',
 	styleUrls: ['dashboard-charity-events-list.component.scss']
 })
-export class DashboardCharityEventsList extends CharityEventsListBaseComponent implements OnInit, OnDestroy {
-	constructor(
-		protected organizationContractService: OrganizationContractService,
-		protected charityEventContractService: CharityEventContractService,
-		protected tokenContractService: TokenContractService,
-		protected zone: NgZone,
-		protected route: ActivatedRoute,
-		protected metaDataStorageService: MetaDataStorageService,
-		protected modal: NgbModal,
-		protected organizationSharedService: OrganizationSharedService,
-		protected errorMessageService: ErrorMessageService,
-		private router: Router
-	) {
+export class DashboardCharityEventsListComponent extends CharityEventsListBaseComponent implements OnInit, OnDestroy {
+	constructor(protected organizationContractService: OrganizationContractService,
+				protected charityEventContractService: CharityEventContractService,
+				protected tokenContractService: TokenContractService,
+				protected zone: NgZone,
+				protected route: ActivatedRoute,
+				protected metaDataStorageService: MetaDataStorageService,
+				protected modal: NgbModal,
+				protected organizationSharedService: OrganizationSharedService,
+				protected errorMessageService: ErrorMessageService,
+				private router: Router) {
 		super(
 			organizationContractService,
 			tokenContractService,
@@ -41,7 +39,9 @@ export class DashboardCharityEventsList extends CharityEventsListBaseComponent i
 	}
 
 	async ngOnInit() {
-		this.route.params.subscribe(params => { this.organizationAddress = params['address']; });
+		this.route.params.subscribe(params => {
+			this.organizationAddress = params['address'];
+		});
 		await this.updateCharityEventsList();
 		this.initEventsListeners();
 	}

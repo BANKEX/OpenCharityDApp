@@ -4,7 +4,7 @@ import {Contract, EventEmitter, EventLog, Tx} from 'web3/types';
 import {Web3ProviderService} from '../web3-provider.service';
 import Web3 from 'web3';
 import {Observable} from 'rxjs/Observable';
-import {OrganizationContractAbi} from '../../contracts-abi';
+import {ORGANIZATION_CONTRACT_ABI} from '../../contracts-abi';
 import {ConnectableObservable} from 'rxjs/Rx';
 import {Observer} from 'rxjs/Observer';
 import {Subject} from 'rxjs/Subject';
@@ -44,6 +44,53 @@ export class OrganizationContractEventsService {
 		return this.charityEventAddedObservable[address];
 	}
 
+	public onIncomingDonationAdded(address: string): Observable<any> {
+		if (!this.incomingDonationAddedObservable[address]) {
+			this.incomingDonationAddedObservable[address] = this.buildOnIncomingDonationAddedObservable(address);
+		}
+
+		return this.incomingDonationAddedObservable[address];
+	}
+
+	public getCharityEventTransactions(organizationAddress: string, charityEventAddress: string, txOptions?: Tx): Observable<EventLog[]> {
+		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
+		const sourceSubject: Subject<EventLog[]> = new Subject<EventLog[]>();
+
+		contract.getPastEvents('FundsMovedToCharityEvent', {
+			filter: {charityEvent: charityEventAddress},
+			fromBlock: 0,
+			toBlock: 'latest'
+		}, (err, events) => {
+			if (err) {
+				sourceSubject.error(err);
+				return;
+			}
+			sourceSubject.next(events);
+		});
+
+		return sourceSubject.asObservable();
+	}
+
+
+	public getCharityEventsByID(organizationAddress: string, incomingDonationAddress: string, txOptions?: Tx): Observable<EventLog[]> {
+		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
+		const sourceSubject: Subject<EventLog[]> = new Subject<EventLog[]>();
+
+		contract.getPastEvents('FundsMovedToCharityEvent', {
+			filter: {incomingDonation: incomingDonationAddress},
+			fromBlock: 0,
+			toBlock: 'latest'
+		}, (err, events) => {
+			if (err) {
+				sourceSubject.error(err);
+				return;
+			}
+			sourceSubject.next(events);
+		});
+
+		return sourceSubject.asObservable();
+	}
+
 	private buildOnCharityEventAddedObservable(address: string): ConnectableObservable<any> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		(<any>contract).setProvider(new Web3.providers.WebsocketProvider(environment.websocketProviderUrl));
@@ -73,21 +120,13 @@ export class OrganizationContractEventsService {
 					if (success) {
 						console.log('unsubscribed');
 					} else {
-						console.error('error during unsubscribe')
+						console.error('error during unsubscribe');
 					}
 
 				});
-			}
+			};
 
 		}).share();
-	}
-
-	public onIncomingDonationAdded(address: string): Observable<any> {
-		if (!this.incomingDonationAddedObservable[address]) {
-			this.incomingDonationAddedObservable[address] = this.buildOnIncomingDonationAddedObservable(address);
-		}
-
-		return this.incomingDonationAddedObservable[address];
 	}
 
 	private buildOnIncomingDonationAddedObservable(address: string): ConnectableObservable<any> {
@@ -113,50 +152,10 @@ export class OrganizationContractEventsService {
 
 			return function() {
 				(<any>contractEventListener).unsubscribe();
-			}
+			};
 
 		}).share();
 	}
-
-
-	public getCharityEventTransactions(organizationAddress: string, charityEventAddress: string, txOptions?: Tx): Observable<EventLog[]> {
-		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
-		const sourceSubject: Subject<EventLog[]> = new Subject<EventLog[]>();
-
-		contract.getPastEvents('FundsMovedToCharityEvent', {
-			filter: {charityEvent: charityEventAddress},
-			fromBlock: 0,
-			toBlock: 'latest'
-		}, (err, events) => {
-			if (err) {
-				sourceSubject.error(err);
-				return;
-			}
-			sourceSubject.next(events);
-		});
-
-		return sourceSubject.asObservable();
-	}
-
-	public getCharityEventsByID(organizationAddress: string, incomingDonationAddress: string, txOptions?: Tx): Observable<EventLog[]> {
-		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
-		const sourceSubject: Subject<EventLog[]> = new Subject<EventLog[]>();
-
-		contract.getPastEvents('FundsMovedToCharityEvent', {
-			filter: {incomingDonation: incomingDonationAddress},
-			fromBlock: 0,
-			toBlock: 'latest'
-		}, (err, events) => {
-			if (err) {
-				sourceSubject.error(err);
-				return;
-			}
-			sourceSubject.next(events);
-		});
-
-		return sourceSubject.asObservable();
-	}
-
 
 	private cloneContract(original: Contract, address: string): Contract {
 		const contract: any = (<any>original).clone();
@@ -167,7 +166,7 @@ export class OrganizationContractEventsService {
 	}
 
 	private buildOrganizationContract(): Contract {
-		return new this.web3.eth.Contract(OrganizationContractAbi);
+		return new this.web3.eth.Contract(ORGANIZATION_CONTRACT_ABI);
 	}
 
 }

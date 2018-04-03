@@ -19,9 +19,9 @@ import {ErrorMessageService} from '../../core/error-message.service';
 export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 	@Input('organizationAddress') organizationAddress: string;
 
-	private componentDestroyed: Subject<void> = new Subject<void>();
 	public incomingDonations: AppIncomingDonation[] = [];
 	public displayedIncomingDonations = [];
+	private componentDestroyed: Subject<void> = new Subject<void>();
 
 	constructor(protected router: Router,
 				protected route: ActivatedRoute,

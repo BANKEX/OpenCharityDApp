@@ -1,11 +1,11 @@
 import {Directive, ElementRef, HostListener, OnInit} from '@angular/core';
 import * as $ from 'jquery';
 
-//sidebar toggler
+// sidebar toggler
 @Directive({
 	selector: '[sidebarToggler]'
 })
-export class sidebarToggler {
+export class SidebarTogglerDirective {
 	constructor() {
 	}
 
@@ -16,11 +16,11 @@ export class sidebarToggler {
 	}
 }
 
-//sidebar dropdown
+// sidebar dropdown
 @Directive({
 	selector: '[sideBar]'
 })
-export class sidebarDropdown implements OnInit {
+export class SidebarDropdownDirective implements OnInit {
 	constructor(private el: ElementRef) {
 	}
 
@@ -44,7 +44,7 @@ export class sidebarDropdown implements OnInit {
 	}
 }
 
-export const Sidebar_Directives = [
-	sidebarDropdown,
-	sidebarToggler
+export const SIDEBAR_DIRECTIVES = [
+	SidebarDropdownDirective,
+	SidebarTogglerDirective
 ];

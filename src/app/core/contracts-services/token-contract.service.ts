@@ -2,7 +2,7 @@ import {Web3ProviderService} from '../web3-provider.service';
 import {Injectable} from '@angular/core';
 import Web3 from 'web3';
 import {Contract, Tx} from 'web3/types';
-import {OpenCharityTokenContractAbi} from '../../contracts-abi';
+import {OPEN_CHARITY_TOKEN_CONTRACT_ABI} from '../../contracts-abi';
 
 @Injectable()
 export class TokenContractService {
@@ -13,7 +13,7 @@ export class TokenContractService {
 
 	constructor(private web3ProviderService: Web3ProviderService) {
 		this.web3 = web3ProviderService.web3;
-		this.tokenContract = new this.web3.eth.Contract(OpenCharityTokenContractAbi, this.TOKEN_CONTRACT_ADDRESS);
+		this.tokenContract = new this.web3.eth.Contract(OPEN_CHARITY_TOKEN_CONTRACT_ABI, this.TOKEN_CONTRACT_ADDRESS);
 	}
 
 
