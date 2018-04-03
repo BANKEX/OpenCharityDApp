@@ -31,16 +31,16 @@ type CharityEventData = {
 	styleUrls: ['charity-event-form.component.scss']
 })
 export class CharityEventFormComponent implements OnInit {
-	@Input('organizationContractAddress') organizationContractAddress: string;
-	@Input('charityEventData') charityEventData: CharityEventData = null;
-	@Output() charityEventChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
+	@Input('organizationContractAddress') public organizationContractAddress: string;
+	@Input('charityEventData') public charityEventData: CharityEventData = null;
+	@Output() public charityEventChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-	@ViewChild('fileDropAttachments', {read: ElementRef}) fileDropElement: ElementRef;
+	@ViewChild('fileDropAttachments', {read: ElementRef}) public fileDropElement: ElementRef;
 
 	public charityEventForm: FormGroup;
 	public selectedTagsBitmask: number = 0;
 
-	public charityEventImage: any;
+	public charityEventImage;
 	public charityEventImagePreview: SafeUrl;
 	public charityEventTags: Array<Tag>;
 
@@ -407,8 +407,8 @@ export class CharityEventFormComponent implements OnInit {
 		let data: CharityEventData,
 			metadataStorage: MetaStorageData,
 			contract: ContractCharityEvent,
-			attachments: Array<any>,
-			tags: Array<any>,
+			attachments: Array<Object>,
+			tags: Array<Tag>,
 			image: MetaStorageFile;
 
 		data = this.charityEventData;
@@ -455,15 +455,15 @@ export class CharityEventFormComponent implements OnInit {
 							metadataStorage: metadataStorage
 						});
 					},
-					(err: any) => {
+					(err: Error) => {
 						reject(err);
-						this.errorMessageService.addError(err, 'getCharityEventData');
+						this.errorMessageService.addError(err.message, 'getCharityEventData');
 					});
 		});
 	}
 
-	private async storeToMetaStorage(charityEvent: ContractCharityEvent, charityEventDetails: string): Promise<any> {
-		const dataToStore: any = {
+	private async storeToMetaStorage(charityEvent: ContractCharityEvent, charityEventDetails: string): Promise<string> {
+		const dataToStore: MetaStorageData = {
 			type: MetaStorageDataType.CHARITY_EVENT,
 			searchDescription: '',
 			data: {
@@ -471,8 +471,6 @@ export class CharityEventFormComponent implements OnInit {
 				description: charityEventDetails
 			}
 		};
-
-		debugger;
 
 		if (this.charityEventImage) {
 			dataToStore.data.image = await this.storeFileToMetaStorage(this.charityEventImage);
@@ -485,7 +483,7 @@ export class CharityEventFormComponent implements OnInit {
 			await Promise.all(this.attachedFiles.map(async (file) => {
 				let metaStorageFile;
 
-				metaStorageFile = attachments ? attachments.find((item) => {
+				metaStorageFile = !!attachments ? attachments.find((item) => {
 					return item.name === file.name;
 				}) : -1;
 
@@ -512,7 +510,7 @@ export class CharityEventFormComponent implements OnInit {
 							name: file.name,
 							type: file.type,
 							size: file.size,
-							storageHash: await this.metaDataStorageService.storeData((<any>e.target).result).first().toPromise()
+							storageHash: await this.metaDataStorageService.storeData((<FileReader>e.target).result).first().toPromise()
 						});
 					});
 
@@ -528,7 +526,7 @@ export class CharityEventFormComponent implements OnInit {
 						name: uploadFile.name,
 						type: uploadFile.type,
 						size: uploadFile.size,
-						storageHash: await this.metaDataStorageService.storeData((<any>e.target).result).first().toPromise()
+						storageHash: await this.metaDataStorageService.storeData((<FileReader>e.target).result).first().toPromise()
 					});
 				});
 
@@ -549,10 +547,10 @@ export class CharityEventFormComponent implements OnInit {
 	private getData(hash: string): Promise<MetaStorageFile> {
 		return new Promise<MetaStorageFile>((resolve, reject) => {
 			this.metaDataStorageService.getData(hash)
-				.subscribe((res: any) => {
+				.subscribe((res: MetaStorageFile) => {
 						resolve(res);
 					},
-					(err: any) => {
+					(err) => {
 						reject(err);
 					});
 		});
@@ -561,10 +559,10 @@ export class CharityEventFormComponent implements OnInit {
 	private getImage(hash: string): Promise<ArrayBuffer> {
 		return new Promise<ArrayBuffer>((resolve, reject) => {
 			this.metaDataStorageService.getImage(hash)
-				.subscribe((res: any) => {
+				.subscribe((res: ArrayBuffer) => {
 						resolve(res);
 					},
-					(err: any) => {
+					(err) => {
 						reject(err);
 						this.errorMessageService.addError(err, 'getImage');
 					});

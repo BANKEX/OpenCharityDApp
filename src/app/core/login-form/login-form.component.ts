@@ -17,7 +17,7 @@ export class LoginFormComponent implements OnInit, OnDestroy {
 
 	constructor(private blockingNotificationOverlayService: BlockingNotificationOverlayService) {}
 
-	ngOnInit(): void {
+	public ngOnInit(): void {
 		this.tabs = [
 			{
 				name: 'Raw Key',
@@ -31,7 +31,7 @@ export class LoginFormComponent implements OnInit, OnDestroy {
 		this.blockingNotificationOverlayService.hideOverlay();
 	}
 
-	ngOnDestroy(): void {}
+	public ngOnDestroy(): void {}
 
 	public chooseTab(index: number): void {
 		this.tabs.forEach((item: Tab) => item.active = false);

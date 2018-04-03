@@ -8,7 +8,7 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 	styleUrls: ['add-charity-event-modal.component.scss']
 })
 export class AddCharityEventModalComponent implements OnInit {
-	@Input('organizationContractAddress') organizationContractAddress: string;
+	@Input('organizationContractAddress') public organizationContractAddress: string;
 
 	constructor(
 		public activeModal: NgbActiveModal

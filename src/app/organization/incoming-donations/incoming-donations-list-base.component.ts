@@ -17,7 +17,7 @@ import {ErrorMessageService} from '../../core/error-message.service';
 	template: ''
 })
 export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
-	@Input('organizationAddress') organizationAddress: string;
+	@Input('organizationAddress') public organizationAddress: string;
 
 	public incomingDonations: AppIncomingDonation[] = [];
 	public displayedIncomingDonations = [];
@@ -34,7 +34,7 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 				protected errorMessageService: ErrorMessageService
 	) {}
 
-	ngOnInit() {
+	public ngOnInit() {
 		console.log('base ngInit');
 		if ( !this.organizationAddress) {
 			this.route.params.subscribe(params => {
@@ -43,7 +43,7 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	ngOnDestroy() {
+	public ngOnDestroy() {
 		this.componentDestroyed.next();
 	}
 
@@ -52,7 +52,7 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 			.takeUntil(this.componentDestroyed)
 			.subscribe((res: AppIncomingDonation) => {
 				this.displayedIncomingDonations.push(res);
-			}, (err: any) => {
+			}, (err: Error) => {
 				this.errorMessageService.addError(err.message, 'onIncomingDonationAdded');
 			});
 
@@ -65,7 +65,7 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 					this.displayedIncomingDonations[i].address = res.address;
 					this.displayedIncomingDonations[i].confirmation = ConfirmationStatusState.CONFIRMED;
 				}
-			}, (err: any) => {
+			}, (err: Error) => {
 				this.errorMessageService.addError(err.message, 'onIncomingDonationConfirmed');
 			});
 
@@ -77,7 +77,7 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 				if (i !== -1) {
 					this.displayedIncomingDonations[i].confirmation = ConfirmationStatusState.FAILED;
 				}
-			}, (err: any) => {
+			}, (err: Error) => {
 				this.errorMessageService.addError(err.message, 'onIncomingDonationFailed');
 			});
 
@@ -89,7 +89,7 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 				if (i !== -1) {
 					this.displayedIncomingDonations.splice(i, 1);
 				}
-			}, (err: any) => {
+			}, (err: Error) => {
 				this.errorMessageService.addError(err.message, 'onIncomingDonationCanceled');
 			});
 	}

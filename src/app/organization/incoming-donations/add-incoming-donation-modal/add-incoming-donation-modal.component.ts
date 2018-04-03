@@ -20,9 +20,9 @@ import { LoadingOverlayService } from '../../../core/loading-overlay.service';
 })
 export class AddIncomingDonationModalComponent extends NeatComponent implements AfterViewInit {
 
-	@Input() charityEvent: AppCharityEvent;
-	@Input() organizationAddress: string;
- 	@Output() donationCreated$: Subject<string> = new Subject();
+	@Input() public charityEvent: AppCharityEvent;
+	@Input() public organizationAddress: string;
+ 	@Output() public donationCreated$: Subject<string> = new Subject();
 
 	constructor(
 		public activeModal: NgbActiveModal,
@@ -32,16 +32,16 @@ export class AddIncomingDonationModalComponent extends NeatComponent implements 
 		super();
 	}
 
-	onDonationCreated(donationAddress: string) {
+	public onDonationCreated(donationAddress: string) {
 		this.donationCreated$.next(donationAddress);
 		// this.activeModal.close('Donation Created');
 	}
 
-	onCloseClick() {
+	public onCloseClick() {
 		this.activeModal.close();
 	}
 
-	ngAfterViewInit() {
+	public ngAfterViewInit() {
 		if (this.charityEvent) {
 			this.$sharedService.onIncomingDonationAdded().takeUntil(this.ngUnsubscribe).subscribe(_ => this.$loadingOverlayService.showOverlay(true));
 			this.$sharedService.onIncomingDonationConfirmed().takeUntil(this.ngUnsubscribe).subscribe(_ => this.$loadingOverlayService.showOverlay(true));

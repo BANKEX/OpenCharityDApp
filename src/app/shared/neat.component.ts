@@ -10,7 +10,7 @@ export abstract class NeatComponent implements OnDestroy, OnInit {
 // Add '.takeUntil(this.ngUnsubscribe)' before every '.subscrybe(...)'
 // and this subscriptions will be cleaned up on component destroy.
 
-	protected ngUnsubscribe: Subject<any> = new Subject();
+	protected ngUnsubscribe: Subject<void> = new Subject();
 
 	public ngOnDestroy() {
 		this.ngUnsubscribe.next();

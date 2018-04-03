@@ -1,6 +1,6 @@
 import {Directive, ElementRef, OnInit} from '@angular/core';
 
-declare var $: any; // JQuery
+declare var $; // JQuery
 
 // Card Portlet Refresh
 @Directive({
@@ -10,7 +10,7 @@ export class CardPortletRefreshDirective implements OnInit {
 	constructor(private el: ElementRef) {
 	}
 
-	ngOnInit(): any {
+	public ngOnInit(): void {
 		$(this.el.nativeElement).on('click', function (e) {
 			$(this).parents('.card').addClass('card-refresh');
 			setTimeout(() => {
@@ -30,7 +30,7 @@ export class CardPortletDeleteDirective implements OnInit {
 	constructor(private el: ElementRef) {
 	}
 
-	ngOnInit(): any {
+	public ngOnInit(): void {
 		$(this.el.nativeElement).on('click', function (e) {
 			$(this).parents('.card').addClass('animated zoomOut');
 			$(this).parents('.card').bind('animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd', () => {

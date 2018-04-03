@@ -21,8 +21,8 @@ import {ErrorMessageService} from '../../../core/error-message.service';
 })
 
 export class IncomingDonationsListComponent implements OnInit, OnDestroy {
-	@Input('organizationAddress') organizationAddress: string;
-	@Input('incomingDonations') incomingDonations: AppIncomingDonation[];
+	@Input('organizationAddress') public organizationAddress: string;
+	@Input('incomingDonations') public incomingDonations: AppIncomingDonation[];
 
 	private componentDestroyed: Subject<void> = new Subject<void>();
 
@@ -88,7 +88,7 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 		return (incomingDonation.confirmation === ConfirmationStatusState.ERROR);
 	}
 
-	ngOnDestroy() {
+	public ngOnDestroy() {
 		this.componentDestroyed.next();
 	}
 
@@ -97,7 +97,7 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 			.takeUntil(this.componentDestroyed)
 			.subscribe((res: AppIncomingDonation) => {
 				this.incomingDonations.push(res);
-			}, (err: any) => {
+			}, (err: Error) => {
 				this.errorMessageService.addError(err.message, 'onIncomingDonationAdded');
 			});
 
@@ -111,7 +111,7 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 					this.incomingDonations[i].address = res.address;
 					this.incomingDonations[i].confirmation = ConfirmationStatusState.CONFIRMED;
 				}
-			}, (err: any) => {
+			}, (err: Error) => {
 				this.errorMessageService.addError(err.message, 'onIncomingDonationConfirmed');
 			});
 
@@ -123,7 +123,7 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 				if (i !== -1) {
 					this.incomingDonations[i].confirmation = ConfirmationStatusState.FAILED;
 				}
-			}, (err: any) => {
+			}, (err: Error) => {
 				this.errorMessageService.addError(err.message, 'onIncomingDonationFailed');
 			});
 
@@ -136,7 +136,7 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 				if (i !== -1) {
 					this.incomingDonations.splice(i, 1);
 				}
-			}, (err: any) => {
+			}, (err: Error) => {
 				this.errorMessageService.addError(err.message, 'onIncomingDonationCanceled');
 			});
 

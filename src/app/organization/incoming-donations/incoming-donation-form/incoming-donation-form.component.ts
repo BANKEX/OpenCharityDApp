@@ -23,7 +23,7 @@ type IncomingDonationSource = {
 };
 
 export function sourceMinValidator(): ValidatorFn {
-	return (control: AbstractControl): {[key: string]: any} => {
+	return (control: AbstractControl): {[key: string]: object} => {
 		if (isObject(control.value) &&
 			Object.keys(control.value).length === 0) {
 			return {
@@ -54,14 +54,14 @@ export function sourceMinValidator(): ValidatorFn {
 })
 
 export class IncomingDonationFormComponent implements OnInit {
-	@Input('charityEvent' ) charityEvent: AppCharityEvent;
-	@Input('organizationAddress') organizationAddress: string;
-	@Input('incomingDonation') incomingDonation: AppIncomingDonation;
-	@Output('donationCreated') donationCreated: Subject<string> = new Subject();
+	@Input('charityEvent' ) public charityEvent: AppCharityEvent;
+	@Input('organizationAddress') public organizationAddress: string;
+	@Input('incomingDonation') public incomingDonation: AppIncomingDonation;
+	@Output('donationCreated') public donationCreated: Subject<string> = new Subject();
 
-	@ViewChild('typeahead') sourceTypeahead: NgbTypeahead;
-	focus$ = new Subject<string>();
-	click$ = new Subject<string>();
+	@ViewChild('typeahead') public sourceTypeahead: NgbTypeahead;
+	public focus$ = new Subject<string>();
+	public click$ = new Subject<string>();
 
 	public incomingDonationForm: FormGroup;
 	public selectedTagsBitmask: number = 0;

@@ -21,7 +21,6 @@ export class CharityEventEditorComponent implements OnInit, OnDestroy {
 	public organizationAddress: string = null;
 	public charityEventAddress: string = null;
 	public name: string = '';
-	public transactions: any[] = [];
 	public contractCharityEvent: ContractCharityEvent;
 	public charityEventData: CharityEventData = null;
 	public charityEventSaved: boolean = false;
@@ -35,7 +34,7 @@ export class CharityEventEditorComponent implements OnInit, OnDestroy {
 				private errorMessageService: ErrorMessageService) {
 	}
 
-	async ngOnInit(): Promise<void> {
+	public async ngOnInit(): Promise<void> {
 		this.route.params.subscribe(params => {
 			this.organizationAddress = params['address'];
 			this.charityEventAddress = params['event'];
@@ -44,7 +43,7 @@ export class CharityEventEditorComponent implements OnInit, OnDestroy {
 		this.charityEventData = await this.getCharityEventData();
 	}
 
-	ngOnDestroy(): void {
+	public ngOnDestroy(): void {
 		this.componentDestroyed.next();
 	}
 
@@ -68,9 +67,9 @@ export class CharityEventEditorComponent implements OnInit, OnDestroy {
 							metadataStorage: metadataStorage
 						});
 					},
-					(err: any) => {
+					(err: Error) => {
 						reject(err);
-						this.errorMessageService.addError(err, 'getCharityEventData');
+						this.errorMessageService.addError(err.message, 'getCharityEventData');
 					});
 		});
 	}

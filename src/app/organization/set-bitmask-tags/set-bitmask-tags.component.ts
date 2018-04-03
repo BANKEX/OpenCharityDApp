@@ -7,17 +7,17 @@ import {Tag, TagsBitmaskService} from '../services/tags-bitmask.service';
 	styleUrls: ['set-bitmask-tags.component.scss']
 })
 export class SetBitmaskTagsComponent implements OnInit {
-	@Input() bitmask: number;
-	@Input() chosenTags: Array<Tag> = [];
-	@Output() bitmaskChanged: EventEmitter<number> = new EventEmitter<number>();
+	@Input() public bitmask: number;
+	@Input() public chosenTags: Array<Tag> = [];
+	@Output() public bitmaskChanged: EventEmitter<number> = new EventEmitter<number>();
 
-	readonly tags = this.tagsBitmaskService.tags;
+	public readonly tags = this.tagsBitmaskService.tags;
 
 	constructor(private tagsBitmaskService: TagsBitmaskService) {
 
 	}
 
-	ngOnInit() {}
+	public ngOnInit() {}
 
 	public toggleTag(tagValue: number): void {
 		this.bitmask = this.tagsBitmaskService.toggleTag(this.bitmask, tagValue);

@@ -26,7 +26,7 @@ export class BitmaskTagsListComponent implements OnInit {
 
 	}
 
-	ngOnInit(): void {
+	public ngOnInit(): void {
 	}
 
 	public parseBitmaskIntoTags(tags: string): Tag[] {

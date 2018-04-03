@@ -22,7 +22,7 @@ export class CharityEventContractService {
 		this.init();
 	}
 
-	async init(): Promise<void> {
+	public async init(): Promise<void> {
 		const accounts: string[] = await this.web3.eth.getAccounts();
 		this.defaultTx = {
 			from: accounts[0]
@@ -86,8 +86,10 @@ export class CharityEventContractService {
 	/*** Utils ***************/
 	/************************/
 	private cloneContract(original: Contract, address: string): Contract {
+		/* tslint:disable */
 		const contract: any = (<any>original).clone();
 		const originalProvider = (<any>original).currentProvider;
+		/* tslint:enable */
 		contract.setProvider(contract.givenProvider || originalProvider);
 		contract.options.address = address;
 
