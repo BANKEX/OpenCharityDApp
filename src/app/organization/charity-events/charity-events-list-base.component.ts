@@ -84,6 +84,12 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 			.subscribe((res: ConfirmationResponse) => {
 
 				const i: number = findIndex(this.charityEvents, {internalId: res.internalId});
+
+				if (findIndex(this.charityEvents, {address: res.address}) !== -1) { // For CE editing
+					this.charityEvents[i].confirmation = ConfirmationStatusState.CONFIRMED;
+					return;
+				}
+
 				if (i !== -1) {
 					this.charityEvents[i].confirmation = ConfirmationStatusState.FAILED;
 				}
@@ -96,6 +102,12 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 			.subscribe((res: ConfirmationResponse) => {
 
 				const i: number = findIndex(this.charityEvents, {internalId: res.internalId});
+
+				if (findIndex(this.charityEvents, {address: res.address}) !== -1) { // For CE editing
+					this.charityEvents[i].confirmation = ConfirmationStatusState.CONFIRMED;
+					return;
+				}
+
 				if (i !== -1) {
 					this.charityEvents.splice(i, 1);
 				}
