@@ -3,11 +3,8 @@ import {Contract, Tx} from 'web3/types';
 import {Web3ProviderService} from '../web3-provider.service';
 import {merge} from 'lodash';
 import Web3 from 'web3';
-import {CHARITY_EVENT_CONTRACT_ABI} from '../../contracts-abi';
 import {ContractCharityEvent} from '../../open-charity-types';
-
-
-
+import {CommonSettingsService} from '../common-settings.service';
 
 @Injectable()
 export class CharityEventContractService {
@@ -16,7 +13,8 @@ export class CharityEventContractService {
 	private web3: Web3;
 	private defaultTx: Tx;
 
-	constructor(private web3ProviderService: Web3ProviderService) {
+	constructor(private web3ProviderService: Web3ProviderService,
+				private commonSettingsService: CommonSettingsService) {
 		this.charityEventContract = this.buildCharityEventContract();
 		this.web3 = this.web3ProviderService.web3;
 		this.init();
@@ -31,6 +29,7 @@ export class CharityEventContractService {
 
 	/************************/
 	/*** Get data methods ****/
+
 	/************************/
 
 	public getMetaStorageHash(address: string, txOptions?: Tx): Promise<string> {
@@ -84,6 +83,7 @@ export class CharityEventContractService {
 
 	/************************/
 	/*** Utils ***************/
+
 	/************************/
 	private cloneContract(original: Contract, address: string): Contract {
 		/* tslint:disable */
@@ -97,7 +97,7 @@ export class CharityEventContractService {
 	}
 
 	private buildCharityEventContract(): Contract {
-		return new this.web3ProviderService.web3.eth.Contract(CHARITY_EVENT_CONTRACT_ABI);
+		return new this.web3ProviderService.web3.eth.Contract(this.commonSettingsService.abis.CharityEvent);
 	}
 
 }

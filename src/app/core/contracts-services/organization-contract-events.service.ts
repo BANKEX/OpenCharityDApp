@@ -4,11 +4,11 @@ import {Contract, EventEmitter, EventLog, Tx} from 'web3/types';
 import {Web3ProviderService} from '../web3-provider.service';
 import Web3 from 'web3';
 import {Observable} from 'rxjs/Observable';
-import {ORGANIZATION_CONTRACT_ABI} from '../../contracts-abi';
 import {ConnectableObservable} from 'rxjs/Rx';
 import {Observer} from 'rxjs/Observer';
 import {Subject} from 'rxjs/Subject';
 import {ContractCharityEvent, ContractIncomingDonation} from '../../open-charity-types';
+import {CommonSettingsService} from '../common-settings.service';
 
 @Injectable()
 export class OrganizationContractEventsService {
@@ -18,8 +18,8 @@ export class OrganizationContractEventsService {
 
 	// tracks Observables for different organizations
 	// key is organization address
-	private charityEventAddedObservable: {[key: string]: ConnectableObservable<ContractCharityEvent>} = {};
-	private incomingDonationAddedObservable: {[key: string]: ConnectableObservable<ContractIncomingDonation>} = {};
+	private charityEventAddedObservable: { [key: string]: ConnectableObservable<ContractCharityEvent> } = {};
+	private incomingDonationAddedObservable: { [key: string]: ConnectableObservable<ContractIncomingDonation> } = {};
 
 	private readonly eventsSignatures = {
 		CHARITY_EVENT_ADDED: 'CharityEventAdded(address,address)',
@@ -27,9 +27,8 @@ export class OrganizationContractEventsService {
 	};
 
 
-	constructor(
-		private web3ProviderService: Web3ProviderService
-	) {
+	constructor(private web3ProviderService: Web3ProviderService,
+				private commonSettingsService: CommonSettingsService) {
 		// websocket provider is required to subscribe to events
 		this.web3 = new Web3(environment.websocketProviderUrl);
 		this.organizationContract = this.buildOrganizationContract();
@@ -115,9 +114,9 @@ export class OrganizationContractEventsService {
 					observer.next(data);
 				});
 
-			return function() {
+			return function () {
 
-				(<any>contractEventListener).unsubscribe(function(err, success) {
+				(<any>contractEventListener).unsubscribe(function (err, success) {
 					if (success) {
 						console.log('unsubscribed');
 					} else {
@@ -151,7 +150,7 @@ export class OrganizationContractEventsService {
 					observer.next(data);
 				});
 
-			return function() {
+			return function () {
 				(<any>contractEventListener).unsubscribe();
 			};
 
@@ -167,7 +166,7 @@ export class OrganizationContractEventsService {
 	}
 	/* tslint:enable */
 	private buildOrganizationContract(): Contract {
-		return new this.web3.eth.Contract(ORGANIZATION_CONTRACT_ABI);
+		return new this.web3.eth.Contract(this.commonSettingsService.abis.Organization);
 	}
 
 }

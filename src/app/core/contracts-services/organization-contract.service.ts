@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {Contract, TransactionReceipt, Tx, PromiEvent} from 'web3/types';
 import {Web3ProviderService} from '../web3-provider.service';
-import {merge, forEach} from 'lodash';
+import {forEach, merge} from 'lodash';
 import Web3 from 'web3';
-import {ORGANIZATION_CONTRACT_ABI} from '../../contracts-abi';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
-import {ContractCharityEvent, ContractIncomingDonation} from '../../open-charity-types';
+import {ContractCharityEvent} from '../../open-charity-types';
+import {CommonSettingsService} from '../common-settings.service';
 
 export type Organization = {
 	name: string;
@@ -25,7 +25,8 @@ export class OrganizationContractService {
 	private lastContractAddress: string;
 	private lastContract: Contract;
 
-	constructor(private web3ProviderService: Web3ProviderService) {
+	constructor(private web3ProviderService: Web3ProviderService,
+				private commonSettingsService: CommonSettingsService) {
 		this.organizationContract = this.buildOrganizationContract();
 		this.web3 = this.web3ProviderService.web3;
 		this.init();
@@ -40,6 +41,7 @@ export class OrganizationContractService {
 
 	/********************************/
 	/***  Get Organization Data *****/
+
 	/********************************/
 
 	public getName(address: string, txOptions?: Tx): Promise<string> {
@@ -199,7 +201,7 @@ export class OrganizationContractService {
 	}
 
 	private buildOrganizationContract(): Contract {
-		return new this.web3ProviderService.web3.eth.Contract(ORGANIZATION_CONTRACT_ABI);
+		return new this.web3ProviderService.web3.eth.Contract(this.commonSettingsService.abis.Organization);
 	}
 
 	private async buildIncomingDonationsList(contract: Contract, incomingDonationCount: number): Promise<string[]> {

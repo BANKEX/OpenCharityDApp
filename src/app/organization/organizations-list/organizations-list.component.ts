@@ -15,7 +15,7 @@ export class OrganizationsListComponent implements OnInit {
 	public organizations: Organization[] = [];
 	public listLoaded: boolean = false;
 
-	private organizationsAddresses: string[] = environment.organizations;
+	private organizationsAddresses: string[];
 
 	constructor(private commonSettingsService: CommonSettingsService,
 				private organizationContractService: OrganizationContractService,
