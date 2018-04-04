@@ -98,14 +98,17 @@ export class IncomingDonationFormComponent implements OnInit {
 		this.formatter = (x: {name: string}) => x.name;
 
 		this.initForm();
+
+		// TODO: Add test data
+		// this.addTestData();
 	}
 
-	public async submitForm() {
-		if (this.incomingDonationForm.invalid) { return; }
+	public async submitForm(data?: ContractIncomingDonation) {
+		// if (this.incomingDonationForm.invalid && !data) { return; }
 		const f = this.incomingDonationForm.value;
 		const tags = this.charityEvent ? this.charityEvent.tags :
 			'0x' + this.tagsBitmaskService.convertToHexWithLeadingZeros(this.selectedTagsBitmask);
-		const newIncomingDonation: ContractIncomingDonation = {
+		const newIncomingDonation: ContractIncomingDonation = data ? data : {
 			realWorldsIdentifier: f.realWorldIdentifier,
 			amount: f.amount,
 			note: f.note,
@@ -118,15 +121,18 @@ export class IncomingDonationFormComponent implements OnInit {
 		let transaction: PromiEvent<TransactionReceipt>;
 		let newIncomingDonationAddress: string = null;
 		try {
-			this.organizationSharedService.incomingDonationAdded({
-				realWorldsIdentifier: f.realWorldIdentifier,
-				amount: f.amount,
-				note: f.note,
-				tags: tags,
-				sourceId: f.source.id,
-				internalId: incomingDonationInternalId,
-				confirmation: ConfirmationStatusState.PENDING
-			});
+
+			if (!data)
+				this.organizationSharedService.incomingDonationAdded({
+					realWorldsIdentifier: f.realWorldsIdentifier,
+					amount: f.amount,
+					note: f.note,
+					tags: f.tags,
+					sourceId: f.source.id,
+					internalId: incomingDonationInternalId,
+					confirmation: ConfirmationStatusState.PENDING
+				});
+
 			this.pendingTransactionService.addPending(
 				newIncomingDonation.realWorldsIdentifier,
 				'Adding ' + newIncomingDonation.realWorldsIdentifier + ' transaction pending',
@@ -134,7 +140,14 @@ export class IncomingDonationFormComponent implements OnInit {
 			);
 			this.toastyService.warning('Adding ' + newIncomingDonation.realWorldsIdentifier + ' transaction pending');
 			this.loadingOverlayService.showOverlay(true);
-			transaction = this.organizationContractService.addIncomingDonation(this.organizationAddress, f.realWorldIdentifier, f.amount, f.note, tags, f.source.id);
+			transaction = this.organizationContractService.addIncomingDonation(
+				this.organizationAddress,
+				newIncomingDonation.realWorldsIdentifier,
+				newIncomingDonation.amount,
+				newIncomingDonation.note,
+				newIncomingDonation.tags,
+				newIncomingDonation.sourceId
+			);
 			transaction.on('transactionHash', (hash) => {
 				this.loadingOverlayService.hideOverlay();
 				this.transactionHash$.emit(hash);
@@ -217,5 +230,11 @@ export class IncomingDonationFormComponent implements OnInit {
 
 	private getSourceById(id: string): IncomingDonationSource  {
 		return find(this.sources, {id: id});
+	}
+
+	private async addTestData() {
+		const data: ContractIncomingDonation[] = this.organizationSharedService.getTestDataIncomingDonations();
+
+		data.forEach(async (item: ContractIncomingDonation) => await this.submitForm(item));
 	}
 }
