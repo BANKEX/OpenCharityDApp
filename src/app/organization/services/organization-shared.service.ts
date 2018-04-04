@@ -7,7 +7,8 @@ import {
 	ConfirmationResponse,
 	ContractCharityEvent,
 	ContractIncomingDonation,
-	IncomingDonationTransaction
+	IncomingDonationTransaction,
+	ConfirmationResponseWithTxHash
 } from '../../open-charity-types';
 import {Web3ProviderService} from '../../core/web3-provider.service';
 
@@ -20,6 +21,10 @@ export class OrganizationSharedService {
 	/****** Events sources ***********/
 	/*********************************/
 
+	// triggered when any transaction submited - emit hash address of the transaction
+	private _onTransactionSubmited: Subject<string> = new Subject<string>();
+	private onTransactionSubmitedSource = this._onTransactionSubmited.asObservable().share<string>();
+
 	// triggered when user try to add new charity event
 	private _onCharityEventAdded: Subject<AppCharityEvent> = new Subject<AppCharityEvent>();
 	private onCharityEventAddedSource = this._onCharityEventAdded.asObservable().share<AppCharityEvent>();
@@ -28,9 +33,13 @@ export class OrganizationSharedService {
 	private _onCharityEventEdited: Subject<AppCharityEvent> = new Subject<AppCharityEvent>();
 	private onCharityEventEditedSource = this._onCharityEventEdited.asObservable().share<AppCharityEvent>();
 
+	// triggered when user submit charity event transaction in Metamask, returns transaction hash string
+	private _onCharityEventSubmited: Subject<ConfirmationResponseWithTxHash> = new Subject<ConfirmationResponseWithTxHash>();
+	private onCharityEventSubmitedSource = this._onCharityEventSubmited.asObservable().share<ConfirmationResponseWithTxHash>();
+
 	// triggered when transaction succeed i.e CE stored in blockchain
-	private _onCharityEventConfirmed: Subject<ConfirmationResponse> = new Subject<ConfirmationResponse>();
-	private onCharityEventConfirmedSource = this._onCharityEventConfirmed.asObservable().share<ConfirmationResponse>();
+	private _onCharityEventConfirmed: Subject<ConfirmationResponseWithTxHash> = new Subject<ConfirmationResponseWithTxHash>();
+	private onCharityEventConfirmedSource = this._onCharityEventConfirmed.asObservable().share<ConfirmationResponseWithTxHash>();
 
 
 	// triggered when transaction failed  i.e CE is not stored in blockchain
@@ -47,9 +56,13 @@ export class OrganizationSharedService {
 	private _onIncomingDonationAdded: Subject<AppIncomingDonation> = new Subject<AppIncomingDonation>();
 	private onIncomingDonationAddedSource = this._onIncomingDonationAdded.asObservable().share<AppIncomingDonation>();
 
+	// triggered when user submit incoming donation transaction in Metamask, returns transaction hash string
+	private _onIncomingDonationSubmited: Subject<ConfirmationResponseWithTxHash> = new Subject<ConfirmationResponseWithTxHash>();
+	private onIncomingDonationSubmitedSource = this._onIncomingDonationSubmited.asObservable().share<ConfirmationResponseWithTxHash>();
+
 	// triggered when transaction succeed i.e CE stored in blockchain
-	private _onIncomingDonationConfirmed: Subject<ConfirmationResponse> = new Subject<ConfirmationResponse>();
-	private onIncomingDonationConfirmedSource = this._onIncomingDonationConfirmed.asObservable().share<ConfirmationResponse>();
+	private _onIncomingDonationConfirmed: Subject<ConfirmationResponseWithTxHash> = new Subject<ConfirmationResponseWithTxHash>();
+	private onIncomingDonationConfirmedSource = this._onIncomingDonationConfirmed.asObservable().share<ConfirmationResponseWithTxHash>();
 
 
 	// triggered when transaction failed  i.e CE is not stored in blockchain
@@ -66,9 +79,13 @@ export class OrganizationSharedService {
 	private _onMoveFundsToCharityEventAdded: Subject<IncomingDonationTransaction> = new Subject<IncomingDonationTransaction>();
 	private onMoveFundsToCharityEventAddedSource = this._onMoveFundsToCharityEventAdded.asObservable().share<IncomingDonationTransaction>();
 
+	// triggered when user submit move funds transaction in Metamask, returns transaction hash string
+	private _onMoveFundsToCharityEventSubmited: Subject<ConfirmationResponseWithTxHash> = new Subject<ConfirmationResponseWithTxHash>();
+	private onMoveFundsToCharityEventSubmitedSource = this._onMoveFundsToCharityEventSubmited.asObservable().share<ConfirmationResponseWithTxHash>();
+
 	// triggered when transaction succeed i.e move funds stored in blockchain
-	private _onMoveFundsToCharityEventConfirmed: Subject<ConfirmationResponse> = new Subject<ConfirmationResponse>();
-	private onMoveFundsToCharityEventConfirmedSource = this._onMoveFundsToCharityEventConfirmed.asObservable().share<ConfirmationResponse>();
+	private _onMoveFundsToCharityEventConfirmed: Subject<ConfirmationResponseWithTxHash> = new Subject<ConfirmationResponseWithTxHash>();
+	private onMoveFundsToCharityEventConfirmedSource = this._onMoveFundsToCharityEventConfirmed.asObservable().share<ConfirmationResponseWithTxHash>();
 
 
 	// triggered when transaction failed i.e move funds is not stored in blockchain
@@ -88,6 +105,11 @@ export class OrganizationSharedService {
 
 	/*********************************/
 
+
+	public transactionSubmited(txHash: string): void {
+		this._onTransactionSubmited.next(txHash);
+	}
+
 	public charityEventAdded(charityEvent: AppCharityEvent): void {
 		this._onCharityEventAdded.next(charityEvent);
 	}
@@ -96,8 +118,13 @@ export class OrganizationSharedService {
 		this._onCharityEventEdited.next(charityEvent);
 	}
 
-	public charityEventConfirmed(charityEventInternalId: string, address: string): void {
-		this._onCharityEventConfirmed.next({internalId: charityEventInternalId, address: address});
+	public charityEventSubmited(charityEventInternalId: string, address: string, txHash?: string): void {
+		this._onCharityEventSubmited.next({internalId: charityEventInternalId, address, txHash});
+		this._onTransactionSubmited.next(txHash);
+	}
+
+	public charityEventConfirmed(charityEventInternalId: string, address: string, txHash?: string): void {
+		this._onCharityEventConfirmed.next({internalId: charityEventInternalId, address, txHash});
 	}
 
 	public charityEventFailed(charityEventInternalId: string, address: string): void {
@@ -112,8 +139,13 @@ export class OrganizationSharedService {
 		this._onIncomingDonationAdded.next(incomingDonation);
 	}
 
-	public incomingDonationConfirmed(incomingDonationInternalId: string, address: string): void {
-		this._onIncomingDonationConfirmed.next({internalId: incomingDonationInternalId, address: address});
+	public incomingDonationSubmited(incomingDonationInternalId: string, address: string, txHash?: string): void {
+		this._onIncomingDonationSubmited.next({internalId: incomingDonationInternalId, address, txHash});
+		this._onTransactionSubmited.next(txHash);
+	}
+
+	public incomingDonationConfirmed(incomingDonationInternalId: string, address: string, txHash?: string): void {
+		this._onIncomingDonationConfirmed.next({internalId: incomingDonationInternalId, address: address, txHash});
 	}
 
 	public incomingDonationFailed(incomingDonationInternalId: string, address: string): void {
@@ -128,8 +160,13 @@ export class OrganizationSharedService {
 		this._onMoveFundsToCharityEventAdded.next(incomingDonationTransaction);
 	}
 
-	public moveFundsToCharityEventConfirmed(charityEventInternalId: string, address: string): void {
-		this._onMoveFundsToCharityEventConfirmed.next({internalId: charityEventInternalId, address: address});
+	public moveFundsToCharityEventSubmited(charityEventInternalId: string, address: string, txHash: string): void {
+		this._onMoveFundsToCharityEventSubmited.next({internalId: charityEventInternalId, address, txHash});
+		this._onTransactionSubmited.next(txHash);
+	}
+
+	public moveFundsToCharityEventConfirmed(charityEventInternalId: string, address: string, txHash?: string): void {
+		this._onMoveFundsToCharityEventConfirmed.next({internalId: charityEventInternalId, address, txHash});
 	}
 
 	public moveFundsToCharityEventFailed(charityEventInternalId: string, address: string): void {
@@ -145,6 +182,10 @@ export class OrganizationSharedService {
 
 	/***********************************/
 
+	public onTransactionConfirmed(): Observable<string> {
+		return this.onTransactionSubmitedSource;
+	}
+
 	public onCharityEventAdded(): Observable<AppCharityEvent> {
 		return this.onCharityEventAddedSource;
 	}
@@ -153,7 +194,11 @@ export class OrganizationSharedService {
 		return this.onCharityEventEditedSource;
 	}
 
-	public onCharityEventConfirmed(): Observable<ConfirmationResponse> {
+	public onCharityEventSubmited(): Observable<ConfirmationResponseWithTxHash> {
+		return this.onCharityEventSubmitedSource;
+	}
+
+	public onCharityEventConfirmed(): Observable<ConfirmationResponseWithTxHash> {
 		return this.onCharityEventConfirmedSource;
 	}
 
@@ -170,7 +215,11 @@ export class OrganizationSharedService {
 		return this.onIncomingDonationAddedSource;
 	}
 
-	public onIncomingDonationConfirmed(): Observable<ConfirmationResponse> {
+	public onIncomingDonationSubmited(): Observable<ConfirmationResponseWithTxHash> {
+		return this.onIncomingDonationSubmitedSource;
+	}
+
+	public onIncomingDonationConfirmed(): Observable<ConfirmationResponseWithTxHash> {
 		return this.onIncomingDonationConfirmedSource;
 	}
 
@@ -186,7 +235,11 @@ export class OrganizationSharedService {
 		return this.onMoveFundsToCharityEventAddedSource;
 	}
 
-	public onMoveFundsToCharityEventConfirmed(): Observable<ConfirmationResponse> {
+	public onMoveFundsToCharityEventSubmited(): Observable<ConfirmationResponseWithTxHash> {
+		return this.onMoveFundsToCharityEventSubmitedSource;
+	}
+
+	public onMoveFundsToCharityEventConfirmed(): Observable<ConfirmationResponseWithTxHash> {
 		return this.onMoveFundsToCharityEventConfirmedSource;
 	}
 

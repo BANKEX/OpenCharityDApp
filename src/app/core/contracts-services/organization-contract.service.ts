@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Contract, TransactionReceipt, Tx} from 'web3/types';
+import {Contract, TransactionReceipt, Tx, PromiEvent} from 'web3/types';
 import {Web3ProviderService} from '../web3-provider.service';
 import {merge, forEach} from 'lodash';
 import Web3 from 'web3';
@@ -121,7 +121,7 @@ export class OrganizationContractService {
 		return source.asObservable();
 	}
 
-	public moveFundsToCharityEvent(organizationAddress: string, incomingDonationAddress: string, charityEventAddress: string, amount: string, txOptions?: Tx): Promise<TransactionReceipt> {
+	public moveFundsToCharityEvent(organizationAddress: string, incomingDonationAddress: string, charityEventAddress: string, amount: string, txOptions?: Tx): PromiEvent<TransactionReceipt>  {
 		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
 		const tx: Tx = merge({}, this.defaultTx, txOptions);
 		return contract.methods.moveDonationFundsToCharityEvent(incomingDonationAddress, charityEventAddress, amount).send(tx);
@@ -131,7 +131,7 @@ export class OrganizationContractService {
 	/***  Charity Events Methods ****/
 
 	/********************************/
-	public addCharityEvent(address: string, charityEvent: ContractCharityEvent, txOptions?: Tx): Promise<TransactionReceipt> {
+	public addCharityEvent(address: string, charityEvent: ContractCharityEvent, txOptions?: Tx): PromiEvent<TransactionReceipt> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		const tx: Tx = merge({}, this.defaultTx, txOptions);
 		return contract.methods.addCharityEvent(charityEvent.name, charityEvent.target, charityEvent.payed, charityEvent.tags, charityEvent.metaStorageHash).send(tx);
@@ -157,13 +157,13 @@ export class OrganizationContractService {
 		return this.buildCharityEventsList(contract, parseInt(charityEventCount));
 	}
 
-	public updateCharityEventMetaStorageHash(organizationAddress: string, charityEventAddress: string, newMetaStorageHash: string, txOptions?: Tx): Promise<TransactionReceipt> {
+	public updateCharityEventMetaStorageHash(organizationAddress: string, charityEventAddress: string, newMetaStorageHash: string, txOptions?: Tx): PromiEvent<TransactionReceipt> {
 		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
 		const tx: Tx = merge({}, this.defaultTx, txOptions);
 		return contract.methods.updateCharityEventMetaStorageHash(charityEventAddress, newMetaStorageHash).send(tx);
 	}
 
-	public async updateCharityEventDetails(organizationAddress: string, charityEvent: ContractCharityEvent, txOptions?: Tx): Promise<TransactionReceipt> {
+	public updateCharityEventDetails(organizationAddress: string, charityEvent: ContractCharityEvent, txOptions?: Tx): PromiEvent<TransactionReceipt> {
 		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
 		const tx: Tx = merge({}, this.defaultTx, txOptions);
 		return contract.methods.updateCharityEventDetails(charityEvent.address, charityEvent.name, charityEvent.target, charityEvent.tags, charityEvent.metaStorageHash).send(tx);

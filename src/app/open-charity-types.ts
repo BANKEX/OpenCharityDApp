@@ -6,7 +6,11 @@ export enum ConfirmationStatusState {
 	FAILED,
 	ERROR
 }
-export type ConfirmationResponse = { internalId: string; address: string; };
+export interface ConfirmationResponse { internalId: string; address: string; }
+
+export interface ConfirmationResponseWithTxHash extends ConfirmationResponse {
+	txHash: string; // hash address of running transaction
+}
 
 export interface ContractCharityEvent {
 	metaStorageHash?: string;

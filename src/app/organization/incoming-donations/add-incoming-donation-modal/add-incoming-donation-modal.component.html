@@ -14,7 +14,7 @@
 					<opc-incoming-donation-form
 						[charityEvent]="charityEvent"
 						[organizationAddress]="organizationAddress"
-						(donationCreated)="onDonationCreated($event)" >
+						(transactionHash$)="onTransactionHashReceived($event)" >
 					</opc-incoming-donation-form>
 				</div>
 			</div>
