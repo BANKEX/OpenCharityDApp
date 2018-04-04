@@ -275,5 +275,60 @@ export class OrganizationSharedService {
 		return this.web3ProviderService.web3.utils.sha3(sourceData);
 	}
 
+	/*********************************/
+	/****** Test Data ****************/
+	/*********************************/
 
+	public getTestDataCharityEvents(): Array<ContractCharityEvent> {
+		const data: ContractCharityEvent[] = [
+			{
+				name: 'Лекарства на выписку',
+				target: '70000',
+				payed: '0',
+				tags: '0x12'
+			},
+			{
+				name: 'Пропал Сергеев Сергей Сергеевич',
+				target: '100000',
+				payed: '0',
+				tags: '0x04'
+			},
+			{
+				name: 'Образование для детей мигрантов',
+				target: '880000',
+				payed: '0',
+				tags: '0x0e'
+			}
+		];
+
+		return data;
+	}
+
+	public getTestDataIncomingDonations(): Array<ContractIncomingDonation> {
+		const data: ContractIncomingDonation[] = [
+			{
+				amount: '70',
+				note: 'детям на лечение',
+				realWorldsIdentifier: 'sber123456789',
+				sourceId: '0',
+				tags: '0x12'
+			},
+			{
+				amount: '427',
+				note: 'на лекарства',
+				realWorldsIdentifier: '412323445645',
+				sourceId: '0',
+				tags: '0x1c'
+			},
+			{
+				amount: '900',
+				note: 'на разные нужды',
+				realWorldsIdentifier: 'tinkoff234345346',
+				sourceId: '0',
+				tags: '0x00'
+			}
+		];
+
+		return data;
+	}
 }
