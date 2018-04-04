@@ -223,7 +223,7 @@ export class CharityEventFormComponent implements OnInit {
 
 					transaction = this.organizationContractService.updateCharityEventMetaStorageHash(
 						this.organizationContractAddress,
-						this.charityEventAddress,
+						charityEventAddress,
 						newMetaStorageHash
 					);
 					this.handleSubmit(transaction);
