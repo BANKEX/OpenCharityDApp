@@ -8,11 +8,12 @@ import {
 	ORGANIZATION_CONTRACT_ABI
 } from '../contracts-abi';
 
+
 type CommonSettingsContractsAbis = {
-	CharityEvent: any,
-	Organization: any,
-	IncomingDonation: any,
-	OpenCharityToken: any
+	CharityEvent: any, // tslint:disable-line:no-any
+	Organization: any, // tslint:disable-line:no-any
+	IncomingDonation: any, // tslint:disable-line:no-any
+	OpenCharityToken: any // tslint:disable-line:no-any
 };
 
 interface CommonSettingsResponse {
@@ -61,15 +62,15 @@ export class CommonSettingsService {
 	}
 
 
-	private getOrganizationsList(environmentId?: number): Observable<any> {
+	private getOrganizationsList(environmentId?: number): Observable<CommonSettingsResponse> {
 		if (!environmentId) {
 			environmentId = 0;
 		}
 
-		return this.httpClient.get(this.buildUrl(`settings/getOrganizationList/${environmentId}`));
+		return this.httpClient.get<CommonSettingsResponse>(this.buildUrl(`settings/getOrganizationList/${environmentId}`));
 	}
 
-
+	// tslint:disable-next-line:no-any
 	private setOrganizationsList(organizations: string[], environmentId?: number): Observable<any> {
 		if (!environmentId) {
 			environmentId = 0;
