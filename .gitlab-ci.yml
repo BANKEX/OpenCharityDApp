@@ -5,5 +5,4 @@ tests:
   image: node:alpine
   stage: tests
   script:
-    - const constants = require('constants');
-    - console.log(constants.STAGING_ENVIRONMENT.apiUrl);
+    - node test.js
