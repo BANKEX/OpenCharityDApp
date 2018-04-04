@@ -16,6 +16,7 @@ import {PendingTransactionService} from './pending-transactions.service';
 import {LoginFormComponent} from './login-form/login-form.component';
 import {ErrorMessageService} from './error-message.service';
 import {ErrorMessageComponent} from './error-message/error-message.component';
+import {CommonSettingsService} from './common-settings.service';
 
 export function windowFactory() {
 	return window;
@@ -52,6 +53,7 @@ const contractsServices = [
 		MetaDataStorageService,
 		PendingTransactionService,
 		ErrorMessageService,
+		CommonSettingsService,
 		...contractsServices
 	]
 })

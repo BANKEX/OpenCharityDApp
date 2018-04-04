@@ -4,8 +4,8 @@ import {Web3ProviderService} from '../web3-provider.service';
 import {merge} from 'lodash';
 import Web3 from 'web3';
 import {TokenContractService} from './token-contract.service';
-import {INCOMING_DONATION_CONTRACT_ABI} from '../../contracts-abi';
 import {ContractIncomingDonation} from '../../open-charity-types';
+import {CommonSettingsService} from '../common-settings.service';
 
 
 @Injectable()
@@ -15,7 +15,8 @@ export class IncomingDonationContractService {
 	private defaultTx: Tx;
 
 	constructor(private web3ProviderService: Web3ProviderService,
-				private tokenContractService: TokenContractService) {
+				private tokenContractService: TokenContractService,
+				private commonSettingsService: CommonSettingsService) {
 		this.incomingDonationContract = this.buildIncomingDonationContract();
 		this.web3 = this.web3ProviderService.web3;
 		this.init();
@@ -50,7 +51,6 @@ export class IncomingDonationContractService {
 	}
 
 
-
 	public async getIncomingDonationDetails(address: string, txOptions?: Tx): Promise<ContractIncomingDonation> {
 		return {
 			realWorldsIdentifier: await this.getRealWorldIdentifier(address, txOptions),
@@ -74,7 +74,7 @@ export class IncomingDonationContractService {
 	}
 
 	private buildIncomingDonationContract(): Contract {
-		return new this.web3ProviderService.web3.eth.Contract(INCOMING_DONATION_CONTRACT_ABI);
+		return new this.web3ProviderService.web3.eth.Contract(this.commonSettingsService.abis.IncomingDonation);
 	}
 
 }

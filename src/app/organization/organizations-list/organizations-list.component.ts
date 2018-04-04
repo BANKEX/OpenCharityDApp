@@ -3,6 +3,7 @@ import {Organization, OrganizationContractService} from '../../core/contracts-se
 import {Router} from '@angular/router';
 import {Web3ProviderService} from '../../core/web3-provider.service';
 import {LoadingOverlayService} from '../../core/loading-overlay.service';
+import {CommonSettingsService} from '../../core/common-settings.service';
 
 @Component({
 	selector: 'opc-organizations-list',
@@ -14,9 +15,10 @@ export class OrganizationsListComponent implements OnInit {
 	public organizations: Organization[] = [];
 	public listLoaded: boolean = false;
 
-	private organizationsAddresses: string[] = environment.organizations;
+	private organizationsAddresses: string[];
 
-	constructor(private organizationContractService: OrganizationContractService,
+	constructor(private commonSettingsService: CommonSettingsService,
+				private organizationContractService: OrganizationContractService,
 				private router: Router,
 				private web3ProviderService: Web3ProviderService,
 				private loadingOverlayService: LoadingOverlayService) {
@@ -25,6 +27,7 @@ export class OrganizationsListComponent implements OnInit {
 	public async ngOnInit(): Promise<void> {
 		this.loadingOverlayService.showOverlay();
 
+		this.organizationsAddresses = this.commonSettingsService.organizations;
 
 		for (let address of this.organizationsAddresses) {
 			if (await this.organizationContractService.isAdmin(address, await this.web3ProviderService.getCurrentAccount())) {

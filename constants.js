@@ -73,10 +73,10 @@ exports.MY_VENDOR_DLLS = [
 exports.MY_CLIENT_PLUGINS = [
 	// use this to import your own webpack config Client plugins.
 
-    new webpack.ProvidePlugin({
-        $: "jquery",
-        jQuery: "jquery"
-    })
+	new webpack.ProvidePlugin({
+		$: "jquery",
+		jQuery: "jquery"
+	})
 ]
 
 exports.MY_CLIENT_PRODUCTION_PLUGINS = [
@@ -101,12 +101,20 @@ exports.DEV_ENVIRONMENT = {
 	'tokenAddress': '0x6a183381d14371b4a228cca37802c09bd166ba9e',
 	'rpcProviderUrl': 'https://rpcprovider.staging.bankex.team:8635',
 	'websocketProviderUrl': 'wss://wsprovider.staging.bankex.team:8636',
-	'metaStorageUrl': 'https://opencharity.staging.bankex.team/api/meta/',
-	'organizations':  [
-		'0x613a9dcba334c8b75ba2a1190b3f6498c9af3e01',
-		'0x0d8d530f578c9816c4415d60821482e74433edf3',
-		'0x7037d461fe08daf2f9ea6f3a343870c8e94b773e'
+	'apiUrl': 'https://opencharity.staging.bankex.team/api/',
+	'organizations': [
+		'0x0fe282ccf65c07eaeab8e829def17d8ede27447c',
+		'0x3b74105e82b5ae9ef799fb852a88a47674148f68',
+		'0xe5541c69a2e0927283e11714e01c32268ecff410'
 	]
+};
+
+exports.STAGING_ENVIRONMENT = {
+	'networkId': 488413,
+	'tokenAddress': '0x6a183381d14371b4a228cca37802c09bd166ba9e',
+	'rpcProviderUrl': 'https://rpcprovider.staging.bankex.team:8635',
+	'websocketProviderUrl': 'wss://wsprovider.staging.bankex.team:8636',
+	'apiUrl': 'https://opencharity.staging.bankex.team/api/'
 };
 
 exports.PROD_ENVIRONMENT = {
@@ -114,10 +122,5 @@ exports.PROD_ENVIRONMENT = {
 	'tokenAddress': '0x7487a0251a0701a89cade302679b1d01c3d8a44f',
 	'rpcProviderUrl': 'https://rpcprovider.opencharity.bankex.team:8635',
 	'websocketProviderUrl': 'wss://wsprovider.opencharity.bankex.team:8636',
-	'metaStorageUrl': 'https://opencharity.bankex.team/api/meta/',
-	'organizations':  [
-		'0xb61785efbb382f5a31e4b193cc3f95bfafbf9f02',
-		'0x8e32283dde3b65a13094422f2a9cd74194780580',
-		'0xc51a3c307edc40a0294555f0d83c04e1f75a3d81'
-	]
+	'apiUrl': 'https://opencharity.bankex.team/api/'
 };

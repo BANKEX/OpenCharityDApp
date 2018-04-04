@@ -6,8 +6,6 @@ import {MetaStorageData, MetaStorageFile} from '../open-charity-types';
 @Injectable()
 export class MetaDataStorageService {
 
-	private metaStorageUrl: string = environment.metaStorageUrl;
-
 	constructor(private httpClient: HttpClient) {
 
 	}
@@ -50,20 +48,20 @@ export class MetaDataStorageService {
 
 	public convertArrayBufferToBase64(arrayBuffer: ArrayBuffer) {
 		let binary = '';
-		const bytes = new Uint8Array( arrayBuffer );
+		const bytes = new Uint8Array(arrayBuffer);
 		const len = bytes.byteLength;
 		for (let i = 0; i < len; i++) {
-			binary += String.fromCharCode( bytes[ i ] );
+			binary += String.fromCharCode(bytes[i]);
 		}
-		return window.btoa( binary );
+		return window.btoa(binary);
 	}
 
 	public convertArrayBufferToFile(arrayBuffer: ArrayBuffer, type: string, name: string): File {
-		return new File([new Blob( [ arrayBuffer ], { type: type } )], name);
+		return new File([new Blob([arrayBuffer], {type: type})], name);
 	}
 
 	private buildUrl(url: string): string {
-		return this.metaStorageUrl + url;
+		return environment.apiUrl + 'meta/' + url;
 	}
 
 }
