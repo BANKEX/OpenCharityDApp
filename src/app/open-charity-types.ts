@@ -39,6 +39,7 @@ export interface ContractIncomingDonation {
 	sourceId: string;
 	tags: string;
 	sourceName?: string;
+	movedFunds?: string
 }
 
 export interface AppIncomingDonation extends ContractIncomingDonation {
