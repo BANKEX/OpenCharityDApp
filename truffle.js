@@ -6,7 +6,7 @@ module.exports = {
 			host: "127.0.0.1",
 			port: 8545,
 			network_id: "*", // Match any network id,
-			gas: 4600000,
+			gas: 4712388,
 			from: "0xce09126ace45e85ac8ca1c9c8de106acbfe81ea2"
 		},
 		ganache: {
@@ -30,12 +30,25 @@ module.exports = {
 			gasPrice: 20000000000,
 			from: "0xdec98a7a34b68c7ba1d342f12069f9c44eeb4be4"
 		},
-		bankexTestNetwork: {
-			host: '52.166.13.111',
-			port: 8535,
-			network_id: 488412,
-			gasPrice: 180000000000,
-			from: "0xce09126ace45e85ac8ca1c9c8de106acbfe81ea2"
+		bankexStaging: {
+			provider: function() {
+				let WalletProvider = require("truffle-wallet-provider");
+				let wallet = require('ethereumjs-wallet').fromPrivateKey(Buffer.from(process.env.ETH_KEY, 'hex'));
+				return new WalletProvider(wallet, "https://rpcprovider.staging.bankex.team:8635")
+			},
+			gas: 4712388,
+			gasPrice: 2000000000,
+			network_id: '*'
+		},
+		bankexProduction: {
+			provider: function() {
+				let WalletProvider = require("truffle-wallet-provider");
+				let wallet = require('ethereumjs-wallet').fromPrivateKey(Buffer.from(process.env.ETH_KEY, 'hex'));
+				return new WalletProvider(wallet, "https://rpcprovider.opencharity.bankex.team:8635")
+			},
+			gas: 4712388,
+			gasPrice: 2000000000,
+			network_id: '*'
 		},
 		solc: {
 			optimizer: {

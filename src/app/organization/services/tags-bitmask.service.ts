@@ -2,10 +2,10 @@ import {Injectable} from '@angular/core';
 import {filter} from 'lodash';
 
 
-export interface Tag {
+export type Tag = {
 	name: string;
 	value: number;
-}
+};
 
 @Injectable()
 export class TagsBitmaskService {
@@ -71,7 +71,8 @@ export class TagsBitmaskService {
 	// compares 2 bitmasks
 	// returns true if they have at least one same tag
 	public containSimilarTags(bitmask1: number, bitmask2: number): boolean {
-		return (bitmask1 & bitmask2) > 0
+		if (bitmask1 === 0 || bitmask2 === 0) { return true; }
+		return (bitmask1 & bitmask2) > 0;
 	}
 
 }

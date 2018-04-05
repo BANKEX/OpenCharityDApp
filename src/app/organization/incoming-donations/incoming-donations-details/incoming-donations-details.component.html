@@ -1,8 +1,8 @@
 <div class="container-fluid">
 	<ol class="breadcrumb oc-breadcrumbs">
-		<li><a href="#" (click)="goBackToOrganization($event)">
+		<li><a href="#" (click)="goBackToPreviousPage($event)">
 			<i class="fa fa-arrow-left"></i>
-			<span>Back to organization</span>
+			<span>Back</span>
 		</a></li>
 	</ol>
 	<div class="page-title" *ngIf="isDonation()">
@@ -65,11 +65,50 @@
 							<li class="list-inline-item">
 								<!-- <input type="text" [(ngModel)]="incomingDonation.targetEvent">
 		                        <input type="number" [(ngModel)]="incomingDonation.amountToMove"> -->
-								<a class="btn btn-success btn-inverse btn-rounded" (click)="openSendDonationFundsModal(incomingDonation)">Move
-									Funds To Charity Event</a>
-								<!-- <a class="btn btn-success btn-inverse btn-rounded" href="javascript:void(0)" (click)="moveToCharityEvent(incomingDonation)">Move Funds To Charity Event</a> -->
+								<button class="btn btn-primary btn-block no-mrg" (click)="openSendDonationFundsModal(incomingDonation)">Move
+									Funds To Charity Event</button>
 							</li>
 						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="card card-hover">
+					<div class="table-responsive">
+						<table class="table table-striped table-hover donations-table">
+							<thead>
+							<tr>
+								<th>Date</th>
+								<th>To</th>
+								<th>Transaction</th>
+								<th class="text-right">Amount</th>
+							</tr>
+							</thead>
+							<tbody>
+							<tr *ngIf="isTransactionsLoading()" class="loading">
+								<td colspan="4" class="text-center">
+									<i class="fa fa-spinner fa-spin fa-3x"></i>
+								</td>
+							</tr>
+							<tr *ngIf="isTransactionsEmpty()" class="empty">
+								<td colspan="4" class="text-center">
+									<div class="message">No transactions</div>
+								</td>
+							</tr>
+							<tr class="data"
+								*ngFor="let transaction of transactions" (click)="goToTransactions(transaction.charityEvent)"
+								[ngClass]="{'pending' : transaction && isPending(transaction)}">
+								<td>{{transaction.date}} <i class="fa fa-spin fa-spinner" *ngIf="transaction && isPending(transaction)"></i></td>
+								<td>{{transaction.charityEvent}}</td>
+								<td>{{transaction.transactionHash}}</td>
+								<td>
+									<div class="transaction-value">- {{transaction.amount}}</div>
+								</td>
+							</tr>
+							</tbody>
+						</table>
 					</div>
 				</div>
 			</div>

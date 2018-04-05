@@ -3,11 +3,8 @@ import {Contract, Tx} from 'web3/types';
 import {Web3ProviderService} from '../web3-provider.service';
 import {merge} from 'lodash';
 import Web3 from 'web3';
-import {CharityEventContractAbi} from '../../contracts-abi';
 import {ContractCharityEvent} from '../../open-charity-types';
-
-
-
+import {CommonSettingsService} from '../common-settings.service';
 
 @Injectable()
 export class CharityEventContractService {
@@ -16,13 +13,14 @@ export class CharityEventContractService {
 	private web3: Web3;
 	private defaultTx: Tx;
 
-	constructor(private web3ProviderService: Web3ProviderService,) {
+	constructor(private web3ProviderService: Web3ProviderService,
+				private commonSettingsService: CommonSettingsService) {
 		this.charityEventContract = this.buildCharityEventContract();
 		this.web3 = this.web3ProviderService.web3;
 		this.init();
 	}
 
-	async init(): Promise<void> {
+	public async init(): Promise<void> {
 		const accounts: string[] = await this.web3.eth.getAccounts();
 		this.defaultTx = {
 			from: accounts[0]
@@ -30,7 +28,8 @@ export class CharityEventContractService {
 	}
 
 	/************************/
-	/** Get data methods ****/
+	/*** Get data methods ****/
+
 	/************************/
 
 	public getMetaStorageHash(address: string, txOptions?: Tx): Promise<string> {
@@ -83,11 +82,14 @@ export class CharityEventContractService {
 
 
 	/************************/
-	/** Utils ***************/
+	/*** Utils ***************/
+
 	/************************/
 	private cloneContract(original: Contract, address: string): Contract {
+		/* tslint:disable */
 		const contract: any = (<any>original).clone();
 		const originalProvider = (<any>original).currentProvider;
+		/* tslint:enable */
 		contract.setProvider(contract.givenProvider || originalProvider);
 		contract.options.address = address;
 
@@ -95,7 +97,7 @@ export class CharityEventContractService {
 	}
 
 	private buildCharityEventContract(): Contract {
-		return new this.web3ProviderService.web3.eth.Contract(CharityEventContractAbi);
+		return new this.web3ProviderService.web3.eth.Contract(this.commonSettingsService.abis.CharityEvent);
 	}
 
 }

@@ -1,0 +1,27 @@
+.error-messages {
+	z-index: 9999999999;
+	position: fixed;
+	right: 0;
+	top: 0;
+
+	.alert {
+		border-radius: 0;
+		margin-bottom: 10px;
+		display: inline-block;
+
+		.alert-content {
+			display: inline-block;
+		}
+
+		.alert-heading {
+			cursor: pointer;
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+
+		&.alert-danger {
+			box-shadow: 0 0 10px #f5c6cb;
+		}
+	}
+}

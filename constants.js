@@ -1,6 +1,7 @@
 "use strict";
-const root = require('./helpers.js').root
+const root = require('./helpers.js').root;
 const ip = require('ip');
+const webpack = require('webpack');
 
 exports.HOST = ip.address();
 exports.DEV_PORT = 3000;
@@ -71,6 +72,11 @@ exports.MY_VENDOR_DLLS = [
 
 exports.MY_CLIENT_PLUGINS = [
 	// use this to import your own webpack config Client plugins.
+
+	new webpack.ProvidePlugin({
+		$: "jquery",
+		jQuery: "jquery"
+	})
 ]
 
 exports.MY_CLIENT_PRODUCTION_PLUGINS = [
@@ -90,29 +96,31 @@ exports.MY_TEST_PLUGINS = [
 ]
 
 
-
 exports.DEV_ENVIRONMENT = {
 	'networkId': 488413,
 	'tokenAddress': '0x6a183381d14371b4a228cca37802c09bd166ba9e',
 	'rpcProviderUrl': 'https://rpcprovider.staging.bankex.team:8635',
 	'websocketProviderUrl': 'wss://wsprovider.staging.bankex.team:8636',
-	'metaStorageUrl': 'https://opencharity.staging.bankex.team/api/meta/',
-	'organizations':  [
-		'0x62d45408519e53d795008bc9489e8cccc3db1717',
-		'0x01bfd36327b9ff3bae7e801bb1be1091d68bfb21',
-		'0xa5a6c81e6607ae513e50fc5cc209d9359089cf59'
+	'apiUrl': 'https://opencharity.staging.bankex.team/api/',
+	'organizations': [
+		'0x0fe282ccf65c07eaeab8e829def17d8ede27447c',
+		'0x3b74105e82b5ae9ef799fb852a88a47674148f68',
+		'0xe5541c69a2e0927283e11714e01c32268ecff410'
 	]
+};
+
+exports.STAGING_ENVIRONMENT = {
+	'networkId': 488413,
+	'tokenAddress': '0x6a183381d14371b4a228cca37802c09bd166ba9e',
+	'rpcProviderUrl': 'https://rpcprovider.staging.bankex.team:8635',
+	'websocketProviderUrl': 'wss://wsprovider.staging.bankex.team:8636',
+	'apiUrl': 'https://opencharity.staging.bankex.team/api/'
 };
 
 exports.PROD_ENVIRONMENT = {
 	'networkId': 488423,
-	'tokenAddress': '0xa4580bdd864022a3874c57d35bf73d7717c40a48',
+	'tokenAddress': '0x7487a0251a0701a89cade302679b1d01c3d8a44f',
 	'rpcProviderUrl': 'https://rpcprovider.opencharity.bankex.team:8635',
 	'websocketProviderUrl': 'wss://wsprovider.opencharity.bankex.team:8636',
-	'metaStorageUrl': 'https://opencharity.bankex.team/api/meta/',
-	'organizations':  [
-		'0x13b07a2848b4baaea2599f37c2471c241d871c6a',
-		'0x8a4f9982ff799522307854bbec390aabeb8ad8e2',
-		'0x565bdf1efc1aa43cde7c643f8eee9de8702ce9d9'
-	]
+	'apiUrl': 'https://opencharity.bankex.team/api/'
 };

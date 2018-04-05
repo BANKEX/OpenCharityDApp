@@ -1,13 +1,10 @@
-variables:
-  IMAGE: bankexlabs/$CI_PROJECT_NAME
-
 stages:
   - setup
   - build-node-stage
   - build-node-prod
+  - tests
   - release-nginx-stage
   - release-nginx-prod
-  - deploy-contracts
   - deploy-stage
   - deploy-prod
 
@@ -53,15 +50,21 @@ build-node-prod:
     expire_in: 24h
   only:
     - production
+    
+tests:
+  image: alpine
+  stage: tests
+  script:
+    - echo "Tests OK"
 
 release-nginx-stage:
   image: docker:latest
   stage: release-nginx-stage
   before_script:
-    - docker login -u $DOCKER_USER -p $DOCKER_TOKEN
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
-    - docker build -f docker/Dockerfile -t ${IMAGE}:stage .
-    - docker push ${IMAGE}:stage
+    - docker build -f docker/Dockerfile -t $CI_REGISTRY_IMAGE:stage .
+    - docker push $CI_REGISTRY_IMAGE:stage
   dependencies: 
     - build-node-stage
 
@@ -69,28 +72,15 @@ release-nginx-prod:
   image: docker:latest
   stage: release-nginx-prod
   before_script:
-    - docker login -u $DOCKER_USER -p $DOCKER_TOKEN
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
-    - docker build -f docker/Dockerfile -t ${IMAGE}:prod .
-    - docker push ${IMAGE}:prod
+    - docker build -f docker/Dockerfile -t $CI_REGISTRY_IMAGE:prod .
+    - docker push $CI_REGISTRY_IMAGE:prod
   dependencies: 
     - build-node-prod
   only:
     - production
-
-deploy-contracts:
-  image: ubuntu:latest
-  stage: deploy-contracts
-  before_script:
-    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
-    - eval $(ssh-agent -s)
-    - ssh-add <(echo "$SSH_PRIVATE_KEY_DEPLOY")
-    - mkdir -p ~/.ssh
-    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-  script:
-    - scp -r ./build/contracts root@charity-staging-do.bankex.team:/data
-    - scp -r ./build/contracts root@charity-prod-do.bankex.team:/data
-
+    
 deploy_stage:
   stage: deploy-stage
   image: tmaier/docker-compose
@@ -106,12 +96,12 @@ deploy_stage:
     - echo "$DO_DOCKER_CA_STAGE" > $DOCKER_CERT_PATH/ca.pem
     - echo "$DO_DOCKER_CERT_STAGE" > $DOCKER_CERT_PATH/cert.pem
     - echo "$DO_DOCKER_KEY_STAGE" > $DOCKER_CERT_PATH/key.pem
-    - docker login -u $DOCKER_USER -p $DOCKER_TOKEN
-    - echo "IMAGE=$IMAGE" > .env ; echo "VIRTUAL_HOST=$SERVERNAME" >> .env ; echo "LETSENCRYPT_HOST=$SERVERNAME" >> .env; echo "LETSENCRYPT_EMAIL=$EMAIL" >> .env
+    - echo "VIRTUAL_HOST=$SERVERNAME" >> .env ; echo "LETSENCRYPT_HOST=$SERVERNAME" >> .env; echo "LETSENCRYPT_EMAIL=$EMAIL" >> .env
   script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker-compose -f docker/docker-compose.yml down
-    - docker rmi $IMAGE || echo "image not exist"
-    - docker pull $IMAGE
+    - docker rmi $CI_REGISTRY_IMAGE:stage || echo "image not exist"
+    - docker pull $CI_REGISTRY_IMAGE:stage
     - docker-compose -f docker/docker-compose.yml up -d
   environment:
     name: staging
@@ -133,14 +123,13 @@ deploy_prod:
     - echo "$DO_DOCKER_CA_PROD" > $DOCKER_CERT_PATH/ca.pem
     - echo "$DO_DOCKER_CERT_PROD" > $DOCKER_CERT_PATH/cert.pem
     - echo "$DO_DOCKER_KEY_PROD" > $DOCKER_CERT_PATH/key.pem
-    - docker login -u $DOCKER_USER -p $DOCKER_TOKEN
-    - echo "IMAGE=$IMAGE" > .env ; echo "VIRTUAL_HOST=$SERVERNAME" >> .env ; echo "LETSENCRYPT_HOST=$SERVERNAME" >> .env; echo "LETSENCRYPT_EMAIL=$EMAIL" >> .env
+    - echo "VIRTUAL_HOST=$SERVERNAME" >> .env ; echo "LETSENCRYPT_HOST=$SERVERNAME" >> .env; echo "LETSENCRYPT_EMAIL=$EMAIL" >> .env
   script:
-    - docker-compose -f docker/docker-compose.yml down
-    - docker rmi $IMAGE || echo "image not exist"
-    - docker pull $IMAGE
-    - sleep 15
-    - docker-compose -f docker/docker-compose.yml up -d
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker-compose -f docker/docker-compose-prod.yml down
+    - docker rmi $CI_REGISTRY_IMAGE:prod || echo "image not exist"
+    - docker pull $CI_REGISTRY_IMAGE:prod
+    - docker-compose -f docker/docker-compose-prod.yml up -d
   environment:
     name: prod
     url: https://opencharity.bankex.team

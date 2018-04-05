@@ -1,10 +1,10 @@
 <div class="modal-dialog modal-md">
 	<div class="modal-content">
-		<div class="modal-body">
-			<div class="modal-header no-pdd-left">
-				<h4>Move More Funds</h4>
+		<div class="card no-mrg">
+			<div class="card-heading border bottom">
+				<h4 class="card-title">Move Funds</h4>
 			</div>
-			<form [formGroup]="moveFundsForm">
+			<form [formGroup]="moveFundsForm" class="card-block no-pdd-top">
 				<div class="mrg-top-20">
 					<ng-template #rt let-r="result" let-t="term">
 						<span data-id="{{r.address}}">{{r.name}}</span>
@@ -12,6 +12,7 @@
 					<label for="typeahead-focus">Choose event:</label>
 					<input id="typeahead-focus" type="text"
 						   class="form-control"
+						   readonly="{{disabled}}"
 						   [formControlName]="'targetCharityEvent'"
 						   (focus)="focus$.next($event.target.value)"
 						   (click)="click$.next($event.target.value)"
@@ -24,6 +25,7 @@
 					<input  type="text"
 							class="form-control" id="form-1-1"
 							placeholder="Amount to move"
+							readonly="{{disabled}}"
 							[formControlName]="'amount'"
 							[ngClass]="{'error':moveFundsForm.get('amount').touched && moveFundsForm.get('amount').invalid}">
 					<label class="error" *ngIf="moveFundsForm.get('amount').touched && moveFundsForm.get('amount').hasError('required')">Amount is required</label>
@@ -32,9 +34,9 @@
 				</div>
 			</form>
 		</div>
-		<button class="btn btn-success btn-inverse  btn-block no-mrg no-border-top pdd-vertical-15 ng-scope"
-				(click)="sendFunds(moveFundsForm.get('targetCharityEvent').value, moveFundsForm.get('amount').value)"
-				[ngClass]="{'disabled': moveFundsForm.get('amount').invalid }">
+		<button class="btn btn-primary btn-block no-mrg no-border-top pdd-vertical-15 ng-scope"
+				(click)="!disabled&&sendFunds(moveFundsForm.get('targetCharityEvent').value, moveFundsForm.get('amount').value)"
+				[ngClass]="{'disabled': moveFundsForm.get('amount').invalid || disabled}">
 			<span class="text-uppercase">Move Funds</span>
 		</button>
 	</div>

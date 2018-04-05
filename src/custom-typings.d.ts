@@ -20,7 +20,7 @@ import * as _ from 'lodash'
  * see https://github.com/typings/registry
  *
  */
-
+/* tslint:disable */
 // Extra variables that live on Global that will be replaced by webpack DefinePlugin
 declare var AOT: boolean;
 declare var ENV: string;

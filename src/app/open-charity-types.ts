@@ -1,10 +1,16 @@
+/* tslint:disable */
+
 export enum ConfirmationStatusState {
 	PENDING,
 	CONFIRMED,
 	FAILED,
 	ERROR
 }
-export type ConfirmationResponse = { internalId: string; address: string; }
+export interface ConfirmationResponse { internalId: string; address: string; }
+
+export interface ConfirmationResponseWithTxHash extends ConfirmationResponse {
+	txHash: string; // hash address of running transaction
+}
 
 export interface ContractCharityEvent {
 	metaStorageHash?: string;
@@ -16,11 +22,11 @@ export interface ContractCharityEvent {
 }
 
 
-export interface AppCharityEvent extends ContractCharityEvent{
+export interface AppCharityEvent extends ContractCharityEvent {
 	internalId?: string;
 	raised?: string;
 	confirmation: ConfirmationStatusState;
-	attachments?: any[],
+	attachments?: any[];
 	image: any;
 	description: string;
 }
@@ -30,6 +36,7 @@ export interface ContractIncomingDonation {
 	address?: string;
 	amount: string;
 	note: string;
+	sourceId: string;
 	tags: string;
 }
 
@@ -38,22 +45,55 @@ export interface AppIncomingDonation extends ContractIncomingDonation {
 	confirmation: ConfirmationStatusState;
 }
 
+export enum MetaStorageDataType {
+	ORGANIZATION,
+	CHARITY_EVENT,
+	INCOMING_DONATION,
+	FILE,
+}
 
 export interface MetaStorageData {
-	type: string;
+	type: MetaStorageDataType;
 	searchDescription: string;
-	data: any;
+	data: CharityEventMetaStorageData;
 }
 
 export type MetaStorageFile = {
 	name: string;
 	size: number;
+	type: string;
 	storageHash: string;
-}
+};
 
 export interface CharityEventMetaStorageData {
+	title?: string,
 	description: string;
-	image: MetaStorageFile;
-	attachments: MetaStorageFile[]
+	image?: MetaStorageFile;
+	attachments?: MetaStorageFile[];
 }
 
+export type AlertMessage = {
+	title: string,
+	message: string
+};
+
+export interface FundsMovedToCharityEvent {
+	incomingDonation: string;
+	charityEvent: string;
+	sender: string;
+	amount: string;
+}
+
+export interface IncomingDonationTransaction {
+	date?: string;
+	amount: string;
+	transactionHash?: string;
+	charityEvent: string;
+	sender?: string;
+	confirmation: ConfirmationStatusState;
+}
+
+export type loadingOverlayConfig = {
+	showOverlay: boolean,
+	transparent: boolean
+};

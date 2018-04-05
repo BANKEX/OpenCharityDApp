@@ -1,0 +1,22 @@
+<div class="card no-mrg">
+	<div class="card-heading border bottom">
+		<h4 class="card-title">
+			Add New Charity Event
+			<button class="btn btn-default pull-right no-mrg"
+					(click)="activeModal.close()">
+				<i class="fa fa-remove"></i>
+			</button>
+		</h4>
+	</div>
+	<div class="card-block">
+		<div class="card-block">
+			<div class="row">
+				<div class="col-md-12 ml-auto mr-auto">
+					<opc-charity-event-form
+						[organizationContractAddress]="organizationContractAddress">
+					</opc-charity-event-form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

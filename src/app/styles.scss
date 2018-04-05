@@ -2,7 +2,11 @@
 /* This file is for importing 3rd party styles  */
 
 @import 'variables';
+@import 'main';
 @import 'bootstrap/scss/bootstrap.scss';
 @import 'pace-js/themes/blue/pace-theme-minimal.css';
 @import '../assets/scss/app.scss';
 @import 'core/loading-overlay/loading-overlay.component.scss';
+@import '../assets/css/quill.snow.css';
+@import '../assets/css/quill.bubble.css';
+@import '../assets/css/ng2-toasty-bootstrap.css';

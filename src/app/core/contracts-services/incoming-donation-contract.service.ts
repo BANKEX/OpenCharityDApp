@@ -4,8 +4,8 @@ import {Web3ProviderService} from '../web3-provider.service';
 import {merge} from 'lodash';
 import Web3 from 'web3';
 import {TokenContractService} from './token-contract.service';
-import {IncomingDonationContractAbi} from '../../contracts-abi';
 import {ContractIncomingDonation} from '../../open-charity-types';
+import {CommonSettingsService} from '../common-settings.service';
 
 
 @Injectable()
@@ -15,13 +15,14 @@ export class IncomingDonationContractService {
 	private defaultTx: Tx;
 
 	constructor(private web3ProviderService: Web3ProviderService,
-				private tokenContractService: TokenContractService) {
+				private tokenContractService: TokenContractService,
+				private commonSettingsService: CommonSettingsService) {
 		this.incomingDonationContract = this.buildIncomingDonationContract();
 		this.web3 = this.web3ProviderService.web3;
 		this.init();
 	}
 
-	async init(): Promise<void> {
+	public async init(): Promise<void> {
 		const accounts: string[] = await this.web3.eth.getAccounts();
 		this.defaultTx = {
 			from: accounts[0]
@@ -44,6 +45,11 @@ export class IncomingDonationContractService {
 		return contract.methods.tags().call(txOptions);
 	}
 
+	public getSourceId(address: string, txOptions?: Tx): Promise<string> {
+		const contract: Contract = this.cloneContract(this.incomingDonationContract, address);
+		return contract.methods.sourceId().call(txOptions);
+	}
+
 
 	public async getIncomingDonationDetails(address: string, txOptions?: Tx): Promise<ContractIncomingDonation> {
 		return {
@@ -51,13 +57,16 @@ export class IncomingDonationContractService {
 			address: address,
 			amount: await this.tokenContractService.balanceOf(address),
 			note: await this.getNote(address, txOptions),
-			tags: await this.getTags(address, txOptions)
+			tags: await this.getTags(address, txOptions),
+			sourceId: await this.getSourceId(address, txOptions)
 		};
 	}
 
 	private cloneContract(original: Contract, address: string): Contract {
+		/* tslint:disable */
 		const contract: any = (<any>original).clone();
 		const originalProvider = (<any>original).currentProvider;
+		/* tslint:enable */
 		contract.setProvider(contract.givenProvider || originalProvider);
 		contract.options.address = address;
 
@@ -65,7 +74,7 @@ export class IncomingDonationContractService {
 	}
 
 	private buildIncomingDonationContract(): Contract {
-		return new this.web3ProviderService.web3.eth.Contract(IncomingDonationContractAbi);
+		return new this.web3ProviderService.web3.eth.Contract(this.commonSettingsService.abis.IncomingDonation);
 	}
 
 }

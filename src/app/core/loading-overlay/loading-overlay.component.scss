@@ -6,7 +6,11 @@
 	right: 0;
 	left: 0;
 	background: white;
-	z-index: 9999999;
+	z-index: 1100;
+
+	&.transparent {
+		background: rgba(255, 255, 255, 0.5);
+	}
 
 	.loading-center-container {
 		width: 200px;

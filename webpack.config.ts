@@ -8,7 +8,7 @@ import {
 	USE_DEV_SERVER_PROXY, DEV_SERVER_PROXY_CONFIG, DEV_SERVER_WATCH_OPTIONS,
 	DEV_SOURCE_MAPS, PROD_SOURCE_MAPS, STORE_DEV_TOOLS,
 	MY_COPY_FOLDERS, MY_POLYFILL_DLLS, MY_VENDOR_DLLS, MY_CLIENT_PLUGINS,
-	MY_CLIENT_PRODUCTION_PLUGINS, MY_CLIENT_RULES, DEV_ENVIRONMENT, PROD_ENVIRONMENT
+	MY_CLIENT_PRODUCTION_PLUGINS, MY_CLIENT_RULES, DEV_ENVIRONMENT, PROD_ENVIRONMENT, STAGING_ENVIRONMENT
 } from './constants';
 
 const {
@@ -56,15 +56,25 @@ if (DEV_SERVER) {
 	console.log(`Starting dev server on: http://${HOST}:${PORT}`);
 }
 
-const CONSTANTS = {
+const CONSTANTS: any = {
 	AOT: AOT,
-	ENV: PROD ? JSON.stringify('production') : JSON.stringify('development'),
+
 	HMR: HMR,
 	HOST: JSON.stringify(HOST),
 	PORT: PORT,
-	STORE_DEV_TOOLS: JSON.stringify(STORE_DEV_TOOLS),
-	environment: (PROD) ? JSON.stringify(PROD_ENVIRONMENT) : JSON.stringify(DEV_ENVIRONMENT)
+	STORE_DEV_TOOLS: JSON.stringify(STORE_DEV_TOOLS)
 };
+
+if (PROD) {
+	CONSTANTS.ENV = JSON.stringify('production');
+	CONSTANTS.environment = JSON.stringify(PROD_ENVIRONMENT);
+} else if (DEV_SERVER) {
+	CONSTANTS.ENV = JSON.stringify('development');
+	CONSTANTS.environment = JSON.stringify(DEV_ENVIRONMENT);
+} else {
+	CONSTANTS.ENV = JSON.stringify('staging');
+	CONSTANTS.environment = JSON.stringify(STAGING_ENVIRONMENT);
+}
 
 const DLL_VENDORS = [
 	'@angular/common',
@@ -286,7 +296,7 @@ const clientConfig = function webpackConfig(): WebpackConfig {
 
 	config.externals = {
 		$: 'jQuery'
-	}
+	};
 
 	return config;
 }();

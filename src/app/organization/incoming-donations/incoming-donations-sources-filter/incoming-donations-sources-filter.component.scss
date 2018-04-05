@@ -1,0 +1,33 @@
+@import 'src/assets/scss/variables';
+
+.sources-list {
+	.nav-item.active {
+		background: $theme-primary;
+		color: $default-white;
+	}
+
+}
+
+.add-new-source {
+	display: flex;
+	align-items: center;
+
+	.add-new-source-form {
+		margin-bottom: -10px;
+
+		.form-control {
+			height: 30px;
+		}
+
+		.btn {
+			margin-right: 0;
+			font-size: 0.9em;
+			padding: 5px 10px;
+			height: 30px;
+		}
+	}
+}
+
+.nav-item {
+	cursor: pointer;
+}

@@ -1,3 +1,5 @@
+import Env = jasmine.Env;
+
 export declare const HOST: string;
 export declare const DEV_PORT: number;
 export declare const E2E_PORT: number;
@@ -31,8 +33,11 @@ interface Environment {
 	tokenAddress: string;
 	rpcProviderUrl: string;
 	websocketProviderUrl: string;
-	metaStorageUrl: string;
+	apiUrl: string;
+}
+interface DevEnvironment extends Environment{
 	organizations: string[];
 }
-export declare const DEV_ENVIRONMENT: Environment;
+export declare const DEV_ENVIRONMENT: DevEnvironment;
+export declare const STAGING_ENVIRONMENT: Environment;
 export declare const PROD_ENVIRONMENT: Environment;

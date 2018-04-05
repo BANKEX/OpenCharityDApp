@@ -13,13 +13,4 @@
 		justify-content: center;
 		z-index: 99;
 	}
-
-	&.pending {
-		background: lighten($default-dark, 40%);
-		color: black;
-		.unconfirmed-loader {
-
-		}
-	}
 }
-

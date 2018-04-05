@@ -3,6 +3,16 @@ import {Component, OnInit} from '@angular/core';
 import {PendingTransactionService} from '../core/pending-transactions.service';
 import {PendingTransaction, PendingTransactionState, PendingTransactionSourceType} from '../pending-transaction.types';
 
+type App = {
+	layout: {
+		sidePanelOpen: boolean,
+		isMenuOpened: boolean,
+		isMenuCollapsed: boolean,
+		themeConfigOpen: boolean,
+		rtlActived: boolean
+	}
+};
+
 @Component({
 	selector: 'app-dashboard',
 	templateUrl: './common-layout.component.html'
@@ -10,13 +20,13 @@ import {PendingTransaction, PendingTransactionState, PendingTransactionSourceTyp
 
 export class CommonLayoutComponent implements OnInit {
 
-	public app: any;
-	public headerThemes: any;
-	public changeHeader: any;
-	public sidenavThemes: any;
-	public changeSidenav: any;
-	public headerSelected: any;
-	public sidenavSelected: any;
+	public app: App;
+	public headerThemes: Array<string>;
+	public changeHeader: Function;
+	public sidenavThemes: Array<string>;
+	public changeSidenav: Function;
+	public headerSelected: string;
+	public sidenavSelected: string;
 
 	public pendingTransactions: PendingTransaction[] = [];
 
@@ -46,19 +56,19 @@ export class CommonLayoutComponent implements OnInit {
 		}
 	}
 
-	ngOnInit() {
+	public ngOnInit() {
 		this.pendingTransactionService.message.subscribe(message => this.pendingTransactions.push(message));
 	}
 
 	public isConfirmed(message: PendingTransaction): boolean {
-		return message.state == PendingTransactionState.CONFIRMED;
+		return message.state === PendingTransactionState.CONFIRMED;
 	}
 
 	public isPending(message: PendingTransaction): boolean {
-		return message.state == PendingTransactionState.PENDING;
+		return message.state === PendingTransactionState.PENDING;
 	}
 
 	public isFailed(message: PendingTransaction): boolean {
-		return message.state == PendingTransactionState.FAILED;
+		return message.state === PendingTransactionState.FAILED;
 	}
 }

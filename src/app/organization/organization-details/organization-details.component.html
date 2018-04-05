@@ -9,38 +9,6 @@
 	</div>
 
 	<opc-dashboard-charity-events-list></opc-dashboard-charity-events-list>
-	<opc-actual-incoming-donations></opc-actual-incoming-donations>
+	<opc-dashboard-incoming-donations-list [organizationAddress]="organizationContractAddress"></opc-dashboard-incoming-donations-list>
 
-	<!-- <div class="card">
-		<div class="tab-primary">
-			<ul class="nav nav-tabs" role="tablist">
-				<li class="nav-item">
-					<a class="nav-link" [ngClass]="{'active':changer === 'events'}" (click)="changer = 'events'">Charity
-						events</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" [ngClass]="{'active':changer === 'donations'}" (click)="changer = 'donations'">Incoming
-						Donations</a>
-				</li>
-			</ul>
-			<div class="tab-content">
-				<div class="tab-pane fade" [ngClass]="{'in active':changer === 'events'}">
-					<div class="pdd-horizon-15 pdd-vertical-20 m-height-card">
-						<opc-charity-events-list [organizationContractAddress]="organizationContractAddress"></opc-charity-events-list>
-					</div>
-				</div>
-				<div class="tab-pane fade" [ngClass]="{'in active':changer === 'donations'}">
-					<div class="pdd-horizon-15 pdd-vertical-20  m-height-card">
-						<opc-incoming-donations-list
-							[organizationContractAddress]="organizationContractAddress"></opc-incoming-donations-list>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div> -->
-
-	<!-- <opc-add-charity-event [ngClass]="{'hidden':changer != 'events'}"
-						   [organizationContractAddress]="organizationContractAddress"></opc-add-charity-event>
-	<opc-add-incoming-donation [ngClass]="{'hidden':changer != 'donations'}"
-							   [organizationContractAddress]="organizationContractAddress"></opc-add-incoming-donation> -->
 </div>

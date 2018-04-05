@@ -10,8 +10,15 @@ import 'rxjs/add/operator/distinctUntilChanged';
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {filter} from 'lodash';
 import {TagsBitmaskService} from '../../services/tags-bitmask.service';
-import {ContractCharityEvent, ContractIncomingDonation} from '../../../open-charity-types';
+import {ContractCharityEvent, ContractIncomingDonation, AppCharityEvent, ConfirmationStatusState} from '../../../open-charity-types';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
+import {LoadingOverlayService} from '../../../core/loading-overlay.service';
+import {TransactionReceipt, PromiEvent} from 'web3/types';
+import {OrganizationSharedService} from '../../services/organization-shared.service';
+import {PendingTransactionService} from '../../../core/pending-transactions.service';
+import {PendingTransactionSourceType} from '../../../pending-transaction.types';
+import {ToastyService} from 'ng2-toasty';
+import {ErrorMessageService} from '../../../core/error-message.service';
 
 
 @Component({
@@ -20,17 +27,19 @@ import {OrganizationContractService} from '../../../core/contracts-services/orga
 })
 
 export class IncomingDonationSendFundsModalComponent implements OnInit {
-	@Input('organizationContractAddress') organizationContractAddress: string;
-	@Input('charityEvents') charityEvents: ContractCharityEvent[];
-	@Input('incomingDonation') incomingDonation: ContractIncomingDonation;
-	@Output('fundsMoved') fundsMoved: EventEmitter<string> = new EventEmitter<string>();
-	@ViewChild('typeahead') typeahead: NgbTypeahead;
-	focus$ = new Subject<string>();
-	click$ = new Subject<string>();
+	@Input('charityEvent') public charityEvent: AppCharityEvent; // If spcified - move all funds to this CE
+	@Input('organizationAddress') public organizationAddress: string;
+	@Input('charityEvents') public charityEvents: ContractCharityEvent[];
+	@Input('incomingDonation') public incomingDonation: ContractIncomingDonation;
+	@Output('fundsMoved') public fundsMoved: EventEmitter<string> = new EventEmitter<string>();
+	@ViewChild('typeahead') public typeahead: NgbTypeahead;
+	public focus$ = new Subject<string>();
+	public click$ = new Subject<string>();
 
-	public formatter: any;
-	public search: any;
-	public statesWithFlags: any;
+	public disabled: boolean;
+	public formatter: Function;
+	public search: Function;
+	public statesWithFlags: ContractCharityEvent[];
 
 	public amount: string;
 	public moveFundsForm: FormGroup;
@@ -40,12 +49,17 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 		private incomingDonationContractService: IncomingDonationContractService,
 		private tagsBitmaskService: TagsBitmaskService,
 		private fb: FormBuilder,
-		private activeModal: NgbActiveModal
+		private activeModal: NgbActiveModal,
+		private loadingOverlayService: LoadingOverlayService,
+		private organizationSharedService: OrganizationSharedService,
+		private pendingTransactionService: PendingTransactionService,
+		private toastyService: ToastyService,
+		private errorMessageService: ErrorMessageService
 	) {
 	}
 
 	public ngOnInit(): void {
-		this.statesWithFlags = this.filterContractCharityEventsByTags(this.charityEvents);
+		this.statesWithFlags = this.filterCharityEventsByTags(this.charityEvents);
 		this.search = (text$: Observable<string>) =>
 			text$
 				.debounceTime(200).distinctUntilChanged()
@@ -59,7 +73,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 		this.initForm();
 	}
 
-	private filterContractCharityEventsByTags(charityEvents: ContractCharityEvent[]): ContractCharityEvent[] {
+	private filterCharityEventsByTags(charityEvents: ContractCharityEvent[]): ContractCharityEvent[] {
 		const donationTags = parseInt(this.incomingDonation.tags, 16);
 		return charityEvents.filter((event) => {
 			return this.tagsBitmaskService.containSimilarTags(parseInt(event.tags, 16), donationTags);
@@ -70,7 +84,14 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 		this.moveFundsForm = this.fb.group({
 			targetCharityEvent: ['', [Validators.required]],
 			amount: ['', [Validators.required, this.validateAmount.bind(this)]]
-		})
+		});
+		// set initial data to the form fields
+		if (this.charityEvent) {
+			this.moveFundsForm.setValue({
+				targetCharityEvent: this.charityEvent,
+				amount: this.incomingDonation.amount,
+			  });
+		}
 	}
 
 	private validateAmount(control: AbstractControl): ValidationErrors | null {
@@ -78,7 +99,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 			return { moreThanMax: true };
 		}
 
-		if( parseInt(control.value, 10) <= 0) {
+		if (parseInt(control.value, 10) <= 0) {
 			return { lessThanMin: true };
 		}
 
@@ -86,19 +107,77 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 	}
 
 
+	// tslint:disable-next-line:member-ordering
 	public async sendFunds(targetCharityEvent: ContractCharityEvent, amount: string): Promise<void> {
+		let charityEventInternalId: string = this.organizationSharedService.makePseudoRandomHash(targetCharityEvent);
+		let charityEventAddress: string = targetCharityEvent.address;
+		let receipt: TransactionReceipt;
+		let transaction: PromiEvent<TransactionReceipt>;
 		try {
-			const tran = await this.organizationContractService.moveFundsToCharityEvent(this.organizationContractAddress, this.incomingDonation.address, targetCharityEvent.address, amount);
-			console.log(tran);
+			this.disabled = true;
+
+			this.organizationSharedService.moveFundsToCharityEventAdded({
+				amount: amount,
+				charityEvent: targetCharityEvent.address,
+				confirmation: ConfirmationStatusState.PENDING
+			});
+
+			this.pendingTransactionService.addPending(
+				amount + ' - ' + targetCharityEvent.name,
+				'Move funds ' + targetCharityEvent.name + ' transaction pending',
+				PendingTransactionSourceType.ID
+			);
+
+			this.toastyService.warning('Move funds ' + targetCharityEvent.name + ' transaction pending');
+			this.loadingOverlayService.showOverlay(true);
+			transaction = this.organizationContractService.moveFundsToCharityEvent(
+				this.organizationAddress,
+				this.incomingDonation.address,
+				targetCharityEvent.address,
+				amount
+			);
+			transaction.on('transactionHash', (hash) => {
+				this.activeModal.close();
+				this.loadingOverlayService.hideOverlay();
+				this.organizationSharedService.incomingDonationSubmited(charityEventInternalId, undefined, hash);
+			});
+			receipt = await transaction;
+			if (receipt.events && receipt.events.FundsMovedToCharityEvent) {
+				charityEventAddress = receipt.events.FundsMovedToCharityEvent.returnValues['charityEvent'];
+				this.organizationSharedService.moveFundsToCharityEventConfirmed(charityEventInternalId, charityEventAddress);
+				this.pendingTransactionService.addConfirmed(
+					amount + ' - ' + targetCharityEvent.name,
+					'Move funds ' + targetCharityEvent.name + ' transaction confirmed',
+					PendingTransactionSourceType.ID
+				);
+				this.toastyService.success('Move funds ' + targetCharityEvent.name + ' transaction confirmed');
+			} else {
+				this.organizationSharedService.moveFundsToCharityEventFailed(charityEventInternalId, charityEventAddress);
+				this.pendingTransactionService.addFailed(
+					amount + ' - ' + targetCharityEvent.name,
+					'Move funds transaction failed',
+					PendingTransactionSourceType.ID
+				);
+				this.toastyService.error('Move funds ' + targetCharityEvent.name + ' transaction failed');
+			}
 			this.fundsMoved.emit(this.incomingDonation.address);
-			this.activeModal.close();
 		} catch (e) {
-			console.log(e);
+			this.activeModal.close();
+			// TODO: listen for failed transaction
+			if (e.message.search('MetaMask Tx Signature: User denied transaction signature') !== -1) {
+				this.organizationSharedService.moveFundsToCharityEventCanceled(charityEventInternalId, charityEventAddress);
+				this.loadingOverlayService.hideOverlay();
+				this.pendingTransactionService.addFailed(
+					amount + ' - ' + targetCharityEvent.name,
+					'Move funds transaction canceled',
+					PendingTransactionSourceType.ID
+				);
+				this.toastyService.error('Move funds ' + targetCharityEvent.name + ' transaction canceled');
+			} else {
+				// TODO:  global errors notifier
+				this.errorMessageService.addError(e.message, 'sendFunds');
+				this.loadingOverlayService.hideOverlay();
+			}
 		}
 	}
-
-
-
-
 }
-

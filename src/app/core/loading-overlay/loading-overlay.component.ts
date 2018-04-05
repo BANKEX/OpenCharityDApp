@@ -1,5 +1,6 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit, ChangeDetectorRef} from '@angular/core';
 import {LoadingOverlayService} from '../loading-overlay.service';
+import {loadingOverlayConfig} from '../../open-charity-types';
 
 @Component({
 	selector: 'opc-loading-overlay',
@@ -8,20 +9,24 @@ import {LoadingOverlayService} from '../loading-overlay.service';
 })
 export class LoadingOverlayComponent implements OnInit {
 	public showOverlay: boolean = true;
+	public transparent: boolean = false;
 
 	constructor(
-		private loadingOverlayService: LoadingOverlayService
+		private loadingOverlayService: LoadingOverlayService,
+		private cdr: ChangeDetectorRef,
 	) {
 
 	}
 
-	ngOnInit(): void {
+	public ngOnInit(): void {
 		this.loadingOverlayService.onOverlayStateChanged()
 			.debounceTime(200)
-			.subscribe((showOverlay: boolean) => {
-					this.showOverlay = showOverlay;
+			.subscribe((config: loadingOverlayConfig) => {
+					this.showOverlay = config.showOverlay;
+					this.transparent = config.transparent;
+					this.cdr.detectChanges();
 				},
-				(err: any) => {
+				(err: Error) => {
 					console.error(err.message);
 				});
 
