@@ -1,16 +1,19 @@
 import {Component, Input, NgZone, OnDestroy, OnInit} from '@angular/core';
-import {AppIncomingDonation, ConfirmationResponse, ConfirmationStatusState} from '../../open-charity-types';
+import {AppIncomingDonation, ConfirmationResponse, ConfirmationStatusState, FundsMovedToCharityEvent} from '../../open-charity-types';
 import {Subject} from 'rxjs/Subject';
 import {ActivatedRoute, Router} from '@angular/router';
 import {TokenContractService} from '../../core/contracts-services/token-contract.service';
 import {OrganizationContractService} from '../../core/contracts-services/organization-contract.service';
-import {assign, constant, filter, find, findIndex, merge, reverse, times} from 'lodash';
+import {assign, constant, filter, find, findIndex, merge, reverse, times, sum} from 'lodash';
 import {IncomingDonationContractService} from '../../core/contracts-services/incoming-donation-contract.service';
 import {OrganizationSharedService} from '../services/organization-shared.service';
 import {AddIncomingDonationModalComponent} from './add-incoming-donation-modal/add-incoming-donation-modal.component';
 import {IncomingDonationSendFundsModalComponent} from './incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ErrorMessageService} from '../../core/error-message.service';
+import * as moment from 'moment';
+import {EventLog} from 'web3/types';
+import {OrganizationContractEventsService} from '../../core/contracts-services/organization-contract-events.service';
 
 @Component({
 	selector: 'opc-incoming-donations-list-base',
@@ -31,7 +34,8 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 				protected zone: NgZone,
 				protected organizationSharedService: OrganizationSharedService,
 				protected modal: NgbModal,
-				protected errorMessageService: ErrorMessageService
+				protected errorMessageService: ErrorMessageService,
+				protected organizationContractEventsService: OrganizationContractEventsService
 	) {}
 
 	public ngOnInit() {
@@ -118,6 +122,7 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 					});
 					await this.updateIncomingDonationAmount(this.incomingDonations[res.index]);
 					await this.getIncomingDonationSourceName(this.incomingDonations[res.index]);
+					await this.getSumOfMovedFunds(this.incomingDonations[res.index]);
 					this.displayedIncomingDonations[res.index] = this.incomingDonations[res.index];
 				});
 
@@ -153,5 +158,21 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 		this.displayedIncomingDonations = filter(this.incomingDonations, (incd: AppIncomingDonation) => {
 			return incd.sourceId === sourceId.toString();
 		});
+	}
+
+	private async getSumOfMovedFunds(incomingDonation: AppIncomingDonation): Promise<void> {
+		const transactions: number[] = [];
+
+		await this.organizationContractEventsService.getCharityEventsByID(this.organizationAddress, incomingDonation.address)
+			.subscribe(async (res: EventLog[]) => {
+				res.forEach(async (log: EventLog) => {
+					const eventValues: FundsMovedToCharityEvent = <FundsMovedToCharityEvent>log.returnValues;
+					transactions.push(parseInt(eventValues.amount));
+				});
+
+				incomingDonation.movedFunds = sum(transactions);
+			}, (err: Error) => {
+				this.errorMessageService.addError(err.message, 'getCharityEventTransactions');
+			});
 	}
 }

@@ -4,6 +4,7 @@
 		<th>Date</th>
 		<th>Real world Id</th>
 		<th>Tag</th>
+		<th>Moved Funds</th>
 		<th>Amount</th>
 		<th>Source</th>
 		<th>Note</th>
@@ -20,6 +21,14 @@
 		<td>01.02.2018</td>
 		<td>{{incomingDonation?.realWorldsIdentifier}}</td>
 		<td><opc-bitmask-tags-list *ngIf="incomingDonation" [tags]="incomingDonation.tags"></opc-bitmask-tags-list></td>
+		<td>
+			<p class="mrg-btm-5">
+				<span class="text-dark text-semibold">{{incomingDonation?.movedFunds}}/{{incomingDonation?.amount}}</span>
+			</p>
+			<div class="progress progress-info progress-sm">
+				<div class="progress-bar" [ngStyle]="{'width.%': (incomingDonation?.amount-incomingDonation?.movedFunds)/incomingDonation?.amount*100}"></div>
+			</div>
+		</td>
 		<td>{{incomingDonation?.amount}}</td>
 		<td>{{incomingDonation?.sourceName}}</td>
 		<td>{{incomingDonation?.note}}</td>
