@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, Output, ViewChild, ElementRef, EventEmitter} from '@angular/core';
+import {Component, Input, OnInit, Output, ViewChild, ElementRef, EventEmitter, AfterViewInit, OnChanges, ChangeDetectorRef, Inject} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
 import {Tag, TagsBitmaskService} from '../../services/tags-bitmask.service';
@@ -35,12 +35,10 @@ export class CharityEventFormComponent implements OnInit {
 	@Input('charityEventData') public charityEventData: CharityEventData = null;
 	@Output() public charityEventChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-	@ViewChild('fileDropAttachments', {read: ElementRef}) public fileDropElement: ElementRef;
-
 	public charityEventForm: FormGroup;
 	public selectedTagsBitmask: number = 0;
 
-	public charityEventImage;
+	public charityEventImage: File;
 	public charityEventImagePreview: SafeUrl;
 	public charityEventTags: Array<Tag>;
 
@@ -63,7 +61,11 @@ export class CharityEventFormComponent implements OnInit {
 		private pendingTransactionService: PendingTransactionService,
 		private toastyService: ToastyService,
 		private activeModal: NgbActiveModal,
-		private errorMessageService: ErrorMessageService
+		private errorMessageService: ErrorMessageService,
+		@Inject(ElementRef)
+		private elRef: ElementRef,
+		@Inject(ChangeDetectorRef)
+		private changeDetectorRef: ChangeDetectorRef
 	) {}
 
 	public ngOnInit(): void {
@@ -290,26 +292,16 @@ export class CharityEventFormComponent implements OnInit {
 	}
 
 	public onImageAdded($event) {
-		this.charityEventImage = $event.files[0];
-
-		const fileEntry = this.charityEventImage.fileEntry;
-
 		this.loadingImage = true;
 
-		fileEntry.file((file: File) => {
-			const reader: FileReader = new FileReader();
-
-			reader.onload = () => {
-				this.charityEventImagePreview = this.sanitize.bypassSecurityTrustUrl(reader.result);
-				this.loadingImage = false;
-			};
-
-			reader.onerror = (err: ErrorEvent) => {
-				this.errorMessageService.addError(err.message, 'onImageAdded');
-			};
-
-			reader.readAsDataURL(file);
-		});
+		if ($event.files instanceof FileList) {
+			this.charityEventImage = $event.files[0];
+			this.getPreviewImageFromFile($event.files[0]);
+		} else
+			$event.files[0].fileEntry.file((file: File) => {
+				this.charityEventImage = file;
+				this.getPreviewImageFromFile(file);
+			});
 	}
 
 	public onFilesAdded($event) {
@@ -332,10 +324,28 @@ export class CharityEventFormComponent implements OnInit {
 	public removeCharityEventImage() {
 		this.charityEventImage = null;
 		this.charityEventImagePreview = null;
+
+		this.changeStylesDropFiles();
 	}
 
 	public bitmaskChanged(bitmask: number) {
 		this.selectedTagsBitmask = bitmask;
+	}
+
+	private getPreviewImageFromFile(file: File) {
+		const reader: FileReader = new FileReader();
+
+		reader.onload = () => {
+			this.charityEventImagePreview = this.sanitize.bypassSecurityTrustUrl(reader.result);
+			this.loadingImage = false;
+		};
+
+		reader.onerror = (err: ErrorEvent) => {
+			this.errorMessageService.addError(err.message, 'onImageAdded');
+		};
+
+		reader.readAsDataURL(file);
+
 	}
 
 	private isCharityEventChanged(newCharityEvent: ContractCharityEvent): boolean {
@@ -361,8 +371,7 @@ export class CharityEventFormComponent implements OnInit {
 			return true;
 
 		// If added new image not same
-		if (this.charityEventImage instanceof UploadFile &&
-			this.charityEventImage.relativePath !== metadataStorage.data.image.name)
+		if (this.charityEventImage.name !== metadataStorage.data.image.name)
 			return true;
 
 		// If added new files
@@ -541,11 +550,23 @@ export class CharityEventFormComponent implements OnInit {
 	}
 
 	private changeStylesDropFiles() {
-		const dropContent: HTMLDivElement = this.fileDropElement.nativeElement.children[0].children[0];
+		let dropContent, dropZone;
 
-		dropContent.style.display = 'block';
-		dropContent.style.padding = '15px';
-		dropContent.style.textAlign = 'center';
+		setTimeout(() => {
+			const fileDrop = this.elRef.nativeElement.querySelectorAll('.file-drop-attachments');
+
+			fileDrop.forEach( (item: HTMLElement) => {
+				dropZone = item.children[0];
+				dropContent = dropZone.children[0];
+
+				dropZone.style.height = '15vh';
+
+				dropContent.style.display = 'block';
+				dropContent.style.padding = '1vw';
+				dropContent.style.height = '15vh';
+				dropContent.style.textAlign = 'center';
+			});
+		});
 	}
 
 	private getData(hash: string): Promise<MetaStorageFile> {
