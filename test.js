@@ -1,2 +1,6 @@
 const constants = require('./test-constants');
-console.log(constants.STAGING_ENVIRONMENT.apiUrl);
+const apiUrl = constants.STAGING_ENVIRONMENT.apiUrl;
+const env = $CI_COMMIT_REF_NAME;
+
+console.log(env);
+
