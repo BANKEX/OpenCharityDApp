@@ -38,6 +38,7 @@ export interface ContractIncomingDonation {
 	note: string;
 	sourceId: string;
 	tags: string;
+	sourceName?: string;
 }
 
 export interface AppIncomingDonation extends ContractIncomingDonation {

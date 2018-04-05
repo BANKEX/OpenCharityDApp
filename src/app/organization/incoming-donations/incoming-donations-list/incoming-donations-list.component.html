@@ -5,6 +5,8 @@
 		<th>Real world Id</th>
 		<th>Tag</th>
 		<th>Amount</th>
+		<th>Source</th>
+		<th>Note</th>
 		<th>Event</th>
 		<th>Annual / Single</th>
 		<th></th>
@@ -19,6 +21,8 @@
 		<td>{{incomingDonation?.realWorldsIdentifier}}</td>
 		<td><opc-bitmask-tags-list *ngIf="incomingDonation" [tags]="incomingDonation.tags"></opc-bitmask-tags-list></td>
 		<td>{{incomingDonation?.amount}}</td>
+		<td>{{incomingDonation?.sourceName}}</td>
+		<td>{{incomingDonation?.note}}</td>
 		<td>Event 1</td>
 		<td>Annual</td>
 		<td>

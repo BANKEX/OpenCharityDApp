@@ -117,6 +117,7 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 						confirmation: ConfirmationStatusState.CONFIRMED
 					});
 					await this.updateIncomingDonationAmount(this.incomingDonations[res.index]);
+					await this.getIncomingDonationSourceName(this.incomingDonations[res.index]);
 					this.displayedIncomingDonations[res.index] = this.incomingDonations[res.index];
 				});
 
@@ -126,6 +127,13 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 
 	public async updateIncomingDonationAmount(incomingDonation: AppIncomingDonation): Promise<void> {
 		incomingDonation.amount = await this.tokenContractService.balanceOf(incomingDonation.address);
+	}
+
+	public async getIncomingDonationSourceName(incomingDonation: AppIncomingDonation): Promise<void> {
+		incomingDonation.sourceName = await this.organizationContractService.getIncomingDonationSourceName(
+			this.organizationAddress,
+			parseInt(incomingDonation.sourceId)
+		);
 	}
 
 	public goBackToOrganization(event: Event): void {
