@@ -6,6 +6,7 @@ import {ContractCharityEvent, MetaStorageData} from '../../../open-charity-types
 import {MetaDataStorageService} from '../../../core/meta-data-storage.service';
 import {Location} from '@angular/common';
 import {ErrorMessageService} from '../../../core/error-message.service';
+import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 
 type CharityEventData = {
 	contract: ContractCharityEvent,
@@ -33,7 +34,8 @@ export class CharityEventEditorModalComponent implements OnInit, OnDestroy {
 				private charityEventContractService: CharityEventContractService,
 				private location: Location,
 				private metaDataStorageService: MetaDataStorageService,
-				private errorMessageService: ErrorMessageService) {
+				private errorMessageService: ErrorMessageService,
+				public activeModal: NgbActiveModal) {
 	}
 
 	public goBackToPreviousPage(event: Event): void {
