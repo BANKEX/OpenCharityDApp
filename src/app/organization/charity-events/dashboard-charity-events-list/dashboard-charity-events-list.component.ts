@@ -11,6 +11,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ErrorMessageService} from '../../../core/error-message.service';
 import { OrganizationContractEventsService } from '../../../core/contracts-services/organization-contract-events.service';
 import { Web3ProviderService } from '../../../core/web3-provider.service';
+import {AsyncLocalStorage} from 'angular-async-local-storage';
 
 @Component({
 	selector: 'opc-dashboard-charity-events-list',
@@ -30,6 +31,7 @@ export class DashboardCharityEventsListComponent extends CharityEventsListBaseCo
 		protected organizationSharedService: OrganizationSharedService,
 		protected errorMessageService: ErrorMessageService,
 		protected web3ProviderService: Web3ProviderService,
+		protected localStorage: AsyncLocalStorage,
 		private router: Router
 	) {
 		super(
@@ -43,6 +45,7 @@ export class DashboardCharityEventsListComponent extends CharityEventsListBaseCo
 			organizationSharedService,
 			errorMessageService,
 			web3ProviderService,
+			localStorage
 		);
 	}
 

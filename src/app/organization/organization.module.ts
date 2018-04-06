@@ -40,6 +40,7 @@ import {ToastyConfig} from 'ng2-toasty';
 import {AddCharityEventModalComponent} from './charity-events/add-charity-event-modal/add-charity-event-modal.component';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {CharityEventEditorModalComponent} from './charity-events/charity-event-editor-modal/charity-event-editor-modal.component';
+import {AsyncLocalStorageModule} from 'angular-async-local-storage';
 
 @NgModule({
 	declarations: [
@@ -82,7 +83,8 @@ import {CharityEventEditorModalComponent} from './charity-events/charity-event-e
 		NgSelectizeModule,
 		FileDropModule,
 		TagInputModule,
-		QuillModule
+		QuillModule,
+		AsyncLocalStorageModule
 	],
 	providers: [
 		IsOrganizationAddressGuard,

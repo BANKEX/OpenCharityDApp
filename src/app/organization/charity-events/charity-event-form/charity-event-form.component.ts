@@ -19,6 +19,7 @@ import {PendingTransactionSourceType} from '../../../pending-transaction.types';
 import {ToastyService} from 'ng2-toasty';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {ErrorMessageService} from '../../../core/error-message.service';
+import {AsyncLocalStorage} from 'angular-async-local-storage';
 
 type CharityEventData = {
 	contract: ContractCharityEvent,
@@ -62,10 +63,8 @@ export class CharityEventFormComponent implements OnInit {
 		private toastyService: ToastyService,
 		private activeModal: NgbActiveModal,
 		private errorMessageService: ErrorMessageService,
-		@Inject(ElementRef)
 		private elRef: ElementRef,
-		@Inject(ChangeDetectorRef)
-		private changeDetectorRef: ChangeDetectorRef
+		private localStorage: AsyncLocalStorage
 	) {}
 
 	public ngOnInit(): void {
@@ -448,14 +447,29 @@ export class CharityEventFormComponent implements OnInit {
 		if (image) {
 			this.loadingImage = true;
 
-			const charityEventImage = await this.getImage(image.storageHash);
+			const localStorageImage: string = await this.localStorage.getItem(image.storageHash).toPromise();
 
-			this.charityEventImagePreview = await this.getPreviewImage(charityEventImage, image.type);
+			if (!localStorageImage) {
+				const charityEventImage: ArrayBuffer = await this.getImage(image.storageHash);
 
-			this.loadingImage = false;
+				await this.localStorage.setItem(
+					image.storageHash,
+					await this.metaDataStorageService.compressImage(charityEventImage, image.type)
+				).toPromise();
 
-			this.charityEventImage = this.metaDataStorageService.convertArrayBufferToFile(charityEventImage, image.type, image.name);
+				this.charityEventImagePreview = await this.getPreviewImage(charityEventImage, image.type);
+				this.loadingImage = false;
+
+				this.charityEventImage = this.metaDataStorageService.convertArrayBufferToFile(charityEventImage, image.type, image.name);
+
+			} else {
+				this.charityEventImagePreview = localStorageImage;
+				this.loadingImage = false;
+
+				this.charityEventImage = this.metaDataStorageService.convertArrayBufferToFile(await this.getImage(image.storageHash), image.type, image.name);
+			}
 		}
+
 	}
 
 	private async getCharityEventData(contractCharityEvent: ContractCharityEvent): Promise<CharityEventData> {
