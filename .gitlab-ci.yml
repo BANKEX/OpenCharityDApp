@@ -96,7 +96,10 @@ contracts-settings-update:
     - node post-deploy-script.js
   only:
     - master
-  cache: {}
+  cache:
+    key: "$CI_PROJECT_ID"
+    paths:
+      - node_modules/
     
 deploy_stage:
   stage: deploy-stage
@@ -134,7 +137,10 @@ contracts-settings-stage:
     - sed -i 's/const env = '"'"'master'"'"';/const env = '"'"'staging'"'"';/' ./post-deploy-script.js
   script:
     - node post-deploy-script.js                                    
-  cache: {}
+  cache:
+    key: "$CI_PROJECT_ID"
+    paths:
+      - node_modules/
 
 deploy_prod:
   stage: deploy-prod
@@ -176,4 +182,8 @@ contracts-settings-prod:
     - node post-deploy-script.js
   only:
     - production
-  cache: {}
+  cache:
+    key: "$CI_PROJECT_ID"
+    paths:
+      - node_modules/
+
