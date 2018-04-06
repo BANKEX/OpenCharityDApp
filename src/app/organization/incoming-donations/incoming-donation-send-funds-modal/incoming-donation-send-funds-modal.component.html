@@ -3,6 +3,9 @@
 		<div class="card no-mrg">
 			<div class="card-heading border bottom">
 				<h4 class="card-title">Move Funds</h4>
+				<button class="close" type="button" aria-label="Close" (click)="onCloseClick()">
+					<span aria-hidden="true">×</span>
+				</button>
 			</div>
 			<form [formGroup]="moveFundsForm" class="card-block no-pdd-top">
 				<div class="mrg-top-20">

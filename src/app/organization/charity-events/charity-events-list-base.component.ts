@@ -13,7 +13,9 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {AddCharityEventModalComponent} from './add-charity-event-modal/add-charity-event-modal.component';
 import {OrganizationSharedService} from '../services/organization-shared.service';
 import {ErrorMessageService} from '../../core/error-message.service';
-
+import { OrganizationContractEventsService } from '../../core/contracts-services/organization-contract-events.service';
+import { Web3ProviderService } from '../../core/web3-provider.service';
+			// tslint:disable:no-any
 @Component({
 	selector: 'opc-charity-events-list-base',
 	template: '',
@@ -27,13 +29,15 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 
 	constructor(
 		protected organizationContractService: OrganizationContractService,
+		protected organizationContractEventsService: OrganizationContractEventsService,
 		protected tokenContractService: TokenContractService,
 		protected charityEventContractService: CharityEventContractService,
 		protected zone: NgZone,
 		protected metaDataStorageService: MetaDataStorageService,
 		protected modal: NgbModal,
 		protected organizationSharedService: OrganizationSharedService,
-		protected errorMessageService: ErrorMessageService
+		protected errorMessageService: ErrorMessageService,
+		protected web3ProviderService: Web3ProviderService,
 	) {}
 
 	public ngOnInit(): void {
@@ -138,22 +142,25 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 		// when data is loaded, replace null by data
 		this.charityEvents = times(charityEventsCount, constant(null));
 
-
+		const addedEvents = await this.organizationContractEventsService.getOrganizationEvents('CharityEventAdded', this.organizationAddress);
+		const blockNumbers = {};
+		for (let i = 0; i < addedEvents.length; i += 1) {
+			blockNumbers[(<any>addedEvents[i].returnValues).charityEvent] = addedEvents[i].blockNumber;
+		}
 		await this.organizationContractService.getCharityEvents(this.organizationAddress)
 			.take(charityEventsCount)
-			.subscribe(async (res: { address: string, index: number }) => {
+			.subscribe(async (event: { address: string, index: number }) => {
 
 				// it is a hack. without zone.run it doesn't work properly:
 				// it doesn't update charityEvents in template
 				// if you change it to .detectChanges, it breaks further change detection of other comopnents
 				// if you know how to fix it, please do it
 				this.zone.run(async() => {
-					this.charityEvents[res.index] = merge({}, await this.charityEventContractService.getCharityEventDetails(res.address), {
+					this.charityEvents[event.index] = merge({}, await this.charityEventContractService.getCharityEventDetails(event.address, undefined, blockNumbers[event.address]), {
 						confirmation: ConfirmationStatusState.CONFIRMED
 					});
-
-					this.updateCharityEventRaised(this.charityEvents[res.index]);
-					this.updateCharityEventMetaStorageData(this.charityEvents[res.index]);
+					this.updateCharityEventRaised(this.charityEvents[event.index]);
+					this.updateCharityEventMetaStorageData(this.charityEvents[event.index]);
 				});
 			});
 	}

@@ -27,6 +27,7 @@ export type CharityEventTransaction = {
 export class CharityEventTransactionsHistoryComponent implements OnInit, OnDestroy {
 	public organizationAddress: string = null;
 	public charityEventAddress: string = null;
+	public charityEventDate: Date = null;
 	public name: string = '';
 	public transactions: CharityEventTransaction[] = [];
 	private componentDestroyed: Subject<void> = new Subject<void>();
@@ -48,6 +49,7 @@ export class CharityEventTransactionsHistoryComponent implements OnInit, OnDestr
 			this.organizationAddress = params['address'];
 			this.charityEventAddress = params['event'];
 		});
+		this.charityEventDate = new Date(+this.route.snapshot.queryParamMap.get('date'));
 		this.name = await this.charityEventContractService.getName(this.charityEventAddress);
 		this.transactions = [];
 

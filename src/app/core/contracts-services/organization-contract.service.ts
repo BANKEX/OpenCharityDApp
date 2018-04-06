@@ -39,10 +39,12 @@ export class OrganizationContractService {
 		};
 	}
 
-	/********************************/
-	/***  Get Organization Data *****/
+	public async isAdmin(address: string, walletAddress: string, txOptions?: Tx): Promise<boolean> {
+		const contract: Contract = this.cloneContract(this.organizationContract, address);
+		return contract.methods.admins(walletAddress).call(txOptions);
+	}
 
-	/********************************/
+	//#region Get Organization Data
 
 	public getName(address: string, txOptions?: Tx): Promise<string> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
@@ -62,9 +64,20 @@ export class OrganizationContractService {
 		};
 	}
 
-	public async isAdmin(address: string, walletAddress: string, txOptions?: Tx): Promise<boolean> {
+	//#endregion
+
+	//#region Incoming Donations methods
+
+	public addNewIncomingDonationsSource(address: string, sourceName: string, txOptions?: Tx): Promise<void> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
-		return contract.methods.admins(walletAddress).call(txOptions);
+		const tx = merge({}, this.defaultTx, txOptions);
+		return contract.methods.addIncomingDonationSource(sourceName).send(tx);
+	}
+
+	public addIncomingDonation(address: string, realWorldsIdentifier: string, amount: string, note: string, tags: string, sourceId: string, txOptions?: Tx) {
+		const contract: Contract = this.cloneContract(this.organizationContract, address);
+		const tx: Tx = merge({}, this.defaultTx, txOptions);
+		return contract.methods.setIncomingDonation(realWorldsIdentifier, amount, note, tags, sourceId).send(tx);
 	}
 
 	public getIncomingDonationsSourcesIds(address: string, txOptions?: Tx): Promise<string> {
@@ -75,27 +88,6 @@ export class OrganizationContractService {
 	public getIncomingDonationSourceName(address: string, sourceId: number, txOptions?: Tx): Promise<string> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		return contract.methods.incomingDonationsSourceName(sourceId).call(txOptions);
-	}
-
-	/********************************/
-	/***  Get Organization Data *****/
-
-	/********************************/
-	public addNewIncomingDonationsSource(address: string, sourceName: string, txOptions?: Tx): Promise<void> {
-		const contract: Contract = this.cloneContract(this.organizationContract, address);
-		const tx = merge({}, this.defaultTx, txOptions);
-		return contract.methods.addIncomingDonationSource(sourceName).send(tx);
-	}
-
-
-	/********************************/
-	/***  IncomingDonations methods */
-
-	/********************************/
-	public addIncomingDonation(address: string, realWorldsIdentifier: string, amount: string, note: string, tags: string, sourceId: string, txOptions?: Tx) {
-		const contract: Contract = this.cloneContract(this.organizationContract, address);
-		const tx: Tx = merge({}, this.defaultTx, txOptions);
-		return contract.methods.setIncomingDonation(realWorldsIdentifier, amount, note, tags, sourceId).send(tx);
 	}
 
 	public async getIncomingDonationsCount(address: string, txOptions?: Tx): Promise<string> {
@@ -128,11 +120,10 @@ export class OrganizationContractService {
 		const tx: Tx = merge({}, this.defaultTx, txOptions);
 		return contract.methods.moveDonationFundsToCharityEvent(incomingDonationAddress, charityEventAddress, amount).send(tx);
 	}
+	//#endregion
 
-	/********************************/
-	/***  Charity Events Methods ****/
+	//#region Charity Events methods
 
-	/********************************/
 	public addCharityEvent(address: string, charityEvent: ContractCharityEvent, txOptions?: Tx): PromiEvent<TransactionReceipt> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		const tx: Tx = merge({}, this.defaultTx, txOptions);
@@ -181,8 +172,10 @@ export class OrganizationContractService {
 
 		return result;
 	}
+	//#endregion
 
-	// Utils
+	//#region  Utils
+
 	private cloneContract(original: Contract, address: string): Contract {
 		if (this.lastContractAddress === address) {
 			return this.lastContract;
@@ -214,5 +207,5 @@ export class OrganizationContractService {
 
 		return result;
 	}
-
+	//#endregion
 }

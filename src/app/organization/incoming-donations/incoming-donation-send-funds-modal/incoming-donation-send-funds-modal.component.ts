@@ -58,6 +58,10 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 	) {
 	}
 
+	public onCloseClick() {
+		this.activeModal.close();
+	}
+
 	public ngOnInit(): void {
 		this.statesWithFlags = this.filterCharityEventsByTags(this.charityEvents);
 		this.search = (text$: Observable<string>) =>

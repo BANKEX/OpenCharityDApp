@@ -9,6 +9,8 @@ import {MetaDataStorageService} from '../../../core/meta-data-storage.service';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ErrorMessageService} from '../../../core/error-message.service';
+import { OrganizationContractEventsService } from '../../../core/contracts-services/organization-contract-events.service';
+import { Web3ProviderService } from '../../../core/web3-provider.service';
 
 @Component({
 	selector: 'opc-dashboard-charity-events-list',
@@ -16,25 +18,31 @@ import {ErrorMessageService} from '../../../core/error-message.service';
 	styleUrls: ['dashboard-charity-events-list.component.scss']
 })
 export class DashboardCharityEventsListComponent extends CharityEventsListBaseComponent implements OnInit, OnDestroy {
-	constructor(protected organizationContractService: OrganizationContractService,
-				protected charityEventContractService: CharityEventContractService,
-				protected tokenContractService: TokenContractService,
-				protected zone: NgZone,
-				protected route: ActivatedRoute,
-				protected metaDataStorageService: MetaDataStorageService,
-				protected modal: NgbModal,
-				protected organizationSharedService: OrganizationSharedService,
-				protected errorMessageService: ErrorMessageService,
-				private router: Router) {
+	constructor(
+		protected organizationContractService: OrganizationContractService,
+		protected organizationContractEventsService: OrganizationContractEventsService,
+		protected charityEventContractService: CharityEventContractService,
+		protected tokenContractService: TokenContractService,
+		protected zone: NgZone,
+		protected route: ActivatedRoute,
+		protected metaDataStorageService: MetaDataStorageService,
+		protected modal: NgbModal,
+		protected organizationSharedService: OrganizationSharedService,
+		protected errorMessageService: ErrorMessageService,
+		protected web3ProviderService: Web3ProviderService,
+		private router: Router
+	) {
 		super(
 			organizationContractService,
+			organizationContractEventsService,
 			tokenContractService,
 			charityEventContractService,
 			zone,
 			metaDataStorageService,
 			modal,
 			organizationSharedService,
-			errorMessageService
+			errorMessageService,
+			web3ProviderService,
 		);
 	}
 

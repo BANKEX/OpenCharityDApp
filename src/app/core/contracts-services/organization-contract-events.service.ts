@@ -52,6 +52,12 @@ export class OrganizationContractEventsService {
 		return this.incomingDonationAddedObservable[address];
 	}
 
+
+	public async getOrganizationEvents(eventName: string, organizationAddress: string, txOptions?: Tx): Promise<EventLog[]> {
+		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
+		return contract.getPastEvents(eventName, {fromBlock: 0, toBlock: 'latest'});
+	}
+
 	public getCharityEventTransactions(organizationAddress: string, charityEventAddress: string, txOptions?: Tx): Observable<EventLog[]> {
 		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
 		const sourceSubject: Subject<EventLog[]> = new Subject<EventLog[]>();
