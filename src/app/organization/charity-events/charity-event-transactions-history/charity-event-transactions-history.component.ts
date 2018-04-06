@@ -7,52 +7,49 @@ import {
 } from '../../../core/contracts-services/organization-contract-events.service';
 import {EventLog} from 'web3/types';
 import {Web3ProviderService} from '../../../core/web3-provider.service';
-import { Location } from '@angular/common';
+import {Location} from '@angular/common';
 import * as moment from 'moment';
+import {ErrorMessageService} from '../../../core/error-message.service';
+import {FundsMovedToCharityEvent} from '../../../open-charity-types';
 
-export interface CharityEventTransaction {
+export type CharityEventTransaction = {
 	date?: string;
 	amount: string;
 	transactionHash: string;
 	incomingDonation: string;
 	sender: string;
-}
-
-interface FundsMovedToCharityEvent {
-	incomingDonation: string;
-	charityEvent: string;
-	sender: string;
-	amount: string;
-}
+};
 
 @Component({
 	templateUrl: 'charity-event-transactions-history.component.html',
 	styleUrls: ['charity-event-transactions-history.component.scss']
 })
 export class CharityEventTransactionsHistoryComponent implements OnInit, OnDestroy {
-	private componentDestroyed: Subject<void> = new Subject<void>();
 	public organizationAddress: string = null;
 	public charityEventAddress: string = null;
+	public charityEventDate: Date = null;
 	public name: string = '';
 	public transactions: CharityEventTransaction[] = [];
+	private componentDestroyed: Subject<void> = new Subject<void>();
 
 	private transactionsLoading: boolean = false;
 	private transactionsEmpty: boolean = false;
 
-	constructor(
-		private router: Router,
-		private route: ActivatedRoute,
-		private charityEventContractService: CharityEventContractService,
-		private organizationContractEventsService: OrganizationContractEventsService,
-		private web3ProviderService: Web3ProviderService,
-		private location: Location
-	) { }
+	constructor(private router: Router,
+				private route: ActivatedRoute,
+				private charityEventContractService: CharityEventContractService,
+				private organizationContractEventsService: OrganizationContractEventsService,
+				private web3ProviderService: Web3ProviderService,
+				private location: Location,
+				private errorMessageService: ErrorMessageService) {
+	}
 
-	async ngOnInit(): Promise<void> {
+	public async ngOnInit(): Promise<void> {
 		this.route.params.subscribe(params => {
 			this.organizationAddress = params['address'];
 			this.charityEventAddress = params['event'];
 		});
+		this.charityEventDate = new Date(+this.route.snapshot.queryParamMap.get('date'));
 		this.name = await this.charityEventContractService.getName(this.charityEventAddress);
 		this.transactions = [];
 
@@ -73,8 +70,8 @@ export class CharityEventTransactionsHistoryComponent implements OnInit, OnDestr
 				});
 				this.setTransactionsLoading(false);
 				this.setTransactionsEmpty(!res.length);
-			}, (err: any) => {
-				console.error(err);
+			}, (err: Error) => {
+				this.errorMessageService.addError(err.message, 'getCharityEventTransactions');
 			});
 	}
 
@@ -99,7 +96,11 @@ export class CharityEventTransactionsHistoryComponent implements OnInit, OnDestr
 		return this.transactionsEmpty;
 	}
 
-	ngOnDestroy(): void {
+	public toDetails(incomingDonationAddress: string): void {
+		this.router.navigate([`/organization/${this.organizationAddress}/donation/${incomingDonationAddress}/details`]);
+	}
+
+	public ngOnDestroy(): void {
 		this.componentDestroyed.next();
 	}
 }

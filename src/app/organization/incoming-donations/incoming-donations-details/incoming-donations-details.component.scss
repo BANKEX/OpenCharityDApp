@@ -3,3 +3,9 @@
 .oc-breadcrumbs {
   margin-bottom: 12px;
 }
+
+.transaction-value {
+  text-align: right;
+  font-size: 18px;
+  color: $theme-danger
+}

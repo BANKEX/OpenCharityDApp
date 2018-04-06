@@ -30,6 +30,7 @@ export class MetamaskCheckService {
 	}
 
 	private getWindowWeb3(): Web3 {
+		/* tslint:disable-next-line */
 		return (<any>this.window).web3;
 	}
 

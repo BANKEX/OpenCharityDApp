@@ -1,12 +1,19 @@
+/* tslint:disable */
+
 export enum ConfirmationStatusState {
 	PENDING,
 	CONFIRMED,
 	FAILED,
 	ERROR
 }
-export type ConfirmationResponse = { internalId: string; address: string; }
+export interface ConfirmationResponse { internalId: string; address: string; }
+
+export interface ConfirmationResponseWithTxHash extends ConfirmationResponse {
+	txHash: string; // hash address of running transaction
+}
 
 export interface ContractCharityEvent {
+	date?: Date;
 	metaStorageHash?: string;
 	name: string;
 	address?: string;
@@ -16,13 +23,15 @@ export interface ContractCharityEvent {
 }
 
 
-export interface AppCharityEvent extends ContractCharityEvent{
+export interface AppCharityEvent extends ContractCharityEvent {
+
+	attachments?: any[];
+	confirmation: ConfirmationStatusState;
+	date?: Date;
+	description: string;
+	image: any;
 	internalId?: string;
 	raised?: string;
-	confirmation: ConfirmationStatusState;
-	attachments?: any[],
-	image: any;
-	description: string;
 }
 
 export interface ContractIncomingDonation {
@@ -32,6 +41,8 @@ export interface ContractIncomingDonation {
 	note: string;
 	sourceId: string;
 	tags: string;
+	sourceName?: string;
+	movedFunds?: string
 }
 
 export interface AppIncomingDonation extends ContractIncomingDonation {
@@ -49,7 +60,7 @@ export enum MetaStorageDataType {
 export interface MetaStorageData {
 	type: MetaStorageDataType;
 	searchDescription: string;
-	data: any;
+	data: CharityEventMetaStorageData;
 }
 
 export type MetaStorageFile = {
@@ -57,11 +68,37 @@ export type MetaStorageFile = {
 	size: number;
 	type: string;
 	storageHash: string;
-}
+};
 
 export interface CharityEventMetaStorageData {
+	title?: string,
 	description: string;
-	image: MetaStorageFile;
-	attachments: MetaStorageFile[]
+	image?: MetaStorageFile;
+	attachments?: MetaStorageFile[];
 }
 
+export type AlertMessage = {
+	title: string,
+	message: string
+};
+
+export interface FundsMovedToCharityEvent {
+	incomingDonation: string;
+	charityEvent: string;
+	sender: string;
+	amount: string;
+}
+
+export interface IncomingDonationTransaction {
+	date?: string;
+	amount: string;
+	transactionHash?: string;
+	charityEvent: string;
+	sender?: string;
+	confirmation: ConfirmationStatusState;
+}
+
+export type loadingOverlayConfig = {
+	showOverlay: boolean,
+	transparent: boolean
+};

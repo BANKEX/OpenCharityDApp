@@ -1,8 +1,8 @@
 @import 'src/assets/scss/variables';
 
 .charity-event-button {
-	min-height: 240px;
-	position: relative;
+  min-height: 240px;
+  position: relative;
 
   .to-events-button {
     height: 240px;
@@ -15,11 +15,17 @@
 }
 
 .row {
-	position: relative;
+  position: relative;
 }
 
 .all-button {
-	position: absolute;
-	right: 12px;
-	top: -54px;
+  position: absolute;
+  right: 12px;
+  top: -54px;
+}
+
+.all-add-button {
+  position: absolute;
+  right: 12px;
+  top: -54px;
 }

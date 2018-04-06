@@ -1,0 +1,26 @@
+<div class="card no-mrg">
+	<div class="card-heading border bottom">
+		<h4 class="card-title">Edit Charity Event</h4>
+		<button class="close" type="button" aria-label="Close" (click)="activeModal.close()">
+			<span aria-hidden="true">×</span>
+		</button>
+	</div>
+	<div class="card-block">
+		<div class="card-block">
+			<div class="text-center" *ngIf="!charityEventData">
+				<i class="fa fa-spinner fa-spin fa-5x"></i>
+			</div>
+
+			<div class="row">
+				<div class="col-md-12 ml-auto mr-auto">
+					<opc-charity-event-form
+							*ngIf="charityEventData"
+							[charityEventData]="charityEventData"
+							(charityEventChanged)="charityEventChanged($event)"
+							[organizationContractAddress]="organizationAddress"
+					></opc-charity-event-form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

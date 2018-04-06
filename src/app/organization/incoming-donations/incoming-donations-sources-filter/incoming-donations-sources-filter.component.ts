@@ -7,8 +7,8 @@ import {OrganizationContractService} from '../../../core/contracts-services/orga
 	styleUrls: ['incoming-donations-sources-filter.component.scss']
 })
 export class IncomingDonationsSourcesFilterComponent implements OnInit {
-	@Input('organizationAddress') organizationAddress: string;
-	@Output('sourceChanged') sourceChanged: EventEmitter<number> = new EventEmitter<number>();
+	@Input('organizationAddress') public organizationAddress: string;
+	@Output('sourceChanged') public sourceChanged: EventEmitter<number> = new EventEmitter<number>();
 
 	public selectedSource: number = -1;
 	public sourcesNamesList: string[] = [];
@@ -22,7 +22,7 @@ export class IncomingDonationsSourcesFilterComponent implements OnInit {
 
 	}
 
-	async ngOnInit() {
+	public async ngOnInit() {
 		await this.updateListOfSources();
 	}
 

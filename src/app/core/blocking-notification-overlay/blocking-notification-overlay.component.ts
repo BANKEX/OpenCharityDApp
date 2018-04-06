@@ -16,16 +16,15 @@ export class BlockingNotificationOverlayComponent implements OnInit, OnDestroy {
 	constructor(
 		private blockingNotificationOverlayService: BlockingNotificationOverlayService
 	) {
-
 	}
 
-	ngOnInit(): void {
+	public ngOnInit(): void {
 		this.blockingNotificationOverlayService.onSetMessage()
 			.takeUntil(this.componentDestroyed)
 			.subscribe((message: string) => {
 					this.message = message;
 				},
-				(err: any) => {
+				(err: Error) => {
 					console.error(err);
 				});
 
@@ -33,12 +32,12 @@ export class BlockingNotificationOverlayComponent implements OnInit, OnDestroy {
 			.subscribe((isVisible: boolean) => {
 					this.showOverlay = isVisible;
 				},
-				(err: any) => {
+				(err: Error) => {
 					console.error(err);
 				});
 	}
 
-	ngOnDestroy(): void {
+	public ngOnDestroy(): void {
 		this.componentDestroyed.next();
 	}
 

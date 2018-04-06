@@ -7,6 +7,9 @@ import {IncomingDonationContractService} from '../../../core/contracts-services/
 import {TokenContractService} from '../../../core/contracts-services/token-contract.service';
 import {IncomingDonationsListBaseComponent} from '../incoming-donations-list-base.component';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {ErrorMessageService} from '../../../core/error-message.service';
+import {OrganizationContractEventsService} from '../../../core/contracts-services/organization-contract-events.service';
 
 @Component({
 	templateUrl: 'incoming-donations-all.component.html',
@@ -21,11 +24,25 @@ export class IncomingDonationsAllComponent extends IncomingDonationsListBaseComp
 				protected router: Router,
 				protected route: ActivatedRoute,
 				protected zone: NgZone,
-				protected rganizationSharedService: OrganizationSharedService) {
-		super(router, route, tokenContractService, organizationContractService, incomingDonationContractService, zone, rganizationSharedService);
+				protected organizationSharedService: OrganizationSharedService,
+				protected modal: NgbModal,
+				protected errorMessageService: ErrorMessageService,
+				protected organizationContractEventsService: OrganizationContractEventsService) {
+		super(
+			router,
+			route,
+			tokenContractService,
+			organizationContractService,
+			incomingDonationContractService,
+			zone,
+			organizationSharedService,
+			modal,
+			errorMessageService,
+			organizationContractEventsService
+		);
 	}
 
-	async ngOnInit(): Promise<void> {
+	public async ngOnInit(): Promise<void> {
 		this.route.params.subscribe(params => {
 			this.organizationAddress = params['address'];
 		});

@@ -1,9 +1,9 @@
-import {Component, Input, OnInit, Output, ViewChild, ElementRef, EventEmitter} from '@angular/core';
+import {Component, Input, OnInit, Output, ViewChild, ElementRef, EventEmitter, AfterViewInit, OnChanges, ChangeDetectorRef, Inject} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
 import {Tag, TagsBitmaskService} from '../../services/tags-bitmask.service';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
-import {TransactionReceipt} from 'web3/types';
+import {TransactionReceipt, PromiEvent, Transaction} from 'web3/types';
 import {
 	ConfirmationStatusState, ContractCharityEvent, MetaStorageData, MetaStorageDataType,
 	MetaStorageFile
@@ -13,10 +13,13 @@ import {UploadFile} from 'ngx-file-drop';
 import {merge} from 'lodash';
 import {ActivatedRoute} from '@angular/router';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {LoadingTransparentOverlayService} from '../../../core/loading-transparent-overlay.service';
+import {LoadingOverlayService} from '../../../core/loading-overlay.service';
 import {PendingTransactionService} from '../../../core/pending-transactions.service';
 import {PendingTransactionSourceType} from '../../../pending-transaction.types';
 import {ToastyService} from 'ng2-toasty';
+import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
+import {ErrorMessageService} from '../../../core/error-message.service';
+import {AsyncLocalStorage} from 'angular-async-local-storage';
 
 type CharityEventData = {
 	contract: ContractCharityEvent,
@@ -29,16 +32,14 @@ type CharityEventData = {
 	styleUrls: ['charity-event-form.component.scss']
 })
 export class CharityEventFormComponent implements OnInit {
-	@Input('organizationContractAddress') organizationContractAddress: string;
-	@Input('charityEventData') charityEventData: CharityEventData = null;
-	@Output() charityEventChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
-
-	@ViewChild('fileDropAttachments', {read: ElementRef}) fileDropElement: ElementRef;
+	@Input('organizationContractAddress') public organizationContractAddress: string;
+	@Input('charityEventData') public charityEventData: CharityEventData = null;
+	@Output() public charityEventChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
 
 	public charityEventForm: FormGroup;
 	public selectedTagsBitmask: number = 0;
 
-	public charityEventImage: any;
+	public charityEventImage: File;
 	public charityEventImagePreview: SafeUrl;
 	public charityEventTags: Array<Tag>;
 
@@ -57,9 +58,13 @@ export class CharityEventFormComponent implements OnInit {
 		private metaDataStorageService: MetaDataStorageService,
 		private route: ActivatedRoute,
 		private sanitize: DomSanitizer,
-		private loadingTransparentOverlayService: LoadingTransparentOverlayService,
+		private loadingOverlayService: LoadingOverlayService,
 		private pendingTransactionService: PendingTransactionService,
-		private toastyService: ToastyService
+		private toastyService: ToastyService,
+		private activeModal: NgbActiveModal,
+		private errorMessageService: ErrorMessageService,
+		private elRef: ElementRef,
+		private localStorage: AsyncLocalStorage
 	) {}
 
 	public ngOnInit(): void {
@@ -70,6 +75,9 @@ export class CharityEventFormComponent implements OnInit {
 			this.organizationAddress = params['address'];
 			this.charityEventAddress = params['event'];
 		});
+
+		// TODO: Add test data
+		// this.addTestData();
 	}
 
 	public async submitForm(): Promise<void> {
@@ -84,11 +92,11 @@ export class CharityEventFormComponent implements OnInit {
 		}
 	}
 
-	public async addCharityEvent(): Promise<void> {
+	public async addCharityEvent(data?: ContractCharityEvent): Promise<void> {
 		const f = this.charityEventForm.value;
 
 		const tags = '0x' + this.tagsBitmaskService.convertToHexWithLeadingZeros(this.selectedTagsBitmask);
-		const newCharityEvent: ContractCharityEvent = {
+		const newCharityEvent: ContractCharityEvent = data ? data : {
 			name: f.name,
 			target: f.target,
 			payed: (f.payed) ? f.payed : 0,
@@ -99,6 +107,7 @@ export class CharityEventFormComponent implements OnInit {
 		let newCharityEventAddress: string = null;
 
 		try {
+			this.loadingOverlayService.showOverlay(true);
 			// save meta data into storage
 			const metaStorageHash: string = await this.storeToMetaStorage(newCharityEvent, f.details);
 			merge(newCharityEvent, {metaStorageHash: metaStorageHash});
@@ -117,8 +126,15 @@ export class CharityEventFormComponent implements OnInit {
 
 			this.toastyService.warning('Adding ' + newCharityEvent.name + ' transaction pending');
 
+			const transaction: PromiEvent<TransactionReceipt> =
+				this.organizationContractService.addCharityEvent(this.organizationContractAddress, newCharityEvent);
+			transaction.on('transactionHash', (hash) => {
+				this.activeModal.close();
+				this.loadingOverlayService.hideOverlay();
+				this.organizationSharedService.transactionSubmited(hash);
+			});
 			// submit transaction to blockchain
-			const receipt: TransactionReceipt = await this.organizationContractService.addCharityEvent(this.organizationContractAddress, newCharityEvent);
+			const receipt: TransactionReceipt = await transaction;
 
 			// check if transaction succseed
 			if (receipt.events && receipt.events.CharityEventAdded) {
@@ -146,12 +162,18 @@ export class CharityEventFormComponent implements OnInit {
 			// TODO: listen for failed transaction
 			if (e.message.search('MetaMask Tx Signature: User denied transaction signature') !== -1) {
 				this.organizationSharedService.charityEventCanceled(charityEventInternalId, newCharityEventAddress);
+				this.pendingTransactionService.addFailed(
+					newCharityEvent.name,
+					'Adding ' + newCharityEvent.name + ' transaction canceled',
+					PendingTransactionSourceType.CE
+				);
 				this.toastyService.error('Adding ' + newCharityEvent.name + ' transaction canceled');
 			} else {
 				// TODO:  global errors notifier
-				console.error(e.message);
-				this.toastyService.error(e.message);
+				this.errorMessageService.addError(e.message, 'addCharityEvent');
 			}
+			this.loadingOverlayService.hideOverlay();
+			this.activeModal.close();
 		}
 	}
 
@@ -168,9 +190,10 @@ export class CharityEventFormComponent implements OnInit {
 			address: this.charityEventData.contract.address
 		};
 
+		let charityEventAddress: string = this.charityEventData.contract.address;
 		let charityEventInternalId: string = this.organizationSharedService.makePseudoRandomHash(newCharityEvent);
 		let receipt: TransactionReceipt;
-		let charityEventAddress: string = null;
+		let transaction: PromiEvent<TransactionReceipt>;
 
 		const isCharityEventChanged = this.isCharityEventChanged(newCharityEvent);
 		const isMetaStorageChanged = this.isMetaStorageChanged(f.details);
@@ -179,14 +202,19 @@ export class CharityEventFormComponent implements OnInit {
 		if (!isSubmitEnable) return;
 
 		try {
-			this.loadingTransparentOverlayService.showOverlay();
+			this.loadingOverlayService.showOverlay(true);
+
+			// show pending charity event in ui
+			this.organizationSharedService.charityEventEdited(merge({}, newCharityEvent, {
+				internalId: charityEventInternalId,
+				confirmation: ConfirmationStatusState.PENDING
+			}));
 
 			if (isMetaStorageChanged) {
 				const newMetaStorageHash: string = await this.storeToMetaStorage(newCharityEvent, f.details);
 				merge(newCharityEvent, {metaStorageHash: newMetaStorageHash});
 
 				if (!isCharityEventChanged) {
-					this.loadingTransparentOverlayService.hideOverlay();
 
 					this.pendingTransactionService.addPending(
 						newCharityEvent.name,
@@ -196,17 +224,18 @@ export class CharityEventFormComponent implements OnInit {
 
 					this.toastyService.warning('Editing ' + newCharityEvent.name + ' transaction pending');
 
-					receipt = await this.organizationContractService.updateCharityEventMetaStorageHash(
-						this.organizationAddress,
-						this.charityEventAddress,
+
+					transaction = this.organizationContractService.updateCharityEventMetaStorageHash(
+						this.organizationContractAddress,
+						charityEventAddress,
 						newMetaStorageHash
 					);
+					this.handleSubmit(transaction);
+					receipt = await transaction;
 				}
 			}
 
 			if (isCharityEventChanged) {
-				this.loadingTransparentOverlayService.hideOverlay();
-
 
 				this.pendingTransactionService.addPending(
 					newCharityEvent.name,
@@ -216,10 +245,10 @@ export class CharityEventFormComponent implements OnInit {
 
 				this.toastyService.warning('Editing ' + newCharityEvent.name + ' transaction pending');
 
-				receipt = await this.organizationContractService.updateCharityEventDetails(
-					this.organizationAddress,
-					newCharityEvent
-				);
+				transaction =
+					this.organizationContractService.updateCharityEventDetails(this.organizationContractAddress, newCharityEvent);
+				this.handleSubmit(transaction);
+				receipt = await transaction;
 			}
 
 			if (receipt && receipt.events && receipt.events.CharityEventEdited || receipt.events.MetaStorageHashUpdated) {
@@ -255,11 +284,67 @@ export class CharityEventFormComponent implements OnInit {
 				this.toastyService.error('Editing ' + newCharityEvent.name + ' transaction canceled');
 			} else {
 				// TODO:  global errors notifier
-				console.error(e.message);
-				this.toastyService.error(e.message);
-				this.loadingTransparentOverlayService.hideOverlay();
+				this.errorMessageService.addError(e.message, 'editCharityEvent');
 			}
+			this.loadingOverlayService.hideOverlay();
 		}
+	}
+
+	public onImageAdded($event) {
+		this.loadingImage = true;
+
+		if ($event.files instanceof FileList) {
+			this.charityEventImage = $event.files[0];
+			this.getPreviewImageFromFile($event.files[0]);
+		} else
+			$event.files[0].fileEntry.file((file: File) => {
+				this.charityEventImage = file;
+				this.getPreviewImageFromFile(file);
+			});
+	}
+
+	public onFilesAdded($event) {
+		if ($event.files instanceof FileList)
+			Array.from($event.files).forEach((file: File) => {
+				this.attachedFiles.push(file);
+			});
+		else
+			$event.files.forEach((item: UploadFile) => {
+				item.fileEntry.file((file: File) => {
+					this.attachedFiles.push(file);
+				});
+			});
+	}
+
+	public removeFile(index: number) {
+		this.attachedFiles.splice(index, 1);
+	}
+
+	public removeCharityEventImage() {
+		this.charityEventImage = null;
+		this.charityEventImagePreview = null;
+
+		this.changeStylesDropFiles();
+	}
+
+	public bitmaskChanged(bitmask: number) {
+		this.selectedTagsBitmask = bitmask;
+	}
+
+	private getPreviewImageFromFile(file: File) {
+		const reader: FileReader = new FileReader();
+
+		reader.onload = () => {
+			this.charityEventImagePreview = this.sanitize.bypassSecurityTrustUrl(reader.result);
+			this.loadingImage = false;
+		};
+
+		reader.onerror = (err: ErrorEvent) => {
+			this.errorMessageService.addError(err.message, 'onImageAdded');
+		};
+
+		reader.readAsDataURL(file);
+
 	}
 
 	private isCharityEventChanged(newCharityEvent: ContractCharityEvent): boolean {
@@ -285,8 +370,7 @@ export class CharityEventFormComponent implements OnInit {
 			return true;
 
 		// If added new image not same
-		if (this.charityEventImage instanceof UploadFile &&
-			this.charityEventImage.relativePath !== metadataStorage.data.image.name)
+		if (this.charityEventImage.name !== metadataStorage.data.image.name)
 			return true;
 
 		// If added new files
@@ -315,51 +399,6 @@ export class CharityEventFormComponent implements OnInit {
 		return false;
 	}
 
-	public onImageAdded($event) {
-		this.charityEventImage = $event.files[0];
-
-		const fileEntry = this.charityEventImage.fileEntry;
-
-		this.loadingImage = true;
-
-		fileEntry.file((file: File) => {
-			const reader: FileReader = new FileReader();
-
-			reader.onload = () => {
-				this.charityEventImagePreview = this.sanitize.bypassSecurityTrustUrl(reader.result);
-				this.loadingImage = false;
-			};
-
-			reader.readAsDataURL(file);
-		});
-	}
-
-	public onFilesAdded($event) {
-		if ($event.files instanceof FileList)
-			Array.from($event.files).forEach((file: File) => {
-				this.attachedFiles.push(file);
-			});
-		else
-			$event.files.forEach((item: UploadFile) => {
-				item.fileEntry.file((file: File) => {
-					this.attachedFiles.push(file);
-				});
-			});
-	}
-
-	public removeFile(index: number) {
-		this.attachedFiles.splice(index, 1);
-	}
-
-	public removeCharityEventImage() {
-		this.charityEventImage = null;
-		this.charityEventImagePreview = null;
-	}
-
-	public bitmaskChanged(bitmask: number) {
-		this.selectedTagsBitmask = bitmask;
-	}
-
 	private async initForm() {
 		this.charityEventForm = this.fb.group({
 			name: [ '', Validators.required ],
@@ -380,8 +419,8 @@ export class CharityEventFormComponent implements OnInit {
 		let data: CharityEventData,
 			metadataStorage: MetaStorageData,
 			contract: ContractCharityEvent,
-			attachments: Array<any>,
-			tags: Array<any>,
+			attachments: Array<Object>,
+			tags: Array<Tag>,
 			image: MetaStorageFile;
 
 		data = this.charityEventData;
@@ -408,14 +447,29 @@ export class CharityEventFormComponent implements OnInit {
 		if (image) {
 			this.loadingImage = true;
 
-			const charityEventImage = await this.getImage(image.storageHash);
+			const localStorageImage: string = await this.localStorage.getItem(image.storageHash).toPromise();
 
-			this.charityEventImagePreview = await this.getPreviewImage(charityEventImage, image.type);
+			if (!localStorageImage) {
+				const charityEventImage: ArrayBuffer = await this.getImage(image.storageHash);
 
-			this.loadingImage = false;
+				await this.localStorage.setItem(
+					image.storageHash,
+					await this.metaDataStorageService.compressImage(charityEventImage, image.type)
+				).toPromise();
 
-			this.charityEventImage = this.metaDataStorageService.convertArrayBufferToFile(charityEventImage, image.type, image.name);
+				this.charityEventImagePreview = await this.getPreviewImage(charityEventImage, image.type);
+				this.loadingImage = false;
+
+				this.charityEventImage = this.metaDataStorageService.convertArrayBufferToFile(charityEventImage, image.type, image.name);
+
+			} else {
+				this.charityEventImagePreview = localStorageImage;
+				this.loadingImage = false;
+
+				this.charityEventImage = this.metaDataStorageService.convertArrayBufferToFile(await this.getImage(image.storageHash), image.type, image.name);
+			}
 		}
+
 	}
 
 	private async getCharityEventData(contractCharityEvent: ContractCharityEvent): Promise<CharityEventData> {
@@ -428,14 +482,15 @@ export class CharityEventFormComponent implements OnInit {
 							metadataStorage: metadataStorage
 						});
 					},
-					(err: any) => {
+					(err: Error) => {
 						reject(err);
+						this.errorMessageService.addError(err.message, 'getCharityEventData');
 					});
 		});
 	}
 
-	private async storeToMetaStorage(charityEvent: ContractCharityEvent, charityEventDetails: string): Promise<any> {
-		const dataToStore: any = {
+	private async storeToMetaStorage(charityEvent: ContractCharityEvent, charityEventDetails: string): Promise<string> {
+		const dataToStore: MetaStorageData = {
 			type: MetaStorageDataType.CHARITY_EVENT,
 			searchDescription: '',
 			data: {
@@ -444,20 +499,18 @@ export class CharityEventFormComponent implements OnInit {
 			}
 		};
 
-		debugger;
-
 		if (this.charityEventImage) {
 			dataToStore.data.image = await this.storeFileToMetaStorage(this.charityEventImage);
 		}
 
 		if (this.attachedFiles.length) {
 			dataToStore.data.attachments = [];
-			let attachments = this.charityEventData.metadataStorage.data.attachments;
+			let attachments = this.charityEventData && this.charityEventData.metadataStorage.data.attachments;
 
 			await Promise.all(this.attachedFiles.map(async (file) => {
 				let metaStorageFile;
 
-				metaStorageFile = attachments ? attachments.find((item) => {
+				metaStorageFile = !!attachments ? attachments.find((item) => {
 					return item.name === file.name;
 				}) : -1;
 
@@ -484,7 +537,7 @@ export class CharityEventFormComponent implements OnInit {
 							name: file.name,
 							type: file.type,
 							size: file.size,
-							storageHash: await this.metaDataStorageService.storeData((<any>e.target).result).first().toPromise()
+							storageHash: await this.metaDataStorageService.storeData((<FileReader>e.target).result).first().toPromise()
 						});
 					});
 
@@ -492,6 +545,7 @@ export class CharityEventFormComponent implements OnInit {
 
 				}, (err) => {
 					reject(err);
+					this.errorMessageService.addError(err, 'storeFileToMetaStorage');
 				});
 			} else {
 				reader.addEventListener('load', async (e) => {
@@ -499,7 +553,7 @@ export class CharityEventFormComponent implements OnInit {
 						name: uploadFile.name,
 						type: uploadFile.type,
 						size: uploadFile.size,
-						storageHash: await this.metaDataStorageService.storeData((<any>e.target).result).first().toPromise()
+						storageHash: await this.metaDataStorageService.storeData((<FileReader>e.target).result).first().toPromise()
 					});
 				});
 
@@ -510,20 +564,32 @@ export class CharityEventFormComponent implements OnInit {
 	}
 
 	private changeStylesDropFiles() {
-		const dropContent: HTMLDivElement = this.fileDropElement.nativeElement.children[0].children[0];
+		let dropContent, dropZone;
 
-		dropContent.style.display = 'block';
-		dropContent.style.padding = '15px';
-		dropContent.style.textAlign = 'center';
+		setTimeout(() => {
+			const fileDrop = this.elRef.nativeElement.querySelectorAll('.file-drop-attachments');
+
+			fileDrop.forEach( (item: HTMLElement) => {
+				dropZone = item.children[0];
+				dropContent = dropZone.children[0];
+
+				dropZone.style.height = '15vh';
+
+				dropContent.style.display = 'block';
+				dropContent.style.padding = '1vw';
+				dropContent.style.height = '15vh';
+				dropContent.style.textAlign = 'center';
+			});
+		});
 	}
 
 	private getData(hash: string): Promise<MetaStorageFile> {
 		return new Promise<MetaStorageFile>((resolve, reject) => {
 			this.metaDataStorageService.getData(hash)
-				.subscribe((res: any) => {
+				.subscribe((res: MetaStorageFile) => {
 						resolve(res);
 					},
-					(err: any) => {
+					(err) => {
 						reject(err);
 					});
 		});
@@ -532,11 +598,12 @@ export class CharityEventFormComponent implements OnInit {
 	private getImage(hash: string): Promise<ArrayBuffer> {
 		return new Promise<ArrayBuffer>((resolve, reject) => {
 			this.metaDataStorageService.getImage(hash)
-				.subscribe((res: any) => {
+				.subscribe((res: ArrayBuffer) => {
 						resolve(res);
 					},
-					(err: any) => {
+					(err) => {
 						reject(err);
+						this.errorMessageService.addError(err, 'getImage');
 					});
 		});
 	}
@@ -553,6 +620,7 @@ export class CharityEventFormComponent implements OnInit {
 
 			reader.onerror = (err) => {
 				reject(err);
+				this.errorMessageService.addError(err.message, 'getPreviewImage');
 			};
 
 			reader.readAsDataURL(blob);
@@ -565,5 +633,19 @@ export class CharityEventFormComponent implements OnInit {
 		this.selectedTagsBitmask = bitmask;
 
 		return this.tagsBitmaskService.parseBitmaskIntoTags(bitmask);
+	}
+
+	private handleSubmit(transaction: PromiEvent<TransactionReceipt>) {
+		transaction.on('transactionHash', (hash) => {
+			this.activeModal.close();
+			this.loadingOverlayService.hideOverlay();
+			this.organizationSharedService.transactionSubmited(hash);
+		});
+	}
+
+	private async addTestData() {
+		const data: ContractCharityEvent[] = this.organizationSharedService.getTestDataCharityEvents();
+
+		data.forEach(async (item: ContractCharityEvent) => await this.addCharityEvent(item));
 	}
 }

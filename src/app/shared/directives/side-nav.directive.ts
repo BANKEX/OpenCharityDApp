@@ -1,30 +1,30 @@
 import {Directive, ElementRef, HostListener, OnInit} from '@angular/core';
 import * as $ from 'jquery';
 
-//sidebar toggler
+// sidebar toggler
 @Directive({
 	selector: '[sidebarToggler]'
 })
-export class sidebarToggler {
+export class SidebarTogglerDirective {
 	constructor() {
 	}
 
 	@HostListener('click', ['$event'])
-	toggleOpen($event: any) {
+	public toggleOpen($event: Event) {
 		$event.preventDefault();
 		document.querySelector('.app').classList.toggle('is-collapsed');
 	}
 }
 
-//sidebar dropdown
+// sidebar dropdown
 @Directive({
 	selector: '[sideBar]'
 })
-export class sidebarDropdown implements OnInit {
+export class SidebarDropdownDirective implements OnInit {
 	constructor(private el: ElementRef) {
 	}
 
-	ngOnInit(): any {
+	public ngOnInit(): void {
 		$('.side-nav .side-nav-menu li a').click(function (event) {
 			if ($(this).parent().hasClass('open')) {
 
@@ -44,7 +44,7 @@ export class sidebarDropdown implements OnInit {
 	}
 }
 
-export const Sidebar_Directives = [
-	sidebarDropdown,
-	sidebarToggler
+export const SIDEBAR_DIRECTIVES = [
+	SidebarDropdownDirective,
+	SidebarTogglerDirective
 ];

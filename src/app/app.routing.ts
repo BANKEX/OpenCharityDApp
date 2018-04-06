@@ -2,6 +2,7 @@
 import {Routes} from '@angular/router';
 import {NotFound404Component} from './not-found404.component';
 import {CommonLayoutComponent} from './common/common-layout.component';
+import {LoginFormComponent} from './core/login-form/login-form.component';
 
 export const routes: Routes = [
 	{
@@ -12,6 +13,10 @@ export const routes: Routes = [
 	{
 		path: 'organization',
 		loadChildren: './organization/organization.module#OrganizationModule'
+	},
+	{
+		path: 'login',
+		component: LoginFormComponent
 	},
 	{
 		path: '**',

@@ -1,10 +1,16 @@
 <div class="row">
-	<button class="btn btn-primary all-button" type="button" (click)="toAllCharityEvents()">To all Charity Events</button>
+	<div class="all-button">
+		<button class="btn btn-primary" type="button" (click)="showAddCharityEventModal()"><i class="fa fa-plus"></i> Add Event</button>
+		<button class="btn btn-primary" type="button" (click)="toAllCharityEvents()">To all Charity Events</button>
+	</div>
 	<opc-charity-events-card class="col-lg-4"
-							 *ngFor="let charityEvent of charityEvents.slice(0, 6).reverse()"
+							 *ngFor="let charityEvent of charityEvents.slice().reverse().slice(0, 6)"
 							 [charityEvent]="charityEvent"
 							 [organizationAddress]="organizationAddress"
 	>
 
 	</opc-charity-events-card>
 </div>
+
+
+

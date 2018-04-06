@@ -1,19 +1,14 @@
-variables:
-  IMAGE: bankexlabs/$CI_PROJECT_NAME
-
 stages:
   - setup
   - build-node-stage
   - build-node-prod
   - release-nginx-stage
   - release-nginx-prod
-  - deploy-contracts
+  - contracts-settings-master
   - deploy-stage
+  - contracts-settings-stage
   - deploy-prod
-
-cache:
-  paths:
-    - node_modules/
+  - contracts-settings-prod
 
 setup:
   image: node:alpine
@@ -25,6 +20,10 @@ setup:
     - npm install
     - npm rebuild bcrypt --build-from-source
     - npm rebuild node-sass
+  cache:
+    key: "$CI_PROJECT_ID"
+    paths:
+      - node_modules/
 
 build-node-stage:
   image: node:alpine
@@ -37,62 +36,73 @@ build-node-stage:
     paths:
       - dist
       - build/contracts
-    expire_in: 24h
+    expire_in: 7d
+  cache:
+    key: "$CI_PROJECT_ID"
+    paths:
+      - node_modules/
+    policy: pull
 
 build-node-prod:
   image: node:alpine
   stage: build-node-prod
   script:
     - npm install -g truffle
-    - npm run build:aot:prod
+    - npm run build:aot:dev
     - truffle compile
   artifacts:
     paths:
       - dist
       - build/contracts
-    expire_in: 24h
+    expire_in: 7d
+  cache:
+    key: "$CI_PROJECT_ID"
+    paths:
+      - node_modules/
+    policy: pull
   only:
     - production
-
+    
 release-nginx-stage:
   image: docker:latest
   stage: release-nginx-stage
   before_script:
-    - docker login -u $DOCKER_USER -p $DOCKER_TOKEN
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
-    - docker build -f docker/Dockerfile -t ${IMAGE}:stage .
-    - docker push ${IMAGE}:stage
+    - docker build -f docker/Dockerfile -t $CI_REGISTRY_IMAGE:stage .
+    - docker push $CI_REGISTRY_IMAGE:stage
   dependencies: 
     - build-node-stage
+  cache: {}
 
 release-nginx-prod:
   image: docker:latest
   stage: release-nginx-prod
   before_script:
-    - docker login -u $DOCKER_USER -p $DOCKER_TOKEN
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
-    - docker build -f docker/Dockerfile -t ${IMAGE}:prod .
-    - docker push ${IMAGE}:prod
+    - docker build -f docker/Dockerfile -t $CI_REGISTRY_IMAGE:prod .
+    - docker push $CI_REGISTRY_IMAGE:prod
   dependencies: 
     - build-node-prod
   only:
     - production
+  cache: {}
 
-deploy-contracts:
-  image: ubuntu:latest
-  stage: deploy-contracts
-  before_script:
-    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
-    - eval $(ssh-agent -s)
-    - ssh-add <(echo "$SSH_PRIVATE_KEY_DEPLOY")
-    - mkdir -p ~/.ssh
-    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+contracts-settings-update:
+  image: node:alpine
+  stage: contracts-settings-master
   script:
-    - scp -r ./build/contracts root@charity-staging-do.bankex.team:/data
-    - scp -r ./build/contracts root@charity-prod-do.bankex.team:/data
+    - node post-deploy-script.js
   only:
     - master
-
+  cache:
+    key: "$CI_PROJECT_ID"
+    paths:
+      - node_modules/
+  dependencies:
+    - build-node-stage
+    
 deploy_stage:
   stage: deploy-stage
   image: tmaier/docker-compose
@@ -108,17 +118,34 @@ deploy_stage:
     - echo "$DO_DOCKER_CA_STAGE" > $DOCKER_CERT_PATH/ca.pem
     - echo "$DO_DOCKER_CERT_STAGE" > $DOCKER_CERT_PATH/cert.pem
     - echo "$DO_DOCKER_KEY_STAGE" > $DOCKER_CERT_PATH/key.pem
-    - docker login -u $DOCKER_USER -p $DOCKER_TOKEN
-    - echo "IMAGE=$IMAGE" > .env ; echo "VIRTUAL_HOST=$SERVERNAME" >> .env ; echo "LETSENCRYPT_HOST=$SERVERNAME" >> .env; echo "LETSENCRYPT_EMAIL=$EMAIL" >> .env
+    - echo "VIRTUAL_HOST=$SERVERNAME" >> .env ; echo "LETSENCRYPT_HOST=$SERVERNAME" >> .env; echo "LETSENCRYPT_EMAIL=$EMAIL" >> .env
   script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker-compose -f docker/docker-compose.yml down
-    - docker rmi $IMAGE || echo "image not exist"
-    - docker pull $IMAGE
+    - docker rmi $CI_REGISTRY_IMAGE:stage || echo "image not exist"
+    - docker pull $CI_REGISTRY_IMAGE:stage
     - docker-compose -f docker/docker-compose.yml up -d
   environment:
     name: staging
     url: https://opencharity.staging.bankex.team
   when: manual
+  allow_failure: false
+  cache: {}
+  dependencies: []
+
+contracts-settings-stage:
+  image: node:alpine
+  stage: contracts-settings-stage
+  before_script:
+    - sed -i 's/const env = '"'"'master'"'"';/const env = '"'"'staging'"'"';/' ./post-deploy-script.js
+  script:
+    - node post-deploy-script.js                                    
+  cache:
+    key: "$CI_PROJECT_ID"
+    paths:
+      - node_modules/
+  dependencies:
+    - build-node-stage
 
 deploy_prod:
   stage: deploy-prod
@@ -135,17 +162,36 @@ deploy_prod:
     - echo "$DO_DOCKER_CA_PROD" > $DOCKER_CERT_PATH/ca.pem
     - echo "$DO_DOCKER_CERT_PROD" > $DOCKER_CERT_PATH/cert.pem
     - echo "$DO_DOCKER_KEY_PROD" > $DOCKER_CERT_PATH/key.pem
-    - docker login -u $DOCKER_USER -p $DOCKER_TOKEN
-    - echo "IMAGE=$IMAGE" > .env ; echo "VIRTUAL_HOST=$SERVERNAME" >> .env ; echo "LETSENCRYPT_HOST=$SERVERNAME" >> .env; echo "LETSENCRYPT_EMAIL=$EMAIL" >> .env
+    - echo "VIRTUAL_HOST=$SERVERNAME" >> .env ; echo "LETSENCRYPT_HOST=$SERVERNAME" >> .env; echo "LETSENCRYPT_EMAIL=$EMAIL" >> .env
   script:
-    - docker-compose -f docker/docker-compose.yml down
-    - docker rmi $IMAGE || echo "image not exist"
-    - docker pull $IMAGE
-    - sleep 15
-    - docker-compose -f docker/docker-compose.yml up -d
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker-compose -f docker/docker-compose-prod.yml down
+    - docker rmi $CI_REGISTRY_IMAGE:prod || echo "image not exist"
+    - docker pull $CI_REGISTRY_IMAGE:prod
+    - docker-compose -f docker/docker-compose-prod.yml up -d
   environment:
     name: prod
     url: https://opencharity.bankex.team
   when: manual
   only:
     - production
+  allow_failure: false
+  cache: {}
+  dependencies: []
+
+contracts-settings-prod:
+  image: node:alpine
+  stage: contracts-settings-prod
+  before_script:
+    - sed -i 's/const env = '"'"'master'"'"';/const env = '"'"'production'"'"';/' ./post-deploy-script.js
+  script:
+    - node post-deploy-script.js
+  only:
+    - production
+  cache:
+    key: "$CI_PROJECT_ID"
+    paths:
+      - node_modules/
+  dependencies:
+    - build-node-prod
+

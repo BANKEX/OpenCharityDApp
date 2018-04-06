@@ -3,6 +3,8 @@ import {Web3ProviderService} from './core/web3-provider.service';
 import {LoadingOverlayService} from './core/loading-overlay.service';
 import {MetamaskCheckService} from './core/metamask-check.service';
 import {BlockingNotificationOverlayService} from './core/blocking-notification-overlay.service';
+import {Router} from '@angular/router';
+import {CommonSettingsService} from './core/common-settings.service';
 
 @Component({
 	selector: 'my-app',
@@ -20,11 +22,14 @@ export class AppComponent implements OnInit {
 		private web3ProviderService: Web3ProviderService,
 		private loadingOverlayService: LoadingOverlayService,
 		private metamaskCheckService: MetamaskCheckService,
-		private blockingNotificationOverlayService: BlockingNotificationOverlayService
+		private blockingNotificationOverlayService: BlockingNotificationOverlayService,
+		private router: Router,
+		private commonSettingsService: CommonSettingsService
 	) {
 	}
 
-	async ngOnInit(): Promise<void> {
+	public async ngOnInit(): Promise<void> {
+		await this.commonSettingsService.initSettings();
 		await this.checkMetamask();
 
 		this.loadingOverlayService.hideOverlay();
@@ -40,11 +45,12 @@ export class AppComponent implements OnInit {
 
 			if (metamaskLocked) {
 				message = 'Your MetaMask wallet is locked. Please, unlock it and try again;';
-			} else if(!correctNetwork) {
+			} else if (!correctNetwork) {
 				message = 'Wrong network. Please, connect to Open Charity network and try again';
 			}
 		} else {
 			message = 'You need MetaMask extension to interact with this app. Please, install it and try again';
+			await this.router.navigateByUrl('login');
 		}
 
 		if (message) {

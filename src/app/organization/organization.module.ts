@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {RouterModule} from '@angular/router';
-import {OrganizationRoutes} from './organization-routing.module';
+import {organizationRoutes} from './organization-routing.module';
 import {OrganizationDetailsComponent} from './organization-details/organization-details.component';
 import {AddCharityEventComponent} from './charity-events/add-charity-event/add-charity-event.component';
 // tslint:disable-next-line:max-line-length
@@ -26,7 +26,7 @@ import {IncomingDonationsEditorComponent} from './incoming-donations/incoming-do
 import {IncomingDonationsAllComponent} from './incoming-donations/incoming-donations-all/incoming-donations-all.component';
 import {FileDropModule} from 'ngx-file-drop';
 import {CharityEventsListBaseComponent} from './charity-events/charity-events-list-base.component';
-import {DashboardCharityEventsList} from './charity-events/dashboard-charity-events-list/dashboard-charity-events-list.component';
+import {DashboardCharityEventsListComponent} from './charity-events/dashboard-charity-events-list/dashboard-charity-events-list.component';
 import {IncomingDonationFormComponent} from './incoming-donations/incoming-donation-form/incoming-donation-form.component';
 import {IncomingDonationsSourcesFilterComponent} from './incoming-donations/incoming-donations-sources-filter/incoming-donations-sources-filter.component';
 import {TagInputModule} from 'ngx-chips';
@@ -35,9 +35,12 @@ import {AddIncomingDonationModalComponent} from './incoming-donations/add-incomi
 import {SharedModule} from '../shared/shared.module';
 import {CharityEventFormComponent} from './charity-events/charity-event-form/charity-event-form.component';
 
-import 'froala-editor/js/froala_editor.pkgd.min.js';
-import { FroalaEditorModule, FroalaViewModule } from 'angular-froala-wysiwyg';
+import {QuillModule} from 'ngx-quill/src/quill.module';
 import {ToastyConfig} from 'ng2-toasty';
+import {AddCharityEventModalComponent} from './charity-events/add-charity-event-modal/add-charity-event-modal.component';
+import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
+import {CharityEventEditorModalComponent} from './charity-events/charity-event-editor-modal/charity-event-editor-modal.component';
+import {AsyncLocalStorageModule} from 'angular-async-local-storage';
 
 @NgModule({
 	declarations: [
@@ -50,7 +53,7 @@ import {ToastyConfig} from 'ng2-toasty';
 		BitmaskTagsListComponent,
 		IncomingDonationSendFundsModalComponent,
 		CharityEventCardComponent,
-		DashboardCharityEventsList,
+		DashboardCharityEventsListComponent,
 		DashboardIncomingDonationsListComponent,
 		CharityEventTransactionsHistoryComponent,
 		CharityEventEditorComponent,
@@ -64,20 +67,24 @@ import {ToastyConfig} from 'ng2-toasty';
 		IncomingDonationsListBaseComponent,
 		AddIncomingDonationModalComponent,
 		IncomingDonationsListBaseComponent,
-		CharityEventFormComponent
+		CharityEventFormComponent,
+		AddCharityEventModalComponent,
+		CharityEventEditorModalComponent
 	],
 	entryComponents: [
 		IncomingDonationSendFundsModalComponent,
-		AddIncomingDonationModalComponent
+		AddIncomingDonationModalComponent,
+		AddCharityEventModalComponent,
+		CharityEventEditorModalComponent
 	],
 	imports: [
 		SharedModule,
-		RouterModule.forChild(OrganizationRoutes),
+		RouterModule.forChild(organizationRoutes),
 		NgSelectizeModule,
 		FileDropModule,
 		TagInputModule,
-		FroalaEditorModule.forRoot(),
-		FroalaViewModule.forRoot()
+		QuillModule,
+		AsyncLocalStorageModule
 	],
 	providers: [
 		IsOrganizationAddressGuard,
@@ -85,6 +92,7 @@ import {ToastyConfig} from 'ng2-toasty';
 		IsOrganizationAddressGuard,
 		IsAdminGuard,
 		OrganizationSharedService,
+		NgbActiveModal
 	]
 })
 

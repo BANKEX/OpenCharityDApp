@@ -1,16 +1,16 @@
 import {Directive, ElementRef, OnInit} from '@angular/core';
 
-declare var $: any; // JQuery
+declare var $; // JQuery
 
-//Card Portlet Refresh
+// Card Portlet Refresh
 @Directive({
-	selector: '[card-portlet-refresh]'
+	selector: '[cardPortletRefresh]'
 })
-export class cardPortletRefresh implements OnInit {
+export class CardPortletRefreshDirective implements OnInit {
 	constructor(private el: ElementRef) {
 	}
 
-	ngOnInit(): any {
+	public ngOnInit(): void {
 		$(this.el.nativeElement).on('click', function (e) {
 			$(this).parents('.card').addClass('card-refresh');
 			setTimeout(() => {
@@ -22,15 +22,15 @@ export class cardPortletRefresh implements OnInit {
 	}
 }
 
-//Card Portlet Refresh
+// Card Portlet Refresh
 @Directive({
-	selector: '[card-portlet-delete]'
+	selector: '[cardPortletDelete]'
 })
-export class cardPortletDelete implements OnInit {
+export class CardPortletDeleteDirective implements OnInit {
 	constructor(private el: ElementRef) {
 	}
 
-	ngOnInit(): any {
+	public ngOnInit(): void {
 		$(this.el.nativeElement).on('click', function (e) {
 			$(this).parents('.card').addClass('animated zoomOut');
 			$(this).parents('.card').bind('animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd', () => {
@@ -42,7 +42,7 @@ export class cardPortletDelete implements OnInit {
 	}
 }
 
-export const Cards_Directives = [
-	cardPortletRefresh,
-	cardPortletDelete
+export const CARDS_DIRECTIVES = [
+	CardPortletRefreshDirective,
+	CardPortletDeleteDirective
 ];

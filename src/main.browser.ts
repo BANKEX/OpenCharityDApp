@@ -11,6 +11,7 @@ if ('production' === ENV) {
 	enableProdMode();
 }
 
+/* tslint:disable-next-line */
 export function main(): Promise<any> {
 	if (module.hot) {
 		module.hot.accept();

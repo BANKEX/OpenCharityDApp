@@ -1,18 +1,18 @@
 import {Injectable} from '@angular/core';
-import {Contract, TransactionReceipt, Tx} from 'web3/types';
+import {Contract, TransactionReceipt, Tx, PromiEvent} from 'web3/types';
 import {Web3ProviderService} from '../web3-provider.service';
-import {merge, forEach} from 'lodash';
+import {forEach, merge} from 'lodash';
 import Web3 from 'web3';
-import {OrganizationContractAbi} from '../../contracts-abi';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
-import {ContractCharityEvent, ContractIncomingDonation} from '../../open-charity-types';
+import {ContractCharityEvent} from '../../open-charity-types';
+import {CommonSettingsService} from '../common-settings.service';
 
-export interface Organization {
+export type Organization = {
 	name: string;
 	address: string;
 	charityEventsCount: number;
-}
+};
 
 @Injectable()
 export class OrganizationContractService {
@@ -25,24 +25,28 @@ export class OrganizationContractService {
 	private lastContractAddress: string;
 	private lastContract: Contract;
 
-	constructor(private web3ProviderService: Web3ProviderService,) {
+	constructor(private web3ProviderService: Web3ProviderService,
+				private commonSettingsService: CommonSettingsService) {
 		this.organizationContract = this.buildOrganizationContract();
 		this.web3 = this.web3ProviderService.web3;
 		this.init();
 	}
 
-	async init(): Promise<void> {
+	public async init(): Promise<void> {
 		const accounts: string[] = await this.web3.eth.getAccounts();
 		this.defaultTx = {
 			from: accounts[0]
 		};
 	}
 
+	public async isAdmin(address: string, walletAddress: string, txOptions?: Tx): Promise<boolean> {
+		const contract: Contract = this.cloneContract(this.organizationContract, address);
+		return contract.methods.admins(walletAddress).call(txOptions);
+	}
 
-	/********************************/
-	/***  Get Organization Data *****/
-	/********************************/
-	public getName(address: string, txOptions?: Tx): Promise<any> {
+	//#region Get Organization Data
+
+	public getName(address: string, txOptions?: Tx): Promise<string> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		return contract.methods.name().call(txOptions);
 	}
@@ -55,14 +59,25 @@ export class OrganizationContractService {
 	public async getOrganization(address: string, txOptions?: Tx): Promise<Organization> {
 		return {
 			name: await this.getName(address, txOptions),
-			address: address,
+			address: this.web3.utils.toChecksumAddress(address),
 			charityEventsCount: parseInt(await this.getCharityEventsCount(address, txOptions), 10)
-		}
+		};
 	}
 
-	public async isAdmin(address: string, walletAddress: string, txOptions?: Tx): Promise<boolean> {
+	//#endregion
+
+	//#region Incoming Donations methods
+
+	public addNewIncomingDonationsSource(address: string, sourceName: string, txOptions?: Tx): Promise<void> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
-		return contract.methods.admins(walletAddress).call(txOptions);
+		const tx = merge({}, this.defaultTx, txOptions);
+		return contract.methods.addIncomingDonationSource(sourceName).send(tx);
+	}
+
+	public addIncomingDonation(address: string, realWorldsIdentifier: string, amount: string, note: string, tags: string, sourceId: string, txOptions?: Tx) {
+		const contract: Contract = this.cloneContract(this.organizationContract, address);
+		const tx: Tx = merge({}, this.defaultTx, txOptions);
+		return contract.methods.setIncomingDonation(realWorldsIdentifier, amount, note, tags, sourceId).send(tx);
 	}
 
 	public getIncomingDonationsSourcesIds(address: string, txOptions?: Tx): Promise<string> {
@@ -73,27 +88,6 @@ export class OrganizationContractService {
 	public getIncomingDonationSourceName(address: string, sourceId: number, txOptions?: Tx): Promise<string> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		return contract.methods.incomingDonationsSourceName(sourceId).call(txOptions);
-	}
-
-	/********************************/
-	/***  Get Organization Data *****/
-	/********************************/
-	public addNewIncomingDonationsSource(address: string, sourceName: string, txOptions?: Tx): Promise<void> {
-		const contract: Contract = this.cloneContract(this.organizationContract, address);
-		const tx = merge({}, this.defaultTx, txOptions);
-		return contract.methods.addIncomingDonationSource(sourceName).send(tx);
-	}
-
-
-
-
-	/********************************/
-	/***  IncomingDonations methods */
-	/********************************/
-	public addIncomingDonation(address: string, realWorldsIdentifier: string, amount: string, note: string, tags: string, sourceId: string, txOptions?: Tx) {
-		const contract: Contract = this.cloneContract(this.organizationContract, address);
-		const tx: Tx = merge({}, this.defaultTx, txOptions);
-		return contract.methods.setIncomingDonation(realWorldsIdentifier, amount, note, tags, sourceId).send(tx);
 	}
 
 	public async getIncomingDonationsCount(address: string, txOptions?: Tx): Promise<string> {
@@ -113,38 +107,24 @@ export class OrganizationContractService {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		contract.methods.incomingDonationCount().call(txOptions)
 			.then(async (count: number) => {
-				for (let i = count - 1; i >=0; i--) {
-					const address: string = await contract.methods.incomingDonationIndex(i).call(txOptions);
-					source.next({address: address, index: i});
+				for (let i = count - 1; i >= 0; i--) {
+					source.next({address: await contract.methods.incomingDonationIndex(i).call(txOptions), index: i});
 				}
 			});
 
 		return source.asObservable();
 	}
 
-	private async buildIncomingDonationsList(contract: Contract, incomingDonationCount: number): Promise<string[]> {
-		const result: string[] = [];
-
-		for (let i = 0; i < incomingDonationCount; i++) {
-			const address: string = await contract.methods.incomingDonationIndex(i).call();
-			result.push(address);
-		}
-
-		return result;
-	}
-
-	public moveFundsToCharityEvent(organizationAddress: string, incomingDonationAddress: string, charityEventAddress: string, amount: string, txOptions?: Tx): Promise<any> {
+	public moveFundsToCharityEvent(organizationAddress: string, incomingDonationAddress: string, charityEventAddress: string, amount: string, txOptions?: Tx): PromiEvent<TransactionReceipt>  {
 		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
 		const tx: Tx = merge({}, this.defaultTx, txOptions);
 		return contract.methods.moveDonationFundsToCharityEvent(incomingDonationAddress, charityEventAddress, amount).send(tx);
 	}
+	//#endregion
 
+	//#region Charity Events methods
 
-
-	/********************************/
-	/***  Charity Events Methods ****/
-	/********************************/
-	public addCharityEvent(address: string, charityEvent: ContractCharityEvent, txOptions?: Tx): Promise<TransactionReceipt> {
+	public addCharityEvent(address: string, charityEvent: ContractCharityEvent, txOptions?: Tx): PromiEvent<TransactionReceipt> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		const tx: Tx = merge({}, this.defaultTx, txOptions);
 		return contract.methods.addCharityEvent(charityEvent.name, charityEvent.target, charityEvent.payed, charityEvent.tags, charityEvent.metaStorageHash).send(tx);
@@ -157,8 +137,7 @@ export class OrganizationContractService {
 		contract.methods.charityEventCount().call(txOptions)
 			.then(async (count: number) => {
 				for (let i = count - 1; i >= 0; i--) {
-					const address: string = await contract.methods.charityEventIndex(i).call(txOptions);
-					source.next({address: address, index: i});
+					source.next({address: await contract.methods.charityEventIndex(i).call(txOptions), index: i});
 				}
 			});
 
@@ -171,6 +150,18 @@ export class OrganizationContractService {
 		return this.buildCharityEventsList(contract, parseInt(charityEventCount));
 	}
 
+	public updateCharityEventMetaStorageHash(organizationAddress: string, charityEventAddress: string, newMetaStorageHash: string, txOptions?: Tx): PromiEvent<TransactionReceipt> {
+		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
+		const tx: Tx = merge({}, this.defaultTx, txOptions);
+		return contract.methods.updateCharityEventMetaStorageHash(charityEventAddress, newMetaStorageHash).send(tx);
+	}
+
+	public updateCharityEventDetails(organizationAddress: string, charityEvent: ContractCharityEvent, txOptions?: Tx): PromiEvent<TransactionReceipt> {
+		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
+		const tx: Tx = merge({}, this.defaultTx, txOptions);
+		return contract.methods.updateCharityEventDetails(charityEvent.address, charityEvent.name, charityEvent.target, charityEvent.tags, charityEvent.metaStorageHash).send(tx);
+	}
+
 	private async buildCharityEventsList(contract: Contract, charityEventCount: number): Promise<string[]> {
 		const result: string[] = [];
 
@@ -181,28 +172,18 @@ export class OrganizationContractService {
 
 		return result;
 	}
+	//#endregion
 
-	public updateCharityEventMetaStorageHash(organizationAddress: string, charityEventAddress: string, newMetaStorageHash: string, txOptions?: Tx): Promise<TransactionReceipt> {
-		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
-		const tx: Tx = merge({}, this.defaultTx, txOptions);
-		return contract.methods.updateCharityEventMetaStorageHash(charityEventAddress, newMetaStorageHash).send(tx);
-	}
+	//#region  Utils
 
-	public async updateCharityEventDetails(organizationAddress: string, charityEvent: ContractCharityEvent, txOptions?: Tx): Promise<TransactionReceipt> {
-		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
-		const tx: Tx = merge({}, this.defaultTx, txOptions);
-		return contract.methods.updateCharityEventDetails(charityEvent.address, charityEvent.name, charityEvent.target, charityEvent.tags, charityEvent.metaStorageHash).send(tx);
-	}
-
-
-
-
-	// Utils
 	private cloneContract(original: Contract, address: string): Contract {
-		if (this.lastContractAddress === address) { return this.lastContract; }
-
+		if (this.lastContractAddress === address) {
+			return this.lastContract;
+		}
+		/* tslint:disable */
 		const contract: any = (<any>original).clone();
 		const originalProvider = (<any>original).currentProvider;
+		/* tslint:enable */
 		contract.setProvider(contract.givenProvider || originalProvider);
 		contract.options.address = address;
 
@@ -213,7 +194,18 @@ export class OrganizationContractService {
 	}
 
 	private buildOrganizationContract(): Contract {
-		return new this.web3ProviderService.web3.eth.Contract(OrganizationContractAbi);
+		return new this.web3ProviderService.web3.eth.Contract(this.commonSettingsService.abis.Organization);
 	}
 
+	private async buildIncomingDonationsList(contract: Contract, incomingDonationCount: number): Promise<string[]> {
+		const result: string[] = [];
+
+		for (let i = 0; i < incomingDonationCount; i++) {
+			const address: string = await contract.methods.incomingDonationIndex(i).call();
+			result.push(address);
+		}
+
+		return result;
+	}
+	//#endregion
 }

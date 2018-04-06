@@ -1,15 +1,20 @@
 <div class="card no-mrg">
 	<!-- <div>Address: {{organizationAddress}}</div> -->
 	<div class="card-heading border bottom">
-		<h4 class="card-title">Add New Incoming Donation to '{{charityEvent.name}}'</h4>
+		<h4 class="card-title" *ngIf="charityEvent">Add New Incoming Donation to '{{charityEvent.name}}'</h4>
+		<h4 class="card-title" *ngIf="!charityEvent">Add New Incoming Donation</h4>
+		<button class="close" type="button" aria-label="Close" (click)="onCloseClick()">
+			<span aria-hidden="true">×</span>
+		</button>
 	</div>
-	<div class="card-block">
+	<div class="card-block no-pdd">
 		<div class="card-block">
 			<div class="row">
 				<div class="col-md-8 ml-auto mr-auto">
 					<opc-incoming-donation-form
+						[charityEvent]="charityEvent"
 						[organizationAddress]="organizationAddress"
-						(donationCreated)="onDonationCreated($event)" >
+						(transactionHash$)="onTransactionHashReceived($event)" >
 					</opc-incoming-donation-form>
 				</div>
 			</div>

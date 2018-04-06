@@ -9,6 +9,6 @@ export class AuthenticationLayoutComponent implements OnInit {
 	constructor() {
 	}
 
-	ngOnInit(): void {
+	public ngOnInit(): void {
 	}
 }

@@ -6,51 +6,58 @@ import {CharityEventContractService} from '../../../core/contracts-services/char
 import {TokenContractService} from '../../../core/contracts-services/token-contract.service';
 import {CharityEventsListBaseComponent} from '../charity-events-list-base.component';
 import {MetaDataStorageService} from '../../../core/meta-data-storage.service';
-import {ConfirmationResponse} from '../../../open-charity-types';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {ErrorMessageService} from '../../../core/error-message.service';
+import { OrganizationContractEventsService } from '../../../core/contracts-services/organization-contract-events.service';
+import { Web3ProviderService } from '../../../core/web3-provider.service';
+import {AsyncLocalStorage} from 'angular-async-local-storage';
 
 @Component({
 	selector: 'opc-dashboard-charity-events-list',
 	templateUrl: 'dashboard-charity-events-list.component.html',
 	styleUrls: ['dashboard-charity-events-list.component.scss']
 })
-export class DashboardCharityEventsList extends CharityEventsListBaseComponent implements OnInit, OnDestroy {
+export class DashboardCharityEventsListComponent extends CharityEventsListBaseComponent implements OnInit, OnDestroy {
 	constructor(
 		protected organizationContractService: OrganizationContractService,
+		protected organizationContractEventsService: OrganizationContractEventsService,
 		protected charityEventContractService: CharityEventContractService,
 		protected tokenContractService: TokenContractService,
 		protected zone: NgZone,
 		protected route: ActivatedRoute,
 		protected metaDataStorageService: MetaDataStorageService,
-		private router: Router,
-		private organizationSharedService: OrganizationSharedService
+		protected modal: NgbModal,
+		protected organizationSharedService: OrganizationSharedService,
+		protected errorMessageService: ErrorMessageService,
+		protected web3ProviderService: Web3ProviderService,
+		protected localStorage: AsyncLocalStorage,
+		private router: Router
 	) {
-		super(organizationContractService, tokenContractService, charityEventContractService, zone, metaDataStorageService);
+		super(
+			organizationContractService,
+			organizationContractEventsService,
+			tokenContractService,
+			charityEventContractService,
+			zone,
+			metaDataStorageService,
+			modal,
+			organizationSharedService,
+			errorMessageService,
+			web3ProviderService,
+			localStorage
+		);
 	}
 
-	ngOnInit(): void {
-		this.route.params.subscribe(params => { this.organizationAddress = params['address']; });
-		this.updateCharityEventsList();
+	public async ngOnInit() {
+		this.route.params.subscribe(params => {
+			this.organizationAddress = params['address'];
+		});
+		await this.updateCharityEventsList();
 		this.initEventsListeners();
 	}
 
 	public toAllCharityEvents() {
 		this.router.navigate([`/organization/${this.organizationAddress}/events`]);
 	}
-
-	public initEventsListeners(): void {
-		this.organizationSharedService.onMoveFundsToCharityEventConfirmed()
-			.takeUntil(this.componentDestroyed)
-			.subscribe(async (res: ConfirmationResponse) => {
-				const i: number = findIndex(this.charityEvents, {address: res.address});
-
-				if (i !== -1) {
-					await this.updateCharityEventRaised(this.charityEvents[i]);
-				}
-			}, (err: any) => {
-				console.error(err);
-				alert(`Error ${err.message}`);
-			});
-	}
-
 }

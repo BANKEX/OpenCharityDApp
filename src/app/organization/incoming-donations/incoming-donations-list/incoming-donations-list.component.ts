@@ -7,21 +7,25 @@ import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 import {IncomingDonationSendFundsModalComponent} from '../incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
 import {CharityEventContractService} from '../../../core/contracts-services/charity-event-contract.service';
 import {constant, find, findIndex, merge, reverse, times} from 'lodash';
-import {AppIncomingDonation, ConfirmationResponse, ConfirmationStatusState} from '../../../open-charity-types';
+import {AppIncomingDonation, ConfirmationResponse, ConfirmationStatusState, FundsMovedToCharityEvent} from '../../../open-charity-types';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
 import {Router} from '@angular/router';
 import {Subject} from 'rxjs/Subject';
-import {LoadingTransparentOverlayService} from '../../../core/loading-transparent-overlay.service';
-
+import {LoadingOverlayService} from '../../../core/loading-overlay.service';
+import {ErrorMessageService} from '../../../core/error-message.service';
+import {EventLog} from 'web3/types';
+import {OrganizationContractEventsService} from '../../../core/contracts-services/organization-contract-events.service';
+import {sum} from 'lodash';
 
 @Component({
 	selector: 'opc-incoming-donations-list',
 	templateUrl: 'incoming-donations-list.component.html',
 	styleUrls: ['incoming-donations-list.component.scss']
 })
+
 export class IncomingDonationsListComponent implements OnInit, OnDestroy {
-	@Input('organizationAddress') organizationAddress: string;
-	@Input('incomingDonations') incomingDonations: AppIncomingDonation[];
+	@Input('organizationAddress') public organizationAddress: string;
+	@Input('incomingDonations') public incomingDonations: AppIncomingDonation[];
 
 	private componentDestroyed: Subject<void> = new Subject<void>();
 
@@ -33,8 +37,9 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 				protected organizationSharedService: OrganizationSharedService,
 				protected zone: NgZone,
 				protected router: Router,
-				protected loadingTransparentOverlayService: LoadingTransparentOverlayService
-	) {
+				protected loadingOverlayService: LoadingOverlayService,
+				protected errorMessageService: ErrorMessageService,
+				protected organizationContractEventsService: OrganizationContractEventsService) {
 
 	}
 
@@ -42,72 +47,17 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 		this.initEventsListeners();
 	}
 
-	private initEventsListeners(): void {
-		this.organizationSharedService.onIncomingDonationAdded()
-			.takeUntil(this.componentDestroyed)
-			.subscribe((res: AppIncomingDonation) => {
-				this.incomingDonations.push(res);
-			}, (err: any) => {
-				console.error(err);
-				alert('`Error ${err.message}');
-			});
-
-
-		this.organizationSharedService.onIncomingDonationConfirmed()
-			.takeUntil(this.componentDestroyed)
-			.subscribe((res: ConfirmationResponse) => {
-
-				const i: number = findIndex(this.incomingDonations, {internalId: res.internalId});
-				if (i !== -1) {
-					this.incomingDonations[i].address = res.address;
-					this.incomingDonations[i].confirmation = ConfirmationStatusState.CONFIRMED;
-				}
-			}, (err: any) => {
-				console.error(err);
-				alert('`Error ${err.message}');
-			});
-
-		this.organizationSharedService.onIncomingDonationFailed()
-			.takeUntil(this.componentDestroyed)
-			.subscribe((res: ConfirmationResponse) => {
-
-				const i: number = findIndex(this.incomingDonations, {internalId: res.internalId});
-				if (i !== -1) {
-					this.incomingDonations[i].confirmation = ConfirmationStatusState.FAILED;
-				}
-			}, (err: any) => {
-				console.error(err);
-				alert('`Error ${err.message}');
-			});
-
-
-		this.organizationSharedService.onIncomingDonationCanceled()
-			.takeUntil(this.componentDestroyed)
-			.subscribe((res: ConfirmationResponse) => {
-
-				const i: number = findIndex(this.incomingDonations, {internalId: res.internalId});
-				if (i !== -1) {
-					this.incomingDonations.splice(i, 1);
-				}
-			}, (err: any) => {
-				console.error(err);
-				alert('`Error ${err.message}');
-			});
-
-	}
-
-
 	public toDetails(incomingDonation: AppIncomingDonation): void {
 		this.router.navigate([`/organization/${this.organizationAddress}/donation/${incomingDonation.address}/details`]);
 	}
 
 	public async openSendDonationFundsModal(incomingDonation: AppIncomingDonation): Promise<void> {
-		this.loadingTransparentOverlayService.showOverlay();
+		this.loadingOverlayService.showOverlay(true);
 
 		const charityEventsAddresses: string[] = await this.organizationContractService.getCharityEventsAsync(this.organizationAddress);
 		const charityEvents = await this.charityEventContractService.getCharityEventsList(charityEventsAddresses);
 
-		this.loadingTransparentOverlayService.hideOverlay();
+		this.loadingOverlayService.hideOverlay();
 
 		const modalRef: NgbModalRef = this.modalService.open(IncomingDonationSendFundsModalComponent);
 		modalRef.componentInstance.organizationAddress = this.organizationAddress;
@@ -117,6 +67,7 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 			const incDonation = find(this.incomingDonations, {address: incomingDonationAddress});
 			if (this.incomingDonations) {
 				this.updateIncomingDonationAmount(incDonation);
+				this.updateSumOfMovedFunds(incDonation);
 			}
 		});
 	}
@@ -142,8 +93,73 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 		return (incomingDonation.confirmation === ConfirmationStatusState.ERROR);
 	}
 
-	ngOnDestroy() {
+	public ngOnDestroy() {
 		this.componentDestroyed.next();
 	}
 
+	private async updateSumOfMovedFunds(incomingDonation: AppIncomingDonation): Promise<void> {
+		const transactions: number[] = [];
+
+		await this.organizationContractEventsService.getCharityEventsByID(this.organizationAddress, incomingDonation.address)
+			.subscribe(async (res: EventLog[]) => {
+				res.forEach(async (log: EventLog) => {
+					const eventValues: FundsMovedToCharityEvent = <FundsMovedToCharityEvent>log.returnValues;
+					transactions.push(parseInt(eventValues.amount));
+				});
+
+				incomingDonation.movedFunds = sum(transactions);
+			}, (err: Error) => {
+				this.errorMessageService.addError(err.message, 'getCharityEventTransactions');
+			});
+	}
+
+	private initEventsListeners(): void {
+		this.organizationSharedService.onIncomingDonationAdded()
+			.takeUntil(this.componentDestroyed)
+			.subscribe((res: AppIncomingDonation) => {
+				this.incomingDonations.push(res);
+			}, (err: Error) => {
+				this.errorMessageService.addError(err.message, 'onIncomingDonationAdded');
+			});
+
+
+		this.organizationSharedService.onIncomingDonationConfirmed()
+			.takeUntil(this.componentDestroyed)
+			.subscribe((res: ConfirmationResponse) => {
+
+				const i: number = findIndex(this.incomingDonations, {internalId: res.internalId});
+				if (i !== -1) {
+					this.incomingDonations[i].address = res.address;
+					this.incomingDonations[i].confirmation = ConfirmationStatusState.CONFIRMED;
+				}
+			}, (err: Error) => {
+				this.errorMessageService.addError(err.message, 'onIncomingDonationConfirmed');
+			});
+
+		this.organizationSharedService.onIncomingDonationFailed()
+			.takeUntil(this.componentDestroyed)
+			.subscribe((res: ConfirmationResponse) => {
+
+				const i: number = findIndex(this.incomingDonations, {internalId: res.internalId});
+				if (i !== -1) {
+					this.incomingDonations[i].confirmation = ConfirmationStatusState.FAILED;
+				}
+			}, (err: Error) => {
+				this.errorMessageService.addError(err.message, 'onIncomingDonationFailed');
+			});
+
+
+		this.organizationSharedService.onIncomingDonationCanceled()
+			.takeUntil(this.componentDestroyed)
+			.subscribe((res: ConfirmationResponse) => {
+
+				const i: number = findIndex(this.incomingDonations, {internalId: res.internalId});
+				if (i !== -1) {
+					this.incomingDonations.splice(i, 1);
+				}
+			}, (err: Error) => {
+				this.errorMessageService.addError(err.message, 'onIncomingDonationCanceled');
+			});
+
+	}
 }
