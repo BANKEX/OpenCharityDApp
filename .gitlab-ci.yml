@@ -90,7 +90,7 @@ release-nginx-prod:
   cache: {}
 
 contracts-settings-update:
-  image: docker:latest
+  image: node:alpine
   stage: contracts-settings-master
   script:
     - node post-deploy-script.js
@@ -128,7 +128,7 @@ deploy_stage:
   cache: {}
 
 contracts-settings-stage:
-  image: docker:latest
+  image: node:alpine
   stage: contracts-settings-stage
   before_script:
     - sed -i 's/const env = '"'"'master'"'"';/const env = '"'"'staging'"'"';/' ./post-deploy-script.js
@@ -168,7 +168,7 @@ deploy_prod:
   cache: {}
 
 contracts-settings-prod:
-  image: docker:latest
+  image: node:alpine
   stage: contracts-settings-prod
   before_script:
     - sed -i 's/const env = '"'"'master'"'"';/const env = '"'"'production'"'"';/' ./post-deploy-script.js
