@@ -100,7 +100,8 @@ contracts-settings-update:
     key: "$CI_PROJECT_ID"
     paths:
       - node_modules/
-  dependencies: []
+  dependencies:
+    - build-node-stage
     
 deploy_stage:
   stage: deploy-stage
@@ -143,7 +144,8 @@ contracts-settings-stage:
     key: "$CI_PROJECT_ID"
     paths:
       - node_modules/
-  dependencies: []
+  dependencies:
+    - build-node-stage
 
 deploy_prod:
   stage: deploy-prod
@@ -190,4 +192,6 @@ contracts-settings-prod:
     key: "$CI_PROJECT_ID"
     paths:
       - node_modules/
-  dependencies: []
+  dependencies:
+    - build-node-prod
+
