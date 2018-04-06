@@ -4,7 +4,6 @@ import {LoadingOverlayService} from './core/loading-overlay.service';
 import {MetamaskCheckService} from './core/metamask-check.service';
 import {BlockingNotificationOverlayService} from './core/blocking-notification-overlay.service';
 import {Router} from '@angular/router';
-import {CommonSettingsService} from './core/common-settings.service';
 
 @Component({
 	selector: 'my-app',
@@ -23,13 +22,11 @@ export class AppComponent implements OnInit {
 		private loadingOverlayService: LoadingOverlayService,
 		private metamaskCheckService: MetamaskCheckService,
 		private blockingNotificationOverlayService: BlockingNotificationOverlayService,
-		private router: Router,
-		private commonSettingsService: CommonSettingsService
+		private router: Router
 	) {
 	}
 
 	public async ngOnInit(): Promise<void> {
-		await this.commonSettingsService.initSettings();
 		await this.checkMetamask();
 
 		this.loadingOverlayService.hideOverlay();

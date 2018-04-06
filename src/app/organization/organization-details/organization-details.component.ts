@@ -16,12 +16,12 @@ export class OrganizationDetailsComponent implements OnInit {
 		private organizationService: OrganizationContractService,
 		private route: ActivatedRoute
 	) {
-		this.route.params.subscribe((params: Params) => {
-			this.organizationContractAddress = params.address;
-		});
 	}
 
 	public async ngOnInit(): Promise<void> {
-		this.name = await this.organizationService.getName(this.organizationContractAddress);
+		this.route.params.subscribe(async (params: Params) => {
+			this.organizationContractAddress = params.address;
+			this.name = await this.organizationService.getName(this.organizationContractAddress);
+		});
 	}
 }
