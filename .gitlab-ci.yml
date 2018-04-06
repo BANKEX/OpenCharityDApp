@@ -100,6 +100,7 @@ contracts-settings-update:
     key: "$CI_PROJECT_ID"
     paths:
       - node_modules/
+  dependencies: []
     
 deploy_stage:
   stage: deploy-stage
@@ -129,6 +130,7 @@ deploy_stage:
   when: manual
   allow_failure: false
   cache: {}
+  dependencies: []
 
 contracts-settings-stage:
   image: node:alpine
@@ -141,6 +143,7 @@ contracts-settings-stage:
     key: "$CI_PROJECT_ID"
     paths:
       - node_modules/
+  dependencies: []
 
 deploy_prod:
   stage: deploy-prod
@@ -172,6 +175,7 @@ deploy_prod:
     - production
   allow_failure: false
   cache: {}
+  dependencies: []
 
 contracts-settings-prod:
   image: node:alpine
@@ -186,4 +190,4 @@ contracts-settings-prod:
     key: "$CI_PROJECT_ID"
     paths:
       - node_modules/
-
+  dependencies: []
