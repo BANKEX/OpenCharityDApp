@@ -19,7 +19,6 @@ setup:
     - yarn config set cache-folder .yarn
     - yarn global add node-gyp
     - yarn install
-    - yarn add @angular-devkit/core
   cache:
     key: "$CI_PROJECT_ID"
     paths:
