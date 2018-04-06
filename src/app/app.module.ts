@@ -25,6 +25,7 @@ import {HttpClientModule} from '@angular/common/http';
 import {BrowserModule} from '@angular/platform-browser';
 import {CommonSettingsService} from './core/common-settings.service';
 
+// tslint:disable-next-line:no-any
 export function initAppFactory(commonSettingsService: CommonSettingsService): () => Promise<any> {
 	return () => commonSettingsService.initSettings();
 }
@@ -47,7 +48,7 @@ export function initAppFactory(commonSettingsService: CommonSettingsService): ()
 	exports: [AppComponent],
 	providers: [
 		APP_PROVIDERS,
-		{ provide: APP_INITIALIZER, useFactory: initAppFactory, deps:[CommonSettingsService], multi: true }
+		{provide: APP_INITIALIZER, useFactory: initAppFactory, deps: [CommonSettingsService], multi: true}
 	]
 })
 
