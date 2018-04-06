@@ -54,7 +54,7 @@ export class IncomingDonationContractService {
 	public async getIncomingDonationDetails(address: string, txOptions?: Tx): Promise<ContractIncomingDonation> {
 		return {
 			realWorldsIdentifier: await this.getRealWorldIdentifier(address, txOptions),
-			address: address,
+			address: this.web3.utils.toChecksumAddress(address),
 			amount: await this.tokenContractService.balanceOf(address),
 			note: await this.getNote(address, txOptions),
 			tags: await this.getTags(address, txOptions),

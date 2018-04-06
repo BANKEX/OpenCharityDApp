@@ -59,7 +59,7 @@ export class OrganizationContractService {
 	public async getOrganization(address: string, txOptions?: Tx): Promise<Organization> {
 		return {
 			name: await this.getName(address, txOptions),
-			address: address,
+			address: this.web3.utils.toChecksumAddress(address),
 			charityEventsCount: parseInt(await this.getCharityEventsCount(address, txOptions), 10)
 		};
 	}

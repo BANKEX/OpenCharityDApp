@@ -70,7 +70,7 @@ export class CharityEventContractService {
 
 	public async getCharityEventDetails(address: string, txOptions?: Tx, blockNumber?: number): Promise<ContractCharityEvent> {
 		return {
-			address: address,
+			address: this.web3.utils.toChecksumAddress(address),
 			date: blockNumber ? await this.getDate(address, blockNumber) : undefined,
 			metaStorageHash: await this.getMetaStorageHash(address, txOptions),
 			name: await this.getName(address, txOptions),
