@@ -6,7 +6,7 @@ const constants = require('./constants');
 const orgnaizationAbi = require('./build/contracts/Organization.json').abi;
 const charityEventAbi = require('./build/contracts/CharityEvent.json').abi;
 const incomingDonationAbi = require('./build/contracts/IncomingDonation.json').abi;
-const openCharityTokenAbi = require('./build/contracts/CharityEvent.json').abi;
+const openCharityTokenAbi = require('./build/contracts/OpenCharityToken.json').abi;
 const request = require('request');
 
 
