@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Contract, TransactionReceipt, Tx, PromiEvent} from 'web3/types';
+import {Contract, PromiEvent, TransactionReceipt, Tx} from 'web3/types';
 import {Web3ProviderService} from '../web3-provider.service';
 import {forEach, merge} from 'lodash';
 import Web3 from 'web3';
@@ -115,11 +115,12 @@ export class OrganizationContractService {
 		return source.asObservable();
 	}
 
-	public moveFundsToCharityEvent(organizationAddress: string, incomingDonationAddress: string, charityEventAddress: string, amount: string, txOptions?: Tx): PromiEvent<TransactionReceipt>  {
+	public moveFundsToCharityEvent(organizationAddress: string, incomingDonationAddress: string, charityEventAddress: string, amount: string, txOptions?: Tx): PromiEvent<TransactionReceipt> {
 		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
 		const tx: Tx = merge({}, this.defaultTx, txOptions);
 		return contract.methods.moveDonationFundsToCharityEvent(incomingDonationAddress, charityEventAddress, amount).send(tx);
 	}
+
 	//#endregion
 
 	//#region Charity Events methods
@@ -172,6 +173,7 @@ export class OrganizationContractService {
 
 		return result;
 	}
+
 	//#endregion
 
 	//#region  Utils
@@ -207,5 +209,6 @@ export class OrganizationContractService {
 
 		return result;
 	}
+
 	//#endregion
 }

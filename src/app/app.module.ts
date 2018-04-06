@@ -6,7 +6,7 @@
  * there is something that is specific to the environment.
  */
 
-import {NgModule} from '@angular/core';
+import {APP_INITIALIZER, NgModule} from '@angular/core';
 import {RouterModule} from '@angular/router';
 import {IdlePreload, IdlePreloadModule} from 'angular-idle-preload';
 
@@ -23,6 +23,11 @@ import {AppComponent} from './app.component';
 import {CoreModule} from './core/core.module';
 import {HttpClientModule} from '@angular/common/http';
 import {BrowserModule} from '@angular/platform-browser';
+import {CommonSettingsService} from './core/common-settings.service';
+
+export function initAppFactory(commonSettingsService: CommonSettingsService): () => Promise<any> {
+	return () => commonSettingsService.initSettings();
+}
 
 @NgModule({
 	declarations: [
@@ -40,7 +45,10 @@ import {BrowserModule} from '@angular/platform-browser';
 	],
 	bootstrap: [AppComponent],
 	exports: [AppComponent],
-	providers: [APP_PROVIDERS]
+	providers: [
+		APP_PROVIDERS,
+		{ provide: APP_INITIALIZER, useFactory: initAppFactory, deps:[CommonSettingsService], multi: true }
+	]
 })
 
 export class AppModule {
