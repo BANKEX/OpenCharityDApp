@@ -13,6 +13,7 @@ export interface ConfirmationResponseWithTxHash extends ConfirmationResponse {
 }
 
 export interface ContractCharityEvent {
+	date?: Date;
 	metaStorageHash?: string;
 	name: string;
 	address?: string;
@@ -23,12 +24,14 @@ export interface ContractCharityEvent {
 
 
 export interface AppCharityEvent extends ContractCharityEvent {
+
+	attachments?: any[];
+	confirmation: ConfirmationStatusState;
+	date?: Date;
+	description: string;
+	image: any;
 	internalId?: string;
 	raised?: string;
-	confirmation: ConfirmationStatusState;
-	attachments?: any[];
-	image: any;
-	description: string;
 }
 
 export interface ContractIncomingDonation {

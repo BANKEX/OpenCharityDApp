@@ -63,7 +63,10 @@ export class CharityEventCardComponent extends NeatComponent {
 		if (!this.isConfirmed() || $event.defaultPrevented) {
 			return;
 		}
-		this.router.navigate([`/organization/${this.organizationAddress}/event/${this.charityEvent.address}/transactions`]);
+		this.router.navigate(
+			[`/organization/${this.organizationAddress}/event/${this.charityEvent.address}/transactions`],
+			{queryParams: {date: this.charityEvent.date.getTime()}}
+		);
 	}
 
 	public editClick($event: Event): void {
