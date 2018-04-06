@@ -13,6 +13,7 @@ const request = require('request');
 // это переменная, чтобы различать пуши в мастер и деплой на прод и стейджинг
 // нужно брать из CI окружения
 const env = 'master';
+console.log(`env: ${env}`);
 
 const setList = (type) => {
 	const body = {
