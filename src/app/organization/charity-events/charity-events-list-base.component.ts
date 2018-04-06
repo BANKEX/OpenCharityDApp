@@ -15,6 +15,7 @@ import {OrganizationSharedService} from '../services/organization-shared.service
 import {ErrorMessageService} from '../../core/error-message.service';
 import { OrganizationContractEventsService } from '../../core/contracts-services/organization-contract-events.service';
 import { Web3ProviderService } from '../../core/web3-provider.service';
+import {AsyncLocalStorage} from 'angular-async-local-storage';
 			// tslint:disable:no-any
 @Component({
 	selector: 'opc-charity-events-list-base',
@@ -38,6 +39,7 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 		protected organizationSharedService: OrganizationSharedService,
 		protected errorMessageService: ErrorMessageService,
 		protected web3ProviderService: Web3ProviderService,
+		protected localStorage: AsyncLocalStorage
 	) {}
 
 	public ngOnInit(): void {
@@ -77,6 +79,7 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 				if (i !== -1) {
 					this.charityEvents[i].address = res.address;
 					this.charityEvents[i].confirmation = ConfirmationStatusState.CONFIRMED;
+					this.charityEvents[i].metaStorageHash = await this.charityEventContractService.getMetaStorageHash(res.address);
 					this.updateCharityEventMetaStorageData(this.charityEvents[i]);
 				}
 			}, (err: Error) => {
@@ -173,7 +176,18 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 		}
 
 		if (data.image) {
-			charityEvent.image = this.metaDataStorageService.convertArrayBufferToBase64( await this.metaDataStorageService.getImage(data.image.storageHash).toPromise() );
+			const localStorageImage: string = await this.localStorage.getItem(data.image.storageHash).toPromise();
+
+			if (!localStorageImage) {
+				charityEvent.image = await this.metaDataStorageService.compressImage(
+					await this.metaDataStorageService.getImage(data.image.storageHash).toPromise(),
+					data.image.type
+				);
+				await this.localStorage.setItem(data.image.storageHash, charityEvent.image).toPromise();
+			} else {
+				charityEvent.image = localStorageImage;
+			}
+
 		}
 
 		charityEvent.description = data.description;

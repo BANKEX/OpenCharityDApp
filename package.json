@@ -91,6 +91,7 @@
     "@ngui/map": "^0.20.1",
     "@types/googlemaps": "^3.30.3",
     "ammap3": "github:amcharts/ammap3",
+    "angular-async-local-storage": "^5.0.0",
     "angular-datatables": "^5.0.0",
     "angular-idle-preload": "~2.0.4",
     "angular2-moment": "^1.7.0",
