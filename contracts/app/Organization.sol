@@ -18,7 +18,7 @@ contract Organization {
 	mapping(address => bool) public charityEvents;
 	mapping(uint => address) public charityEventIndex;
 	uint public charityEventCount = 0;
-	event CharityEventAdded(address charityEvent);
+	event CharityEventAdded(address indexed charityEvent);
 	event CharityEventEdited(address indexed charityEvent, address indexed who);
 
 
