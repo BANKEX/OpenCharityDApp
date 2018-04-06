@@ -16,21 +16,21 @@ setup:
   script:
     - apk add --update git
     - apk --no-cache add g++ gcc libgcc libstdc++ linux-headers make python
-    - yarn config set cache-folder .yarn
-    - yarn global add node-gyp
-    - yarn install
+    - npm install --quiet node-gyp -g
+    - npm install
+    - npm rebuild bcrypt --build-from-source
+    - npm rebuild node-sass
   cache:
     key: "$CI_PROJECT_ID"
     paths:
       - node_modules/
-      - .yarn
 
 build-node-stage:
   image: node:alpine
   stage: build-node-stage
   script:
-    - yarn global add truffle
-    - yarn run build:aot:dev
+    - npm install -g truffle
+    - npm run build:aot:dev
     - truffle compile
   artifacts:
     paths:
@@ -41,15 +41,14 @@ build-node-stage:
     key: "$CI_PROJECT_ID"
     paths:
       - node_modules/
-      - .yarn
     policy: pull
 
 build-node-prod:
   image: node:alpine
   stage: build-node-prod
   script:
-    - yarn global add truffle
-    - yarn run build:aot:dev
+    - npm install -g truffle
+    - npm run build:aot:dev
     - truffle compile
   artifacts:
     paths:
@@ -60,7 +59,6 @@ build-node-prod:
     key: "$CI_PROJECT_ID"
     paths:
       - node_modules/
-      - .yarn
     policy: pull
   only:
     - production
