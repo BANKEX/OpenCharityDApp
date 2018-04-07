@@ -24,6 +24,17 @@ tr.loading, tr.empty {
 	}
 }
 
+.card {
+	&-header {
+		&-sort {
+			font-size: 20px;
+			position: absolute;
+    		right: 20px;
+			top: 10px;
+		}
+	}
+}
+
 @media (min-width: 1250px) {
   .modal-more-lg {
     .modal-dialog {
@@ -62,20 +73,6 @@ tr.loading, tr.empty {
 
     &:hover {
       width: 100% !important;
-    }
-  }
-}
-
-.table.donations-table {
-  tr.data {
-    cursor: pointer;
-  }
-
-  tr.pending {
-    background: lighten($default-dark, 40%);
-    color: black;
-    .unconfirmed-loader {
-
     }
   }
 }
