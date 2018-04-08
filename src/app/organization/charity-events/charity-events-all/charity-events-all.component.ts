@@ -1,4 +1,4 @@
-import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
+import {Component, NgZone, OnDestroy, OnInit, ChangeDetectorRef} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 import {constant, findIndex, merge, reverse, times} from 'lodash';
 
@@ -13,6 +13,7 @@ import {ErrorMessageService} from '../../../core/error-message.service';
 import { OrganizationContractEventsService } from '../../../core/contracts-services/organization-contract-events.service';
 import { Web3ProviderService } from '../../../core/web3-provider.service';
 import {AsyncLocalStorage} from 'angular-async-local-storage';
+import {NgProgress} from '@ngx-progressbar/core';
 
 @Component({
 	selector: 'opc-charity-events-all',
@@ -37,6 +38,8 @@ export class CharityEventsAllComponent extends CharityEventsListBaseComponent im
 		protected errorMessageService: ErrorMessageService,
 		protected web3ProviderService: Web3ProviderService,
 		protected localStorage: AsyncLocalStorage,
+		protected progress: NgProgress,
+		protected cdf: ChangeDetectorRef,
 		private route: ActivatedRoute,
 		private router: Router
 	) {
@@ -51,7 +54,9 @@ export class CharityEventsAllComponent extends CharityEventsListBaseComponent im
 			organizationSharedService,
 			errorMessageService,
 			web3ProviderService,
-			localStorage
+			localStorage,
+			progress,
+			cdf
 		);
 	}
 

@@ -1,4 +1,4 @@
-import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
+import {Component, NgZone, OnDestroy, OnInit, ChangeDetectorRef} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {constant, findIndex, merge, reverse, times} from 'lodash';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
@@ -9,9 +9,10 @@ import {MetaDataStorageService} from '../../../core/meta-data-storage.service';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ErrorMessageService} from '../../../core/error-message.service';
-import { OrganizationContractEventsService } from '../../../core/contracts-services/organization-contract-events.service';
-import { Web3ProviderService } from '../../../core/web3-provider.service';
+import {OrganizationContractEventsService} from '../../../core/contracts-services/organization-contract-events.service';
+import {Web3ProviderService} from '../../../core/web3-provider.service';
 import {AsyncLocalStorage} from 'angular-async-local-storage';
+import {NgProgress} from '@ngx-progressbar/core';
 
 @Component({
 	selector: 'opc-dashboard-charity-events-list',
@@ -32,7 +33,9 @@ export class DashboardCharityEventsListComponent extends CharityEventsListBaseCo
 		protected errorMessageService: ErrorMessageService,
 		protected web3ProviderService: Web3ProviderService,
 		protected localStorage: AsyncLocalStorage,
-		private router: Router
+		protected progress: NgProgress,
+		protected cdf: ChangeDetectorRef,
+		private router: Router,
 	) {
 		super(
 			organizationContractService,
@@ -45,7 +48,9 @@ export class DashboardCharityEventsListComponent extends CharityEventsListBaseCo
 			organizationSharedService,
 			errorMessageService,
 			web3ProviderService,
-			localStorage
+			localStorage,
+			progress,
+			cdf,
 		);
 	}
 

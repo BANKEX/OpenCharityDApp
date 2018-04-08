@@ -1,30 +1,39 @@
-import {Component, Input, NgZone, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, Output, NgZone, OnDestroy, OnInit, EventEmitter, ChangeDetectorRef} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
+import {Observable} from 'rxjs/Observable';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {
 	AppCharityEvent, CharityEventMetaStorageData, ConfirmationResponse, ConfirmationStatusState,
-	MetaStorageData
+	MetaStorageData, SortParams, SortBy
 } from '../../open-charity-types';
 import {TokenContractService} from '../../core/contracts-services/token-contract.service';
 import {OrganizationContractService} from '../../core/contracts-services/organization-contract.service';
-import {constant, findIndex, merge, reverse, times} from 'lodash';
+import {constant, findIndex, merge, times} from 'lodash';
 import {CharityEventContractService} from '../../core/contracts-services/charity-event-contract.service';
 import {MetaDataStorageService} from '../../core/meta-data-storage.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {AddCharityEventModalComponent} from './add-charity-event-modal/add-charity-event-modal.component';
 import {OrganizationSharedService} from '../services/organization-shared.service';
 import {ErrorMessageService} from '../../core/error-message.service';
-import { OrganizationContractEventsService } from '../../core/contracts-services/organization-contract-events.service';
-import { Web3ProviderService } from '../../core/web3-provider.service';
+import {OrganizationContractEventsService} from '../../core/contracts-services/organization-contract-events.service';
+import {Web3ProviderService} from '../../core/web3-provider.service';
 import {AsyncLocalStorage} from 'angular-async-local-storage';
-			// tslint:disable:no-any
+import {AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
+import {NgProgress} from '@ngx-progressbar/core';
+// tslint:disable:no-any
 @Component({
 	selector: 'opc-charity-events-list-base',
 	template: '',
 })
 
-export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
+export class CharityEventsListBaseComponent implements OnInit, OnDestroy, AfterViewInit {
 	@Input('organizationAddress') public organizationAddress: string;
-	public charityEvents: AppCharityEvent[] = [];
+	@Input('sort$') public sort$: Observable<SortParams> = Observable.empty<SortParams>(); // to recive external sort requests
+	public charityEvents: AppCharityEvent[] = [];	// list of CE to show
+	public sort = {by: SortBy.DATE, reverse: true};	// CE sorting settings
+	public dataReady = new BehaviorSubject(false);						// flag to show preloader
+	public dataLoader = 0; 							// count how many charityEvents fully loaded
+	public sortModes = [['Sort by Date', SortBy.DATE], ['Sort by Name', SortBy.NAME], ['Sort by Raised', SortBy.RASED]];
 
 	protected componentDestroyed: Subject<void> = new Subject<void>();
 
@@ -39,19 +48,20 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 		protected organizationSharedService: OrganizationSharedService,
 		protected errorMessageService: ErrorMessageService,
 		protected web3ProviderService: Web3ProviderService,
-		protected localStorage: AsyncLocalStorage
+		protected localStorage: AsyncLocalStorage,
+		protected progress: NgProgress,
+		protected cdf: ChangeDetectorRef
 	) {}
 
-	public ngOnInit(): void {
-
-	}
-
 	public initEventsListeners(): void {
-		this.organizationSharedService.onCharityEventAdded()
+		this.organizationSharedService.onCharityEventSubmited()
+			.withLatestFrom(this.organizationSharedService.onCharityEventAdded(), (fromSubm, fromAdded) => fromAdded)
 			.takeUntil(this.componentDestroyed)
 			.subscribe((res: AppCharityEvent) => {
 				this.charityEvents.push(merge({}, res, {raised: 0}));
 				this.updateCharityEventMetaStorageData(this.charityEvents[this.charityEvents.length - 1]);
+				this.charityEvents = Object.assign([], this.charityEvents);
+				this.cdf.detectChanges();
 			}, (err: Error) => {
 				this.errorMessageService.addError(err.message, 'onCharityEventAdded');
 			});
@@ -144,7 +154,6 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 		// null value means that incoming donation data is loading
 		// when data is loaded, replace null by data
 		this.charityEvents = times(charityEventsCount, constant(null));
-
 		const addedEvents = await this.organizationContractEventsService.getOrganizationEvents('CharityEventAdded', this.organizationAddress);
 		const blockNumbers = {};
 		for (let i = 0; i < addedEvents.length; i += 1) {
@@ -162,8 +171,15 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 					this.charityEvents[event.index] = merge({}, await this.charityEventContractService.getCharityEventDetails(event.address, undefined, blockNumbers[event.address]), {
 						confirmation: ConfirmationStatusState.CONFIRMED
 					});
-					this.updateCharityEventRaised(this.charityEvents[event.index]);
+					await this.updateCharityEventRaised(this.charityEvents[event.index]);
 					this.updateCharityEventMetaStorageData(this.charityEvents[event.index]);
+					this.dataLoader += 1;
+					let persents = Math.floor(this.dataLoader * 100 / charityEventsCount);
+					this.progress.set(persents, 'charityEvents'); // update loading bar
+					if (this.dataLoader === charityEventsCount) {
+						this.dataReady.next(true);
+						this.progress.complete('charityEvents');
+					}
 				});
 			});
 	}
@@ -197,8 +213,9 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 		return this.metaDataStorageService.getData(charityEvent.metaStorageHash).toPromise();
 	}
 
-	protected async updateCharityEventRaised(charityEvent: AppCharityEvent) {
-		charityEvent.raised = await this.tokenContractService.balanceOf(charityEvent.address);
+	protected async updateCharityEventRaised(charityEvent: AppCharityEvent): Promise<boolean> {
+		charityEvent.raised = +(await this.tokenContractService.balanceOf(charityEvent.address));
+		return Promise.resolve(true);
 	}
 
 	public showAddCharityEventModal() {
@@ -212,6 +229,39 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy {
 		modalInstance.organizationContractAddress = this.organizationAddress;
 	}
 
+	public doSort(mode: SortBy, reverse?: boolean) {
+		if (mode === this.sort.by && reverse === undefined) {
+			this.sort.reverse = !this.sort.reverse;
+		} else {
+			this.sort.by = mode;
+			if (reverse !== undefined) {
+				this.sort.reverse = reverse;
+			} else {
+				this.sort.reverse = this.sort.by !== SortBy.NAME; // don't reverse if sorting by name
+			}
+		}
+		this.localStorage.getItem('SortCharityEvents').subscribe(item => {
+			item = item || {}; // on first run item is NULL
+			item[this.organizationAddress] = this.sort;
+			this.localStorage.setItem('SortCharityEvents', item).toPromise();
+		});
+	}
+
+	public ngAfterViewInit() {
+		this.localStorage.getItem('SortCharityEvents')
+			.filter((val) => !!val)
+			.map(item => item && item[this.organizationAddress])
+			.merge(this.sort$)
+			.subscribe((sortParams: SortParams) => {
+				if (!sortParams) return;
+				this.sort.by = sortParams.by;
+				this.sort.reverse = sortParams.reverse;
+				this.doSort(sortParams.by, sortParams.reverse);
+			});
+	}
+	public ngOnInit(): void {
+
+	}
 	public ngOnDestroy(): void {
 		this.componentDestroyed.next();
 

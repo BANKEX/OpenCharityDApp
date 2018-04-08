@@ -5,6 +5,10 @@ section {
   margin-left: 15px;
 }
 
+.invisible {
+	opacity: 0 !important;
+}
+
 tr.loading, tr.empty {
   background: #fff !important;
 
@@ -21,6 +25,32 @@ tr.loading, tr.empty {
 		position: absolute;
 		right: 20px;
     	top: 15px;
+	}
+}
+
+.card {
+	&-header {
+		&-sort {
+			cursor: pointer;
+			color: $default-text-color;
+			font-size: 20px;
+			position: absolute;
+    		right: 20px;
+			top: 10px;
+			transition: all .5s ease-in-out;
+			&:hover {
+				color: $default-dark;
+			}
+		}
+	}
+	.dropdown-menu {
+		.fa {
+			font-size: 20px;
+			position: relative;
+			&-sort-up {
+				top: 5px;
+			}
+		}
 	}
 }
 
@@ -62,20 +92,6 @@ tr.loading, tr.empty {
 
     &:hover {
       width: 100% !important;
-    }
-  }
-}
-
-.table.donations-table {
-  tr.data {
-    cursor: pointer;
-  }
-
-  tr.pending {
-    background: lighten($default-dark, 40%);
-    color: black;
-    .unconfirmed-loader {
-
     }
   }
 }

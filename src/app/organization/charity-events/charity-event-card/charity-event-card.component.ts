@@ -65,7 +65,7 @@ export class CharityEventCardComponent extends NeatComponent {
 		}
 		this.router.navigate(
 			[`/organization/${this.organizationAddress}/event/${this.charityEvent.address}/transactions`],
-			{queryParams: {date: this.charityEvent.date.getTime()}}
+			{queryParams: {date: this.charityEvent.date && this.charityEvent.date.getTime()}}
 		);
 	}
 
