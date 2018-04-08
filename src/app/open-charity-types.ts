@@ -6,6 +6,13 @@ export enum ConfirmationStatusState {
 	FAILED,
 	ERROR
 }
+
+export enum SortBy {
+	NAME = 'name',
+	DATE = 'date',
+	RASED = 'raised',
+}
+
 export interface ConfirmationResponse { internalId: string; address: string; }
 
 export interface ConfirmationResponseWithTxHash extends ConfirmationResponse {
@@ -13,13 +20,13 @@ export interface ConfirmationResponseWithTxHash extends ConfirmationResponse {
 }
 
 export interface ContractCharityEvent {
+	address?: string;
 	date?: Date;
 	metaStorageHash?: string;
 	name: string;
-	address?: string;
-	target: string;
 	payed: string;
 	tags: string;
+	target: string;
 }
 
 
@@ -31,7 +38,7 @@ export interface AppCharityEvent extends ContractCharityEvent {
 	description: string;
 	image: any;
 	internalId?: string;
-	raised?: string;
+	raised?: string | number;
 }
 
 export interface ContractIncomingDonation {
@@ -75,6 +82,11 @@ export interface CharityEventMetaStorageData {
 	description: string;
 	image?: MetaStorageFile;
 	attachments?: MetaStorageFile[];
+}
+
+export interface SortParams {
+	by?: SortBy,
+	reverse?: boolean
 }
 
 export type AlertMessage = {

@@ -17,6 +17,7 @@ body {
    line-height: 1.5;
    letter-spacing: 0.2px;
    overflow-x: hidden;
+   min-width: 650px;
 }
 
 h1,
@@ -30,11 +31,11 @@ h6 {
 	letter-spacing: 0.5px;
 	font-weight: normal;
 	line-height: 1.5;
-	
+
 	a {
 		font-family: $font-secondary;
 	}
-	
+
 	small {
 		font-weight: 300;
 		color: lighten($default-dark,5%);
@@ -81,7 +82,7 @@ ul {
 
 a {
 	color: $default-info;
-	
+
 	&:hover,
 	&:focus {
 		text-decoration: none;
@@ -119,7 +120,7 @@ hr {
 }
 
 .text-link {
-	
+
 	&:hover,
 	&:focus {
 		text-decoration: underline;
@@ -222,10 +223,10 @@ hr {
 
 .overlay-dark {
 	position: relative;
-	overflow: hidden;	
+	overflow: hidden;
 	color: darken($default-white, 20%);
-	
-	
+
+
 	h1,
 	h2,
 	h3,
@@ -234,11 +235,11 @@ hr {
 	h6 {
 		color: $default-white;
 	}
-	
+
 	p {
 		color: darken($default-white, 20%);
 	}
-	
+
 	&:before {
 		content:"";
 		background-color: $default-dark;
@@ -250,7 +251,7 @@ hr {
 		left: 0px;
 		z-index: 2
 	}
-	
+
 	>div {
 		position: relative;
 		z-index: 3;
@@ -261,7 +262,7 @@ blockquote {
     border-left: 0px;
 	padding-left: 30px;
 	position: relative;
-	
+
 	&:before {
 		font-family: 'themify';
 		content: "\e67f";
@@ -270,12 +271,12 @@ blockquote {
 		color: $default-dark;
 	}
 }
-	
+
 .fade {
 	&.in {
 		opacity: 1;
 	}
-}	
+}
 
 .collapse {
 	&.in {
@@ -295,7 +296,7 @@ iframe {
 @include print {
 	body {
 		font-size: 10px;
-	}	
+	}
 
 	.mrg-top-30,
 	.mrg-top-20 {

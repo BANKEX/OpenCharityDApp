@@ -128,11 +128,7 @@ export class CharityEventFormComponent implements OnInit {
 
 			const transaction: PromiEvent<TransactionReceipt> =
 				this.organizationContractService.addCharityEvent(this.organizationContractAddress, newCharityEvent);
-			transaction.on('transactionHash', (hash) => {
-				this.activeModal.close();
-				this.loadingOverlayService.hideOverlay();
-				this.organizationSharedService.transactionSubmited(hash);
-			});
+			this.handleSubmit(transaction, charityEventInternalId, undefined);
 			// submit transaction to blockchain
 			const receipt: TransactionReceipt = await transaction;
 
@@ -230,7 +226,7 @@ export class CharityEventFormComponent implements OnInit {
 						charityEventAddress,
 						newMetaStorageHash
 					);
-					this.handleSubmit(transaction);
+					this.handleSubmit(transaction, charityEventInternalId, charityEventAddress);
 					receipt = await transaction;
 				}
 			}
@@ -244,10 +240,9 @@ export class CharityEventFormComponent implements OnInit {
 				);
 
 				this.toastyService.warning('Editing ' + newCharityEvent.name + ' transaction pending');
-
 				transaction =
 					this.organizationContractService.updateCharityEventDetails(this.organizationContractAddress, newCharityEvent);
-				this.handleSubmit(transaction);
+				this.handleSubmit(transaction, charityEventInternalId, charityEventAddress);
 				receipt = await transaction;
 			}
 
@@ -635,11 +630,11 @@ export class CharityEventFormComponent implements OnInit {
 		return this.tagsBitmaskService.parseBitmaskIntoTags(bitmask);
 	}
 
-	private handleSubmit(transaction: PromiEvent<TransactionReceipt>) {
+	private handleSubmit(transaction: PromiEvent<TransactionReceipt>, id, address) {
 		transaction.on('transactionHash', (hash) => {
 			this.activeModal.close();
 			this.loadingOverlayService.hideOverlay();
-			this.organizationSharedService.transactionSubmited(hash);
+			this.organizationSharedService.charityEventSubmited(id, address, hash);
 		});
 	}
 

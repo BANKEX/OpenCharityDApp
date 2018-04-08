@@ -5,6 +5,10 @@ section {
   margin-left: 15px;
 }
 
+.invisible {
+	opacity: 0 !important;
+}
+
 tr.loading, tr.empty {
   background: #fff !important;
 
@@ -27,10 +31,25 @@ tr.loading, tr.empty {
 .card {
 	&-header {
 		&-sort {
+			cursor: pointer;
+			color: $default-text-color;
 			font-size: 20px;
 			position: absolute;
     		right: 20px;
 			top: 10px;
+			transition: all .5s ease-in-out;
+			&:hover {
+				color: $default-dark;
+			}
+		}
+	}
+	.dropdown-menu {
+		.fa {
+			font-size: 20px;
+			position: relative;
+			&-sort-up {
+				top: 5px;
+			}
 		}
 	}
 }
