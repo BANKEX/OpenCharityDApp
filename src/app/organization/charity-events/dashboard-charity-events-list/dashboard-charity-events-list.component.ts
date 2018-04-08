@@ -1,4 +1,4 @@
-import {Component, NgZone, OnDestroy, OnInit, ChangeDetectorRef} from '@angular/core';
+import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {constant, findIndex, merge, reverse, times} from 'lodash';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
@@ -34,7 +34,6 @@ export class DashboardCharityEventsListComponent extends CharityEventsListBaseCo
 		protected web3ProviderService: Web3ProviderService,
 		protected localStorage: AsyncLocalStorage,
 		protected progress: NgProgress,
-		protected cdf: ChangeDetectorRef,
 		private router: Router,
 	) {
 		super(
@@ -50,7 +49,6 @@ export class DashboardCharityEventsListComponent extends CharityEventsListBaseCo
 			web3ProviderService,
 			localStorage,
 			progress,
-			cdf,
 		);
 	}
 

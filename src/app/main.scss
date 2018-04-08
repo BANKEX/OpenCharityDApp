@@ -54,6 +54,20 @@ tr.loading, tr.empty {
 	}
 }
 
+.table.donations-table {
+	tr.data {
+	  	cursor: pointer;
+	}
+
+	tr.pending {
+		background: lighten($default-dark, 40%);
+		color: black;
+		.unconfirmed-loader {
+
+	  	}
+	}
+}
+
 @media (min-width: 1250px) {
   .modal-more-lg {
     .modal-dialog {

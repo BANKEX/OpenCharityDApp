@@ -1,4 +1,4 @@
-import {Component, NgZone, OnDestroy, OnInit, ChangeDetectorRef} from '@angular/core';
+import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 import {constant, findIndex, merge, reverse, times} from 'lodash';
 
@@ -39,7 +39,6 @@ export class CharityEventsAllComponent extends CharityEventsListBaseComponent im
 		protected web3ProviderService: Web3ProviderService,
 		protected localStorage: AsyncLocalStorage,
 		protected progress: NgProgress,
-		protected cdf: ChangeDetectorRef,
 		private route: ActivatedRoute,
 		private router: Router
 	) {
@@ -56,7 +55,6 @@ export class CharityEventsAllComponent extends CharityEventsListBaseComponent im
 			web3ProviderService,
 			localStorage,
 			progress,
-			cdf
 		);
 	}
 

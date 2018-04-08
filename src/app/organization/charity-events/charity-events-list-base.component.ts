@@ -1,4 +1,4 @@
-import {Component, Input, Output, NgZone, OnDestroy, OnInit, EventEmitter, ChangeDetectorRef} from '@angular/core';
+import {Component, Input, Output, NgZone, OnDestroy, OnInit, EventEmitter} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
@@ -50,7 +50,6 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy, AfterV
 		protected web3ProviderService: Web3ProviderService,
 		protected localStorage: AsyncLocalStorage,
 		protected progress: NgProgress,
-		protected cdf: ChangeDetectorRef
 	) {}
 
 	public initEventsListeners(): void {
@@ -60,8 +59,7 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy, AfterV
 			.subscribe((res: AppCharityEvent) => {
 				this.charityEvents.push(merge({}, res, {raised: 0}));
 				this.updateCharityEventMetaStorageData(this.charityEvents[this.charityEvents.length - 1]);
-				this.charityEvents = Object.assign([], this.charityEvents);
-				this.cdf.detectChanges();
+				this.charityEvents = Object.assign([], this.charityEvents); // to run change detection and show added CE
 			}, (err: Error) => {
 				this.errorMessageService.addError(err.message, 'onCharityEventAdded');
 			});
