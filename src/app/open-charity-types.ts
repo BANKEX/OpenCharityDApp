@@ -34,7 +34,6 @@ export interface AppCharityEvent extends ContractCharityEvent {
 
 	attachments?: any[];
 	confirmation: ConfirmationStatusState;
-	date?: Date;
 	description: string;
 	image: any;
 	internalId?: string;
@@ -42,14 +41,15 @@ export interface AppCharityEvent extends ContractCharityEvent {
 }
 
 export interface ContractIncomingDonation {
-	realWorldsIdentifier: string;
 	address?: string;
+	date?: Date;
 	amount: string;
-	note: string;
-	sourceId: string;
-	tags: string;
-	sourceName?: string;
 	movedFunds?: string
+	note: string;
+	realWorldsIdentifier: string;
+	sourceId: string;
+	sourceName?: string;
+	tags: string;
 }
 
 export interface AppIncomingDonation extends ContractIncomingDonation {

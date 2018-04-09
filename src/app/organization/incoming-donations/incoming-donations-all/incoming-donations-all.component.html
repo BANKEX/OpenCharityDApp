@@ -33,11 +33,13 @@
 
 				<div class="tab-primary">
 					<opc-incoming-donations-sources-filter [organizationAddress]="organizationAddress" (sourceChanged)="selectedSourceChanged($event)"></opc-incoming-donations-sources-filter>
-					<div class="tab-content">
+					<div class="tab-content" *ngIf="dataReady|async">
 						<opc-incoming-donations-list [organizationAddress]="organizationAddress" [incomingDonations]="displayedIncomingDonations"></opc-incoming-donations-list>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+	<div class="text-center" *ngIf="!(dataReady|async)"><i class="fa fa-spinner fa-spin fa-3x"></i></div>
+	<ng-progress [id]="'incomingDonations'" [spinner]="false" [meteor]="false"></ng-progress>
 </div>

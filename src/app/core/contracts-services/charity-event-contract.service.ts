@@ -32,16 +32,13 @@ export class CharityEventContractService {
 	/**
 	 * 	 Returns Charity Event creation date by retrieving it's block timestamp
 	 *
-	 * @param  {string} address - charity event address
-	 * @param  {number} blockNumber	block number (take it from transaction receipt)
-	 * @returns Promise<Date>
+	 * @param  {string} address Charity event address
+	 * @param  {number} blockNumber	Block number (take it from transaction receipt)
 	 */
-	public getDate(address: string, blockNumber: string): Promise<Date> {
+	public async getDate(address: string, blockNumber: string): Promise<Date> {
 		const contract: Contract = this.cloneContract(this.charityEventContract, address);
-		return new Promise(async(resolve, reject) => {
-			const blockTimestamp = (await this.web3ProviderService.web3.eth.getBlock(blockNumber)).timestamp;
-			resolve(moment(blockTimestamp * 1000).toDate());
-		});
+		const blockTimestamp = (await this.web3ProviderService.web3.eth.getBlock(blockNumber)).timestamp;
+		return moment(blockTimestamp * 1000).toDate();
 	}
 
 	public getMetaStorageHash(address: string, txOptions?: Tx): Promise<string> {
@@ -68,10 +65,9 @@ export class CharityEventContractService {
 		return contract.methods.target().call(txOptions);
 	}
 
-	public async getCharityEventDetails(address: string, txOptions?: Tx, blockNumber?: string): Promise<ContractCharityEvent> {
+	public async getCharityEventDetails(address: string, txOptions?: Tx): Promise<ContractCharityEvent> {
 		return {
 			address: this.web3.utils.toChecksumAddress(address),
-			date: blockNumber ? await this.getDate(address, blockNumber) : undefined,
 			metaStorageHash: await this.getMetaStorageHash(address, txOptions),
 			name: await this.getName(address, txOptions),
 			payed: await this.getPayed(address, txOptions),

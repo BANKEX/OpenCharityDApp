@@ -6,6 +6,7 @@ import Web3 from 'web3';
 import {TokenContractService} from './token-contract.service';
 import {ContractIncomingDonation} from '../../open-charity-types';
 import {CommonSettingsService} from '../common-settings.service';
+import * as moment from 'moment';
 
 
 @Injectable()
@@ -29,15 +30,26 @@ export class IncomingDonationContractService {
 		};
 	}
 
-	public getRealWorldIdentifier(address: string, txOptions?: Tx): Promise<string> {
+	/**
+	 * 	 Returns Incoming Donation creation date by retrieving it's block timestamp
+	 *
+	 * @param  {string} address Incoming donation address
+	 * @param  {number} blockNumber	Block number
+	 */
+	public async getDate(address: string, blockNumber: string): Promise<Date> {
 		const contract: Contract = this.cloneContract(this.incomingDonationContract, address);
-		return contract.methods.realWorldIdentifier().call(txOptions);
+		const blockTimestamp = (await this.web3ProviderService.web3.eth.getBlock(blockNumber)).timestamp;
+		return moment(blockTimestamp * 1000).toDate();
 	}
-
 
 	public getNote(address: string, txOptions?: Tx): Promise<string> {
 		const contract: Contract = this.cloneContract(this.incomingDonationContract, address);
 		return contract.methods.note().call(txOptions);
+	}
+
+	public getRealWorldIdentifier(address: string, txOptions?: Tx): Promise<string> {
+		const contract: Contract = this.cloneContract(this.incomingDonationContract, address);
+		return contract.methods.realWorldIdentifier().call(txOptions);
 	}
 
 	public getTags(address: string, txOptions?: Tx): Promise<string> {

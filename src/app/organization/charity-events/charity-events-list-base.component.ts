@@ -30,9 +30,9 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy, AfterV
 	@Input('organizationAddress') public organizationAddress: string;
 	@Input('sort$') public sort$: Observable<SortParams> = Observable.empty<SortParams>(); // to recive external sort requests
 	public charityEvents: AppCharityEvent[] = [];	// list of CE to show
-	public sort = {by: SortBy.DATE, reverse: true};	// CE sorting settings
-	public dataReady = new BehaviorSubject(false);						// flag to show preloader
 	public dataLoader = 0; 							// count how many charityEvents fully loaded
+	public dataReady = new BehaviorSubject(false);						// flag to show preloader
+	public sort = {by: SortBy.DATE, reverse: true};	// CE sorting settings
 	public sortModes = [['Sort by Date', SortBy.DATE], ['Sort by Name', SortBy.NAME], ['Sort by Raised', SortBy.RASED]];
 
 	protected componentDestroyed: Subject<void> = new Subject<void>();
@@ -152,11 +152,13 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy, AfterV
 		// null value means that incoming donation data is loading
 		// when data is loaded, replace null by data
 		this.charityEvents = times(charityEventsCount, constant(null));
-		const addedEvents = await this.organizationContractEventsService.getOrganizationEvents('CharityEventAdded', this.organizationAddress);
-		const blockNumbers = {};
-		for (let i = 0; i < addedEvents.length; i += 1) {
-			blockNumbers[(<any>addedEvents[i].returnValues).charityEvent] = addedEvents[i].blockNumber;
-		}
+		// bconst addedEvents = await this.organizationContractEventsService.getOrganizationEvents('CharityEventAdded', this.organizationAddress);
+		// const blockNumbers = {};
+		// for (let i = 0; i < addedEvents.length; i += 1) {
+		// 	blockNumbers[(<any>addedEvents[i].returnValues).charityEvent] = addedEvents[i].blockNumber;
+		// }
+		const blockNumbers =
+			await this.organizationContractEventsService.getBlockNumbersForEvents(this.organizationAddress, 'CharityEventAdded', 'charityEvent');
 		await this.organizationContractService.getCharityEvents(this.organizationAddress)
 			.take(charityEventsCount)
 			.subscribe(async (event: { address: string, index: number }) => {
@@ -166,7 +168,8 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy, AfterV
 				// if you change it to .detectChanges, it breaks further change detection of other comopnents
 				// if you know how to fix it, please do it
 				this.zone.run(async() => {
-					this.charityEvents[event.index] = merge({}, await this.charityEventContractService.getCharityEventDetails(event.address, undefined, blockNumbers[event.address]), {
+					this.charityEvents[event.index] = merge({}, await this.charityEventContractService.getCharityEventDetails(event.address), {
+						date: await this.charityEventContractService.getDate(event.address, blockNumbers[event.address]),
 						confirmation: ConfirmationStatusState.CONFIRMED
 					});
 					await this.updateCharityEventRaised(this.charityEvents[event.index]);
