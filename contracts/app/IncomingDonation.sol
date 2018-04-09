@@ -60,7 +60,7 @@ contract IncomingDonation {
      * @param charityEvent Charity Event to compare
      */
     function validateTags(uint[] donationTags, CharityEvent charityEvent) view public returns (bool)  {
-		uint charityEventTagsLength = charityEvent.tagsCount();
+		uint charityEventTagsLength = charityEvent.tagsLength();
 		if (donationTags.length == 0 || charityEventTagsLength == 0) {
 			return true;
 		}
@@ -75,6 +75,13 @@ contract IncomingDonation {
 
 		return false;
     }
+
+	/**
+     * @dev Returns how much tags this ID has
+     */
+	function tagsLength() public view returns(uint) {
+		return tags.length;
+	}
 
     // check that contract is charity event contract
     function isIncomingDonation() pure public returns (bool) {

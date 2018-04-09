@@ -58,7 +58,7 @@ contract CharityEvent is Ownable {
 	/**
      * @dev Returns how much tags this CE has
      */
-	function tagsCount() public view returns(uint) {
+	function tagsLength() public view returns(uint) {
 		return tags.length;
 	}
 

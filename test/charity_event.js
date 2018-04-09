@@ -167,7 +167,7 @@ contract('Charity Event', function(accounts) {
 
 async function getCharityEventTags(charityEventInstance) {
 	const tags = [];
-	const tagsLength = await charityEventInstance.tagsCount();
+	const tagsLength = await charityEventInstance.tagsLength();
 
 	for (let i = 0; i < tagsLength; i++) {
 		tags.push(parseInt(await charityEventInstance.tags(i)));
