@@ -25,7 +25,7 @@ contract('Incoming Donation', function(accounts) {
 
     it('should create a new incoming donation contract with specified details', async () => {
         try {
-            const transactionDetails = await OrganizationInstance.setIncomingDonation('Test', '200', 'Test note', '0', '0', {
+            const transactionDetails = await OrganizationInstance.setIncomingDonation('Test', '200', 'Test note', [0], '0', {
                 from: ADMIN_ACCOUNTS[0]
             });
 

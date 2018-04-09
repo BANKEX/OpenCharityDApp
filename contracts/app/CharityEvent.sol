@@ -15,12 +15,12 @@ contract CharityEvent is Ownable {
     // how much funds payed to needy
     uint public payed;
 
-    bytes1 public tags;
+    uint256[] public tags;
 
 	string public metaStorageHash;
 
 
-    function CharityEvent(string _name, uint _target, uint _payed, bytes1 _tags, string _metaStorageHash) public {
+    function CharityEvent(string _name, uint _target, uint _payed, uint256[] _tags, string _metaStorageHash) public {
         require(_target > 0);
         require(_payed >= 0);
         require(!Tools.isEmptyString(_name));
@@ -41,7 +41,7 @@ contract CharityEvent is Ownable {
      * @param _tags New tags
      * @param _metaStorageHash New metaStorageHash
      */
-	function updateCharityEventDetails(string _name, uint _target, bytes1 _tags, string _metaStorageHash) public onlyOwner returns(bool) {
+	function updateCharityEventDetails(string _name, uint _target, uint256[] _tags, string _metaStorageHash) public onlyOwner returns(bool) {
 
 		name = _name;
 
@@ -55,8 +55,16 @@ contract CharityEvent is Ownable {
 	}
 
 
+	/**
+     * @dev Returns how much tags this CE has
+     */
+	function tagsCount() public view returns(uint) {
+		return tags.length;
+	}
 
-	function updateMetaStorageHash(string _metaStorageHash) public  {
+
+
+	function updateMetaStorageHash(string _metaStorageHash) onlyOwner public  {
 		metaStorageHash = _metaStorageHash;
 	}
 

@@ -73,7 +73,7 @@ contract Organization {
 	/**
      * @dev Add new CharityEvent to Organization
      */
-	function addCharityEvent(string _name, uint _target, uint _payed, bytes1 _tags, string _metaStorageHash) public onlyAdmin returns(address) {
+	function addCharityEvent(string _name, uint _target, uint _payed, uint[] _tags, string _metaStorageHash) public onlyAdmin returns(address) {
 		CharityEvent charityEvent = new CharityEvent(_name, _target, _payed, _tags, _metaStorageHash);
 
 		// add charityEvent to charityEvents list
@@ -89,7 +89,7 @@ contract Organization {
 		return charityEvent;
 	}
 
-	function setIncomingDonation(string _realWorldIdentifier, uint _amount, string _note, bytes1 _tags, uint _sourceId) public onlyAdmin returns(address) {
+	function setIncomingDonation(string _realWorldIdentifier, uint _amount, string _note, uint[] _tags, uint _sourceId) public onlyAdmin returns(address) {
 		address incomingDonation = addIncomingDonation(_realWorldIdentifier, _amount, _note, _tags, _sourceId);
 
 		token.mint(incomingDonation, _amount);
@@ -100,7 +100,7 @@ contract Organization {
 	/**
      * @dev Add new IncomingDonation to Organization
      */
-	function addIncomingDonation(string _realWorldIdentifier, uint _amount, string _note, bytes1 _tags, uint _sourceId) internal returns(address) {
+	function addIncomingDonation(string _realWorldIdentifier, uint _amount, string _note, uint[] _tags, uint _sourceId) internal returns(address) {
 		require(_sourceId >= 0 && _sourceId <= incomingDonationsSourceIds);
 
 		IncomingDonation incomingDonation = new IncomingDonation(token, _realWorldIdentifier, _note, _tags, _sourceId);
@@ -146,7 +146,7 @@ contract Organization {
      * @param _tags New tags
      * @param _metaStorageHash New metaStorageHash
      */
-	function updateCharityEventDetails(address _charityEvent, string _name, uint _target, bytes1 _tags, string _metaStorageHash) public onlyAdmin returns(bool) {
+	function updateCharityEventDetails(address _charityEvent, string _name, uint _target, uint[] _tags, string _metaStorageHash) public onlyAdmin returns(bool) {
 		require(_charityEvent != address(0x0));
 		// check that it is CharityEvent contract
 		CharityEvent charityEvent = CharityEvent(_charityEvent);

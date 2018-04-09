@@ -25,7 +25,7 @@ contract('Charity Event', function(accounts) {
         const name = 'Test Charity Event';
         const target = '100';
         const payed = '0';
-        const tags = '0xcc';
+        const tags = [0, 1, 2];
         const metaHash = 'metaHash';
 
         const transactionDetails = await OrganizationInstance.addCharityEvent(name, target, payed, tags, metaHash, {
@@ -39,11 +39,15 @@ contract('Charity Event', function(accounts) {
         const charityEventTarget = (await CharityEventInstance.target()).toString();
         const charityEventPayed = (await CharityEventInstance.payed()).toString();
         const charityEventMetaHash = (await CharityEventInstance.metaStorageHash()).toString();
-        const charityEventTags = await CharityEventInstance.tags();
+        const charityEventTags = await getCharityEventTags(CharityEventInstance);
+
+
+		console.log(`charityEventTags: ${charityEventTags}`);
+
 
         // console.log(metaHash);
 
-        await CharityEventInstance.updateMetaStorageHash('updated');
+        // await CharityEventInstance.updateMetaStorageHash('updated');
 
         // console.log((await CharityEventInstance.metaStorageHash()).toString());
 
@@ -51,16 +55,26 @@ contract('Charity Event', function(accounts) {
         assert(charityEventTarget === target, 'Wrong charityEvent target');
         assert(charityEventPayed === payed, 'Wrong charityEvent payed');
         assert(charityEventMetaHash === metaHash, 'Wrong metaHash');
-        assert(charityEventTags === tags, 'Wrong tags');
+        assert(isEqualTags(tags, charityEventTags), 'Wrong tags');
     });
+
 
     it('should throw an error if addCharityEvent method called by non-admin', async () => {
         try {
-            await OrganizationInstance.addEmployee('Rick', 'Sanchez', {from: accounts[3]});
-            assert(false, 'Allow create users for account without admin rights');
+			const name = 'Test Charity Event';
+			const target = '100';
+			const payed = '0';
+			const tags = [0, 1, 2];
+			const metaHash = 'metaHash';
+
+			await OrganizationInstance.addCharityEvent(name, target, payed, tags, metaHash, {
+				from: accounts[0]
+			});
+
+            assert(false, 'Allow to create new CE without admin rights 1 ');
         } catch (exception) {
             const transactionException = exception.message.search('Exception while processing transaction: revert') !== -1;
-            assert(transactionException, 'Allow create users for account without admin rights');
+            assert(transactionException, 'Allow to create new CE without admin rights 2');
         }
     });
 
@@ -68,7 +82,7 @@ contract('Charity Event', function(accounts) {
 		const name = 'Test Charity Event';
 		const target = '100';
 		const payed = '0';
-		const tags = '0xcc';
+		const tags = [0, 1, 2];
 		const metaHash = 'metaHash';
 
 		const transactionDetails = await OrganizationInstance.addCharityEvent(name, target, payed, tags, metaHash, {
@@ -78,7 +92,7 @@ contract('Charity Event', function(accounts) {
 		// console.log(charityEventAddress);
 		const CharityEventInstance = CharityEvent.at(charityEventAddress);
 
-		await OrganizationInstance.updateCharityEventDetails(charityEventAddress, name+'_updated', parseInt(target)+100, '0xce', metaHash+'_updated', {
+		await OrganizationInstance.updateCharityEventDetails(charityEventAddress, name+'_updated', parseInt(target)+100, [0,1,2,3], metaHash+'_updated', {
 			from: ADMIN_ACCOUNTS[0]
 		});
 
@@ -86,14 +100,14 @@ contract('Charity Event', function(accounts) {
 		const charityEvenName = await CharityEventInstance.name();
 		const charityEventTarget = (await CharityEventInstance.target()).toString();
 		const charityEventPayed = (await CharityEventInstance.payed()).toString();
-		const charityEventTags = await CharityEventInstance.tags();
+		const charityEventTags = await getCharityEventTags(CharityEventInstance);
 		const charityEventMetaHash = (await CharityEventInstance.metaStorageHash()).toString();
 
 
 		assert(charityEvenName === name+'_updated', 'Wrong charityEvent name');
 		assert(charityEventTarget.toString() === (parseInt(target)+100).toString(), 'Wrong charityEvent target');
 		assert(charityEventMetaHash === metaHash+'_updated', 'Wrong metaHash');
-		assert(charityEventTags === '0xce', 'Wrong tags');
+		assert(isEqualTags(charityEventTags, [0,1,2,3]), 'Wrong tags');
 		assert(charityEventPayed.toString() === '0', 'Wrong payed');
 	});
 
@@ -101,7 +115,7 @@ contract('Charity Event', function(accounts) {
 		const name = 'Test Charity Event';
 		const target = '100';
 		const payed = '0';
-		const tags = '0xcc';
+		const tags = [0, 1, 2];
 		const metaHash = 'metaHash';
 
 		const transactionDetails = await OrganizationInstance.addCharityEvent(name, target, payed, tags, metaHash, {
@@ -110,7 +124,7 @@ contract('Charity Event', function(accounts) {
 		const charityEventAddress = transactionDetails.logs[0].args.charityEvent;
 
 		try {
-			await OrganizationInstance.updateCharityEventDetails(charityEventAddress, name + '_updated', parseInt(target) + 100, '0xce', metaHash + '_updated', {
+			await OrganizationInstance.updateCharityEventDetails(charityEventAddress, name + '_updated', parseInt(target) + 100, [0, 1, 2, 3], metaHash + '_updated', {
 				from: accounts[0]
 			});
 			assert(false, 'Update charity event without admin rights');
@@ -124,7 +138,7 @@ contract('Charity Event', function(accounts) {
 		const name = 'Test Charity Event';
 		const target = '100';
 		const payed = '0';
-		const tags = '0xcc';
+		const tags = [0, 1, 2];
 		const metaHash = 'metaHash';
 
 		const transactionDetails = await OrganizationInstance.addCharityEvent(name, target, payed, tags, metaHash, {
@@ -145,12 +159,23 @@ contract('Charity Event', function(accounts) {
 		}
 	});
 
-	it('should throw an error if try to set new CE target less than already raised amount', async() => {
-
-	});
-
-
-
-
-
+	// it('should throw an error if try to set new CE target less than already raised amount', async() => {
+	//
+	// });
 });
+
+
+async function getCharityEventTags(charityEventInstance) {
+	const tags = [];
+	const tagsLength = await charityEventInstance.tagsCount();
+
+	for (let i = 0; i < tagsLength; i++) {
+		tags.push(parseInt(await charityEventInstance.tags(i)));
+	}
+
+	return tags;
+}
+
+function isEqualTags(tags1, tags2) {
+	return (JSON.stringify(tags1) === JSON.stringify(tags2));
+}

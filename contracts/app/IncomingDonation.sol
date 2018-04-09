@@ -13,11 +13,8 @@ contract IncomingDonation {
     // for example bank transaction ID
     string public realWorldIdentifier;
 
-    // 0 in bytes format
-    bytes1 zeroBytes = 0x00;
-
     // tags assigned to donation
-    bytes1 public tags;
+    uint256[] public tags;
 
     // optional note. can be anything or empty
     string public note;
@@ -28,7 +25,7 @@ contract IncomingDonation {
 	uint public sourceId;
 
 
-    function IncomingDonation(address _token, string _realWorldIdentifier, string _note, bytes1 _tags, uint _sourceId) public {
+    function IncomingDonation(address _token, string _realWorldIdentifier, string _note, uint256[] _tags, uint _sourceId) public {
         require(_token != address(0x0));
 		require(_sourceId >= 0);
 
@@ -49,7 +46,7 @@ contract IncomingDonation {
 
         require(charityEvent.isCharityEvent());
 
-        require(validateTags(tags, charityEvent.tags()));
+        require(validateTags(tags, charityEvent));
 
         token.transfer(_charityEvent, _amount);
 
@@ -60,14 +57,23 @@ contract IncomingDonation {
      * @dev Compare target charity event and incoming donation tags
      * returns true if at least one tag is the same
      * @param donationTags tags of incoming donation
-     * @param eventTags tags of charity event
+     * @param charityEvent Charity Event to compare
      */
-    function validateTags(bytes1 donationTags, bytes1 eventTags) view public returns (bool)  {
-		if (donationTags == zeroBytes || eventTags == zeroBytes) {
+    function validateTags(uint[] donationTags, CharityEvent charityEvent) view public returns (bool)  {
+		uint charityEventTagsLength = charityEvent.tagsCount();
+		if (donationTags.length == 0 || charityEventTagsLength == 0) {
 			return true;
 		}
 
-        return ( (donationTags & eventTags) > zeroBytes);
+		for (uint i = 0; i < donationTags.length; i++) {
+			for(uint j = 0; i < charityEventTagsLength; j++) {
+				if (donationTags[i] == charityEvent.tags(j)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
     }
 
     // check that contract is charity event contract

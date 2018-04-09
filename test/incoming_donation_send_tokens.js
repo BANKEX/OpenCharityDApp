@@ -27,11 +27,11 @@ contract('Organization', function(accounts) {
         OrganizationInstance = await Organization.new(OpenCharityTokenInstance.address, ADMIN_ACCOUNTS, 'Test Organization');
         await OpenCharityTokenInstance.setMintAgent(OrganizationInstance.address, true);
 
-        await OrganizationInstance.setIncomingDonation('Test Incoming Donation', INCOMING_DONATION_AMOUNT, 'Test note', '0x3f', '0', {
+        await OrganizationInstance.setIncomingDonation('Test Incoming Donation', INCOMING_DONATION_AMOUNT, 'Test note', [0,1,2,3], '0', {
             from: ADMIN_ACCOUNTS[0]
         });
 
-        await OrganizationInstance.addCharityEvent('Test Charity Event', INCOMING_DONATION_AMOUNT+200, '0', '0x01', 'metahash', {
+        await OrganizationInstance.addCharityEvent('Test Charity Event', INCOMING_DONATION_AMOUNT+200, '0', [0,1,2,3], 'metahash', {
             from: ADMIN_ACCOUNTS[0]
         });
 
@@ -61,7 +61,7 @@ contract('Organization', function(accounts) {
 
     it('should not move tokens if charity event and incoming donation has no tags matches', async () => {
 
-        await OrganizationInstance.addCharityEvent('Test Charity Event With Unmatched Tags', INCOMING_DONATION_AMOUNT+200, '0', '0xC0', 'metahash', {
+        await OrganizationInstance.addCharityEvent('Test Charity Event With Unmatched Tags', INCOMING_DONATION_AMOUNT+200, '0', [4,5,6], 'metahash', {
             from: ADMIN_ACCOUNTS[0]
         });
 
@@ -84,12 +84,12 @@ contract('Organization', function(accounts) {
 		try {
 			const amountToMove = INCOMING_DONATION_AMOUNT - INCOMING_DONATION_AMOUNT/2;
 
-			await OrganizationInstance.setIncomingDonation('Test Incoming Donation', INCOMING_DONATION_AMOUNT, 'Test note', '0x00', '0', {
+			await OrganizationInstance.setIncomingDonation('Test Incoming Donation', INCOMING_DONATION_AMOUNT, 'Test note', [], '0', {
 				from: ADMIN_ACCOUNTS[0]
 			});
 
 
-			await OrganizationInstance.addCharityEvent('Test Charity Event', INCOMING_DONATION_AMOUNT+20000, '0', '0x00', 'metahash', {
+			await OrganizationInstance.addCharityEvent('Test Charity Event', INCOMING_DONATION_AMOUNT+20000, '0', [], 'metahash', {
 				from: ADMIN_ACCOUNTS[0]
 			});
 
@@ -126,7 +126,7 @@ contract('Organization', function(accounts) {
 		try {
 			const amountToMove = INCOMING_DONATION_AMOUNT - INCOMING_DONATION_AMOUNT/2;
 
-			await OrganizationInstance.setIncomingDonation('Test Incoming Donation', INCOMING_DONATION_AMOUNT, 'Test note', '0x00', '0', {
+			await OrganizationInstance.setIncomingDonation('Test Incoming Donation', INCOMING_DONATION_AMOUNT, 'Test note', [], '0', {
 				from: ADMIN_ACCOUNTS[0]
 			});
 			const incomingDonationInstance = IncomingDonation.at(await getLastIncomingDonationAddress(OrganizationInstance));
