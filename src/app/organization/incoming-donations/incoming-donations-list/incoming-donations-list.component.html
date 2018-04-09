@@ -15,10 +15,10 @@
 	</thead>
 	<tbody>
 	<tr class="data"
-		*ngFor="let incomingDonation of incomingDonations"
+		*ngFor="let incomingDonation of incomingDonations | orderBy:'date':true"
 		[ngClass]="{'pending' : incomingDonation && isPending(incomingDonation)}"
 		(click)="toDetails(incomingDonation)">
-		<td>01.02.2018</td>
+		<td>{{incomingDonation?.date|date:'dd.MM.yyyy'}}</td>
 		<td>{{incomingDonation?.realWorldsIdentifier}}</td>
 		<td><opc-bitmask-tags-list *ngIf="incomingDonation" [tags]="incomingDonation.tags"></opc-bitmask-tags-list></td>
 		<td>

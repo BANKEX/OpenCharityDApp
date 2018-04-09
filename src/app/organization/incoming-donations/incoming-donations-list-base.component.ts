@@ -1,5 +1,6 @@
 import {Component, Input, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {AppIncomingDonation, ConfirmationResponse, ConfirmationStatusState, FundsMovedToCharityEvent} from '../../open-charity-types';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Subject} from 'rxjs/Subject';
 import {ActivatedRoute, Router} from '@angular/router';
 import {TokenContractService} from '../../core/contracts-services/token-contract.service';
@@ -14,6 +15,7 @@ import {ErrorMessageService} from '../../core/error-message.service';
 import * as moment from 'moment';
 import {EventLog} from 'web3/types';
 import {OrganizationContractEventsService} from '../../core/contracts-services/organization-contract-events.service';
+import {NgProgress} from '@ngx-progressbar/core';
 
 @Component({
 	selector: 'opc-incoming-donations-list-base',
@@ -21,9 +23,10 @@ import {OrganizationContractEventsService} from '../../core/contracts-services/o
 })
 export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 	@Input('organizationAddress') public organizationAddress: string;
-
-	public incomingDonations: AppIncomingDonation[] = [];
 	public displayedIncomingDonations = [];
+	public dataLoader = 0;
+	public dataReady = new BehaviorSubject(false);
+	public incomingDonations: AppIncomingDonation[] = [];
 	private componentDestroyed: Subject<void> = new Subject<void>();
 
 	constructor(protected router: Router,
@@ -35,7 +38,8 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 				protected organizationSharedService: OrganizationSharedService,
 				protected modal: NgbModal,
 				protected errorMessageService: ErrorMessageService,
-				protected organizationContractEventsService: OrganizationContractEventsService
+				protected organizationContractEventsService: OrganizationContractEventsService,
+				protected progress: NgProgress,
 	) {}
 
 	public ngOnInit() {
@@ -106,29 +110,38 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 		// null value means that incoming donation data is loading
 		// when data is loaded, replace null by data
 		this.incomingDonations = times(incomingDonationsCount, constant(null));
-
+		const blockNumbers =
+			await this.organizationContractEventsService.getBlockNumbersForEvents(this.organizationAddress, 'IncomingDonationAdded', 'incomingDonation');
 
 		this.organizationContractService.getIncomingDonations(this.organizationAddress)
 			.take(incomingDonationsCount)
-			.subscribe(async (res: { address: string, index: number }) => {
+			.subscribe(async (event: { address: string, index: number }) => {
 
 				// it is a hack. without zone.run it doesn't work properly:
 				// it doesn't update incoming donations in template
 				// if you change it to .detectChanges, it breaks further change detection of other components
 				// if you know how to fix it, please do it
 				this.zone.run(async () => {
-					this.incomingDonations[res.index] = merge({}, await this.incomingDonationContractService.getIncomingDonationDetails(res.address), {
+					this.incomingDonations[event.index] =
+						merge({}, await this.incomingDonationContractService.getIncomingDonationDetails(event.address), {
+						date: await this.incomingDonationContractService.getDate(event.address, blockNumbers[event.address]),
 						confirmation: ConfirmationStatusState.CONFIRMED
 					});
-					await this.updateIncomingDonationAmount(this.incomingDonations[res.index]);
-					await this.getIncomingDonationSourceName(this.incomingDonations[res.index]);
-					await this.getSumOfMovedFunds(this.incomingDonations[res.index]);
-					this.displayedIncomingDonations[res.index] = this.incomingDonations[res.index];
+					await this.updateIncomingDonationAmount(this.incomingDonations[event.index]);
+					await this.getIncomingDonationSourceName(this.incomingDonations[event.index]);
+					await this.getSumOfMovedFunds(this.incomingDonations[event.index]);
+					this.displayedIncomingDonations[event.index] = this.incomingDonations[event.index];
+					this.dataLoader += 1;
+					let persents = Math.floor(this.dataLoader * 100 / incomingDonationsCount);
+					this.progress.set(persents, 'incomingDonations'); // update loading bar
+					if (this.dataLoader === incomingDonationsCount) {
+						this.dataReady.next(true);
+						this.progress.complete('incomingDonations');
+					}
 				});
 
 			});
 	}
-
 
 	public async updateIncomingDonationAmount(incomingDonation: AppIncomingDonation): Promise<void> {
 		incomingDonation.amount = await this.tokenContractService.balanceOf(incomingDonation.address);

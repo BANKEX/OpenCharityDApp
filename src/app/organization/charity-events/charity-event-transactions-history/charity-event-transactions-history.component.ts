@@ -57,7 +57,8 @@ export class CharityEventTransactionsHistoryComponent implements OnInit, OnDestr
 
 		this.organizationContractEventsService.getCharityEventTransactions(this.organizationAddress, this.charityEventAddress)
 			.subscribe(async (res: EventLog[]) => {
-				res.forEach(async (log: EventLog) => {
+				for (let i = 0; i < res.length; i += 1) {
+					const log = res[i];
 					const eventValues: FundsMovedToCharityEvent = <FundsMovedToCharityEvent>log.returnValues;
 					const blockTimestamp: number = (await this.web3ProviderService.web3.eth.getBlock(log.blockNumber)).timestamp;
 					this.transactions.push({
@@ -67,7 +68,7 @@ export class CharityEventTransactionsHistoryComponent implements OnInit, OnDestr
 						amount: eventValues.amount,
 						sender: eventValues.sender,
 					});
-				});
+				}
 				this.setTransactionsLoading(false);
 				this.setTransactionsEmpty(!res.length);
 			}, (err: Error) => {

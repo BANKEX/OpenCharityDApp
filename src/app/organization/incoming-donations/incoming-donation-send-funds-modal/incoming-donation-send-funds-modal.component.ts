@@ -43,7 +43,6 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 
 	public amount: string;
 	public moveFundsForm: FormGroup;
-
 	constructor(
 		private organizationContractService: OrganizationContractService,
 		private incomingDonationContractService: IncomingDonationContractService,
@@ -167,10 +166,10 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 			this.fundsMoved.emit(this.incomingDonation.address);
 		} catch (e) {
 			this.activeModal.close();
+			this.loadingOverlayService.hideOverlay();
 			// TODO: listen for failed transaction
 			if (e.message.search('MetaMask Tx Signature: User denied transaction signature') !== -1) {
 				this.organizationSharedService.moveFundsToCharityEventCanceled(charityEventInternalId, charityEventAddress);
-				this.loadingOverlayService.hideOverlay();
 				this.pendingTransactionService.addFailed(
 					amount + ' - ' + targetCharityEvent.name,
 					'Move funds transaction canceled',
@@ -180,7 +179,6 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 			} else {
 				// TODO:  global errors notifier
 				this.errorMessageService.addError(e.message, 'sendFunds');
-				this.loadingOverlayService.hideOverlay();
 			}
 		}
 	}
