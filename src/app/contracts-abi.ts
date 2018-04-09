@@ -314,7 +314,7 @@ export const ORGANIZATION_CONTRACT_ABI = [
 			},
 			{
 				'name': '_tags',
-				'type': 'bytes1'
+				'type': 'uint256[]'
 			},
 			{
 				'name': '_metaStorageHash',
@@ -349,7 +349,7 @@ export const ORGANIZATION_CONTRACT_ABI = [
 			},
 			{
 				'name': '_tags',
-				'type': 'bytes1'
+				'type': 'uint256[]'
 			},
 			{
 				'name': '_sourceId',
@@ -424,7 +424,7 @@ export const ORGANIZATION_CONTRACT_ABI = [
 			},
 			{
 				'name': '_tags',
-				'type': 'bytes1'
+				'type': 'uint256[]'
 			},
 			{
 				'name': '_metaStorageHash',
@@ -525,8 +525,13 @@ export const CHARITY_EVENT_CONTRACT_ABI = [
 	},
 	{
 		'constant': true,
-		'inputs': [],
-		'name': 'payed',
+		'inputs': [
+			{
+				'name': '',
+				'type': 'uint256'
+			}
+		],
+		'name': 'tags',
 		'outputs': [
 			{
 				'name': '',
@@ -540,7 +545,7 @@ export const CHARITY_EVENT_CONTRACT_ABI = [
 	{
 		'constant': true,
 		'inputs': [],
-		'name': 'target',
+		'name': 'payed',
 		'outputs': [
 			{
 				'name': '',
@@ -568,11 +573,11 @@ export const CHARITY_EVENT_CONTRACT_ABI = [
 	{
 		'constant': true,
 		'inputs': [],
-		'name': 'tags',
+		'name': 'target',
 		'outputs': [
 			{
 				'name': '',
-				'type': 'bytes1'
+				'type': 'uint256'
 			}
 		],
 		'payable': false,
@@ -609,7 +614,7 @@ export const CHARITY_EVENT_CONTRACT_ABI = [
 			},
 			{
 				'name': '_tags',
-				'type': 'bytes1'
+				'type': 'uint256[]'
 			},
 			{
 				'name': '_metaStorageHash',
@@ -650,7 +655,7 @@ export const CHARITY_EVENT_CONTRACT_ABI = [
 			},
 			{
 				'name': '_tags',
-				'type': 'bytes1'
+				'type': 'uint256[]'
 			},
 			{
 				'name': '_metaStorageHash',
@@ -666,6 +671,20 @@ export const CHARITY_EVENT_CONTRACT_ABI = [
 		],
 		'payable': false,
 		'stateMutability': 'nonpayable',
+		'type': 'function'
+	},
+	{
+		'constant': true,
+		'inputs': [],
+		'name': 'tagsLength',
+		'outputs': [
+			{
+				'name': '',
+				'type': 'uint256'
+			}
+		],
+		'payable': false,
+		'stateMutability': 'view',
 		'type': 'function'
 	},
 	{
@@ -698,6 +717,25 @@ export const CHARITY_EVENT_CONTRACT_ABI = [
 	}
 ];
 export const INCOMING_DONATION_CONTRACT_ABI = [
+	{
+		'constant': true,
+		'inputs': [
+			{
+				'name': '',
+				'type': 'uint256'
+			}
+		],
+		'name': 'tags',
+		'outputs': [
+			{
+				'name': '',
+				'type': 'uint256'
+			}
+		],
+		'payable': false,
+		'stateMutability': 'view',
+		'type': 'function'
+	},
 	{
 		'constant': true,
 		'inputs': [],
@@ -743,20 +781,6 @@ export const INCOMING_DONATION_CONTRACT_ABI = [
 	{
 		'constant': true,
 		'inputs': [],
-		'name': 'tags',
-		'outputs': [
-			{
-				'name': '',
-				'type': 'bytes1'
-			}
-		],
-		'payable': false,
-		'stateMutability': 'view',
-		'type': 'function'
-	},
-	{
-		'constant': true,
-		'inputs': [],
 		'name': 'token',
 		'outputs': [
 			{
@@ -784,7 +808,7 @@ export const INCOMING_DONATION_CONTRACT_ABI = [
 			},
 			{
 				'name': '_tags',
-				'type': 'bytes1'
+				'type': 'uint256[]'
 			},
 			{
 				'name': '_sourceId',
@@ -823,11 +847,11 @@ export const INCOMING_DONATION_CONTRACT_ABI = [
 		'inputs': [
 			{
 				'name': 'donationTags',
-				'type': 'bytes1'
+				'type': 'uint256[]'
 			},
 			{
-				'name': 'eventTags',
-				'type': 'bytes1'
+				'name': 'charityEvent',
+				'type': 'address'
 			}
 		],
 		'name': 'validateTags',
@@ -835,6 +859,20 @@ export const INCOMING_DONATION_CONTRACT_ABI = [
 			{
 				'name': '',
 				'type': 'bool'
+			}
+		],
+		'payable': false,
+		'stateMutability': 'view',
+		'type': 'function'
+	},
+	{
+		'constant': true,
+		'inputs': [],
+		'name': 'tagsLength',
+		'outputs': [
+			{
+				'name': '',
+				'type': 'uint256'
 			}
 		],
 		'payable': false,
