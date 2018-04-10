@@ -240,8 +240,7 @@ export class CharityEventFormComponent implements OnInit {
 				);
 
 				this.toastyService.warning('Editing ' + newCharityEvent.name + ' transaction pending');
-				transaction =
-					this.organizationContractService.updateCharityEventDetails(this.organizationContractAddress, newCharityEvent);
+				transaction = this.organizationContractService.updateCharityEventDetails(this.organizationContractAddress, newCharityEvent);
 				this.handleSubmit(transaction, charityEventInternalId, charityEventAddress);
 				receipt = await transaction;
 			}
@@ -365,7 +364,8 @@ export class CharityEventFormComponent implements OnInit {
 			return true;
 
 		// If added new image not same
-		if (this.charityEventImage.name !== metadataStorage.data.image.name)
+		if (this.charityEventImage &&
+			this.charityEventImage.name !== metadataStorage.data.image.name)
 			return true;
 
 		// If added new files
