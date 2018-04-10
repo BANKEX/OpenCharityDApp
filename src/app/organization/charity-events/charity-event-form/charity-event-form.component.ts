@@ -507,10 +507,10 @@ export class CharityEventFormComponent implements OnInit {
 
 				metaStorageFile = !!attachments ? attachments.find((item) => {
 					return item.name === file.name;
-				}) : -1;
+				}) : undefined;
 
 				dataToStore.data.attachments.push(
-					metaStorageFile !== -1 ? metaStorageFile : await this.storeFileToMetaStorage(file)
+					metaStorageFile ? metaStorageFile : await this.storeFileToMetaStorage(file)
 				);
 			}));
 		}
