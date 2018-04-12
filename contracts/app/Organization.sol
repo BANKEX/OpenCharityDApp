@@ -39,7 +39,8 @@ contract Organization {
 	// names of incoming donations sources
 	mapping(uint => string) public incomingDonationsSourceName;
 
-
+	// number of block when smart contract was deployed
+	uint public creationBlockNumber;
 
 
 	/**
@@ -64,6 +65,8 @@ contract Organization {
 
 		name = _name;
 		token = OpenCharityTokenInterface(_token);
+
+		creationBlockNumber = block.number;
 
 	}
 
