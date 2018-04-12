@@ -122,7 +122,7 @@
     "ng2-validation": "^4.2.0",
     "ngrx-store-freeze": "~0.2.0",
     "ngrx-store-logger": "~0.2.0",
-    "ngx-chips": "^1.6.7",
+    "ngx-chips": "^1.8.0",
     "ngx-file-drop": "^2.0.5",
     "ngx-masonry": "^0.5.4",
     "ngx-perfect-scrollbar": "^5.3.0",

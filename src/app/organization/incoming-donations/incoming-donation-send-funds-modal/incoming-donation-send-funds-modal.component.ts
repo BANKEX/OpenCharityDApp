@@ -9,7 +9,6 @@ import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {filter} from 'lodash';
-import {TagsBitmaskService} from '../../services/tags-bitmask.service';
 import {ContractCharityEvent, ContractIncomingDonation, AppCharityEvent, ConfirmationStatusState} from '../../../open-charity-types';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
 import {LoadingOverlayService} from '../../../core/loading-overlay.service';
@@ -19,6 +18,7 @@ import {PendingTransactionService} from '../../../core/pending-transactions.serv
 import {PendingTransactionSourceType} from '../../../pending-transaction.types';
 import {ToastyService} from 'ng2-toasty';
 import {ErrorMessageService} from '../../../core/error-message.service';
+import {TagService} from '../../services/tag.service';
 
 
 @Component({
@@ -46,14 +46,14 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 	constructor(
 		private organizationContractService: OrganizationContractService,
 		private incomingDonationContractService: IncomingDonationContractService,
-		private tagsBitmaskService: TagsBitmaskService,
 		private fb: FormBuilder,
 		private activeModal: NgbActiveModal,
 		private loadingOverlayService: LoadingOverlayService,
 		private organizationSharedService: OrganizationSharedService,
 		private pendingTransactionService: PendingTransactionService,
 		private toastyService: ToastyService,
-		private errorMessageService: ErrorMessageService
+		private errorMessageService: ErrorMessageService,
+		private tagService: TagService,
 	) {
 	}
 
@@ -77,10 +77,9 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 	}
 
 	private filterCharityEventsByTags(charityEvents: ContractCharityEvent[]): ContractCharityEvent[] {
-		const donationTags = parseInt(this.incomingDonation.tags, 16);
-		return charityEvents.filter((event) => {
-			return this.tagsBitmaskService.containSimilarTags(parseInt(event.tags, 16), donationTags);
-		});
+		return charityEvents.filter((event) =>
+			this.tagService.intersect(event.tags, this.incomingDonation.tags)
+		);
 	}
 
 	private initForm(): void {

@@ -1,7 +1,6 @@
 import {Component, Input, OnInit, ViewChild, Output, EventEmitter} from '@angular/core';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
 import {AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
-import {TagsBitmaskService} from '../../services/tags-bitmask.service';
 import {TransactionReceipt, PromiEvent} from 'web3/types';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
 import {AppIncomingDonation, ConfirmationStatusState, ContractIncomingDonation, AppCharityEvent} from '../../../open-charity-types';
@@ -15,8 +14,9 @@ import {PendingTransactionSourceType} from '../../../pending-transaction.types';
 import {PendingTransactionService} from '../../../core/pending-transactions.service';
 import {ToastyService} from 'ng2-toasty';
 import {ErrorMessageService} from '../../../core/error-message.service';
-import { LoadingOverlayService } from '../../../core/loading-overlay.service';
-
+import {LoadingOverlayService} from '../../../core/loading-overlay.service';
+import {TagService} from '../../services/tag.service';
+// tslint:disable:no-any
 
 type IncomingDonationSource = {
 	id: number;
@@ -67,7 +67,7 @@ export class IncomingDonationFormComponent implements OnInit {
 	public formatter: Function;
 	public incomingDonationForm: FormGroup;
 	public search: Function;
-	public selectedTagsBitmask: number = 0;
+	public selectedTagNames: string[] = [];
 	public sources: IncomingDonationSource[] = [];
 
 	constructor(
@@ -78,8 +78,8 @@ export class IncomingDonationFormComponent implements OnInit {
 		private organizationContractService: OrganizationContractService,
 		private organizationSharedService: OrganizationSharedService,
 		private pendingTransactionService: PendingTransactionService,
-		private tagsBitmaskService: TagsBitmaskService,
 		private toastyService: ToastyService,
+		private tagService: TagService,
 	) {
 	}
 
@@ -106,8 +106,7 @@ export class IncomingDonationFormComponent implements OnInit {
 	public async submitForm(data?: ContractIncomingDonation) {
 		// if (this.incomingDonationForm.invalid && !data) { return; }
 		const f = this.incomingDonationForm.value;
-		const tags = this.charityEvent ? this.charityEvent.tags :
-			'0x' + this.tagsBitmaskService.convertToHexWithLeadingZeros(this.selectedTagsBitmask);
+		const tags = this.charityEvent ? this.charityEvent.tags : (await this.tagService.getTagIds(this.selectedTagNames)).map((item: any) => item.tagID);
 		const newIncomingDonation: ContractIncomingDonation = data ? data : {
 			realWorldsIdentifier: f.realWorldIdentifier,
 			amount: f.amount,
@@ -127,7 +126,7 @@ export class IncomingDonationFormComponent implements OnInit {
 					realWorldsIdentifier: f.realWorldsIdentifier,
 					amount: f.amount,
 					note: f.note,
-					tags: f.tags,
+					tags: tags,
 					sourceId: f.source.id,
 					internalId: incomingDonationInternalId,
 					confirmation: ConfirmationStatusState.PENDING
@@ -206,8 +205,8 @@ export class IncomingDonationFormComponent implements OnInit {
 		}
 	}
 
-	public bitmaskChanged(bitmask: number): void {
-		this.selectedTagsBitmask = bitmask;
+	public tagsChanged(tagNames: string[]) {
+		this.selectedTagNames = tagNames;
 	}
 
 	private initForm(): void {

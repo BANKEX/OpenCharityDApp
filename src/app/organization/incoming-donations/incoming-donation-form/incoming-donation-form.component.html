@@ -85,11 +85,13 @@
 				<!--<label class="error" *ngIf="url?.errors?.url"></label>-->
 			</div>
 		</div>
-
 		<div class="col-md-12">
 			<div class="form-group" *ngIf="!charityEvent">
-				<opc-set-bitmask-tags [bitmask]="selectedTagsBitmask"
-									  (bitmaskChanged)="bitmaskChanged($event)"></opc-set-bitmask-tags>
+				<opc-set-tags
+					[allowCreate]="true"
+					[initialTags]="selectedTagNames"
+					(tagsChanged)="tagsChanged($event)">
+				</opc-set-tags>
 			</div>
 		</div>
 	</div>

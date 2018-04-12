@@ -5,7 +5,6 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {TransactionReceipt} from 'web3/types';
 
 import {IncomingDonationContractService} from '../../../core/contracts-services/incoming-donation-contract.service';
-import {TagsBitmaskService} from '../../services/tags-bitmask.service';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
 import {AppIncomingDonation, ConfirmationStatusState, ContractIncomingDonation} from '../../../open-charity-types';
@@ -39,7 +38,6 @@ export class IncomingDonationsEditorComponent implements OnInit, OnDestroy {
 				private route: ActivatedRoute,
 				private incomingDonationsContractService: IncomingDonationContractService,
 				private fb: FormBuilder,
-				private tagsBitmaskService: TagsBitmaskService,
 				private organizationContractService: OrganizationContractService,
 				private organizationSharedService: OrganizationSharedService,
 				private location: Location) {

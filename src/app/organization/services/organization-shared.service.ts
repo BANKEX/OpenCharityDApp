@@ -285,19 +285,19 @@ export class OrganizationSharedService {
 				name: 'Лекарства на выписку',
 				target: '70000',
 				payed: '0',
-				tags: '0x12'
+				tags: [1, 2]
 			},
 			{
 				name: 'Пропал Сергеев Сергей Сергеевич',
 				target: '100000',
 				payed: '0',
-				tags: '0x04'
+				tags: [1, 3]
 			},
 			{
 				name: 'Образование для детей мигрантов',
 				target: '880000',
 				payed: '0',
-				tags: '0x0e'
+				tags: [2, 3]
 			}
 		];
 
@@ -311,21 +311,21 @@ export class OrganizationSharedService {
 				note: 'детям на лечение',
 				realWorldsIdentifier: 'sber123456789',
 				sourceId: '0',
-				tags: '0x12'
+				tags: [1, 2]
 			},
 			{
 				amount: '427',
 				note: 'на лекарства',
 				realWorldsIdentifier: '412323445645',
 				sourceId: '0',
-				tags: '0x1c'
+				tags: [1, 3]
 			},
 			{
 				amount: '900',
 				note: 'на разные нужды',
 				realWorldsIdentifier: 'tinkoff234345346',
 				sourceId: '0',
-				tags: '0x00'
+				tags: [2, 3]
 			}
 		];
 

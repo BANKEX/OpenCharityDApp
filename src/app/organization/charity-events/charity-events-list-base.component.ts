@@ -146,17 +146,10 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy, AfterV
 	public async updateCharityEventsList(): Promise<void> {
 		// get amount of organization incoming donations
 		const charityEventsCount: number = parseInt(await this.organizationContractService.getCharityEventsCount(this.organizationAddress), 10);
-
-
 		// initialize empty array
 		// null value means that incoming donation data is loading
 		// when data is loaded, replace null by data
 		this.charityEvents = times(charityEventsCount, constant(null));
-		// bconst addedEvents = await this.organizationContractEventsService.getOrganizationEvents('CharityEventAdded', this.organizationAddress);
-		// const blockNumbers = {};
-		// for (let i = 0; i < addedEvents.length; i += 1) {
-		// 	blockNumbers[(<any>addedEvents[i].returnValues).charityEvent] = addedEvents[i].blockNumber;
-		// }
 		const blockNumbers =
 			await this.organizationContractEventsService.getBlockNumbersForEvents(this.organizationAddress, 'CharityEventAdded', 'charityEvent');
 		await this.organizationContractService.getCharityEvents(this.organizationAddress)

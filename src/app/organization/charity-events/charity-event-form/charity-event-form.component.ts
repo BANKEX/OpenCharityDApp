@@ -1,7 +1,6 @@
 import {Component, Input, OnInit, Output, ViewChild, ElementRef, EventEmitter, AfterViewInit, OnChanges, ChangeDetectorRef, Inject} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
-import {Tag, TagsBitmaskService} from '../../services/tags-bitmask.service';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
 import {TransactionReceipt, PromiEvent, Transaction} from 'web3/types';
 import {
@@ -20,7 +19,8 @@ import {ToastyService} from 'ng2-toasty';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {ErrorMessageService} from '../../../core/error-message.service';
 import {AsyncLocalStorage} from 'angular-async-local-storage';
-
+import {TagService} from '../../services/tag.service';
+// tslint:disable:no-any
 type CharityEventData = {
 	contract: ContractCharityEvent,
 	metadataStorage: MetaStorageData
@@ -37,11 +37,11 @@ export class CharityEventFormComponent implements OnInit {
 	@Output() public charityEventChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
 
 	public charityEventForm: FormGroup;
-	public selectedTagsBitmask: number = 0;
+	public selectedTagNames: string[] = [];
 
 	public charityEventImage: File;
 	public charityEventImagePreview: SafeUrl;
-	public charityEventTags: Array<Tag>;
+	public charityEventTagNames: Array<string>;
 
 	public attachedFiles: Array<File>;
 
@@ -55,7 +55,6 @@ export class CharityEventFormComponent implements OnInit {
 	constructor(
 		private organizationContractService: OrganizationContractService,
 		private fb: FormBuilder,
-		private tagsBitmaskService: TagsBitmaskService,
 		private organizationSharedService: OrganizationSharedService,
 		private metaDataStorageService: MetaDataStorageService,
 		private route: ActivatedRoute,
@@ -66,7 +65,8 @@ export class CharityEventFormComponent implements OnInit {
 		private activeModal: NgbActiveModal,
 		private errorMessageService: ErrorMessageService,
 		private elRef: ElementRef,
-		private localStorage: AsyncLocalStorage
+		private localStorage: AsyncLocalStorage,
+		private tagService: TagService,
 	) {}
 
 	public ngOnInit(): void {
@@ -97,8 +97,7 @@ export class CharityEventFormComponent implements OnInit {
 
 	public async addCharityEvent(data?: ContractCharityEvent): Promise<void> {
 		const f = this.charityEventForm.value;
-
-		const tags = '0x' + this.tagsBitmaskService.convertToHexWithLeadingZeros(this.selectedTagsBitmask);
+		const tags = (await this.tagService.getTagIds(this.selectedTagNames)).map((item: any) => item.tagID);
 		const newCharityEvent: ContractCharityEvent = data ? data : {
 			name: f.name,
 			target: f.target,
@@ -114,27 +113,22 @@ export class CharityEventFormComponent implements OnInit {
 			// save meta data into storage
 			const metaStorageHash: string = await this.storeToMetaStorage(newCharityEvent, f.details);
 			merge(newCharityEvent, {metaStorageHash: metaStorageHash});
-
 			// show pending charity event in ui
 			this.organizationSharedService.charityEventAdded(merge({}, newCharityEvent, {
 				internalId: charityEventInternalId,
 				confirmation: ConfirmationStatusState.PENDING
 			}));
-
 			this.pendingTransactionService.addPending(
 				newCharityEvent.name,
 				'Adding ' + newCharityEvent.name + ' transaction pending',
 				PendingTransactionSourceType.CE
 			);
-
 			this.toastyService.warning('Adding ' + newCharityEvent.name + ' transaction pending');
-
 			const transaction: PromiEvent<TransactionReceipt> =
 				this.organizationContractService.addCharityEvent(this.organizationContractAddress, newCharityEvent);
 			this.handleSubmit(transaction, charityEventInternalId, undefined);
 			// submit transaction to blockchain
 			const receipt: TransactionReceipt = await transaction;
-
 			// check if transaction succseed
 			if (receipt.events && receipt.events.CharityEventAdded) {
 				newCharityEventAddress = receipt.events.CharityEventAdded.returnValues['charityEvent'];
@@ -178,8 +172,7 @@ export class CharityEventFormComponent implements OnInit {
 
 	public async editCharityEvent(): Promise<void> {
 		const f = this.charityEventForm.value;
-
-		const tags = '0x' + this.tagsBitmaskService.convertToHexWithLeadingZeros(this.selectedTagsBitmask);
+		const tags = (await this.tagService.getTagIds(this.selectedTagNames)).map((item: any) => item.tagID);
 		const newCharityEvent: ContractCharityEvent = {
 			name: f.name,
 			target: f.target,
@@ -324,8 +317,8 @@ export class CharityEventFormComponent implements OnInit {
 		this.changeStylesDropFiles();
 	}
 
-	public bitmaskChanged(bitmask: number) {
-		this.selectedTagsBitmask = bitmask;
+	public tagsChanged(tagNames: string[]) {
+		this.selectedTagNames = tagNames;
 	}
 
 	public setQuillToolBar() {
@@ -444,7 +437,7 @@ export class CharityEventFormComponent implements OnInit {
 			metadataStorage: MetaStorageData,
 			contract: ContractCharityEvent,
 			attachments: Array<Object>,
-			tags: Array<Tag>,
+			tags: Array<string>,
 			image: MetaStorageFile;
 
 		data = this.charityEventData;
@@ -456,7 +449,7 @@ export class CharityEventFormComponent implements OnInit {
 
 		image = metadataStorage.data ? metadataStorage.data.image : null;
 		attachments = metadataStorage.data.attachments ? metadataStorage.data.attachments : [];
-		tags = contract.tags ? this.parseBitmaskIntoTags(contract.tags) : [];
+		tags = await this.tagService.getTagNames(contract.tags);
 
 		this.charityEventForm = this.fb.group({
 			name: [ contract.name, Validators.required ],
@@ -466,7 +459,7 @@ export class CharityEventFormComponent implements OnInit {
 		});
 
 		this.attachedFiles = Object.assign([], attachments);
-		this.charityEventTags = tags;
+		this.charityEventTagNames = tags;
 
 		if (image) {
 			this.loadingImage = true;
@@ -649,14 +642,6 @@ export class CharityEventFormComponent implements OnInit {
 
 			reader.readAsDataURL(blob);
 		});
-	}
-
-	private parseBitmaskIntoTags(tags: string): Tag[] {
-		const bitmask = parseInt(tags, 16);
-
-		this.selectedTagsBitmask = bitmask;
-
-		return this.tagsBitmaskService.parseBitmaskIntoTags(bitmask);
 	}
 
 	private handleSubmit(transaction: PromiEvent<TransactionReceipt>, id, address) {

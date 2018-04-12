@@ -25,7 +25,7 @@ export interface ContractCharityEvent {
 	metaStorageHash?: string;
 	name: string;
 	payed: string;
-	tags: string;
+	tags: number[];
 	target: string;
 }
 
@@ -49,7 +49,7 @@ export interface ContractIncomingDonation {
 	realWorldsIdentifier: string;
 	sourceId: string;
 	sourceName?: string;
-	tags: string;
+	tags: number[];
 }
 
 export interface AppIncomingDonation extends ContractIncomingDonation {

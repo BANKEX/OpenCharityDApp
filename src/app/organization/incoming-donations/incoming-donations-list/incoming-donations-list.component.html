@@ -20,7 +20,7 @@
 		(click)="toDetails(incomingDonation)">
 		<td>{{incomingDonation?.date|date:'dd.MM.yyyy'}}</td>
 		<td>{{incomingDonation?.realWorldsIdentifier}}</td>
-		<td><opc-bitmask-tags-list *ngIf="incomingDonation" [tags]="incomingDonation.tags"></opc-bitmask-tags-list></td>
+		<td><opc-tag-list *ngIf="incomingDonation" [tags]="incomingDonation.tags"></opc-tag-list></td>
 		<td>
 			<p class="mrg-btm-5">
 				<span class="text-dark text-semibold">{{incomingDonation?.movedFunds}}/{{incomingDonation?.amount}}</span>

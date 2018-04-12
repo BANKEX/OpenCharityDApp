@@ -127,9 +127,11 @@
 
 			<!-- Event tags -->
 			<div class="form-group">
-				<opc-set-bitmask-tags [bitmask]="selectedTagsBitmask"
-									  [chosenTags]="charityEventTags"
-									  (bitmaskChanged)="bitmaskChanged($event)"></opc-set-bitmask-tags>
+				<opc-set-tags
+					[allowCreate]="true"
+					[initialTags]="charityEventTagNames"
+					(tagsChanged)="tagsChanged($event)">
+				</opc-set-tags>
 			</div>
 			<!-- /Event tags -->
 

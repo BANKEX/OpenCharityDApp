@@ -1,0 +1,12 @@
+<tag-input class="tags-list"
+		   [onlyFromAutocomplete]="!allowCreate"
+		   [(ngModel)]="selectedTags"
+		   (onAdd)="toggleTag($event)"
+		   (onRemove)="toggleTag($event)"
+		   [inputClass]="'form-control'"
+		   theme="minimal">
+	<tag-input-dropdown [showDropdownIfEmpty]="false"
+							[focusFirstElement]="true"
+							[autocompleteItems]="tags">
+		</tag-input-dropdown>
+	</tag-input>

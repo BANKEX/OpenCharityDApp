@@ -55,9 +55,15 @@ export class CharityEventContractService {
 		return contract.methods.payed().call(txOptions);
 	}
 
-	public getTags(address: string, txOptions?: Tx): Promise<string> {
+	public async getTags(address: string, txOptions?: Tx): Promise<number[]> {
 		const contract: Contract = this.cloneContract(this.charityEventContract, address);
-		return contract.methods.tags().call(txOptions);
+		let count = await contract.methods.tagsLength().call(txOptions);
+		const tagPromises = [];
+		for (let i = 0; i < count; i += 1) {
+			tagPromises.push(contract.methods.tags(i).call(txOptions));
+		}
+		const tags = await Promise.all(tagPromises);
+		return tags.map(tag => +tag); // remove quotes
 	}
 
 	public getTarget(address: string, txOptions?: Tx): Promise<string> {
