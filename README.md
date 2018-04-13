@@ -1,23 +1,19 @@
-# Bankex Open Charity
+# Bankex Foundation Open Charity
 
 
-#Запуск
+# Installation
 
-1. Скопировать репозиторий
+1. clone this repository
 1. `npm install`
-1. Установить плагин Metamask https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn
-1. В Metamask изменить сеть на Custom RPC и указать адрес https://rpcprovider.staging.bankex.team:8635
-1. `npm run start`, чтобы запустить приложение
-1. Написать мне в Slack: @bykrab, чтобы получить тестовый эфир и админские права
+1. install metamask extension from https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn
+1. set RPC to https://rpcprovider.staging.bankex.team:8635 inside metamask
+1. `npm run start` to launch the application
 
-<!-- Чтобы задеплоить контракт организации, необходим [truffle](http://truffleframework.com/) -->
-<!-- 1. `npm install -g truffle` -->
-<!-- 1. Зайти в папку проекта, запустить `truffle migrate --network ganache` -->
-<!-- 1. Дождаться компиляции, в консоли будет строчка вида `Organization: 0x.....` где 0x.... это адрес контракта организации. -->
-<!-- 1. Скопировать адрес организации из предыдущего шага в `constants.js` в переменную `exports.DEV_ENVIRONMENT.organizations`; -->
 
-# Работа с ветками
-1. Для каждой задачи создается новая ветка. Ветка должна иметь префикс `feature/` если добавляются новые функции и `fix/` если исправляется какая-то ошибка.
-2. Когда задача готова, открываем pull request в master
+
+# Git flow
+1. for each task create new branch with `feature/` or `fix/` prefix
+1. create pull request when the work is finished
+
 
 
