@@ -17,22 +17,32 @@
 				<i class="fa fa-plus"></i>
 					Add Event
 				</button>
-
 				<button class="btn btn-default" (click)="hideAddCharityEventForm()" *ngIf="isAddCharityFormEnabled">
 					Close Form
 				</button>
 			</div>
 			<div class="clearfix"></div>
 		</h4>
-
-
 	</div>
-
 	<div class="card" *ngIf="changer === 'actual' && isAddCharityFormEnabled">
 		<opc-add-charity-event [organizationContractAddress]="organizationAddress"></opc-add-charity-event>
 	</div>
-
-	<div class="card">
+	<div class="card" ngbDropdown placement="bottom-right">
+		<span class="card-header-sort" ngbDropdownToggle><i class="fa fa-sort"></i></span>
+		<div class="dropdown-menu" ngbDropdownMenu (click)="$event.stopPropagation()">
+			<ng-container *ngFor="let mode of sortModes">
+				<button class="dropdown-item" (click)="doSort(mode[1])">
+					<ng-container *ngIf="mode[1]===sort.by; else emptyIcon">
+						<i *ngIf="sort.reverse" class="fa fa-sort-up pdd-right-10"></i>
+						<i *ngIf="!sort.reverse" class="fa fa-sort-down pdd-right-10"></i>
+					</ng-container>
+					<ng-template #emptyIcon>
+						<i class="fa fa-sort pdd-right-10 invisible"></i>
+					</ng-template>
+					<span>{{mode[0]}}</span>
+				</button>
+			</ng-container>
+		</div>
 		<div class="tab-primary">
 			<ul class="nav nav-tabs" role="tablist">
 				<li class="nav-item">
@@ -47,8 +57,12 @@
 			</ul>
 			<div class="tab-content">
 				<div class="tab-pane fade" [ngClass]="{'in active':changer === 'actual'}">
-					<div class="row ce-row">
-						<opc-charity-events-card class="col-lg-4" *ngFor="let charityEvent of charityEvents.slice().reverse()" [charityEvent]="charityEvent" [organizationAddress]="organizationAddress"></opc-charity-events-card>
+					<div class="row ce-row" *ngIf="dataReady|async">
+						<opc-charity-events-card class="col-lg-4"
+							*ngFor="let charityEvent of charityEvents|orderBy:sort.by:sort.reverse"
+							[charityEvent]="charityEvent"
+							[organizationAddress]="organizationAddress">
+						</opc-charity-events-card>
 					</div>
 				</div>
 				<div class="tab-pane fade" [ngClass]="{'in active':changer === 'archive'}">
@@ -64,4 +78,6 @@
 			</div>
 		</div>
 	</div>
+	<div class="text-center" *ngIf="!(dataReady|async)"><i class="fa fa-spinner fa-spin fa-3x"></i></div>
+	<ng-progress [id]="'charityEvents'" [spinner]="false" [meteor]="false"></ng-progress>
 </div>

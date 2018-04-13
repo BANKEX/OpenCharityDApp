@@ -1,7 +1,6 @@
 import {Component, NgZone, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {constant, find, findIndex, merge, reverse, times} from 'lodash';
-
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
 import {IncomingDonationContractService} from '../../../core/contracts-services/incoming-donation-contract.service';
 import {TokenContractService} from '../../../core/contracts-services/token-contract.service';
@@ -9,7 +8,8 @@ import {IncomingDonationsListBaseComponent} from '../incoming-donations-list-bas
 import {OrganizationSharedService} from '../../services/organization-shared.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ErrorMessageService} from '../../../core/error-message.service';
-
+import {OrganizationContractEventsService} from '../../../core/contracts-services/organization-contract-events.service';
+import {NgProgress} from '@ngx-progressbar/core';
 @Component({
 	selector: 'opc-dashboard-incoming-donations-list',
 	templateUrl: 'dashboard-incoming-donations-list.component.html',
@@ -17,16 +17,19 @@ import {ErrorMessageService} from '../../../core/error-message.service';
 })
 export class DashboardIncomingDonationsListComponent extends IncomingDonationsListBaseComponent implements OnInit {
 
-
-	constructor(protected organizationContractService: OrganizationContractService,
-				protected incomingDonationContractService: IncomingDonationContractService,
-				protected tokenContractService: TokenContractService,
-				protected router: Router,
-				protected route: ActivatedRoute,
-				protected zone: NgZone,
-				protected organizationSharedService: OrganizationSharedService,
-				protected modal: NgbModal,
-				protected errorMessageService: ErrorMessageService) {
+	constructor(
+		protected organizationContractService: OrganizationContractService,
+		protected incomingDonationContractService: IncomingDonationContractService,
+		protected tokenContractService: TokenContractService,
+		protected router: Router,
+		protected route: ActivatedRoute,
+		protected zone: NgZone,
+		protected organizationSharedService: OrganizationSharedService,
+		protected modal: NgbModal,
+		protected errorMessageService: ErrorMessageService,
+		protected organizationContractEventsService: OrganizationContractEventsService,
+		protected progress: NgProgress,
+	) {
 		super(
 			router,
 			route,
@@ -36,7 +39,9 @@ export class DashboardIncomingDonationsListComponent extends IncomingDonationsLi
 			zone,
 			organizationSharedService,
 			modal,
-			errorMessageService
+			errorMessageService,
+			organizationContractEventsService,
+			progress
 		);
 	}
 

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Contract, TransactionReceipt, Tx, PromiEvent} from 'web3/types';
+import {Contract, PromiEvent, TransactionReceipt, Tx} from 'web3/types';
 import {Web3ProviderService} from '../web3-provider.service';
 import {forEach, merge} from 'lodash';
 import Web3 from 'web3';
@@ -39,10 +39,12 @@ export class OrganizationContractService {
 		};
 	}
 
-	/********************************/
-	/***  Get Organization Data *****/
+	public async isAdmin(address: string, walletAddress: string, txOptions?: Tx): Promise<boolean> {
+		const contract: Contract = this.cloneContract(this.organizationContract, address);
+		return contract.methods.admins(walletAddress).call(txOptions);
+	}
 
-	/********************************/
+	//#region Get Organization Data
 
 	public getName(address: string, txOptions?: Tx): Promise<string> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
@@ -57,14 +59,25 @@ export class OrganizationContractService {
 	public async getOrganization(address: string, txOptions?: Tx): Promise<Organization> {
 		return {
 			name: await this.getName(address, txOptions),
-			address: address,
+			address: this.web3.utils.toChecksumAddress(address),
 			charityEventsCount: parseInt(await this.getCharityEventsCount(address, txOptions), 10)
 		};
 	}
 
-	public async isAdmin(address: string, walletAddress: string, txOptions?: Tx): Promise<boolean> {
+	//#endregion
+
+	//#region Incoming Donations methods
+
+	public addNewIncomingDonationsSource(address: string, sourceName: string, txOptions?: Tx): Promise<void> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
-		return contract.methods.admins(walletAddress).call(txOptions);
+		const tx = merge({}, this.defaultTx, txOptions);
+		return contract.methods.addIncomingDonationSource(sourceName).send(tx);
+	}
+
+	public addIncomingDonation(address: string, realWorldsIdentifier: string, amount: string, note: string, tags: string, sourceId: string, txOptions?: Tx) {
+		const contract: Contract = this.cloneContract(this.organizationContract, address);
+		const tx: Tx = merge({}, this.defaultTx, txOptions);
+		return contract.methods.setIncomingDonation(realWorldsIdentifier, amount, note, tags, sourceId).send(tx);
 	}
 
 	public getIncomingDonationsSourcesIds(address: string, txOptions?: Tx): Promise<string> {
@@ -75,27 +88,6 @@ export class OrganizationContractService {
 	public getIncomingDonationSourceName(address: string, sourceId: number, txOptions?: Tx): Promise<string> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		return contract.methods.incomingDonationsSourceName(sourceId).call(txOptions);
-	}
-
-	/********************************/
-	/***  Get Organization Data *****/
-
-	/********************************/
-	public addNewIncomingDonationsSource(address: string, sourceName: string, txOptions?: Tx): Promise<void> {
-		const contract: Contract = this.cloneContract(this.organizationContract, address);
-		const tx = merge({}, this.defaultTx, txOptions);
-		return contract.methods.addIncomingDonationSource(sourceName).send(tx);
-	}
-
-
-	/********************************/
-	/***  IncomingDonations methods */
-
-	/********************************/
-	public addIncomingDonation(address: string, realWorldsIdentifier: string, amount: string, note: string, tags: string, sourceId: string, txOptions?: Tx) {
-		const contract: Contract = this.cloneContract(this.organizationContract, address);
-		const tx: Tx = merge({}, this.defaultTx, txOptions);
-		return contract.methods.setIncomingDonation(realWorldsIdentifier, amount, note, tags, sourceId).send(tx);
 	}
 
 	public async getIncomingDonationsCount(address: string, txOptions?: Tx): Promise<string> {
@@ -123,16 +115,16 @@ export class OrganizationContractService {
 		return source.asObservable();
 	}
 
-	public moveFundsToCharityEvent(organizationAddress: string, incomingDonationAddress: string, charityEventAddress: string, amount: string, txOptions?: Tx): PromiEvent<TransactionReceipt>  {
+	public moveFundsToCharityEvent(organizationAddress: string, incomingDonationAddress: string, charityEventAddress: string, amount: string, txOptions?: Tx): PromiEvent<TransactionReceipt> {
 		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
 		const tx: Tx = merge({}, this.defaultTx, txOptions);
 		return contract.methods.moveDonationFundsToCharityEvent(incomingDonationAddress, charityEventAddress, amount).send(tx);
 	}
 
-	/********************************/
-	/***  Charity Events Methods ****/
+	//#endregion
 
-	/********************************/
+	//#region Charity Events methods
+
 	public addCharityEvent(address: string, charityEvent: ContractCharityEvent, txOptions?: Tx): PromiEvent<TransactionReceipt> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
 		const tx: Tx = merge({}, this.defaultTx, txOptions);
@@ -182,7 +174,10 @@ export class OrganizationContractService {
 		return result;
 	}
 
-	// Utils
+	//#endregion
+
+	//#region  Utils
+
 	private cloneContract(original: Contract, address: string): Contract {
 		if (this.lastContractAddress === address) {
 			return this.lastContract;
@@ -215,4 +210,5 @@ export class OrganizationContractService {
 		return result;
 	}
 
+	//#endregion
 }

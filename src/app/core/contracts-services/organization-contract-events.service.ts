@@ -9,7 +9,8 @@ import {Observer} from 'rxjs/Observer';
 import {Subject} from 'rxjs/Subject';
 import {ContractCharityEvent, ContractIncomingDonation} from '../../open-charity-types';
 import {CommonSettingsService} from '../common-settings.service';
-
+import to from 'await-to-js';
+// tslint:disable:no-any
 @Injectable()
 export class OrganizationContractEventsService {
 	private organizationContract: Contract;
@@ -50,6 +51,27 @@ export class OrganizationContractEventsService {
 		}
 
 		return this.incomingDonationAddedObservable[address];
+	}
+
+
+	public async getOrganizationEvents(eventName: string, organizationAddress: string, txOptions?: Tx): Promise<EventLog[]> {
+		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
+		return contract.getPastEvents(eventName, {fromBlock: 0, toBlock: 'latest'});
+	}
+	/**
+	 * Returns an object where specified event instance addreses are keys and block numbers are values
+	 * @param  {string} address 	Organization address
+	 * @param  {string} eventName	Organization event name
+	 * @param  {string} valueName	Key name in Return Values object of specified event
+	 */
+	public async getBlockNumbersForEvents(address: string, eventName: string, valueName: string) {
+		const [err, events] = await to(this.getOrganizationEvents(eventName, address));
+		if (err) { console.error(err); return {}; }
+		const blockNumbers = {};
+		for (let i = 0; i < events.length; i += 1) {
+			blockNumbers[(<any>events[i].returnValues)[valueName]] = events[i].blockNumber;
+		}
+		return blockNumbers;
 	}
 
 	public getCharityEventTransactions(organizationAddress: string, charityEventAddress: string, txOptions?: Tx): Observable<EventLog[]> {

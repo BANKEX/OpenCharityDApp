@@ -10,6 +10,10 @@ import {MetaDataStorageService} from '../../../core/meta-data-storage.service';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ErrorMessageService} from '../../../core/error-message.service';
+import { OrganizationContractEventsService } from '../../../core/contracts-services/organization-contract-events.service';
+import { Web3ProviderService } from '../../../core/web3-provider.service';
+import {AsyncLocalStorage} from 'angular-async-local-storage';
+import {NgProgress} from '@ngx-progressbar/core';
 
 @Component({
 	selector: 'opc-charity-events-all',
@@ -24,6 +28,7 @@ export class CharityEventsAllComponent extends CharityEventsListBaseComponent im
 
 	constructor(
 		protected organizationContractService: OrganizationContractService,
+		protected organizationContractEventsService: OrganizationContractEventsService,
 		protected charityEventContractService: CharityEventContractService,
 		protected tokenContractService: TokenContractService,
 		protected zone: NgZone,
@@ -31,18 +36,25 @@ export class CharityEventsAllComponent extends CharityEventsListBaseComponent im
 		protected modal: NgbModal,
 		protected organizationSharedService: OrganizationSharedService,
 		protected errorMessageService: ErrorMessageService,
+		protected web3ProviderService: Web3ProviderService,
+		protected localStorage: AsyncLocalStorage,
+		protected progress: NgProgress,
 		private route: ActivatedRoute,
 		private router: Router
 	) {
 		super(
 			organizationContractService,
+			organizationContractEventsService,
 			tokenContractService,
 			charityEventContractService,
 			zone,
 			metaDataStorageService,
 			modal,
 			organizationSharedService,
-			errorMessageService
+			errorMessageService,
+			web3ProviderService,
+			localStorage,
+			progress,
 		);
 	}
 

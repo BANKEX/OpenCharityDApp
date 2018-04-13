@@ -9,6 +9,8 @@ import {IncomingDonationsListBaseComponent} from '../incoming-donations-list-bas
 import {OrganizationSharedService} from '../../services/organization-shared.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ErrorMessageService} from '../../../core/error-message.service';
+import {OrganizationContractEventsService} from '../../../core/contracts-services/organization-contract-events.service';
+import {NgProgress} from '@ngx-progressbar/core';
 
 @Component({
 	templateUrl: 'incoming-donations-all.component.html',
@@ -17,15 +19,19 @@ import {ErrorMessageService} from '../../../core/error-message.service';
 export class IncomingDonationsAllComponent extends IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 	public organizationName: string = '';
 
-	constructor(protected organizationContractService: OrganizationContractService,
-				protected incomingDonationContractService: IncomingDonationContractService,
-				protected tokenContractService: TokenContractService,
-				protected router: Router,
-				protected route: ActivatedRoute,
-				protected zone: NgZone,
-				protected organizationSharedService: OrganizationSharedService,
-				protected modal: NgbModal,
-				protected errorMessageService: ErrorMessageService) {
+	constructor(
+		protected organizationContractService: OrganizationContractService,
+		protected incomingDonationContractService: IncomingDonationContractService,
+		protected tokenContractService: TokenContractService,
+		protected router: Router,
+		protected route: ActivatedRoute,
+		protected zone: NgZone,
+		protected organizationSharedService: OrganizationSharedService,
+		protected modal: NgbModal,
+		protected errorMessageService: ErrorMessageService,
+		protected organizationContractEventsService: OrganizationContractEventsService,
+		protected progress: NgProgress,
+	) {
 		super(
 			router,
 			route,
@@ -35,7 +41,9 @@ export class IncomingDonationsAllComponent extends IncomingDonationsListBaseComp
 			zone,
 			organizationSharedService,
 			modal,
-			errorMessageService
+			errorMessageService,
+			organizationContractEventsService,
+			progress,
 		);
 	}
 

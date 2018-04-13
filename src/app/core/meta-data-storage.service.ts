@@ -46,18 +46,68 @@ export class MetaDataStorageService {
 		return this.httpClient.get(this.buildUrl('getData/' + hash), httpOptions);
 	}
 
-	public convertArrayBufferToBase64(arrayBuffer: ArrayBuffer) {
+	public convertArrayBufferToBase64(arrayBuffer: ArrayBuffer, type: string) {
 		let binary = '';
 		const bytes = new Uint8Array(arrayBuffer);
 		const len = bytes.byteLength;
 		for (let i = 0; i < len; i++) {
 			binary += String.fromCharCode(bytes[i]);
 		}
-		return window.btoa(binary);
+		return `data:${type};base64,` + window.btoa(binary);
 	}
 
 	public convertArrayBufferToFile(arrayBuffer: ArrayBuffer, type: string, name: string): File {
 		return new File([new Blob([arrayBuffer], {type: type})], name);
+	}
+
+	public compressImage(arrayBuffer: ArrayBuffer, type: string): Promise<string> {
+		return new Promise<string>((resolve, reject) => {
+			let image = new Image();
+
+			image.onload = () => {
+				resolve(this.jicCompress(image, type));
+			};
+
+			image.onerror = (err: ErrorEvent) => {
+				reject(err);
+			};
+
+			image.src = this.convertArrayBufferToBase64(arrayBuffer, type);
+		});
+	}
+
+	private jicCompress(sourceImgObj, mimeType): string {
+		let quality = 100;
+
+		let maxHeight = 500;
+		let maxWidth = 500;
+
+		let height = sourceImgObj.height;
+		let width = sourceImgObj.width;
+
+		// calculate the width and height, constraining the proportions
+		if (width > height) {
+			if (width > maxWidth) {
+				height = Math.round(height *= maxWidth / width);
+				width = maxWidth;
+			}
+		} else {
+			if (height > maxHeight) {
+				width = Math.round(width *= maxHeight / height);
+				height = maxHeight;
+			}
+		}
+
+		let cvs = document.createElement('canvas');
+		cvs.width = width;
+		cvs.height = height;
+
+		let ctx = cvs.getContext('2d').drawImage(sourceImgObj, 0, 0, width, height);
+		let newImageData = cvs.toDataURL(mimeType, quality);
+		let resultImageObj = new Image();
+		resultImageObj.src = newImageData;
+
+		return resultImageObj.src;
 	}
 
 	private buildUrl(url: string): string {

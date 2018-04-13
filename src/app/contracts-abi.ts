@@ -30,6 +30,20 @@ export const ORGANIZATION_CONTRACT_ABI = [
 	{
 		'constant': true,
 		'inputs': [],
+		'name': 'creationBlockNumber',
+		'outputs': [
+			{
+				'name': '',
+				'type': 'uint256'
+			}
+		],
+		'payable': false,
+		'stateMutability': 'view',
+		'type': 'function'
+	},
+	{
+		'constant': true,
+		'inputs': [],
 		'name': 'incomingDonationsSourceIds',
 		'outputs': [
 			{
@@ -192,7 +206,7 @@ export const ORGANIZATION_CONTRACT_ABI = [
 		'anonymous': false,
 		'inputs': [
 			{
-				'indexed': false,
+				'indexed': true,
 				'name': 'charityEvent',
 				'type': 'address'
 			}

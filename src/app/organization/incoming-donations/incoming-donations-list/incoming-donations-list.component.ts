@@ -7,12 +7,15 @@ import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 import {IncomingDonationSendFundsModalComponent} from '../incoming-donation-send-funds-modal/incoming-donation-send-funds-modal.component';
 import {CharityEventContractService} from '../../../core/contracts-services/charity-event-contract.service';
 import {constant, find, findIndex, merge, reverse, times} from 'lodash';
-import {AppIncomingDonation, ConfirmationResponse, ConfirmationStatusState} from '../../../open-charity-types';
+import {AppIncomingDonation, ConfirmationResponse, ConfirmationStatusState, FundsMovedToCharityEvent} from '../../../open-charity-types';
 import {OrganizationSharedService} from '../../services/organization-shared.service';
 import {Router} from '@angular/router';
 import {Subject} from 'rxjs/Subject';
 import {LoadingOverlayService} from '../../../core/loading-overlay.service';
 import {ErrorMessageService} from '../../../core/error-message.service';
+import {EventLog} from 'web3/types';
+import {OrganizationContractEventsService} from '../../../core/contracts-services/organization-contract-events.service';
+import {sum} from 'lodash';
 
 @Component({
 	selector: 'opc-incoming-donations-list',
@@ -35,7 +38,8 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 				protected zone: NgZone,
 				protected router: Router,
 				protected loadingOverlayService: LoadingOverlayService,
-				protected errorMessageService: ErrorMessageService) {
+				protected errorMessageService: ErrorMessageService,
+				protected organizationContractEventsService: OrganizationContractEventsService) {
 
 	}
 
@@ -63,6 +67,7 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 			const incDonation = find(this.incomingDonations, {address: incomingDonationAddress});
 			if (this.incomingDonations) {
 				this.updateIncomingDonationAmount(incDonation);
+				this.updateSumOfMovedFunds(incDonation);
 			}
 		});
 	}
@@ -90,6 +95,22 @@ export class IncomingDonationsListComponent implements OnInit, OnDestroy {
 
 	public ngOnDestroy() {
 		this.componentDestroyed.next();
+	}
+
+	private async updateSumOfMovedFunds(incomingDonation: AppIncomingDonation): Promise<void> {
+		const transactions: number[] = [];
+
+		await this.organizationContractEventsService.getCharityEventsByID(this.organizationAddress, incomingDonation.address)
+			.subscribe(async (res: EventLog[]) => {
+				res.forEach(async (log: EventLog) => {
+					const eventValues: FundsMovedToCharityEvent = <FundsMovedToCharityEvent>log.returnValues;
+					transactions.push(parseInt(eventValues.amount));
+				});
+
+				incomingDonation.movedFunds = sum(transactions);
+			}, (err: Error) => {
+				this.errorMessageService.addError(err.message, 'getCharityEventTransactions');
+			});
 	}
 
 	private initEventsListeners(): void {

@@ -52,7 +52,7 @@ async function createTestOrganizations(deployer, network, tokenInstance, adminAd
 	for (let i = 0; i < names.length; i++) {
 		await deployer.deploy(Organization, tokenInstance.address, adminAddresses, names[i]);
 		organization = await Organization.deployed();
-		organizations.push(organization.address);
+		organizations.push(web3.toChecksumAddress(organization.address));
 		await tokenInstance.setMintAgent(organization.address, true);
 	}
 

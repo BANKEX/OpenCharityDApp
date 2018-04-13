@@ -2,9 +2,10 @@ import {Injectable} from '@angular/core';
 import {Contract, Tx} from 'web3/types';
 import {Web3ProviderService} from '../web3-provider.service';
 import {merge} from 'lodash';
-import Web3 from 'web3';
 import {ContractCharityEvent} from '../../open-charity-types';
 import {CommonSettingsService} from '../common-settings.service';
+import * as moment from 'moment';
+import Web3 from 'web3';
 
 @Injectable()
 export class CharityEventContractService {
@@ -27,10 +28,18 @@ export class CharityEventContractService {
 		};
 	}
 
-	/************************/
-	/*** Get data methods ****/
-
-	/************************/
+	//#region Get data methods
+	/**
+	 * 	 Returns Charity Event creation date by retrieving it's block timestamp
+	 *
+	 * @param  {string} address Charity event address
+	 * @param  {number} blockNumber	Block number (take it from transaction receipt)
+	 */
+	public async getDate(address: string, blockNumber: string): Promise<Date> {
+		const contract: Contract = this.cloneContract(this.charityEventContract, address);
+		const blockTimestamp = (await this.web3ProviderService.web3.eth.getBlock(blockNumber)).timestamp;
+		return moment(blockTimestamp * 1000).toDate();
+	}
 
 	public getMetaStorageHash(address: string, txOptions?: Tx): Promise<string> {
 		return this.cloneContract(this.charityEventContract, address).methods.metaStorageHash().call(txOptions);
@@ -39,11 +48,6 @@ export class CharityEventContractService {
 	public getName(address: string, txOptions?: Tx): Promise<string> {
 		const contract: Contract = this.cloneContract(this.charityEventContract, address);
 		return contract.methods.name().call(txOptions);
-	}
-
-	public getTarget(address: string, txOptions?: Tx): Promise<string> {
-		const contract: Contract = this.cloneContract(this.charityEventContract, address);
-		return contract.methods.target().call(txOptions);
 	}
 
 	public getPayed(address: string, txOptions?: Tx): Promise<string> {
@@ -56,14 +60,19 @@ export class CharityEventContractService {
 		return contract.methods.tags().call(txOptions);
 	}
 
+	public getTarget(address: string, txOptions?: Tx): Promise<string> {
+		const contract: Contract = this.cloneContract(this.charityEventContract, address);
+		return contract.methods.target().call(txOptions);
+	}
+
 	public async getCharityEventDetails(address: string, txOptions?: Tx): Promise<ContractCharityEvent> {
 		return {
+			address: this.web3.utils.toChecksumAddress(address),
 			metaStorageHash: await this.getMetaStorageHash(address, txOptions),
 			name: await this.getName(address, txOptions),
-			address: address,
-			target: await this.getTarget(address, txOptions),
 			payed: await this.getPayed(address, txOptions),
-			tags: await this.getTags(address, txOptions)
+			target: await this.getTarget(address, txOptions),
+			tags: await this.getTags(address, txOptions),
 		};
 	}
 
@@ -79,12 +88,10 @@ export class CharityEventContractService {
 
 		return charityEvents;
 	}
+	//#endregion
 
+	//#region Utils
 
-	/************************/
-	/*** Utils ***************/
-
-	/************************/
 	private cloneContract(original: Contract, address: string): Contract {
 		/* tslint:disable */
 		const contract: any = (<any>original).clone();
@@ -99,5 +106,6 @@ export class CharityEventContractService {
 	private buildCharityEventContract(): Contract {
 		return new this.web3ProviderService.web3.eth.Contract(this.commonSettingsService.abis.CharityEvent);
 	}
+	//#endregion
 
 }

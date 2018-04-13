@@ -34,15 +34,18 @@ import {IncomingDonationsListBaseComponent} from './incoming-donations/incoming-
 import {AddIncomingDonationModalComponent} from './incoming-donations/add-incoming-donation-modal/add-incoming-donation-modal.component';
 import {SharedModule} from '../shared/shared.module';
 import {CharityEventFormComponent} from './charity-events/charity-event-form/charity-event-form.component';
-
 import {QuillModule} from 'ngx-quill/src/quill.module';
 import {ToastyConfig} from 'ng2-toasty';
 import {AddCharityEventModalComponent} from './charity-events/add-charity-event-modal/add-charity-event-modal.component';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {CharityEventEditorModalComponent} from './charity-events/charity-event-editor-modal/charity-event-editor-modal.component';
+import {AsyncLocalStorageModule} from 'angular-async-local-storage';
+import {OrderPipe} from '../shared/pipes/order-by.pipe';
+import {NgProgressModule} from '@ngx-progressbar/core';
 
 @NgModule({
 	declarations: [
+		// OrderPipe,
 		OrganizationDetailsComponent,
 		AddCharityEventComponent,
 		IncomingDonationsListComponent,
@@ -79,16 +82,19 @@ import {CharityEventEditorModalComponent} from './charity-events/charity-event-e
 	imports: [
 		SharedModule,
 		RouterModule.forChild(organizationRoutes),
+		NgProgressModule.forRoot(),
 		NgSelectizeModule,
 		FileDropModule,
 		TagInputModule,
-		QuillModule
+		QuillModule,
+		AsyncLocalStorageModule
 	],
 	providers: [
 		IsOrganizationAddressGuard,
 		TagsBitmaskService,
 		IsOrganizationAddressGuard,
 		IsAdminGuard,
+
 		OrganizationSharedService,
 		NgbActiveModal
 	]

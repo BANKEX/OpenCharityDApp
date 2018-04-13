@@ -27,6 +27,7 @@ export type CharityEventTransaction = {
 export class CharityEventTransactionsHistoryComponent implements OnInit, OnDestroy {
 	public organizationAddress: string = null;
 	public charityEventAddress: string = null;
+	public charityEventDate: Date = null;
 	public name: string = '';
 	public transactions: CharityEventTransaction[] = [];
 	private componentDestroyed: Subject<void> = new Subject<void>();
@@ -48,6 +49,7 @@ export class CharityEventTransactionsHistoryComponent implements OnInit, OnDestr
 			this.organizationAddress = params['address'];
 			this.charityEventAddress = params['event'];
 		});
+		this.charityEventDate = new Date(+this.route.snapshot.queryParamMap.get('date'));
 		this.name = await this.charityEventContractService.getName(this.charityEventAddress);
 		this.transactions = [];
 
@@ -55,7 +57,8 @@ export class CharityEventTransactionsHistoryComponent implements OnInit, OnDestr
 
 		this.organizationContractEventsService.getCharityEventTransactions(this.organizationAddress, this.charityEventAddress)
 			.subscribe(async (res: EventLog[]) => {
-				res.forEach(async (log: EventLog) => {
+				for (let i = 0; i < res.length; i += 1) {
+					const log = res[i];
 					const eventValues: FundsMovedToCharityEvent = <FundsMovedToCharityEvent>log.returnValues;
 					const blockTimestamp: number = (await this.web3ProviderService.web3.eth.getBlock(log.blockNumber)).timestamp;
 					this.transactions.push({
@@ -65,7 +68,7 @@ export class CharityEventTransactionsHistoryComponent implements OnInit, OnDestr
 						amount: eventValues.amount,
 						sender: eventValues.sender,
 					});
-				});
+				}
 				this.setTransactionsLoading(false);
 				this.setTransactionsEmpty(!res.length);
 			}, (err: Error) => {

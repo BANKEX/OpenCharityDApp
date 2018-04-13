@@ -18,7 +18,7 @@ contract Organization {
 	mapping(address => bool) public charityEvents;
 	mapping(uint => address) public charityEventIndex;
 	uint public charityEventCount = 0;
-	event CharityEventAdded(address charityEvent);
+	event CharityEventAdded(address indexed charityEvent);
 	event CharityEventEdited(address indexed charityEvent, address indexed who);
 
 
@@ -39,7 +39,8 @@ contract Organization {
 	// names of incoming donations sources
 	mapping(uint => string) public incomingDonationsSourceName;
 
-
+	// number of block when smart contract was deployed
+	uint public creationBlockNumber;
 
 
 	/**
@@ -64,6 +65,8 @@ contract Organization {
 
 		name = _name;
 		token = OpenCharityTokenInterface(_token);
+
+		creationBlockNumber = block.number;
 
 	}
 
