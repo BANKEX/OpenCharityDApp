@@ -5,14 +5,25 @@ declare var window;
 
 @Injectable()
 export class Web3ProviderService {
-	public web3;
+	private _web3: Web3;
+	private _currentAccount: string;
 
-	constructor() {
-		this.web3 = this.checkAndInstantiateWeb3();
+	get web3(): Web3 {
+		return this._web3;
 	}
 
-	public async getCurrentAccount(): Promise<string> {
-		return (await this.web3.eth.getAccounts())[0];
+	get currentAccount(): string {
+		return this._currentAccount;
+	}
+
+	constructor() {
+		this._web3 = this.checkAndInstantiateWeb3();
+		this.setCurrentAccount();
+
+	}
+
+	private async setCurrentAccount(): Promise<void> {
+		this._currentAccount = (await this._web3.eth.getAccounts())[0];
 	}
 
 	private checkAndInstantiateWeb3() {

@@ -35,7 +35,7 @@ export class CharityEventContractService {
 	 * @param  {string} address Charity event address
 	 * @param  {number} blockNumber	Block number (take it from transaction receipt)
 	 */
-	public async getDate(address: string, blockNumber: string): Promise<Date> {
+	public async getDate(address: string, blockNumber: number): Promise<Date> {
 		const contract: Contract = this.cloneContract(this.charityEventContract, address);
 		const blockTimestamp = (await this.web3ProviderService.web3.eth.getBlock(blockNumber)).timestamp;
 		return moment(blockTimestamp * 1000).toDate();

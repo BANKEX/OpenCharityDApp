@@ -30,7 +30,7 @@ export class OrganizationsListComponent implements OnInit {
 		this.organizationsAddresses = this.commonSettingsService.organizations;
 
 		for (let address of this.organizationsAddresses) {
-			if (await this.organizationContractService.isAdmin(address, await this.web3ProviderService.getCurrentAccount())) {
+			if (await this.organizationContractService.isAdmin(address, this.web3ProviderService.currentAccount)) {
 				this.organizations.push(await this.organizationContractService.getOrganization(address));
 			}
 		}
