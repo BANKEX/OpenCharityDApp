@@ -4,6 +4,7 @@ import {Router} from '@angular/router';
 import {Web3ProviderService} from '../../core/web3-provider.service';
 import {LoadingOverlayService} from '../../core/loading-overlay.service';
 import {CommonSettingsService} from '../../core/common-settings.service';
+import {AuthService} from '../../core/auth.service';
 
 @Component({
 	selector: 'opc-organizations-list',
@@ -19,8 +20,8 @@ export class OrganizationsListComponent implements OnInit {
 
 	constructor(private commonSettingsService: CommonSettingsService,
 				private organizationContractService: OrganizationContractService,
+				private authService: AuthService,
 				private router: Router,
-				private web3ProviderService: Web3ProviderService,
 				private loadingOverlayService: LoadingOverlayService) {
 	}
 
@@ -30,7 +31,7 @@ export class OrganizationsListComponent implements OnInit {
 		this.organizationsAddresses = this.commonSettingsService.organizations;
 
 		for (let address of this.organizationsAddresses) {
-			if (await this.organizationContractService.isAdmin(address, this.web3ProviderService.currentAccount)) {
+			if (await this.organizationContractService.isAdmin(address, this.authService.currentAccount)) {
 				this.organizations.push(await this.organizationContractService.getOrganization(address));
 			}
 		}

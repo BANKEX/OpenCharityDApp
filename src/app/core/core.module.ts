@@ -17,6 +17,8 @@ import {LoginFormComponent} from './login-form/login-form.component';
 import {ErrorMessageService} from './error-message.service';
 import {ErrorMessageComponent} from './error-message/error-message.component';
 import {CommonSettingsService} from './common-settings.service';
+import {OpenCharityWalletService} from './open-charity-wallet.service';
+import {AuthService} from './auth.service';
 
 export function windowFactory() {
 	return window;
@@ -54,6 +56,8 @@ const contractsServices = [
 		PendingTransactionService,
 		ErrorMessageService,
 		CommonSettingsService,
+		OpenCharityWalletService,
+		AuthService,
 		...contractsServices
 	]
 })

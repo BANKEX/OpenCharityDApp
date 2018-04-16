@@ -7,6 +7,7 @@ import {TokenContractService} from './token-contract.service';
 import {ContractIncomingDonation} from '../../open-charity-types';
 import {CommonSettingsService} from '../common-settings.service';
 import * as moment from 'moment';
+import {AuthService} from '../auth.service';
 
 
 @Injectable()
@@ -17,16 +18,17 @@ export class IncomingDonationContractService {
 
 	constructor(private web3ProviderService: Web3ProviderService,
 				private tokenContractService: TokenContractService,
-				private commonSettingsService: CommonSettingsService) {
+				private commonSettingsService: CommonSettingsService,
+				private authService: AuthService) {
 		this.incomingDonationContract = this.buildIncomingDonationContract();
 		this.web3 = this.web3ProviderService.web3;
 		this.init();
 	}
 
 	public async init(): Promise<void> {
-		const accounts: string[] = await this.web3.eth.getAccounts();
 		this.defaultTx = {
-			from: accounts[0]
+			from: this.authService.currentAccount,
+			gas: this.web3ProviderService.estimateGas() // temp solution for test purposes; must be replaced by real gasEstimate method
 		};
 	}
 

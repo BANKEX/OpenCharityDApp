@@ -7,6 +7,7 @@ import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 import {ContractCharityEvent} from '../../open-charity-types';
 import {CommonSettingsService} from '../common-settings.service';
+import {AuthService} from '../auth.service';
 
 export type Organization = {
 	name: string;
@@ -26,18 +27,16 @@ export class OrganizationContractService {
 	private lastContract: Contract;
 
 	constructor(private web3ProviderService: Web3ProviderService,
+				private authService: AuthService,
 				private commonSettingsService: CommonSettingsService) {
 		this.organizationContract = this.buildOrganizationContract();
 		this.web3 = this.web3ProviderService.web3;
-		this.init();
-	}
-
-	public async init(): Promise<void> {
-		const accounts: string[] = await this.web3.eth.getAccounts();
 		this.defaultTx = {
-			from: accounts[0]
+			from: this.authService.currentAccount,
+			gas: this.web3ProviderService.estimateGas() // temp solution for test purposes; must be replaced by real gasEstimate method
 		};
 	}
+
 
 	public async isAdmin(address: string, walletAddress: string, txOptions?: Tx): Promise<boolean> {
 		const contract: Contract = this.cloneContract(this.organizationContract, address);
@@ -195,8 +194,8 @@ export class OrganizationContractService {
 		return <Contract> contract;
 	}
 
-	private buildOrganizationContract(): Contract {
-		return new this.web3ProviderService.web3.eth.Contract(this.commonSettingsService.abis.Organization);
+	private buildOrganizationContract(address?: string): Contract {
+		return new this.web3ProviderService.web3.eth.Contract(this.commonSettingsService.abis.Organization, address);
 	}
 
 	private async buildIncomingDonationsList(contract: Contract, incomingDonationCount: number): Promise<string[]> {

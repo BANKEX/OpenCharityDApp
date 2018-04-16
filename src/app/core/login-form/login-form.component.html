@@ -28,41 +28,49 @@
                                             </ul>
 
                                             <div class="tab-content mrg-top-30">
+
+												<!-- Raw Key Form -->
                                                 <form *ngIf="tabs[0].active" class="ng-pristine ng-valid">
                                                     <div class="form-group">
-                                                        <textarea placeholder="Private key" class="form-control"
+                                                        <textarea placeholder="Private key" class="form-control" #privateKey
                                                                   cols="30" rows="10"></textarea>
                                                     </div>
                                                     <div class="form-group">
                                                         <input class="form-control" placeholder="Password"
+															   #password
                                                                type="password">
                                                     </div>
                                                     <p class="mrg-btm-15 font-size-13">Please enter your <strong>Private
                                                         Key</strong> and <strong>password</strong> to login</p>
                                                     <div class="mrg-top-20 text-center">
-                                                        <button class="btn btn-info">Login</button>
+                                                        <button class="btn btn-info" (click)="rawKeyLogin(privateKey.value, password.value)">Login</button>
                                                     </div>
                                                 </form>
-                                                <form *ngIf="tabs[1].active" class="ng-pristine ng-valid">
-                                                    <div class="form-group">
-                                                        <div class="custom-file">
-                                                            <input type="file" class="custom-file-input"
-                                                                   id="inputGroupFile02">
-                                                            <label class="custom-file-label" for="inputGroupFile02">Choose
-                                                                file</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <input class="form-control" placeholder="Password"
-                                                               type="password">
-                                                    </div>
-                                                    <p class="mrg-btm-15 font-size-13">Please upload your
-                                                        <strong>File</strong> and enter your <strong>password</strong>
-                                                        to login</p>
-                                                    <div class="mrg-top-20 text-center">
-                                                        <button class="btn btn-info">Login</button>
-                                                    </div>
-                                                </form>
+												<!-- /Raw Key Form -->
+
+												<!-- File Form -->
+                                                <!--<form *ngIf="tabs[1].active" class="ng-pristine ng-valid">-->
+                                                    <!--<div class="form-group">-->
+                                                        <!--<div class="custom-file">-->
+                                                            <!--<input type="file" class="custom-file-input"-->
+                                                                   <!--id="inputGroupFile02">-->
+                                                            <!--<label class="custom-file-label" for="inputGroupFile02">Choose-->
+                                                                <!--file</label>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                    <!--<div class="form-group">-->
+                                                        <!--<input class="form-control" placeholder="Password"-->
+                                                               <!--type="password">-->
+                                                    <!--</div>-->
+                                                    <!--<p class="mrg-btm-15 font-size-13">Please upload your-->
+                                                        <!--<strong>File</strong> and enter your <strong>password</strong>-->
+                                                        <!--to login</p>-->
+                                                    <!--<div class="mrg-top-20 text-center">-->
+                                                        <!--<button class="btn btn-info">Login</button>-->
+                                                    <!--</div>-->
+                                                <!--</form>-->
+												<!-- /File Form -->
+
                                             </div>
 
                                         </div>

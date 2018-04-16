@@ -24,10 +24,15 @@ import {CoreModule} from './core/core.module';
 import {HttpClientModule} from '@angular/common/http';
 import {BrowserModule} from '@angular/platform-browser';
 import {CommonSettingsService} from './core/common-settings.service';
+import {AuthService} from './core/auth.service';
 
 // tslint:disable-next-line:no-any
-export function initAppFactory(commonSettingsService: CommonSettingsService): () => Promise<any> {
+export function initialSettingsFactory(commonSettingsService: CommonSettingsService): () => Promise<any> {
 	return () => commonSettingsService.initSettings();
+}
+// tslint:disable-next-line:no-any
+export function initialFactory(authService: AuthService) {
+	return () => authService.initAuthMethod();
 }
 
 @NgModule({
@@ -48,7 +53,12 @@ export function initAppFactory(commonSettingsService: CommonSettingsService): ()
 	exports: [AppComponent],
 	providers: [
 		APP_PROVIDERS,
-		{provide: APP_INITIALIZER, useFactory: initAppFactory, deps: [CommonSettingsService], multi: true}
+		{
+			provide: APP_INITIALIZER, useFactory: initialSettingsFactory, deps: [CommonSettingsService], multi: true,
+		},
+		{
+			provide: APP_INITIALIZER, useFactory: initialFactory, deps: [AuthService], multi: true,
+		}
 	]
 })
 
