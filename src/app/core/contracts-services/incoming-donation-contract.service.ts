@@ -27,13 +27,16 @@ export class IncomingDonationContractService {
 
 	public async init(): Promise<void> {
 		this.defaultTx = {
-			from: this.authService.currentAccount,
-			gas: this.web3ProviderService.estimateGas() // temp solution for test purposes; must be replaced by real gasEstimate method
+			from: this.authService.currentAccount
 		};
+
+		if (!this.authService.isMetamaskUsed) {
+			this.defaultTx.gas = this.web3ProviderService.estimateGas() // temp solution for test purposes; must be replaced by real gasEstimate method
+		}
 	}
 
 	/**
-	 * 	 Returns Incoming Donation creation date by retrieving it's block timestamp
+	 * @dev Returns Incoming Donation creation date by retrieving it's block timestamp
 	 *
 	 * @param  {string} address Incoming donation address
 	 * @param  {number} blockNumber	Block number

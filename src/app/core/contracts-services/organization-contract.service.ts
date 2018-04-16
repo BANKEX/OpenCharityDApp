@@ -33,8 +33,11 @@ export class OrganizationContractService {
 		this.web3 = this.web3ProviderService.web3;
 		this.defaultTx = {
 			from: this.authService.currentAccount,
-			gas: this.web3ProviderService.estimateGas() // temp solution for test purposes; must be replaced by real gasEstimate method
 		};
+		
+		if (!this.authService.isMetamaskUsed) {
+			this.defaultTx.gas = this.web3ProviderService.estimateGas() // temp solution for test purposes; must be replaced by real gasEstimate method
+		}
 	}
 
 

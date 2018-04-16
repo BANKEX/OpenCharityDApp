@@ -25,9 +25,12 @@ export class CharityEventContractService {
 
 	public async init(): Promise<void> {
 		this.defaultTx = {
-			from: this.authService.currentAccount,
-			gas: this.web3ProviderService.estimateGas() // temp solution for test purposes; must be replaced by real gasEstimate method
+			from: this.authService.currentAccount
 		};
+
+		if (!this.authService.isMetamaskUsed) {
+			this.defaultTx.gas = this.web3ProviderService.estimateGas() // temp solution for test purposes; must be replaced by real gasEstimate method
+		}
 	}
 
 	//#region Get data methods
