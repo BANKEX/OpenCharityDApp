@@ -26,7 +26,7 @@ contract Organization {
 	mapping(address => bool) public incomingDonations;
 	mapping(uint => address) public incomingDonationIndex;
 	uint public incomingDonationCount = 0;
-	event IncomingDonationAdded(address incomingDonation, uint amount, uint sourceId);
+	event IncomingDonationAdded(address indexed incomingDonation, uint amount, uint sourceId);
 
 	// Triggered when meta storage of some smart contract is updated
 	event MetaStorageHashUpdated(address indexed ownerAddress, string metaStorageHash);
