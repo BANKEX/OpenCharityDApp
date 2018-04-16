@@ -235,7 +235,7 @@ export const ORGANIZATION_CONTRACT_ABI = [
 		'anonymous': false,
 		'inputs': [
 			{
-				'indexed': false,
+				'indexed': true,
 				'name': 'incomingDonation',
 				'type': 'address'
 			},
