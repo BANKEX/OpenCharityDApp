@@ -3,6 +3,7 @@ import {OpenCharityWalletService} from './open-charity-wallet.service';
 import {Web3ProviderService} from './web3-provider.service';
 import {Router} from '@angular/router';
 import Web3 from 'web3';
+import {PrivateKey, Account} from 'web3/types';
 
 @Injectable()
 export class AuthService {
@@ -67,6 +68,17 @@ export class AuthService {
 		}
 
 		this.openCharityWalletService.init(this.web3ProviderService.web3, privateKey, password);
+		this._isWeb3WalletUsed = true;
+		this._currentAccount = this.web3.eth.accounts.wallet[0].address;
+		this.router.navigate(['/']);
+	}
+
+	public async keyStorageLogin(parsedKeyStorageFile: PrivateKey, password: string): Promise<void> {
+		this.web3 = await this.web3ProviderService.initWalletProvider();
+
+		// TODO: check if decrypt failed and show appropriate error
+		const addedAccount: Account = this.web3.eth.accounts.decrypt(parsedKeyStorageFile, password);
+		this.openCharityWalletService.init(this.web3ProviderService.web3, addedAccount.privateKey, password);
 		this._isWeb3WalletUsed = true;
 		this._currentAccount = this.web3.eth.accounts.wallet[0].address;
 		this.router.navigate(['/']);
