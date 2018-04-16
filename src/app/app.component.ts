@@ -1,9 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {Web3ProviderService} from './core/web3-provider.service';
 import {LoadingOverlayService} from './core/loading-overlay.service';
 import {MetamaskCheckService} from './core/metamask-check.service';
 import {BlockingNotificationOverlayService} from './core/blocking-notification-overlay.service';
 import {Router} from '@angular/router';
+import {AuthService} from './core/auth.service';
 
 @Component({
 	selector: 'my-app',
@@ -11,7 +12,7 @@ import {Router} from '@angular/router';
 	templateUrl: './app.component.html'
 })
 
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewInit {
 
 	public appLoaded: boolean = false;
 	public showBlockingOverlay: boolean = false;
@@ -21,16 +22,24 @@ export class AppComponent implements OnInit {
 		private web3ProviderService: Web3ProviderService,
 		private loadingOverlayService: LoadingOverlayService,
 		private metamaskCheckService: MetamaskCheckService,
+		private authService: AuthService,
 		private blockingNotificationOverlayService: BlockingNotificationOverlayService,
 		private router: Router
 	) {
 	}
 
 	public async ngOnInit(): Promise<void> {
-		await this.checkMetamask();
+		// await this.web3ProviderService.init();
 
-		this.loadingOverlayService.hideOverlay();
+		if (this.authService.isMetamaskUsed) {
+			await this.checkMetamask();
+		}
+
 		this.appLoaded = true;
+	}
+
+	public async ngAfterViewInit(): Promise<void> {
+		this.loadingOverlayService.hideOverlay();
 	}
 
 	private async checkMetamask(): Promise<void> {
@@ -46,8 +55,8 @@ export class AppComponent implements OnInit {
 				message = 'Wrong network. Please, connect to Open Charity network and try again';
 			}
 		} else {
-			message = 'You need MetaMask extension to interact with this app. Please, install it and try again';
-			await this.router.navigateByUrl('login');
+			// message = 'You need MetaMask extension to interact with this app. Please, install it and try again';
+			await this.router.navigate(['/login']);
 		}
 
 		if (message) {

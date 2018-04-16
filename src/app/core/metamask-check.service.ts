@@ -12,7 +12,6 @@ export class MetamaskCheckService {
 		@Inject('Window') private window: Window,
 		private web3ProviderService: Web3ProviderService
 	) {
-		this.web3 = this.web3ProviderService.web3;
 	}
 
 	public isMetamaskInstalled(): boolean {
@@ -20,12 +19,12 @@ export class MetamaskCheckService {
 	}
 
 	public async isMetamaskLocked(): Promise<boolean> {
-		const accounts: string[] = await this.web3.eth.getAccounts();
+		const accounts: string[] = await this.web3ProviderService.web3.eth.getAccounts();
 		return !(accounts && accounts.length !== 0);
 	}
 
 	public async isCorrectNetwork(): Promise<boolean> {
-		const netId: number = await this.web3.eth.net.getId();
+		const netId: number = await this.web3ProviderService.web3.eth.net.getId();
 		return (netId === environment.networkId);
 	}
 

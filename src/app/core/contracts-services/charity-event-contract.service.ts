@@ -6,6 +6,7 @@ import {ContractCharityEvent} from '../../open-charity-types';
 import {CommonSettingsService} from '../common-settings.service';
 import * as moment from 'moment';
 import Web3 from 'web3';
+import {AuthService} from '../auth.service';
 
 @Injectable()
 export class CharityEventContractService {
@@ -15,17 +16,21 @@ export class CharityEventContractService {
 	private defaultTx: Tx;
 
 	constructor(private web3ProviderService: Web3ProviderService,
-				private commonSettingsService: CommonSettingsService) {
+				private commonSettingsService: CommonSettingsService,
+				private authService: AuthService) {
 		this.charityEventContract = this.buildCharityEventContract();
 		this.web3 = this.web3ProviderService.web3;
 		this.init();
 	}
 
 	public async init(): Promise<void> {
-		const accounts: string[] = await this.web3.eth.getAccounts();
 		this.defaultTx = {
-			from: accounts[0]
+			from: this.authService.currentAccount
 		};
+
+		if (!this.authService.isMetamaskUsed) {
+			this.defaultTx.gas = this.web3ProviderService.estimateGas(); // temp solution for test purposes; must be replaced by real gasEstimate method
+		}
 	}
 
 	//#region Get data methods
@@ -35,7 +40,7 @@ export class CharityEventContractService {
 	 * @param  {string} address Charity event address
 	 * @param  {number} blockNumber	Block number (take it from transaction receipt)
 	 */
-	public async getDate(address: string, blockNumber: string): Promise<Date> {
+	public async getDate(address: string, blockNumber: number): Promise<Date> {
 		const contract: Contract = this.cloneContract(this.charityEventContract, address);
 		const blockTimestamp = (await this.web3ProviderService.web3.eth.getBlock(blockNumber)).timestamp;
 		return moment(blockTimestamp * 1000).toDate();
