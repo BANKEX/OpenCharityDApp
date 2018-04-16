@@ -8,7 +8,7 @@ type Tab = {
 	active: boolean
 };
 
-//TODO: move this component from CoreModule
+// TODO: move this component from CoreModule
 
 @Component({
 	selector: 'opc-login-form',
