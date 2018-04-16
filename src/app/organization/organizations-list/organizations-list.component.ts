@@ -37,6 +37,8 @@ export class OrganizationsListComponent implements OnInit {
 		}
 
 
+
+
 		this.loadingOverlayService.hideOverlay();
 		this.listLoaded = true;
 	}
