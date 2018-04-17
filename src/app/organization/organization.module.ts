@@ -7,7 +7,6 @@ import {AddCharityEventComponent} from './charity-events/add-charity-event/add-c
 import {IncomingDonationsListComponent} from './incoming-donations/incoming-donations-list/incoming-donations-list.component';
 // tslint:disable-next-line:max-line-length
 import {AddIncomingDonationComponent} from './incoming-donations/add-incoming-donation/add-incoming-donation.component';
-import {NgSelectizeModule} from 'ng-selectize';
 import {OrganizationsListComponent} from './organizations-list/organizations-list.component';
 import {IsOrganizationAddressGuard} from './is-organization-address.guard';
 import {TagsBitmaskService} from './services/tags-bitmask.service';
@@ -40,7 +39,6 @@ import {AddCharityEventModalComponent} from './charity-events/add-charity-event-
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {CharityEventEditorModalComponent} from './charity-events/charity-event-editor-modal/charity-event-editor-modal.component';
 import {AsyncLocalStorageModule} from 'angular-async-local-storage';
-import {OrderPipe} from '../shared/pipes/order-by.pipe';
 import {NgProgressModule} from '@ngx-progressbar/core';
 
 @NgModule({
@@ -83,7 +81,6 @@ import {NgProgressModule} from '@ngx-progressbar/core';
 		SharedModule,
 		RouterModule.forChild(organizationRoutes),
 		NgProgressModule.forRoot(),
-		NgSelectizeModule,
 		FileDropModule,
 		TagInputModule,
 		QuillModule,

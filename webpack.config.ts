@@ -96,7 +96,6 @@ const DLL_VENDORS = [
 	'ngrx-store-logger',
 	// 'pace-js/pace.min.js',
 	'jquery',
-	'popper.js/dist/umd/popper.min.js',
 	'rxjs',
 	...MY_VENDOR_DLLS
 ];
