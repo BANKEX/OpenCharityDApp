@@ -84,8 +84,6 @@ contract Organization {
 		// broadcast event
 		CharityEventAdded(charityEvent);
 
-		MetaStorageHashUpdated(charityEvent, _metaStorageHash);
-
 		return charityEvent;
 	}
 
@@ -137,6 +135,8 @@ contract Organization {
 		CharityEvent(_charityEvent).updateMetaStorageHash(_hash);
 
 		MetaStorageHashUpdated(_charityEvent, _hash);
+
+		CharityEventEdited(_charityEvent, msg.sender);
 	}
 
 	/**
@@ -155,11 +155,15 @@ contract Organization {
 		// new target cannot be less that raised amount
 		require(token.balanceOf(charityEvent) <= _target);
 
+		bool isMetaStorageUpdated = !(charityEvent.isTheSameMetaStorageHash(_metaStorageHash));
+		// update charity event details
 		require(charityEvent.updateCharityEventDetails(_name, _target, _tags, _metaStorageHash));
 
 		CharityEventEdited(_charityEvent, msg.sender);
 
-		MetaStorageHashUpdated(charityEvent, _metaStorageHash);
+		if (isMetaStorageUpdated) {
+			MetaStorageHashUpdated(charityEvent, _metaStorageHash);
+		}
 
 		return true;
 	}

@@ -60,6 +60,14 @@ contract CharityEvent is Ownable {
 		metaStorageHash = _metaStorageHash;
 	}
 
+	/**
+     * @dev Compares 2 hashes and returns true if they are the same
+     * @param _toCompare String to compare with
+     */
+	function isTheSameMetaStorageHash(string _toCompare) public view returns(bool) {
+		return (keccak256(metaStorageHash) == keccak256(_toCompare));
+	}
+
 
 	// check that contract is charity event contract
 	function isCharityEvent() pure external returns (bool) {
