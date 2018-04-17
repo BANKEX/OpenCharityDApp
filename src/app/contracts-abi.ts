@@ -540,11 +540,11 @@ export const CHARITY_EVENT_CONTRACT_ABI = [
 	{
 		'constant': true,
 		'inputs': [],
-		'name': 'target',
+		'name': 'owner',
 		'outputs': [
 			{
 				'name': '',
-				'type': 'uint256'
+				'type': 'address'
 			}
 		],
 		'payable': false,
@@ -554,11 +554,11 @@ export const CHARITY_EVENT_CONTRACT_ABI = [
 	{
 		'constant': true,
 		'inputs': [],
-		'name': 'owner',
+		'name': 'target',
 		'outputs': [
 			{
 				'name': '',
-				'type': 'address'
+				'type': 'uint256'
 			}
 		],
 		'payable': false,
@@ -680,6 +680,25 @@ export const CHARITY_EVENT_CONTRACT_ABI = [
 		'outputs': [],
 		'payable': false,
 		'stateMutability': 'nonpayable',
+		'type': 'function'
+	},
+	{
+		'constant': true,
+		'inputs': [
+			{
+				'name': '_toCompare',
+				'type': 'string'
+			}
+		],
+		'name': 'isTheSameMetaStorageHash',
+		'outputs': [
+			{
+				'name': '',
+				'type': 'bool'
+			}
+		],
+		'payable': false,
+		'stateMutability': 'view',
 		'type': 'function'
 	},
 	{
