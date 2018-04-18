@@ -35,21 +35,47 @@
                                                         <textarea placeholder="Private key"
 																  class="form-control"
 																  cols="30" rows="10"
-																  [formControlName]="'privateKey'"
-														>
+																  [ngClass]="{'error' : rawKeyLoginForm.get('privateKey').touched && rawKeyLoginForm.get('privateKey').invalid}"
+																  [formControlName]="'privateKey'">
 														</textarea>
+														<div>
+															<label class="error"
+																   *ngIf="rawKeyLoginForm.get('privateKey').touched && rawKeyLoginForm.get('privateKey').hasError('privateKeyInvalid')">
+																It is not Private key
+															</label>
+														</div>
+														<div>
+															<label class="error"
+																   *ngIf="rawKeyLoginForm.get('privateKey').touched && rawKeyLoginForm.get('privateKey').hasError('required')">
+																Private key is required
+															</label>
+														</div>
 													</div>
 													<div class="form-group">
 														<input class="form-control"
 															   placeholder="Password"
 															   type="password"
-															   [formControlName]="'password'"
-														>
+															   [ngClass]="{'error' : rawKeyLoginForm.get('password').touched && rawKeyLoginForm.get('password').invalid}"
+															   [formControlName]="'password'">
+														<div>
+															<label class="error"
+																   *ngIf="rawKeyLoginForm.get('password').touched && rawKeyLoginForm.get('password').hasError('pattern')">
+																Minimum six characters, at least one uppercase letter, one lowercase letter and one number:
+															</label>
+														</div>
+														<div>
+															<label class="error"
+																   *ngIf="rawKeyLoginForm.get('password').touched && rawKeyLoginForm.get('password').hasError('required')">
+																Password is required
+															</label>
+														</div>
 													</div>
 													<p class="mrg-btm-15 font-size-13">Please enter your <strong>Private
 														Key</strong> and <strong>password</strong> to login</p>
 													<div class="mrg-top-20 text-center">
 														<button class="btn btn-info"
+																[ngClass]="{disabled: rawKeyLoginForm.invalid || rawKeyLoginForm.pristine}"
+																[disabled]="rawKeyLoginForm.invalid || rawKeyLoginForm.pristine"
 																(click)="rawKeyLogin()">
 															Login
 														</button>
@@ -64,11 +90,12 @@
 															<input type="file"
 																   class="custom-file-input"
 																   id="inputGroupFile02"
-																   (change)="keyStorageUpdated($event)"
-															>
+																   (change)="keyStorageUpdated($event)">
 															<label
 																class="custom-file-label"
-																for="inputGroupFile02">Choose file
+																for="inputGroupFile02">
+																<span *ngIf="fileName">{{ fileName.slice(0, 30) + '...' }}</span>
+																<span *ngIf="!fileName">Choose file</span>
 															</label>
 														</div>
 													</div>
@@ -77,8 +104,20 @@
 														<input class="form-control"
 															   placeholder="Password"
 															   type="password"
-															   [formControlName]="'password'"
-														>
+															   [ngClass]="{'error' : keyStorageLoginForm.get('password').touched && keyStorageLoginForm.get('password').invalid}"
+															   [formControlName]="'password'">
+														<div>
+															<label class="error"
+																   *ngIf="keyStorageLoginForm.get('password').touched && keyStorageLoginForm.get('password').hasError('pattern')">
+																Minimum six characters, at least one uppercase letter, one lowercase letter and one number:
+															</label>
+														</div>
+														<div>
+															<label class="error"
+																   *ngIf="keyStorageLoginForm.get('password').touched && keyStorageLoginForm.get('password').hasError('required')">
+																Password is required
+															</label>
+														</div>
 													</div>
 
 													<p class="mrg-btm-15 font-size-13">
@@ -87,7 +126,10 @@
 														to login</p>
 
 													<div class="mrg-top-20 text-center">
-														<button class="btn btn-info" (click)="keyStorageLogin()" [disabled]="keyStorageLoginForm.invalid || keyStorageLoginForm.pristine">Login</button>
+														<button class="btn btn-info"
+																(click)="keyStorageLogin()"
+																[ngClass]="{disabled: keyStorageLoginForm.invalid || keyStorageLoginForm.pristine}"
+																[disabled]="keyStorageLoginForm.invalid || keyStorageLoginForm.pristine">Login</button>
 													</div>
 
 												</form>

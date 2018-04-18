@@ -99,6 +99,7 @@
 		"angular2-wizard": "^0.4.0",
 		"ap-angular2-fullcalendar": "^1.3.6",
 		"await-to-js": "^2.0.1",
+		"bn.js": "^4.11.8",
 		"bootstrap": "4.0.0",
 		"chart.js": "^2.7.1",
 		"core-js": "2.5.3",
