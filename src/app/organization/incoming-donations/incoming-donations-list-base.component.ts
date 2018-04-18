@@ -113,6 +113,10 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 		const blockNumbers =
 			await this.organizationContractEventsService.getBlockNumbersForEvents(this.organizationAddress, 'IncomingDonationAdded', 'incomingDonation');
 
+		if (!incomingDonationsCount) {
+			this.dataReady.next(true);
+		}
+
 		this.organizationContractService.getIncomingDonations(this.organizationAddress)
 			.take(incomingDonationsCount)
 			.subscribe(async (event: { address: string, index: number }) => {

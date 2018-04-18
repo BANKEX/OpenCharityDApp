@@ -9,7 +9,7 @@ section {
 	opacity: 0 !important;
 }
 
-tr.loading, tr.empty {
+tr.loading, tr.empty, tr.empty-incoming-donations {
   background: #fff !important;
 
   .fa-spin {
@@ -20,6 +20,13 @@ tr.loading, tr.empty {
     margin-top: 16px;
   }
 }
+
+tr.empty-incoming-donations {
+	.message {
+		margin-top: 25px;
+	}
+}
+
 .modal {
 	.close {
 		position: absolute;
