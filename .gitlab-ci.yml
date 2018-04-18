@@ -95,7 +95,6 @@ contracts-settings-update:
   before_script:
     - sed -i '11i\const TOKENSTAGE = '$TOKENSTAGE';\' ./post-deploy-script.js ; sed -i '12i\const TOKENPROD = '$TOKENPROD';\' ./post-deploy-script.js
   script:
-    - cat post-deploy-script.js
     - node post-deploy-script.js
   only:
     - master
