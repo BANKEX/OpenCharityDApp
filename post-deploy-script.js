@@ -25,7 +25,7 @@ const setList = (type) => {
 			IncomingDonation: incomingDonationAbi,
 			OpenCharityToken: openCharityTokenAbi
 		},
-		token: (env === 'production') ? $TOKENPROD : $TOKENSTAGE
+		token: (env === 'production') ? TOKENPROD : TOKENSTAGE
 	};
 
 	request({
