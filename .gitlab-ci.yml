@@ -93,7 +93,7 @@ contracts-settings-update:
   image: node:alpine
   stage: contracts-settings-master
   before_script:
-    - sed -i '11i\const TOKENSTAGE = '$TOKENSTAGE';\' ./post-deploy-script.js ; sed -i '12i\const TOKENPROD = '$TOKENPROD';\' ./post-deploy-script.js
+    - sed -i '11i\const TOKENSTAGE = '"'"''$TOKENSTAGE''"'"';\' ./post-deploy-script.js ; sed -i '12i\const TOKENPROD = '"'"''$TOKENPROD''"'"';\' ./post-deploy-script.js
   script:
     - node post-deploy-script.js
   only:
@@ -140,7 +140,7 @@ contracts-settings-stage:
   stage: contracts-settings-stage
   before_script:
     - sed -i 's/const env = '"'"'master'"'"';/const env = '"'"'staging'"'"';/' ./post-deploy-script.js
-    - sed -i '11i\const TOKENSTAGE = '$TOKENSTAGE';\' ./post-deploy-script.js ; sed -i '12i\const TOKENPROD = '$TOKENPROD';\' ./post-deploy-script.js
+    - sed -i '11i\const TOKENSTAGE = '"'"''$TOKENSTAGE''"'"';\' ./post-deploy-script.js ; sed -i '12i\const TOKENPROD = '"'"''$TOKENPROD''"'"';\' ./post-deploy-script.js
   script:
     - node post-deploy-script.js                                    
   cache:
@@ -187,7 +187,7 @@ contracts-settings-prod:
   stage: contracts-settings-prod
   before_script:
     - sed -i 's/const env = '"'"'master'"'"';/const env = '"'"'production'"'"';/' ./post-deploy-script.js
-    - sed -i '11i\const TOKENSTAGE = '$TOKENSTAGE';\' ./post-deploy-script.js ; sed -i '12i\const TOKENPROD = '$TOKENPROD';\' ./post-deploy-script.js
+    - sed -i '11i\const TOKENSTAGE = '"'"''$TOKENSTAGE''"'"';\' ./post-deploy-script.js ; sed -i '12i\const TOKENPROD = '"'"''$TOKENPROD''"'"';\' ./post-deploy-script.js
   script:
     - node post-deploy-script.js
   only:
