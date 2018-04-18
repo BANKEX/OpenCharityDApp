@@ -96,6 +96,7 @@
 		"angular-idle-preload": "~2.0.4",
 		"angular2-moment": "^1.7.0",
 		"await-to-js": "^2.0.1",
+		"bn.js": "^4.11.8",
 		"bootstrap": "4.0.0",
 		"core-js": "2.5.3",
 		"imagesloaded": "^4.1.3",

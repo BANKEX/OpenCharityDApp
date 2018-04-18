@@ -1,9 +1,12 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Inject, Injector, OnDestroy, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {AuthService} from '../../core/auth.service';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {ErrorMessageService} from '../../core/error-message.service';
 import {PrivateKey} from 'web3/types';
+import {Web3ProviderService} from '../../core/web3-provider.service';
+import {OpenCharityWalletService} from '../../core/open-charity-wallet.service';
+import {LoadingOverlayService} from '../../core/loading-overlay.service';
 
 type Tab = {
 	name: string,
@@ -31,23 +34,31 @@ export class LoginFormComponent implements OnInit, OnDestroy {
 			active: false
 		}
 	];
+	public fileName: string;
 
 	constructor(private authService: AuthService,
 				private router: Router,
 				private fb: FormBuilder,
 				private cd: ChangeDetectorRef,
-				private errorMessageService: ErrorMessageService) {
+				private errorMessageService: ErrorMessageService,
+				private loadingOverlayService: LoadingOverlayService) {
 	}
 
 	public async ngOnInit(): Promise<void> {
 		this.rawKeyLoginForm = this.fb.group({
-			privateKey: ['', [Validators.required]], // TODO: add private key validation
-			password: ['', [Validators.required]] // TODO: add basic validations for strict password. min length, special characters, etc
+			privateKey: ['', [Validators.required, this.authService.privateKeyValidator()]],
+			password: ['', [
+				Validators.required,
+				Validators.pattern(/(?=^.{6,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/)
+			]]
 		});
 
 		this.keyStorageLoginForm = this.fb.group({
 			file: ['', [Validators.required]],
-			password: ['', [Validators.required]] // TODO: add basic validations for strict password. min length, special characters, etc
+			password: ['', [
+				Validators.required,
+				Validators.pattern(/(?=^.{6,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/)
+			]]
 		});
 
 		if (this.authService.isMetamaskInstalled()) {
@@ -64,6 +75,8 @@ export class LoginFormComponent implements OnInit, OnDestroy {
 	}
 
 	public rawKeyLogin(): void {
+		this.loadingOverlayService.showOverlay(true);
+
 		if (this.rawKeyLoginForm.invalid || this.rawKeyLoginForm.pristine) {
 			return;
 		}
@@ -71,6 +84,8 @@ export class LoginFormComponent implements OnInit, OnDestroy {
 	}
 
 	public keyStorageLogin(): void {
+		this.loadingOverlayService.showOverlay(true);
+
 		if (this.keyStorageLoginForm.invalid || this.keyStorageLoginForm.pristine) {
 			return;
 		}
@@ -86,6 +101,7 @@ export class LoginFormComponent implements OnInit, OnDestroy {
 			const fileContent: any = reader.result;
 			let parsedContent: PrivateKey;
 			try {
+				this.fileName = fileInput.files[0].name;
 				parsedContent = JSON.parse(fileContent);
 				this.keyStorageLoginForm.patchValue({
 					file: parsedContent
