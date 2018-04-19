@@ -1,5 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {OrganizationContractService} from '../../../core/contracts-services/organization-contract.service';
+import {PendingTransactionSourceType} from '../../../pending-transaction.types';
+import {PendingTransactionService} from '../../../core/pending-transactions.service';
+import {ToastyService} from 'ng2-toasty';
 
 @Component({
 	selector: 'opc-incoming-donations-sources-filter',
@@ -17,7 +20,9 @@ export class IncomingDonationsSourcesFilterComponent implements OnInit {
 	public newSourceName: string = '';
 
 	constructor(
-		private organizationContractService: OrganizationContractService
+		private organizationContractService: OrganizationContractService,
+		private pendingTransactionService: PendingTransactionService,
+		private toastyService: ToastyService
 	) {
 
 	}
@@ -54,7 +59,23 @@ export class IncomingDonationsSourcesFilterComponent implements OnInit {
 
 		this.newSourceFormLoading = true;
 
+		this.pendingTransactionService.addPending(
+			newSourceName,
+			'Adding ' + newSourceName + ' transaction pending',
+			PendingTransactionSourceType.ID
+		);
+		this.toastyService.warning('Adding ' + newSourceName + ' transaction pending');
+
 		await this.organizationContractService.addNewIncomingDonationsSource(this.organizationAddress, newSourceName);
+
+		this.pendingTransactionService.addConfirmed(
+			newSourceName,
+			'Adding ' + newSourceName + ' transaction confirmed',
+			PendingTransactionSourceType.ID
+		);
+		this.toastyService.success('Adding ' + newSourceName + ' transaction confirmed');
+
+		this.sourcesNamesList.push(this.newSourceName);
 
 		this.newSourceFormVisible = false;
 		this.newSourceFormLoading = false;
