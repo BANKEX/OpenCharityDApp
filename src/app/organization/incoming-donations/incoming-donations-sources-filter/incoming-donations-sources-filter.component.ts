@@ -3,6 +3,7 @@ import {OrganizationContractService} from '../../../core/contracts-services/orga
 import {PendingTransactionSourceType} from '../../../pending-transaction.types';
 import {PendingTransactionService} from '../../../core/pending-transactions.service';
 import {ToastyService} from 'ng2-toasty';
+import {OrganizationSharedService} from '../../services/organization-shared.service';
 
 @Component({
 	selector: 'opc-incoming-donations-sources-filter',
@@ -22,7 +23,8 @@ export class IncomingDonationsSourcesFilterComponent implements OnInit {
 	constructor(
 		private organizationContractService: OrganizationContractService,
 		private pendingTransactionService: PendingTransactionService,
-		private toastyService: ToastyService
+		private toastyService: ToastyService,
+		private organizationSharedService: OrganizationSharedService
 	) {
 
 	}
@@ -59,7 +61,10 @@ export class IncomingDonationsSourcesFilterComponent implements OnInit {
 
 		this.newSourceFormLoading = true;
 
+		let sourceInternalId: string = this.organizationSharedService.makePseudoRandomHash({source: newSourceName});
+
 		this.pendingTransactionService.addPending(
+			sourceInternalId,
 			newSourceName,
 			'Adding ' + newSourceName + ' transaction pending',
 			PendingTransactionSourceType.ID
@@ -69,6 +74,7 @@ export class IncomingDonationsSourcesFilterComponent implements OnInit {
 		await this.organizationContractService.addNewIncomingDonationsSource(this.organizationAddress, newSourceName);
 
 		this.pendingTransactionService.addConfirmed(
+			sourceInternalId,
 			newSourceName,
 			'Adding ' + newSourceName + ' transaction confirmed',
 			PendingTransactionSourceType.ID

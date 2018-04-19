@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-
 import {PendingTransactionService} from '../core/pending-transactions.service';
 import {PendingTransaction, PendingTransactionState, PendingTransactionSourceType} from '../pending-transaction.types';
+import {findIndex} from 'lodash';
 
 type App = {
 	layout: {
@@ -57,7 +57,10 @@ export class CommonLayoutComponent implements OnInit {
 	}
 
 	public ngOnInit() {
-		this.pendingTransactionService.message.subscribe(message => this.pendingTransactions.push(message));
+		this.pendingTransactionService.message.subscribe((pendingTransaction: PendingTransaction) => {
+			this.removeExistPendingTransaction(pendingTransaction);
+			this.pendingTransactions.push(pendingTransaction);
+		});
 	}
 
 	public isConfirmed(message: PendingTransaction): boolean {
@@ -70,5 +73,15 @@ export class CommonLayoutComponent implements OnInit {
 
 	public isFailed(message: PendingTransaction): boolean {
 		return message.state === PendingTransactionState.FAILED;
+	}
+
+	private removeExistPendingTransaction(pendingTransaction: PendingTransaction) {
+		const pendingTransactionIndex = findIndex(this.pendingTransactions, {
+			internalId: pendingTransaction.internalId,
+			state: PendingTransactionState.PENDING
+		});
+
+		if (pendingTransactionIndex !== -1)
+			this.pendingTransactions.splice(pendingTransactionIndex, 1);
 	}
 }

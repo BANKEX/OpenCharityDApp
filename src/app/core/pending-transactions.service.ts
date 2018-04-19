@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ReplaySubject, Observable} from 'rxjs';
 import {PendingTransaction, PendingTransactionState, PendingTransactionSourceType} from '../pending-transaction.types';
+import * as moment from 'moment';
 
 @Injectable()
 export class PendingTransactionService {
@@ -8,8 +9,10 @@ export class PendingTransactionService {
 
 	constructor() {}
 
-	public addPending(title: string, text: string, source: PendingTransactionSourceType): void {
+	public addPending(internalId: string, title: string, text: string, source: PendingTransactionSourceType): void {
 		this.message.next(<PendingTransaction>{
+			internalId: internalId,
+			time: moment(new Date().getTime()).format('hh:mm:ss'),
 			title: title,
 			text: text,
 			state: PendingTransactionState.PENDING,
@@ -17,8 +20,10 @@ export class PendingTransactionService {
 		});
 	}
 
-	public addConfirmed(title: string, text: string, source: PendingTransactionSourceType): void {
+	public addConfirmed(internalId: string, title: string, text: string, source: PendingTransactionSourceType): void {
 		this.message.next(<PendingTransaction>{
+			internalId: internalId,
+			time: moment(new Date().getTime()).format('hh:mm:ss'),
 			title: title,
 			text: text,
 			state: PendingTransactionState.CONFIRMED,
@@ -26,8 +31,10 @@ export class PendingTransactionService {
 		});
 	}
 
-	public addFailed(title: string, text: string, source: PendingTransactionSourceType): void {
+	public addFailed(internalId: string, title: string, text: string, source: PendingTransactionSourceType): void {
 		this.message.next(<PendingTransaction>{
+			internalId: internalId,
+			time: moment(new Date().getTime()).format('hh:mm:ss'),
 			title: title,
 			text: text,
 			state: PendingTransactionState.FAILED,

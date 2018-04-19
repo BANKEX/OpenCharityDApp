@@ -11,6 +11,8 @@ export enum PendingTransactionState {
 }
 
 export type PendingTransaction = {
+  internalId: string;
+  time: string;
   title: string;
   text: string;
   state: PendingTransactionState;
