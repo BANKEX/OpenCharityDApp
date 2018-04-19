@@ -122,6 +122,7 @@ export class CharityEventFormComponent implements OnInit {
 			}));
 
 			this.pendingTransactionService.addPending(
+				charityEventInternalId,
 				newCharityEvent.name,
 				'Adding ' + newCharityEvent.name + ' transaction pending',
 				PendingTransactionSourceType.CE
@@ -140,6 +141,7 @@ export class CharityEventFormComponent implements OnInit {
 				newCharityEventAddress = receipt.events.CharityEventAdded.returnValues['charityEvent'];
 				this.organizationSharedService.charityEventConfirmed(charityEventInternalId, newCharityEventAddress);
 				this.pendingTransactionService.addConfirmed(
+					charityEventInternalId,
 					newCharityEvent.name,
 					'Adding ' + newCharityEvent.name + ' transaction confirmed',
 					PendingTransactionSourceType.CE
@@ -149,6 +151,7 @@ export class CharityEventFormComponent implements OnInit {
 				this.organizationSharedService.charityEventFailed(charityEventInternalId, newCharityEventAddress);
 				this.pendingTransactionService.addFailed(
 					newCharityEvent.name,
+					charityEventInternalId,
 					'Adding ' + newCharityEvent.name + ' transaction failed',
 					PendingTransactionSourceType.CE
 				);
@@ -162,6 +165,7 @@ export class CharityEventFormComponent implements OnInit {
 			if (e.message.search('MetaMask Tx Signature: User denied transaction signature') !== -1) {
 				this.organizationSharedService.charityEventCanceled(charityEventInternalId, newCharityEventAddress);
 				this.pendingTransactionService.addFailed(
+					charityEventInternalId,
 					newCharityEvent.name,
 					'Adding ' + newCharityEvent.name + ' transaction canceled',
 					PendingTransactionSourceType.CE
@@ -216,6 +220,7 @@ export class CharityEventFormComponent implements OnInit {
 				if (!isCharityEventChanged) {
 
 					this.pendingTransactionService.addPending(
+						charityEventInternalId,
 						newCharityEvent.name,
 						'Editing ' + newCharityEvent.name + ' transaction pending',
 						PendingTransactionSourceType.CE
@@ -237,6 +242,7 @@ export class CharityEventFormComponent implements OnInit {
 			if (isCharityEventChanged) {
 
 				this.pendingTransactionService.addPending(
+					charityEventInternalId,
 					newCharityEvent.name,
 					'Editing ' + newCharityEvent.name + ' transaction pending',
 					PendingTransactionSourceType.CE
@@ -251,6 +257,7 @@ export class CharityEventFormComponent implements OnInit {
 			if (receipt && receipt.events && receipt.events.CharityEventEdited || receipt.events.MetaStorageHashUpdated) {
 				this.organizationSharedService.charityEventConfirmed(charityEventInternalId, charityEventAddress);
 				this.pendingTransactionService.addConfirmed(
+					charityEventInternalId,
 					newCharityEvent.name,
 					'Editing ' + newCharityEvent.name + ' transaction confirmed',
 					PendingTransactionSourceType.CE
@@ -259,6 +266,7 @@ export class CharityEventFormComponent implements OnInit {
 			} else {
 				this.organizationSharedService.charityEventFailed(charityEventInternalId, charityEventAddress);
 				this.pendingTransactionService.addFailed(
+					charityEventInternalId,
 					newCharityEvent.name,
 					'Editing ' + newCharityEvent.name + ' transaction failed',
 					PendingTransactionSourceType.CE
@@ -274,6 +282,7 @@ export class CharityEventFormComponent implements OnInit {
 			if (e.message.search('MetaMask Tx Signature: User denied transaction signature') !== -1) {
 				this.organizationSharedService.charityEventCanceled(charityEventInternalId, charityEventAddress);
 				this.pendingTransactionService.addFailed(
+					charityEventInternalId,
 					newCharityEvent.name,
 					'Editing ' + newCharityEvent.name + ' transaction canceled',
 					PendingTransactionSourceType.CE

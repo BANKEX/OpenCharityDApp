@@ -70,7 +70,7 @@
 					<div class="side-panel-wrapper bg-white">
 						<ul class="nav nav-tabs" role="tablist">
 							<li class="nav-item active">
-								<a class="nav-link" href="#tab1" role="tab" data-toggle="tab">
+								<a class="nav-link" href="javascript:void(0);" role="tab" data-toggle="tab">
 									<span>Pending Transactions</span>
 								</a>
 							</li>
@@ -88,8 +88,9 @@
 												<div class="pt-section">
 														<a href="javascript:void(0);" class="pt-message pt-toggle" *ngFor="let message of pendingTransactions">
 																<div class="message-info">
-																		<span class="message-name">{{message.title}}</span>
-																		<span class="message-text">{{message.text}}</span>
+																	<span class="message-name">{{message.title}}</span>
+																	<span class="message-time">{{message.time}}</span>
+																	<span class="message-text">{{message.text}}</span>
 																</div>
 																<span class="status" [ngClass]="{confirmed: isConfirmed(message), pending: isPending(message), failed: isFailed(message)}"><span></span></span>
 														</a>

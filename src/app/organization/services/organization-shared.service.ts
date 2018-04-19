@@ -262,7 +262,7 @@ export class OrganizationSharedService {
 	// THIS HASH IS UNIQUE ONLY WITHING CURRENT USER SESSION
 	// DON'T STORE IT ON THE SERVER OR ANYWHERE ELSE
 
-	public makePseudoRandomHash(data: ContractCharityEvent | ContractIncomingDonation): string {
+	public makePseudoRandomHash(data: ContractCharityEvent | ContractIncomingDonation | Object): string {
 		let sourceData = '';
 
 		for (let p in data) {

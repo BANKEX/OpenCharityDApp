@@ -126,6 +126,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 			});
 
 			this.pendingTransactionService.addPending(
+				charityEventInternalId,
 				amount + ' - ' + targetCharityEvent.name,
 				'Move funds ' + targetCharityEvent.name + ' transaction pending',
 				PendingTransactionSourceType.ID
@@ -149,6 +150,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 				charityEventAddress = receipt.events.FundsMovedToCharityEvent.returnValues['charityEvent'];
 				this.organizationSharedService.moveFundsToCharityEventConfirmed(charityEventInternalId, charityEventAddress);
 				this.pendingTransactionService.addConfirmed(
+					charityEventInternalId,
 					amount + ' - ' + targetCharityEvent.name,
 					'Move funds ' + targetCharityEvent.name + ' transaction confirmed',
 					PendingTransactionSourceType.ID
@@ -157,6 +159,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 			} else {
 				this.organizationSharedService.moveFundsToCharityEventFailed(charityEventInternalId, charityEventAddress);
 				this.pendingTransactionService.addFailed(
+					charityEventInternalId,
 					amount + ' - ' + targetCharityEvent.name,
 					'Move funds transaction failed',
 					PendingTransactionSourceType.ID
@@ -171,6 +174,7 @@ export class IncomingDonationSendFundsModalComponent implements OnInit {
 			if (e.message.search('MetaMask Tx Signature: User denied transaction signature') !== -1) {
 				this.organizationSharedService.moveFundsToCharityEventCanceled(charityEventInternalId, charityEventAddress);
 				this.pendingTransactionService.addFailed(
+					charityEventInternalId,
 					amount + ' - ' + targetCharityEvent.name,
 					'Move funds transaction canceled',
 					PendingTransactionSourceType.ID

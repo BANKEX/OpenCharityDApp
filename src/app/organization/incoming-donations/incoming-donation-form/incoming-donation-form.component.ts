@@ -134,6 +134,7 @@ export class IncomingDonationFormComponent implements OnInit {
 				});
 
 			this.pendingTransactionService.addPending(
+				incomingDonationInternalId,
 				newIncomingDonation.realWorldsIdentifier,
 				'Adding ' + newIncomingDonation.realWorldsIdentifier + ' transaction pending',
 				PendingTransactionSourceType.ID
@@ -159,6 +160,7 @@ export class IncomingDonationFormComponent implements OnInit {
 				newIncomingDonationAddress = receipt.events.IncomingDonationAdded.returnValues['incomingDonation'];
 				this.organizationSharedService.incomingDonationConfirmed(incomingDonationInternalId, newIncomingDonationAddress, receipt.transactionHash);
 				this.pendingTransactionService.addConfirmed(
+					incomingDonationInternalId,
 					newIncomingDonation.realWorldsIdentifier,
 					'Adding ' + newIncomingDonation.realWorldsIdentifier + ' transaction confirmed',
 					PendingTransactionSourceType.ID
@@ -167,6 +169,7 @@ export class IncomingDonationFormComponent implements OnInit {
 			} else {
 				this.organizationSharedService.incomingDonationFailed(incomingDonationInternalId, newIncomingDonationAddress);
 				this.pendingTransactionService.addFailed(
+					incomingDonationInternalId,
 					newIncomingDonation.realWorldsIdentifier,
 					'Adding ' + newIncomingDonation.realWorldsIdentifier + ' transaction failed',
 					PendingTransactionSourceType.ID
@@ -182,6 +185,7 @@ export class IncomingDonationFormComponent implements OnInit {
 			if (e.message.search('MetaMask Tx Signature: User denied transaction signature') !== -1) {
 				this.organizationSharedService.incomingDonationCanceled(incomingDonationInternalId, newIncomingDonationAddress);
 				this.pendingTransactionService.addFailed(
+					incomingDonationInternalId,
 					newIncomingDonation.realWorldsIdentifier,
 					'Adding ' + newIncomingDonation.realWorldsIdentifier + ' transaction canceled',
 					PendingTransactionSourceType.ID
