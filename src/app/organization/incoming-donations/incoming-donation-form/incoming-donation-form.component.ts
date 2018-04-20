@@ -98,17 +98,14 @@ export class IncomingDonationFormComponent implements OnInit {
 		this.formatter = (x: {name: string}) => x.name;
 
 		this.initForm();
-
-		// TODO: Add test data
-		// this.addTestData();
 	}
 
-	public async submitForm(data?: ContractIncomingDonation) {
+	public async submitForm() {
 		// if (this.incomingDonationForm.invalid && !data) { return; }
 		const f = this.incomingDonationForm.value;
 		const tags = this.charityEvent ? this.charityEvent.tags :
 			'0x' + this.tagsBitmaskService.convertToHexWithLeadingZeros(this.selectedTagsBitmask);
-		const newIncomingDonation: ContractIncomingDonation = data ? data : {
+		const newIncomingDonation: ContractIncomingDonation = {
 			realWorldsIdentifier: f.realWorldIdentifier,
 			amount: f.amount,
 			note: f.note,
@@ -122,16 +119,15 @@ export class IncomingDonationFormComponent implements OnInit {
 		let newIncomingDonationAddress: string = null;
 		try {
 
-			if (!data)
-				this.organizationSharedService.incomingDonationAdded({
-					realWorldsIdentifier: f.realWorldsIdentifier,
-					amount: f.amount,
-					note: f.note,
-					tags: f.tags,
-					sourceId: f.source.id,
-					internalId: incomingDonationInternalId,
-					confirmation: ConfirmationStatusState.PENDING
-				});
+			this.organizationSharedService.incomingDonationAdded({
+				realWorldsIdentifier: f.realWorldsIdentifier,
+				amount: f.amount,
+				note: f.note,
+				tags: f.tags,
+				sourceId: f.source.id,
+				internalId: incomingDonationInternalId,
+				confirmation: ConfirmationStatusState.PENDING
+			});
 
 			this.pendingTransactionService.addPending(
 				incomingDonationInternalId,
@@ -234,11 +230,5 @@ export class IncomingDonationFormComponent implements OnInit {
 
 	private getSourceById(id: string): IncomingDonationSource  {
 		return find(this.sources, {id: id});
-	}
-
-	private async addTestData() {
-		const data: ContractIncomingDonation[] = this.organizationSharedService.getTestDataIncomingDonations();
-
-		data.forEach(async (item: ContractIncomingDonation) => await this.submitForm(item));
 	}
 }
