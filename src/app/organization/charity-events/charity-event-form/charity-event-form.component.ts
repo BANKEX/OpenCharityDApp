@@ -78,9 +78,6 @@ export class CharityEventFormComponent implements OnInit {
 			this.organizationAddress = params['address'];
 			this.charityEventAddress = params['event'];
 		});
-
-		// TODO: Add test data
-		// this.addTestData();
 	}
 
 	public async submitForm(): Promise<void> {
@@ -95,11 +92,11 @@ export class CharityEventFormComponent implements OnInit {
 		}
 	}
 
-	public async addCharityEvent(data?: ContractCharityEvent): Promise<void> {
+	public async addCharityEvent(): Promise<void> {
 		const f = this.charityEventForm.value;
 
 		const tags = '0x' + this.tagsBitmaskService.convertToHexWithLeadingZeros(this.selectedTagsBitmask);
-		const newCharityEvent: ContractCharityEvent = data ? data : {
+		const newCharityEvent: ContractCharityEvent = {
 			name: f.name,
 			target: f.target,
 			payed: (f.payed) ? f.payed : 0,
@@ -676,9 +673,4 @@ export class CharityEventFormComponent implements OnInit {
 		});
 	}
 
-	private async addTestData() {
-		const data: ContractCharityEvent[] = this.organizationSharedService.getTestDataCharityEvents();
-
-		data.forEach(async (item: ContractCharityEvent) => await this.addCharityEvent(item));
-	}
 }

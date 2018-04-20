@@ -1,0 +1,71 @@
+<div class="container-fluid">
+
+	<div class="row mt-lg-5">
+		<div class="offset-lg-3 col-lg-6">
+			<div class="card">
+				<div class="card-block">
+					<h4 class="card-title text-center"><b>Test Data</b> Open Charity Organizations</h4>
+					<div class="card-body" *ngIf="!addTestDataLoading">
+						<label *ngIf="organizations.length">Add test data to <b>Organizations:</b></label>
+						<ul class="list-group">
+							<li class="list-group-item" *ngFor="let item of organizations; let i = index">
+								{{ item }}
+								<span (click)="organizations.splice(i, 1)" class="pointer pull-right"><i class="fa fa-remove"></i></span>
+							</li>
+						</ul>
+						<div class="form-group mrg-top-25">
+							<label for="organizations">Organizations</label>
+							<textarea id="organizations" class="form-control"
+									  [(ngModel)]="organization"
+									  (ngModelChange)="pushOrganization($event)" placeholder="Organization 1, Organization 2, ...">
+							</textarea>
+						</div>
+					</div>
+					<div class="card-body" *ngIf="addTestDataLoading">
+						<div class="mrg-btm-50" *ngFor="let item of organizationsLoadings; let i = index">
+							<div>
+								<span class="label label-lg" [ngClass]="{'label-primary': !item.success, 'label-success': item.success}">
+									<i class="fa fa-spinner fa-spin" *ngIf="!item.success"></i>
+									<i class="fa fa-check" *ngIf="item.success"></i>
+									{{ item.name }}
+								</span>
+							</div>
+
+							<div class="mrg-top-25">
+								<label class="label" [ngClass]="{'label-info': !item.successCE, 'label-success': item.successCE}">Add CE: {{ item.indexCE }} of {{ item.lengthCE }}</label>
+								<ngb-progressbar [type]="item.successCE ? 'success' : 'info'"
+												 [value]="item.loadingCE" [striped]="!item.successCE" [animated]="true" height="20px">
+									<i *ngIf="!item.successCE && item.loadingCE">{{item.loadingCE.toFixed(0)}}%</i>
+									<i *ngIf="item.successCE">Completed!</i>
+								</ngb-progressbar>
+
+								<label class="label" [ngClass]="{'label-info': !item.successIDsource, 'label-success': item.successIDsource}">Add ID Source: {{ item.indexIDsource }} of {{ item.lengthIDsource }}</label>
+								<ngb-progressbar [type]="item.successIDsource ? 'success' : 'info'"
+												 [value]="item.loadingIDsource" [striped]="!item.successIDsource" [animated]="true" height="20px">
+									<i *ngIf="!item.successIDsource && item.loadingIDsource">{{item.loadingIDsource.toFixed(0)}}%</i>
+									<i *ngIf="item.successIDsource">Completed!</i>
+								</ngb-progressbar>
+
+								<label class="label" [ngClass]="{'label-info': !item.successID, 'label-success': item.successID}">Add ID: {{ item.indexID }} of {{ item.lengthID }}</label>
+								<ngb-progressbar [type]="item.successID ? 'success' : 'info'"
+												 [value]="item.loadingID" [striped]="!item.successIDsource" [animated]="true" height="20px">
+									<i *ngIf="!item.successID && item.loadingID">{{item.loadingID.toFixed(0)}}%</i>
+									<i *ngIf="item.successID">Completed!</i>
+								</ngb-progressbar>
+							</div>
+						</div>
+					</div>
+					<div class="mrg-top-20 text-right">
+						<button class="btn btn-primary no-mrg-btm"
+								[disabled]="addTestDataLoading"
+								[ngClass]="{disabled: addTestDataLoading}"
+								(click)="addTestData()">
+							<i class="fa fa-database"></i> Add test data
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>

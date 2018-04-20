@@ -3,6 +3,7 @@ import {Routes} from '@angular/router';
 import {NotFound404Component} from './not-found404.component';
 import {CommonLayoutComponent} from './common/common-layout.component';
 import {LoginFormComponent} from './shared/login-form/login-form.component';
+import {TestDataComponent} from './shared/test-data/test-data.component';
 
 export const routes: Routes = [
 	{
@@ -17,6 +18,10 @@ export const routes: Routes = [
 	{
 		path: 'login',
 		component: LoginFormComponent
+	},
+	{
+		path: 'testData',
+		component: TestDataComponent
 	},
 	{
 		path: '**',
