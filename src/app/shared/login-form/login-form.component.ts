@@ -1,19 +1,15 @@
-import {ChangeDetectorRef, Component, Inject, Injector, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {AuthService} from '../../core/auth.service';
-import {AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ErrorMessageService} from '../../core/error-message.service';
 import {PrivateKey} from 'web3/types';
-import {Web3ProviderService} from '../../core/web3-provider.service';
-import {OpenCharityWalletService} from '../../core/open-charity-wallet.service';
 import {LoadingOverlayService} from '../../core/loading-overlay.service';
 
 type Tab = {
 	name: string,
 	active: boolean
 };
-
-// TODO: move this component from CoreModule
 
 @Component({
 	selector: 'opc-login-form',
@@ -24,6 +20,7 @@ type Tab = {
 export class LoginFormComponent implements OnInit, OnDestroy {
 	public rawKeyLoginForm: FormGroup;
 	public keyStorageLoginForm: FormGroup;
+	public unlockWalletForm: FormGroup;
 	public tabs: Array<Tab> = [
 		{
 			name: 'Raw Key',
@@ -36,12 +33,15 @@ export class LoginFormComponent implements OnInit, OnDestroy {
 	];
 	public fileName: string;
 
+	public showUnlockWalletForm: boolean = false;
+
 	constructor(private authService: AuthService,
 				private router: Router,
 				private fb: FormBuilder,
 				private cd: ChangeDetectorRef,
 				private errorMessageService: ErrorMessageService,
 				private loadingOverlayService: LoadingOverlayService) {
+
 	}
 
 	public async ngOnInit(): Promise<void> {
@@ -60,9 +60,17 @@ export class LoginFormComponent implements OnInit, OnDestroy {
 			]]
 		});
 
+		this.unlockWalletForm = this.fb.group({
+			password: ['', [
+				Validators.required
+			]]
+		});
+
 		if (this.authService.isMetamaskInstalled()) {
 			await this.router.navigate(['/']);
 		}
+
+		this.showUnlockWalletForm = this.authService.isWalletStored();
 	}
 
 	public ngOnDestroy(): void {
@@ -114,6 +122,21 @@ export class LoginFormComponent implements OnInit, OnDestroy {
 
 		};
 		reader.readAsText(fileInput.files[0]);
+	}
+
+	public unlockWallet() {
+		try {
+			this.authService.unlockWallet(this.unlockWalletForm.value.password);
+		} catch (e) {
+			alert('invalid password');
+		}
+	}
+
+	public removeStoredWallet(): void {
+		if (confirm('Do you really want to delete stored wallet?')) {
+			this.showUnlockWalletForm = false;
+			this.authService.removeStoredWallet();
+		}
 	}
 
 }

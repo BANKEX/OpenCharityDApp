@@ -3,7 +3,7 @@ import {OpenCharityWalletService} from './open-charity-wallet.service';
 import {Web3ProviderService} from './web3-provider.service';
 import {Router} from '@angular/router';
 import Web3 from 'web3';
-import {PrivateKey, Account} from 'web3/types';
+import {Account, PrivateKey} from 'web3/types';
 import {BN} from 'bn.js/lib/bn';
 import {AbstractControl, ValidatorFn} from '@angular/forms';
 import {ErrorMessageService} from './error-message.service';
@@ -52,6 +52,7 @@ export class AuthService {
 		if (this.isWalletStored()) {
 			this.web3 = await this.web3ProviderService.initWalletProvider();
 			this._isWeb3WalletUsed = true;
+			this.router.navigate(['/login']);
 		} else if (this.isMetamaskInstalled()) {
 			this.web3 = await this.web3ProviderService.initMetamaskProvider();
 			this._currentAccount = (await this.web3.eth.getAccounts())[0];
@@ -92,17 +93,28 @@ export class AuthService {
 		const addedAccount: Account = await this.accountDecrypt(parsedKeyStorageFile, password);
 		this.loadingOverlayService.hideOverlay();
 		this.openCharityWalletService.init(this.web3ProviderService.web3, addedAccount.privateKey, password);
-		this._isWeb3WalletUsed = true;
-		this._currentAccount = this.web3.eth.accounts.wallet[0].address;
-		this.router.navigate(['/']);
+		this.openCharityWalletInited();
 	}
 
+	public unlockWallet(password: string): void {
+		try {
+			this.openCharityWalletService.unlockWallet(this.web3, password);
+			this.openCharityWalletInited();
+		} finally {
+		}
+	}
+
+	public removeStoredWallet(): void {
+		return this.openCharityWalletService.removeStoredWallet();
+	}
+
+	//#region Utils and validations methods
 	public privateKeyValidator(): ValidatorFn {
-		return (control: AbstractControl): {[key: string]: object} => {
+		return (control: AbstractControl): { [key: string]: object } => {
 
 			if (control.value && !this.validatePrivateKey(control.value)) {
 				return {
-					'privateKeyInvalid': { value: control.value }
+					'privateKeyInvalid': {value: control.value}
 				};
 			}
 
@@ -118,6 +130,12 @@ export class AuthService {
 		}
 
 		return privateKey.length === 32 && this.privateKeyVerify(privateKey);
+	}
+
+	private openCharityWalletInited(): void {
+		this._isWeb3WalletUsed = true;
+		this._currentAccount = this.web3.eth.accounts.wallet[0].address;
+		this.router.navigate(['/']);
 	}
 
 	private initWallet() {
@@ -140,7 +158,7 @@ export class AuthService {
 		});
 	}
 
-	private privateKeyVerify (privateKey) {
+	private privateKeyVerify(privateKey) {
 		let bn = this.fromBuffer(privateKey);
 
 		BN.n = this.fromBuffer(Buffer.from('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141', 'hex'));
@@ -210,6 +228,8 @@ export class AuthService {
 		return '0x' + value;
 
 	}
+
+	//#endregion
 
 
 }
