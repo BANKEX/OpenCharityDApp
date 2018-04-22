@@ -15,15 +15,18 @@ export class OpenCharityWalletService {
 		web3.eth.accounts.wallet.save(password);
 	}
 
-
-	// TODO: add possibility to use stored walled by passing a correct password
 	public isWalletStored(): boolean {
-		return false;
-		// return (localStorage.getItem(this.walletLocalStorageKey) !== null);
+		return (localStorage.getItem(this.walletLocalStorageKey) !== null);
 	}
 
 	public removeStoredWallet(): void {
 		localStorage.removeItem(this.walletLocalStorageKey);
+	}
+
+	public unlockWallet(web3: Web3, password: string) {
+		try {
+			web3.eth.accounts.wallet.load(password, this.walletLocalStorageKey);
+		} finally {}
 	}
 
 }

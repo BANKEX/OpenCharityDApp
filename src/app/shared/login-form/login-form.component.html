@@ -15,7 +15,7 @@
 
 										<div class="tab-info center-tabs">
 
-											<ul class="nav nav-tabs" role="tablist">
+											<ul class="nav nav-tabs" role="tablist"  *ngIf="!showUnlockWalletForm">
 
 												<li class="nav-item width-50"
 													*ngFor="let tab of tabs; let i = index"
@@ -30,7 +30,7 @@
 											<div class="tab-content mrg-top-30">
 
 												<!-- Raw Key Form -->
-												<form *ngIf="tabs[0].active" [formGroup]="rawKeyLoginForm">
+												<form *ngIf="!showUnlockWalletForm && tabs[0].active" [formGroup]="rawKeyLoginForm">
 													<div class="form-group">
                                                         <textarea placeholder="Private key"
 																  class="form-control"
@@ -84,7 +84,7 @@
 												<!-- /Raw Key Form -->
 
 												<!-- File Form -->
-												<form *ngIf="tabs[1].active" [formGroup]="keyStorageLoginForm">
+												<form *ngIf="!showUnlockWalletForm && tabs[1].active" [formGroup]="keyStorageLoginForm">
 													<div class="form-group">
 														<div class="custom-file">
 															<input type="file"
@@ -134,6 +134,46 @@
 
 												</form>
 												<!-- /File Form -->
+
+
+												<!-- Unlock wallet form -->
+												<form *ngIf="showUnlockWalletForm" [formGroup]="unlockWalletForm">
+													<div class="form-group">
+														<input class="form-control"
+															   placeholder="Password"
+															   type="password"
+															   [ngClass]="{'error' : unlockWalletForm.get('password').touched && unlockWalletForm.get('password').invalid}"
+															   [formControlName]="'password'">
+														<div>
+															<!--<label class="error"-->
+															<!--*ngIf="unlockWalletForm.get('password').touched && unlockWalletForm.get('password').hasError('pattern')">-->
+															<!--Minimum six characters, at least one uppercase letter, one lowercase letter and one number:-->
+															<!--</label>-->
+														</div>
+														<div>
+															<label class="error"
+																   *ngIf="unlockWalletForm.get('password').touched && unlockWalletForm.get('password').hasError('required')">
+																Password is required
+															</label>
+														</div>
+													</div>
+
+													<p class="mrg-btm-15 font-size-13">
+														Please, provide a password to unlock stored wallet. If you don't remember password, removed stored wallet using button below.
+													</p>
+
+													<div class="mrg-top-20 text-center">
+														<button class="btn btn-warning" (click)="removeStoredWallet()">
+															Remove Stored Wallet
+														</button>
+														<button class="btn btn-info"
+																(click)="unlockWallet()"
+																[ngClass]="{disabled: unlockWalletForm.invalid || unlockWalletForm.pristine}"
+																[disabled]="unlockWalletForm.invalid || unlockWalletForm.pristine">Login</button>
+													</div>
+
+												</form>
+												<!-- /Unlock wallet form -->
 
 											</div>
 
