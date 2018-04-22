@@ -40,6 +40,7 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {CharityEventEditorModalComponent} from './charity-events/charity-event-editor-modal/charity-event-editor-modal.component';
 import {AsyncLocalStorageModule} from 'angular-async-local-storage';
 import {NgProgressModule} from '@ngx-progressbar/core';
+import {PapaParseModule} from 'ngx-papaparse';
 
 @NgModule({
 	declarations: [
@@ -84,7 +85,8 @@ import {NgProgressModule} from '@ngx-progressbar/core';
 		FileDropModule,
 		TagInputModule,
 		QuillModule,
-		AsyncLocalStorageModule
+		AsyncLocalStorageModule,
+		PapaParseModule
 	],
 	providers: [
 		IsOrganizationAddressGuard,

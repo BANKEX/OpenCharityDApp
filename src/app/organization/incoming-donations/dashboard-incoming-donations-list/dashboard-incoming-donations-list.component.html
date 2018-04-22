@@ -10,7 +10,7 @@
 						<button class="btn btn-primary strange-btn" ngbDropdownToggle><i class="fa fa-caret-down"></i></button>
 						<div class="dropdown-menu" ngbDropdownMenu>
 							<button class="dropdown-item">Upload CSV File</button>
-							<input type="file" class="upload-btn" value="Upload CSV File" />
+							<input type="file" class="upload-btn" value="Upload CSV File" (change)="csvImportFileChanged($event)" />
 						</div>
 					</div>
 				</div>
