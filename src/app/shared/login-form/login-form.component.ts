@@ -56,8 +56,7 @@ export class LoginFormComponent implements OnInit, OnDestroy {
 		this.keyStorageLoginForm = this.fb.group({
 			file: ['', [Validators.required]],
 			password: ['', [
-				Validators.required,
-				Validators.pattern(/(?=^.{6,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/)
+				Validators.required
 			]]
 		});
 
