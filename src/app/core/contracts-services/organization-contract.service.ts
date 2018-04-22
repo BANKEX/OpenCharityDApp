@@ -122,6 +122,23 @@ export class OrganizationContractService {
 		return contract.methods.moveDonationFundsToCharityEvent(incomingDonationAddress, charityEventAddress, amount).send(tx);
 	}
 
+	public async importIncomingDonations(organizationAddress: string, incomingDonations: string[][], txOptions?: Tx): Promise<void> {
+		const contract: Contract = this.cloneContract(this.organizationContract, organizationAddress);
+		let tx: Tx;
+		// tslint:disable-next-line:no-any
+		let incomingDonationData: any[];
+
+		for (let i = 0; i < incomingDonations.length; i++) {
+			incomingDonationData = incomingDonations[i];
+
+			// .send method mutates passed tx object
+			// so making a copy each time is important
+			tx = merge({}, this.defaultTx, txOptions);
+			await this.importIncomingDonation(contract, incomingDonationData, tx);
+		}
+	}
+
+
 	//#endregion
 
 	//#region Charity Events methods
@@ -176,6 +193,33 @@ export class OrganizationContractService {
 	}
 
 	//#endregion
+
+	private importIncomingDonation(contract: Contract, incomingDonationData, tx): Promise<TransactionReceipt | string> {
+		return new Promise((resolve, reject) => {
+			const transaction = contract.methods.setIncomingDonation(incomingDonationData[0], incomingDonationData[1], incomingDonationData[2], incomingDonationData[3], incomingDonationData[4]).send(tx);
+
+			if (this.authService.isMetamaskUsed) {
+				transaction
+					.once('transactionHash', (hash: string) => {
+						resolve(hash);
+					});
+			}
+
+			// right now web3 wallet doesn't work wall with multiply simultaneous transactions
+			// and returns nonce error
+			// it's a temporal solution, must be improved
+			if (this.authService.isWeb3WalletUsed) {
+				transaction
+					.once('receipt', (receipt: TransactionReceipt) => {
+						resolve(receipt);
+					});
+			}
+
+			transaction.on('error', (err) => {
+				reject(err);
+			});
+		});
+	}
 
 	//#region  Utils
 

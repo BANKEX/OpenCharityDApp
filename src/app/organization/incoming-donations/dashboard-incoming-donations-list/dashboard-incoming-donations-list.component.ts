@@ -10,6 +10,8 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ErrorMessageService} from '../../../core/error-message.service';
 import {OrganizationContractEventsService} from '../../../core/contracts-services/organization-contract-events.service';
 import {NgProgress} from '@ngx-progressbar/core';
+import {PapaParseResult, PapaParseService} from 'ngx-papaparse';
+
 @Component({
 	selector: 'opc-dashboard-incoming-donations-list',
 	templateUrl: 'dashboard-incoming-donations-list.component.html',
@@ -17,19 +19,18 @@ import {NgProgress} from '@ngx-progressbar/core';
 })
 export class DashboardIncomingDonationsListComponent extends IncomingDonationsListBaseComponent implements OnInit {
 
-	constructor(
-		protected organizationContractService: OrganizationContractService,
-		protected incomingDonationContractService: IncomingDonationContractService,
-		protected tokenContractService: TokenContractService,
-		protected router: Router,
-		protected route: ActivatedRoute,
-		protected zone: NgZone,
-		protected organizationSharedService: OrganizationSharedService,
-		protected modal: NgbModal,
-		protected errorMessageService: ErrorMessageService,
-		protected organizationContractEventsService: OrganizationContractEventsService,
-		protected progress: NgProgress,
-	) {
+	constructor(protected organizationContractService: OrganizationContractService,
+				protected incomingDonationContractService: IncomingDonationContractService,
+				protected tokenContractService: TokenContractService,
+				protected router: Router,
+				protected route: ActivatedRoute,
+				protected zone: NgZone,
+				protected organizationSharedService: OrganizationSharedService,
+				protected modal: NgbModal,
+				protected errorMessageService: ErrorMessageService,
+				protected organizationContractEventsService: OrganizationContractEventsService,
+				protected progress: NgProgress,
+				private papa: PapaParseService) {
 		super(
 			router,
 			route,
@@ -52,6 +53,22 @@ export class DashboardIncomingDonationsListComponent extends IncomingDonationsLi
 
 	public toAllDonations() {
 		this.router.navigate([`/organization/${this.organizationAddress}/donations`]);
+	}
+
+	// tslint:disable-next-line:no-any
+	public csvImportFileChanged(event: any) {
+		this.papa.parse(event.srcElement.files[0], {
+			complete: async (result: PapaParseResult) => {
+				// tslint:disable-next-line:no-any
+				const parsedData: any = result.data;
+				try {
+					await this.organizationContractService.importIncomingDonations(this.organizationAddress, parsedData);
+					alert('Import finished');
+				} catch (e) {
+					console.error(e);
+				}
+			}
+		});
 	}
 
 }
