@@ -103,9 +103,9 @@ exports.DEV_ENVIRONMENT = {
 	'websocketProviderUrl': 'wss://wsprovider.staging.bankex.team:8636',
 	'apiUrl': 'https://opencharity.staging.bankex.team/api/',
 	'organizations': [
-		'0xBA08D8B2Ad8259a15bd6F9CA4713E8ab679B320C',
-		'0xEC797bC71Bf1a08914da5954a03F497833F75bFc',
-		'0xcbcceC590F116da2050f2bA4542CF2CCD357bc5F'
+		'0x34bB0614921cE5D2bD427042e6aCBE3bd4495945',
+		'0xb55b6d6aEF315ea7Dc1b9959D17b07f6d31f5862',
+		'0x0ca46319eABbC8A12DbEBF512A019eCc79be9B2B'
 	]
 };
 
@@ -116,9 +116,9 @@ exports.STAGING_ENVIRONMENT = {
 	'websocketProviderUrl': 'wss://wsprovider.staging.bankex.team:8636',
 	'apiUrl': 'https://opencharity.staging.bankex.team/api/',
 	'organizations': [
-		'0xBA08D8B2Ad8259a15bd6F9CA4713E8ab679B320C',
-		'0xEC797bC71Bf1a08914da5954a03F497833F75bFc',
-		'0xcbcceC590F116da2050f2bA4542CF2CCD357bc5F'
+		'0x34bB0614921cE5D2bD427042e6aCBE3bd4495945',
+		'0xb55b6d6aEF315ea7Dc1b9959D17b07f6d31f5862',
+		'0x0ca46319eABbC8A12DbEBF512A019eCc79be9B2B'
 	]
 };
 
@@ -129,8 +129,8 @@ exports.PROD_ENVIRONMENT = {
 	'websocketProviderUrl': 'wss://wsprovider.opencharity.bankex.team:8636',
 	'apiUrl': 'https://opencharity.bankex.team/api/',
 	'organizations': [
-		'0x14548f61d91c2961D2cA612fB8a404eda07f9383',
-		'0x9cF762Ece9825d34Af177fa1adC5186e2A1B3d16',
-		'0x2127ec3241179A8faD68E415cFCD7f5f68372BD9'
+		'0xAF1c495a6Ec5fcBB826DbD84a149D0a65Af155Db',
+		'0xC3d7685347Fe9Cf1865e184627e689Cf4C28958F',
+		'0x400723D5696c60cCb5205682d3888644C7E373AF'
 	]
 };
