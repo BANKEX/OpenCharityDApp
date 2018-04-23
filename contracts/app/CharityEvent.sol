@@ -23,7 +23,6 @@ contract CharityEvent is Ownable {
     function CharityEvent(string _name, uint _target, uint _payed, bytes1 _tags, string _metaStorageHash) public {
         require(_target > 0);
         require(_payed >= 0);
-        require(!Tools.isEmptyString(_name));
 
         name = _name;
         target = _target;
