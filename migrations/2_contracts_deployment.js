@@ -14,8 +14,8 @@ module.exports = async function(deployer, network, accounts) {
 	await deployer.deploy(Tools, {overwrite: false});
 	await deployer.deploy(SafeMath, {overwrite: false});
 	await deployer.link(SafeMath, [OpenCharityToken]);
-	await deployer.link(Tools, [Organization, CharityEvent]);
-	await deployer.deploy(OpenCharityToken, tokenParams.name, tokenParams.symbol, tokenParams.decimals, {overwrite: false});
+	await deployer.link(Tools, [Organization]);
+
 
 	// const openCharityTokenInstance = await OpenCharityToken.deployed();
 	// await deployer.deploy(Organization, openCharityTokenInstance.address, adminAddresses, 'Test Organization Name');
@@ -30,7 +30,8 @@ module.exports = async function(deployer, network, accounts) {
 	} else if (network === PRODUCTION_NETWORK) {
 		token = OpenCharityToken.at('0x7487a0251a0701a89cade302679b1d01c3d8a44f');
 	} else {
-		token = OpenCharityToken.at('0x6a183381d14371b4a228cca37802c09bd166ba9e');
+		await deployer.deploy(OpenCharityToken, tokenParams.name, tokenParams.symbol, tokenParams.decimals, {overwrite: false});
+		token = await OpenCharityToken.deployed();
 	}
 
 	await createTestOrganizations(deployer, network, token, adminAddresses);

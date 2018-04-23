@@ -1,6 +1,6 @@
-pragma solidity ^0.4.17;
+pragma solidity 0.4.23;
 
-import "zeppelin-solidity/contracts/token/ERC20Basic.sol";
+import "zeppelin-solidity/contracts/token/ERC20/ERC20Basic.sol";
 
 contract OpenCharityTokenInterface is ERC20Basic {
 
