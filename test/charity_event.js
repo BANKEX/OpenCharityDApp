@@ -56,11 +56,19 @@ contract('Charity Event', function(accounts) {
 
     it('should throw an error if addCharityEvent method called by non-admin', async () => {
         try {
-            await OrganizationInstance.addEmployee('Rick', 'Sanchez', {from: accounts[3]});
-            assert(false, 'Allow create users for account without admin rights');
+			const name = 'Test Charity Event';
+			const target = '100';
+			const payed = '0';
+			const tags = '0xcc';
+			const metaHash = 'metaHash';
+
+			await OrganizationInstance.addCharityEvent(name, target, payed, tags, metaHash, {
+				from: accounts[3]
+			});
+            assert(false, 'Allow create CE for account without admin rights');
         } catch (exception) {
             const transactionException = exception.message.search('Exception while processing transaction: revert') !== -1;
-            assert(transactionException, 'Allow create users for account without admin rights');
+            assert(transactionException, 'Allow create CE for account without admin rights');
         }
     });
 
