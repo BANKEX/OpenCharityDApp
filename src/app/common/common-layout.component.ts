@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {PendingTransactionService} from '../core/pending-transactions.service';
 import {PendingTransaction, PendingTransactionState, PendingTransactionSourceType} from '../pending-transaction.types';
 import {findIndex} from 'lodash';
+import {AuthService} from '../core/auth.service';
 
 type App = {
 	layout: {
@@ -27,10 +28,12 @@ export class CommonLayoutComponent implements OnInit {
 	public changeSidenav: Function;
 	public headerSelected: string;
 	public sidenavSelected: string;
+	public currentAccount: string;
 
 	public pendingTransactions: PendingTransaction[] = [];
 
-	constructor(private pendingTransactionService: PendingTransactionService) {
+	constructor(private pendingTransactionService: PendingTransactionService,
+				private authService: AuthService) {
 		this.app = {
 			layout: {
 				sidePanelOpen: false,
@@ -61,6 +64,8 @@ export class CommonLayoutComponent implements OnInit {
 			this.removeExistPendingTransaction(pendingTransaction);
 			this.pendingTransactions.push(pendingTransaction);
 		});
+
+		this.currentAccount = this.authService.currentAccount;
 	}
 
 	public isConfirmed(message: PendingTransaction): boolean {
