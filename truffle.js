@@ -49,13 +49,13 @@ module.exports = {
 			gas: 4712388,
 			gasPrice: 2000000000,
 			network_id: '*'
-		},
-		solc: {
-			optimizer: {
-				enabled: true,
-				runs: 200
-			}
-		},
-		migrations_directory: './migrations'
-	}
+		}
+	},
+	solc: {
+		optimizer: {
+			enabled: true,
+			runs: 200
+		}
+	},
+	migrations_directory: './migrations'
 };

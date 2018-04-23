@@ -1,5 +1,5 @@
 // TO DO: add ownable contract to force calling of some methods only from Organization contract
-pragma solidity 0.4.23;
+pragma solidity 0.4.21;
 
 import './interfaces/OpenCharityTokenInterface.sol';
 import './CharityEvent.sol';
@@ -28,7 +28,7 @@ contract IncomingDonation {
 	uint public sourceId;
 
 
-    constructor(address _token, string _realWorldIdentifier, string _note, bytes1 _tags, uint _sourceId) public {
+    function IncomingDonation(address _token, string _realWorldIdentifier, string _note, bytes1 _tags, uint _sourceId) public {
         require(_token != address(0x0));
 		require(_sourceId >= 0);
 

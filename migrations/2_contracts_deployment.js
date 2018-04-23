@@ -11,10 +11,8 @@ const STAGING_NETWORK = 'bankexStaging';
 
 
 module.exports = async function(deployer, network, accounts) {
-	await deployer.deploy(Tools, {overwrite: false});
-	await deployer.deploy(SafeMath, {overwrite: false});
+	await deployer.deploy(SafeMath);
 	await deployer.link(SafeMath, [OpenCharityToken]);
-	await deployer.link(Tools, [Organization]);
 
 
 	// const openCharityTokenInstance = await OpenCharityToken.deployed();
@@ -26,11 +24,11 @@ module.exports = async function(deployer, network, accounts) {
 	// const token = OpenCharityToken.at(openCharityTokenInstance.address);
 	let token;
 	if(network === STAGING_NETWORK) {
-		token = OpenCharityToken.at('0x6a183381d14371b4a228cca37802c09bd166ba9e');
+		token = OpenCharityToken.at('0xa724a61f4b46d549fd67f5e5d4c441d950b85c43');
 	} else if (network === PRODUCTION_NETWORK) {
-		token = OpenCharityToken.at('0x7487a0251a0701a89cade302679b1d01c3d8a44f');
+		token = OpenCharityToken.at('0x1e06133cbb191eecd9a6f3fc54adf56897fda110');
 	} else {
-		await deployer.deploy(OpenCharityToken, tokenParams.name, tokenParams.symbol, tokenParams.decimals, {overwrite: false});
+		await deployer.deploy(OpenCharityToken, tokenParams.name, tokenParams.symbol, tokenParams.decimals);
 		token = await OpenCharityToken.deployed();
 	}
 

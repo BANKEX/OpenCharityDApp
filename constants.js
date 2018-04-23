@@ -98,27 +98,28 @@ exports.MY_TEST_PLUGINS = [
 
 exports.DEV_ENVIRONMENT = {
 	'networkId': 488413,
-	'tokenAddress': '0x6a183381d14371b4a228cca37802c09bd166ba9e',
+	'tokenAddress': '0xa724a61f4b46d549fd67f5e5d4c441d950b85c43',
 	'rpcProviderUrl': 'https://rpcprovider.staging.bankex.team:8635',
 	'websocketProviderUrl': 'wss://wsprovider.staging.bankex.team:8636',
 	'apiUrl': 'https://opencharity.staging.bankex.team/api/',
 	'organizations': [
-		'0x34bB0614921cE5D2bD427042e6aCBE3bd4495945',
-		'0xb55b6d6aEF315ea7Dc1b9959D17b07f6d31f5862',
-		'0x0ca46319eABbC8A12DbEBF512A019eCc79be9B2B'
+		'0x0Edd482B0D1177a197EfEd715428e54852453219',
+		'0xe86Ec436401C9d853aB260C6a25273d4537645aD',
+		'0x4c35a12eE22b428C3D45249b461Caf323680B949'
+
 	]
 };
 
 exports.STAGING_ENVIRONMENT = {
 	'networkId': 488413,
-	'tokenAddress': '0x6a183381d14371b4a228cca37802c09bd166ba9e',
+	'tokenAddress': '0xa724a61f4b46d549fd67f5e5d4c441d950b85c43',
 	'rpcProviderUrl': 'https://rpcprovider.staging.bankex.team:8635',
 	'websocketProviderUrl': 'wss://wsprovider.staging.bankex.team:8636',
 	'apiUrl': 'https://opencharity.staging.bankex.team/api/',
 	'organizations': [
-		'0x34bB0614921cE5D2bD427042e6aCBE3bd4495945',
-		'0xb55b6d6aEF315ea7Dc1b9959D17b07f6d31f5862',
-		'0x0ca46319eABbC8A12DbEBF512A019eCc79be9B2B'
+		'0x0Edd482B0D1177a197EfEd715428e54852453219',
+		'0xe86Ec436401C9d853aB260C6a25273d4537645aD',
+		'0x4c35a12eE22b428C3D45249b461Caf323680B949'
 	]
 };
 
@@ -129,8 +130,8 @@ exports.PROD_ENVIRONMENT = {
 	'websocketProviderUrl': 'wss://wsprovider.opencharity.bankex.team:8636',
 	'apiUrl': 'https://opencharity.bankex.team/api/',
 	'organizations': [
-		'0xAF1c495a6Ec5fcBB826DbD84a149D0a65Af155Db',
-		'0xC3d7685347Fe9Cf1865e184627e689Cf4C28958F',
-		'0x400723D5696c60cCb5205682d3888644C7E373AF'
+		'0x3efbEe62f4132073382cF273D78D77DFea317c2b',
+		'0x9d53eB998289631F9663fe1BC3F0307589903C09',
+		'0x1A6Cc32EDB9230D0aC1c842D8baF69c97F00a1AC'
 	]
 };
