@@ -1,6 +1,5 @@
 pragma solidity ^0.4.17;
 
-import "./lib/Tools.sol";
 import "./OrganizationInterface.sol";
 import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 

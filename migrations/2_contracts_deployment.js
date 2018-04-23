@@ -14,7 +14,7 @@ module.exports = async function(deployer, network, accounts) {
 	await deployer.deploy(Tools, {overwrite: false});
 	await deployer.deploy(SafeMath, {overwrite: false});
 	await deployer.link(SafeMath, [OpenCharityToken]);
-	await deployer.link(Tools, [Organization, CharityEvent]);
+	await deployer.link(Tools, [Organization]);
 	await deployer.deploy(OpenCharityToken, tokenParams.name, tokenParams.symbol, tokenParams.decimals, {overwrite: false});
 
 	// const openCharityTokenInstance = await OpenCharityToken.deployed();
