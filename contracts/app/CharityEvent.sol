@@ -1,4 +1,4 @@
-pragma solidity ^0.4.17;
+pragma solidity 0.4.23;
 
 import "./OrganizationInterface.sol";
 import "zeppelin-solidity/contracts/ownership/Ownable.sol";
@@ -19,7 +19,7 @@ contract CharityEvent is Ownable {
 	string public metaStorageHash;
 
 
-    function CharityEvent(string _name, uint _target, uint _payed, bytes1 _tags, string _metaStorageHash) public {
+    constructor(string _name, uint _target, uint _payed, bytes1 _tags, string _metaStorageHash) public {
         require(_target > 0);
         require(_payed >= 0);
 

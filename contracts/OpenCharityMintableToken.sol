@@ -1,4 +1,4 @@
-pragma solidity ^0.4.17;
+pragma solidity 0.4.23;
 
 import "../node_modules/zeppelin-solidity/contracts/token/MintableToken.sol";
 
@@ -21,7 +21,7 @@ contract OpenCharityMintableToken is MintableToken {
      */
     function setMintAgent(address addr, bool state) onlyOwner canMint public {
         mintAgents[addr] = state;
-        MintingAgentChanged(addr, state);
+        emit MintingAgentChanged(addr, state);
     }
 
     /**
@@ -33,16 +33,16 @@ contract OpenCharityMintableToken is MintableToken {
     function mint(address _to, uint256 _amount) onlyMintAgent canMint public returns (bool) {
         totalSupply = totalSupply.add(_amount);
         balances[_to] = balances[_to].add(_amount);
-        Mint(_to, _amount);
-        Transfer(address(0), _to, _amount);
+        emit Mint(_to, _amount);
+        emit Transfer(address(0), _to, _amount);
         return true;
     }
 
     function mintTest(address _to, uint256 _amount) onlyMintAgent canMint public returns (bool) {
         totalSupply = totalSupply.add(_amount);
         balances[_to] = balances[_to].add(_amount);
-        Mint(_to, _amount);
-        Transfer(address(0), _to, _amount);
+        emit Mint(_to, _amount);
+        emit Transfer(address(0), _to, _amount);
         return true;
     }
 
