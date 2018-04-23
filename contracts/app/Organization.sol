@@ -1,4 +1,4 @@
-pragma solidity 0.4.23;
+pragma solidity 0.4.21;
 
 import "./Employee.sol";
 import "./CharityEvent.sol";
@@ -82,7 +82,7 @@ contract Organization {
 		charityEventCount++;
 
 		// broadcast event
-		emit CharityEventAdded(charityEvent);
+		CharityEventAdded(charityEvent);
 
 		return charityEvent;
 	}
@@ -109,7 +109,7 @@ contract Organization {
 		incomingDonationCount++;
 
 		// broadcast event
-		emit IncomingDonationAdded(incomingDonation, _amount, _sourceId);
+		IncomingDonationAdded(incomingDonation, _amount, _sourceId);
 
 		return incomingDonation;
 	}
@@ -124,7 +124,7 @@ contract Organization {
 		// move funds
 		require(IncomingDonation(_incomingDonation).moveToCharityEvent(_charityEvent, _amount));
 
-		emit FundsMovedToCharityEvent(_incomingDonation, _charityEvent, msg.sender, _amount);
+		FundsMovedToCharityEvent(_incomingDonation, _charityEvent, msg.sender, _amount);
 
 	}
 
@@ -134,9 +134,9 @@ contract Organization {
 
 		CharityEvent(_charityEvent).updateMetaStorageHash(_hash);
 
-		emit MetaStorageHashUpdated(_charityEvent, _hash);
+		MetaStorageHashUpdated(_charityEvent, _hash);
 
-		emit CharityEventEdited(_charityEvent, msg.sender);
+		CharityEventEdited(_charityEvent, msg.sender);
 	}
 
 	/**
@@ -159,10 +159,10 @@ contract Organization {
 		// update charity event details
 		require(charityEvent.updateCharityEventDetails(_name, _target, _tags, _metaStorageHash));
 
-		emit CharityEventEdited(_charityEvent, msg.sender);
+		CharityEventEdited(_charityEvent, msg.sender);
 
 		if (isMetaStorageUpdated) {
-			emit MetaStorageHashUpdated(charityEvent, _metaStorageHash);
+			MetaStorageHashUpdated(charityEvent, _metaStorageHash);
 		}
 
 		return true;
