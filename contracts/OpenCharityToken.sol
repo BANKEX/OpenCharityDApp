@@ -1,7 +1,7 @@
 pragma solidity 0.4.23;
 
-import "../node_modules/zeppelin-solidity/contracts/token/DetailedERC20.sol";
-import "../node_modules/zeppelin-solidity/contracts/token/BurnableToken.sol";
+import "../node_modules/zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol";
+import "../node_modules/zeppelin-solidity/contracts/token/ERC20/BurnableToken.sol";
 import "./OpenCharityMintableToken.sol";
 
 contract OpenCharityToken is DetailedERC20, OpenCharityMintableToken, BurnableToken {
