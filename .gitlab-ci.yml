@@ -29,7 +29,7 @@ build-node-stage:
   image: node:alpine
   stage: build-node-stage
   script:
-    - npm install -g truffle
+    - npm install -g truffle@4.1.6
     - npm run build:aot:dev
     - truffle compile
   artifacts:
@@ -47,7 +47,7 @@ build-node-prod:
   image: node:alpine
   stage: build-node-prod
   script:
-    - npm install -g truffle
+    - npm install -g truffle@4.1.6
     - npm run build:aot:dev
     - truffle compile
   artifacts:
@@ -62,7 +62,7 @@ build-node-prod:
     policy: pull
   only:
     - production
-    
+
 release-nginx-stage:
   image: docker:latest
   stage: release-nginx-stage
@@ -71,7 +71,7 @@ release-nginx-stage:
   script:
     - docker build -f docker/Dockerfile -t $CI_REGISTRY_IMAGE:stage .
     - docker push $CI_REGISTRY_IMAGE:stage
-  dependencies: 
+  dependencies:
     - build-node-stage
   cache: {}
 
@@ -83,7 +83,7 @@ release-nginx-prod:
   script:
     - docker build -f docker/Dockerfile -t $CI_REGISTRY_IMAGE:prod .
     - docker push $CI_REGISTRY_IMAGE:prod
-  dependencies: 
+  dependencies:
     - build-node-prod
   only:
     - production
@@ -104,7 +104,7 @@ contracts-settings-update:
       - node_modules/
   dependencies:
     - build-node-stage
-    
+
 deploy_stage:
   stage: deploy-stage
   image: tmaier/docker-compose
@@ -142,7 +142,7 @@ contracts-settings-stage:
     - sed -i 's/const env = '"'"'master'"'"';/const env = '"'"'staging'"'"';/' ./post-deploy-script.js
     - sed -i '11i\const TOKENSTAGE = '"'"''$TOKENSTAGE''"'"';\' ./post-deploy-script.js ; sed -i '12i\const TOKENPROD = '"'"''$TOKENPROD''"'"';\' ./post-deploy-script.js
   script:
-    - node post-deploy-script.js                                    
+    - node post-deploy-script.js
   cache:
     key: "$CI_PROJECT_ID"
     paths:
