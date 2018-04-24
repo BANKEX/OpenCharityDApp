@@ -107,6 +107,7 @@ export class CharityEventsListBaseComponent implements OnInit, OnDestroy, AfterV
 
 				if (i !== -1) {
 					this.charityEvents[i].confirmation = ConfirmationStatusState.FAILED;
+					this.charityEvents.splice(i, 1);
 				}
 			}, (err: Error) => {
 				this.errorMessageService.addError(err.message, 'onCharityEventFailed');

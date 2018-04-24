@@ -84,6 +84,7 @@ export class IncomingDonationsListBaseComponent implements OnInit, OnDestroy {
 				const i: number = findIndex(this.displayedIncomingDonations, {internalId: res.internalId});
 				if (i !== -1) {
 					this.displayedIncomingDonations[i].confirmation = ConfirmationStatusState.FAILED;
+					this.displayedIncomingDonations.splice(i, 1);
 				}
 			}, (err: Error) => {
 				this.errorMessageService.addError(err.message, 'onIncomingDonationFailed');
