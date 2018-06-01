@@ -1,6 +1,67 @@
 version: 2
 jobs:
-  build:
+  setup:
+    docker:
+      - image: bankexlabs/node:9-alpine
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          - v1-dependencies-
+
+      - run:
+          name: Install node modules
+          command: |
+            npm install --quiet node-gyp -g
+            npm install
+            npm rebuild bcrypt --build-from-source
+            npm rebuild node-sass
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+  build-stage:
+    docker:
+      - image: bankexlabs/node:9-alpine
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          - v1-dependencies-
+
+      - run:
+          name: Build stage project
+          command: |
+            npm install -g truffle@4.1.6
+            npm run build:aot:dev
+            truffle compile
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist
+            - build/contracts
+
+  build-push-stage-image:
+    machine: true
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Build-Push stage image
+          command: |
+            docker login -u $DHLOGIN -p $DHPASS
+            docker build -t $IMAGE:test .
+            docker push $IMAGE:test
+
+  deploy-stage:
     machine: true
     steps:
       - run:
@@ -10,9 +71,36 @@ jobs:
             echo -e $DOCKERCA > certs/ca.pem
             echo -e $DOCKERCERT > certs/cert.pem
             echo -e $DOCKERKEY > certs/key.pem
-            ls -alh certs
-            cat certs/ca.pem
             export DOCKER_TLS_VERIFY="1"
             export DOCKER_HOST="tcp://$STAGEHOST:2376"
             export DOCKER_CERT_PATH="/home/circleci/project/certs"
-            docker ps
+            docker login -u $DHLOGIN -p $DHPASS
+            docker-compose -f docker-compose.yml down
+            docker rmi $IMAGE:test || echo "image not exist"
+            docker pull $IMAGE:test
+            docker-compose -f docker-compose.yml up -d
+
+workflows:
+  version: 2
+  build-deploy-stage-image:
+    jobs:
+      - setup
+      - build-stage:
+          filters:
+            branches:
+              ignore: master
+          requires:
+            - setup
+      - build-push-stage-image:
+          requires:
+            - build-stage
+          filters:
+            branches:
+              ignore: master
+      - deploy-stage:
+          requires:
+            - build-push-stage-image
+          filters:
+            branches:
+              ignore: master
+
