@@ -6,7 +6,11 @@ jobs:
       - run:
           name: Deploy to stage
           command: |
-            pwd
-            ls -alh
             mkdir -p certs
-            ls -alh
+            echo -e $DOCKERCA > certs/ca.pem
+            echo -e $DOCKERCERT > certs/cert.pem
+            echo -e $DOCKERKEY > certs/key.pem
+            export DOCKER_TLS_VERIFY="1"
+            export DOCKER_HOST="tcp://$STAGEHOST:2376"
+            export DOCKER_CERT_PATH="$CIRCLE_WORKING_DIRECTORY/certs"
+            docker ps
