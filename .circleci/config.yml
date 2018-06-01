@@ -6,5 +6,5 @@ jobs:
       - run:
           name: Deploy to stage
           command: |
+            pwd
             ls -alh
-            ls -alh .docker
