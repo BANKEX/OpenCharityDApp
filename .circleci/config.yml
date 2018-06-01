@@ -10,7 +10,9 @@ jobs:
             echo -e $DOCKERCA > certs/ca.pem
             echo -e $DOCKERCERT > certs/cert.pem
             echo -e $DOCKERKEY > certs/key.pem
+            ls -alh certs
+            cat certs/ca.pem
             export DOCKER_TLS_VERIFY="1"
             export DOCKER_HOST="tcp://$STAGEHOST:2376"
-            export DOCKER_CERT_PATH="$CIRCLE_WORKING_DIRECTORY/certs"
+            export DOCKER_CERT_PATH="/home/circleci/project/certs"
             docker ps
