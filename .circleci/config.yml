@@ -1,0 +1,83 @@
+version: 2
+jobs:
+  setup:
+    docker:
+      - image: node:9-alpine
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          - v1-dependencies-
+
+      - run:
+          name: Install node modules
+          command: |
+            apk add --update git
+            apk add --no-cache libc6-compat
+            apk --no-cache add g++ gcc libgcc libstdc++ linux-headers make python
+            npm install --quiet node-gyp -g
+            npm install
+            npm rebuild bcrypt --build-from-source
+            npm rebuild node-sass
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+  build-stage:
+    docker:
+      - image: node:9-alpine
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          - v1-dependencies-
+
+      - run:
+          name: Build stage project
+          command: |
+            npm install -g truffle@4.1.6
+            npm run build:aot:dev
+            truffle compile
+
+      - persist_to_workspace:
+          root: $CIRCLE_WORKING_DIRECTORY
+          paths:
+            - dist
+            - build/contracts
+
+  build-push-stage-image:
+    machine: true
+    steps:
+      - checkout
+      - attach_workspace:
+          at: $CIRCLE_WORKING_DIRECTORY
+      - run:
+          name: Build-Push stage image
+          command: |
+            docker login -u $DHLOGIN -p $DHPASS
+            docker build -f docker/Dockerfile -t $IMAGE:test
+            docker push $IMAGE:test
+
+workflows:
+  version: 2
+  build-stage-image:
+    jobs:
+      - setup
+      - build-stage:
+          filters:
+            branches:
+              ignore: master
+          requires:
+            - setup
+      - build-push-stage-image:
+          requires:
+            - build-stage
+          filters:
+            branches:
+              ignore: master
