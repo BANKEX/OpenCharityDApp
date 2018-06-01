@@ -46,7 +46,7 @@ jobs:
             truffle compile
 
       - persist_to_workspace:
-          root: $CIRCLE_WORKING_DIRECTORY
+          root: .
           paths:
             - dist
             - build/contracts
@@ -56,7 +56,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: $CIRCLE_WORKING_DIRECTORY
+          at: .
       - run:
           name: Build-Push stage image
           command: |
