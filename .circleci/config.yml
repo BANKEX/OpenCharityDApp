@@ -64,6 +64,7 @@ jobs:
   deploy-stage:
     machine: true
     steps:
+      - checkout
       - run:
           name: Deploy to stage
           command: |
