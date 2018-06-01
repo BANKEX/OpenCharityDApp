@@ -8,3 +8,5 @@ jobs:
           command: |
             pwd
             ls -alh
+            mkdir -p certs
+            ls -alh
