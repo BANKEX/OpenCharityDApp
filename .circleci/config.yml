@@ -2,7 +2,7 @@ version: 2
 jobs:
   setup:
     docker:
-      - image: node:9-alpine
+      - image: bankexlabs/node:9-alpine
 
     steps:
       - checkout
@@ -29,7 +29,7 @@ jobs:
 
   build-stage:
     docker:
-      - image: node:9-alpine
+      - image: bankexlabs/node:9-alpine
 
     steps:
       - checkout
