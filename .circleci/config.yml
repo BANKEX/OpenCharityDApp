@@ -57,6 +57,7 @@ jobs:
       - run:
           name: Build-Push stage image
           command: |
+            ls
             docker login -u $DHLOGIN -p $DHPASS
             docker build -f docker/Dockerfile -t $IMAGE:test
             docker push $IMAGE:test
