@@ -61,9 +61,28 @@ jobs:
             docker build -t $IMAGE:test .
             docker push $IMAGE:test
 
+  deploy-stage:
+    machine: true
+    steps:
+      - run:
+          name: Deploy to stage
+          command: |
+            mkdir -p /certs
+            echo -e $DOCKERCA > /certs/ca.pem
+            echo -e $DOCKERCERT > /certs/cert.pem
+            echo -e $DOCKERKEY > /certs/key.pem
+            export DOCKER_TLS_VERIFY="1"
+            export DOCKER_HOST="tcp://$STAGEHOST:2376"
+            export DOCKER_CERT_PATH="/certs"
+            docker login -u $DHLOGIN -p $DHPASS
+            docker-compose -f docker-compose.yml down
+            docker rmi $IMAGE:test || echo "image not exist"
+            docker pull $IMAGE:test
+            docker-compose -f docker-compose.yml up -d
+
 workflows:
   version: 2
-  build-stage-image:
+  build-deploy-stage-image:
     jobs:
       - setup
       - build-stage:
@@ -75,6 +94,12 @@ workflows:
       - build-push-stage-image:
           requires:
             - build-stage
+          filters:
+            branches:
+              ignore: master
+      - deploy-stage:
+          requires:
+            - build-push-stage-image
           filters:
             branches:
               ignore: master

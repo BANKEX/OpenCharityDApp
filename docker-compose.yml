@@ -2,8 +2,8 @@ version: '3'
 
 services:
   oc_client:
-    image: $CI_REGISTRY_IMAGE:stage
-    container_name: oc_client
+    image: $IMAGE:test
+    container_name: oc_client_test
     restart: always
     expose:
       - "80"
