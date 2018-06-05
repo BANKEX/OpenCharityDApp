@@ -143,6 +143,9 @@ workflows:
   stage-workflow:
     jobs:
       - setup
+          filters:
+            branches:
+              ignore: master
       - build-stage-node:
           filters:
             branches:
@@ -169,6 +172,9 @@ workflows:
   prod-workflow:
     jobs:
       - setup
+          filters:
+            branches:
+              only: master
       - build-prod-node:
           filters:
             branches:
