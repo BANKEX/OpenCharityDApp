@@ -98,11 +98,13 @@ workflows:
           filters:
             branches:
               ignore: master
-      - hold:
+      - approval-step:
           type: approval
           requires:
             - build-docker-image
       - deploy-stage:
+          requires:
+            - approval-step
           filters:
             branches:
               ignore: master
