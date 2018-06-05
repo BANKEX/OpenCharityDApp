@@ -142,7 +142,7 @@ workflows:
   version: 2
   stage-workflow:
     jobs:
-      - setup
+      - setup:
           filters:
             branches:
               ignore: master
@@ -171,7 +171,7 @@ workflows:
 
   prod-workflow:
     jobs:
-      - setup
+      - setup:
           filters:
             branches:
               only: master
