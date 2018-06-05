@@ -24,7 +24,7 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
-  build-stage:
+  build-node:
     docker:
       - image: bankexlabs/node:9-alpine
 
@@ -36,7 +36,7 @@ jobs:
           - v1-dependencies-
 
       - run:
-          name: Build stage project
+          name: Build node-dev
           command: |
             npm install -g truffle@4.1.6
             npm run build:aot:dev
@@ -48,7 +48,7 @@ jobs:
             - dist
             - build/contracts
 
-  build-push-stage-image:
+  build-docker-image:
     machine: true
     steps:
       - checkout
@@ -83,26 +83,26 @@ jobs:
 
 workflows:
   version: 2
-  build-deploy-stage-image:
+  stage-workflow:
     jobs:
       - setup
-      - build-stage:
+      - build-node:
           filters:
             branches:
               ignore: master
           requires:
             - setup
-      - build-push-stage-image:
+      - build-docker-image:
           requires:
-            - build-stage
+            - build-node
           filters:
             branches:
               ignore: master
-      - deploy-stage:
+      - hold:
           type: approval
           requires:
-            - build-push-stage-image
+            - build-docker-image
+      - deploy-stage:
           filters:
             branches:
               ignore: master
-
