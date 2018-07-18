@@ -145,11 +145,11 @@ workflows:
       - setup:
           filters:
             branches:
-              ignore: master
+              ignore: prod
       - build-stage-node:
           filters:
             branches:
-              ignore: master
+              ignore: prod
           requires:
             - setup
       - build-stage-docker-image:
@@ -157,28 +157,24 @@ workflows:
             - build-stage-node
           filters:
             branches:
-              ignore: master
-      - approval-step:
-          type: approval
-          requires:
-            - build-stage-docker-image
+              ignore: prod
       - deploy-stage:
           requires:
             - approval-step
           filters:
             branches:
-              ignore: master
+              ignore: prod
 
   prod-workflow:
     jobs:
       - setup:
           filters:
             branches:
-              only: master
+              only: prod
       - build-prod-node:
           filters:
             branches:
-              only: master
+              only: prod
           requires:
             - setup
       - build-prod-docker-image:
@@ -186,7 +182,7 @@ workflows:
             - build-prod-node
           filters:
             branches:
-              only: master
+              only: prod
       - approval-step:
           type: approval
           requires:
@@ -196,5 +192,5 @@ workflows:
             - approval-step
           filters:
             branches:
-              only: master
+              only: prod
 
