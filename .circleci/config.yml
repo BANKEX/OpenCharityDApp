@@ -1,0 +1,196 @@
+version: 2
+jobs:
+  setup:
+    docker:
+      - image: bankexlabs/node:9-alpine
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          - v1-dependencies-
+
+      - run:
+          name: Install node modules
+          command: |
+            npm install --quiet node-gyp -g
+            npm install
+            npm rebuild bcrypt --build-from-source
+            npm rebuild node-sass
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+  build-stage-node:
+    docker:
+      - image: bankexlabs/node:9-alpine
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          - v1-dependencies-
+
+      - run:
+          name: Build node-dev
+          command: |
+            npm install -g truffle@4.1.6
+            npm run build:aot:dev
+            truffle compile
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist
+            - build/contracts
+
+  build-stage-prod:
+    docker:
+      - image: bankexlabs/node:9-alpine
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          - v1-dependencies-
+
+      - run:
+          name: Build node-prod
+          command: |
+            npm install -g truffle@4.1.6
+            npm run build:aot:prod
+            truffle compile
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist
+            - build/contracts
+
+  build-stage-docker-image:
+    machine: true
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Build-Push stage image
+          command: |
+            docker login -u $DHLOGIN -p $DHPASS
+            docker build -t $IMAGE:stage .
+            docker push $IMAGE:stage
+
+  build-prod-docker-image:
+    machine: true
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Build-Push Prod image
+          command: |
+            docker login -u $DHLOGIN -p $DHPASS
+            docker build -t $IMAGE:prod .
+            docker push $IMAGE:prod
+
+  deploy-stage:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: Deploy to stage
+          command: |
+            mkdir -p certs
+            echo -e $DOCKERCA > certs/ca.pem
+            echo -e $DOCKERCERT > certs/cert.pem
+            echo -e $DOCKERKEY > certs/key.pem
+            export DOCKER_TLS_VERIFY="1"
+            export DOCKER_HOST="tcp://$STAGEHOST:2376"
+            export DOCKER_CERT_PATH="/home/circleci/project/certs"
+            docker login -u $DHLOGIN -p $DHPASS
+            docker-compose -f docker-compose.yml down
+            docker rmi $IMAGE:stage || echo "image not exist"
+            docker pull $IMAGE:stage
+            docker-compose -f docker-compose.yml up -d
+
+  deploy-prod:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: Deploy to stage
+          command: |
+            mkdir -p certs
+            echo -e $DOCKERCA > certs/ca.pem
+            echo -e $DOCKERCERT > certs/cert.pem
+            echo -e $DOCKERKEY > certs/key.pem
+            export DOCKER_TLS_VERIFY="1"
+            export DOCKER_HOST="tcp://$PRODHOST:2376"
+            export DOCKER_CERT_PATH="/home/circleci/project/certs"
+            docker login -u $DHLOGIN -p $DHPASS
+            docker-compose -f docker-compose-prod.yml down
+            docker rmi $IMAGE:prod || echo "image not exist"
+            docker pull $IMAGE:prod
+            docker-compose -f docker-compose-prod.yml up -d
+
+workflows:
+  version: 2
+  stage-workflow:
+    jobs:
+      - setup:
+          filters:
+            branches:
+              ignore: prod
+      - build-stage-node:
+          filters:
+            branches:
+              ignore: prod
+          requires:
+            - setup
+      - build-stage-docker-image:
+          requires:
+            - build-stage-node
+          filters:
+            branches:
+              ignore: prod
+      - deploy-stage:
+          requires:
+            - build-stage-docker-image
+          filters:
+            branches:
+              ignore: prod
+
+  prod-workflow:
+    jobs:
+      - setup:
+          filters:
+            branches:
+              only: prod
+      - build-prod-node:
+          filters:
+            branches:
+              only: prod
+          requires:
+            - setup
+      - build-prod-docker-image:
+          requires:
+            - build-prod-node
+          filters:
+            branches:
+              only: prod
+      - approval-step:
+          type: approval
+          requires:
+            - build-prod-docker-image
+      - deploy-prod:
+          requires:
+            - approval-step
+          filters:
+            branches:
+              only: prod
+
