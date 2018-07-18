@@ -159,8 +159,6 @@ workflows:
             branches:
               ignore: prod
       - deploy-stage:
-          requires:
-            - approval-step
           filters:
             branches:
               ignore: prod
