@@ -159,6 +159,8 @@ workflows:
             branches:
               ignore: prod
       - deploy-stage:
+          requires:
+            - build-stage-docker-image
           filters:
             branches:
               ignore: prod
