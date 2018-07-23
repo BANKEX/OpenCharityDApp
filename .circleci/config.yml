@@ -183,14 +183,9 @@ workflows:
           filters:
             branches:
               only: prod
-      - approval-step:
-          type: approval
-          requires:
-            - build-prod-docker-image
       - deploy-prod:
           requires:
-            - approval-step
+            - build-prod-docker-image
           filters:
             branches:
               only: prod
-
